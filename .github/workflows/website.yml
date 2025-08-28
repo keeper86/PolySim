@@ -1,0 +1,45 @@
+name: website
+
+on:
+  push:
+
+defaults:
+  run:
+    working-directory: ./website
+
+jobs:
+  checks:
+    name: Check format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('website/**/package-lock.json') }}
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint:check
+
+  unitTests:
+    name: Unit Tests
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+      - name: Cache .npm
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('website/**/package-lock.json') }}
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm run test
