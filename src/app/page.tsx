@@ -1,4 +1,4 @@
-import {EnergyForecast} from '../components/client/EnergyForecast';
+import { EnergyForecast } from '../components/client/EnergyForecast';
 
 export default async function Home() {
     return (

@@ -1,20 +1,10 @@
 {
-  "extends": "@tsconfig/next/tsconfig.json",
-  "compilerOptions": {
-    "jsx": "preserve",
-    "jsxImportSource": "react",
-    "target": "ES2017"
-  },
-  "include": [
-    "**/*.js",
-    "**/*.json",
-    "**/*.ts",
-    "**/*.tsx",
-    ".eslintrc.cjs",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "./dist"
-  ]
+    "extends": "@tsconfig/next/tsconfig.json",
+    "compilerOptions": {
+        "jsx": "preserve",
+        "jsxImportSource": "react",
+        "target": "ES2017"
+    },
+    "include": ["**/*.js", "**/*.json", "**/*.ts", "**/*.tsx", ".eslintrc.cjs", ".next/types/**/*.ts"],
+    "exclude": ["node_modules", "./dist"]
 }

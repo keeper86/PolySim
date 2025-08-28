@@ -132,12 +132,12 @@ export const EnergyForecast: FC = () => {
             tooltip: {
                 callbacks: {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    title: (tooltipItems : any) => {
+                    title: (tooltipItems: any) => {
                         const rawValue = (tooltipItems[0].raw as { x: string | number | Date }).x;
                         const date = new Date(rawValue);
                         return date.toLocaleDateString('de-DE', { year: 'numeric', month: 'long' });
-                    }
-                }
+                    },
+                },
             },
             legend: {
                 position: 'top' as const,
