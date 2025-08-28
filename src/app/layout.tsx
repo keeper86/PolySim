@@ -24,6 +24,9 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     testServer.listen({ onUnhandledRequest: 'error' });
+    console.log(
+        'Mock server is running. All fetch requests to /api/v1/energy/historical and /api/v1/energy/forecast will be intercepted.',
+    );
 
     return (
         <html lang='en'>

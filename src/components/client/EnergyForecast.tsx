@@ -1,25 +1,22 @@
 'use client';
-import React from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
-    Chart,
     CategoryScale,
+    Chart,
+    Filler,
+    Legend,
     LinearScale,
-    PointElement,
     LineElement,
+    PointElement,
+    TimeScale,
     Title,
     Tooltip,
-    Legend,
-    TimeScale,
-    Filler,
 } from 'chart.js';
-
-import { FC, useEffect, useState } from 'react';
 
 import 'chartjs-adapter-date-fns';
 
 import { TimeSeriesData } from '../../types/timeSeriesData';
-import { mockForecastData, mockHistoricData } from '../../../test/mockData';
 
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, TimeScale, Filler);
 
@@ -39,15 +36,18 @@ export const EnergyForecast: FC = () => {
             // fetch data from the server endpoint /api/user
             const historicalDataResult = await fetch('/api/v1/energy/historical');
             if (!historicalDataResult.ok) {
-                console.log('Failed to fetch historical data');
-                setHistoricalData(mockHistoricData);
+                console.log('Failed to fetch historical data not ok');
             } else {
-                setHistoricalData((await historicalDataResult.json()).data);
+                const test = await historicalDataResult.json();
+                if (test.data) {
+                    setHistoricalData(test.data);
+                } else {
+                    console.log('Failed to fetch historical data');
+                }
             }
             const forecastDataResult = await fetch('/api/v1/energy/forecast');
             if (!forecastDataResult.ok) {
                 console.log('Failed to fetch forecast data');
-                setForecastData(mockForecastData);
             } else {
                 setForecastData((await forecastDataResult.json()).data);
             }
@@ -78,7 +78,7 @@ export const EnergyForecast: FC = () => {
             },
             {
                 label: 'Forecast',
-                data: forecastData.map((d) => ({
+                data: forecastData?.map((d) => ({
                     x: d.date,
                     y: d.value,
                 })),
