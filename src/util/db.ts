@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 
-const databaseUrl = process.env.DATABASE_URL;
+const databaseUrl = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@db:5432/${process.env.POSTGRES_DB}`
 if (!databaseUrl) {
     throw new Error('DATABASE_URL environment variable is not set');
 }
