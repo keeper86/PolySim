@@ -1,6 +1,35 @@
 services:
-    app:
-        build:
-            context: .
-        ports:
-            - '3000:3000'
+  app:
+    build:
+      context: .
+      target: production
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/yourdb
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: yourdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  caddy:
+    image: caddy:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:
