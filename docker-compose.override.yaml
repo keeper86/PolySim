@@ -1,0 +1,20 @@
+services:
+    app:
+        build:
+            target: development # Use dev-stage in Dockerfile
+        volumes:
+            - .:/app # Mount source code
+            - /app/node_modules # Preserve dependencies
+        ports:
+            - '3000:3000' # Expose dev server
+            - '9229:9229' # Node.js debug port
+        environment:
+            - NODE_ENV=development
+            - DEBUG=* # Enable debug output
+        command: npm run dev # Hot-reload dev command
+
+    db:
+        ports:
+            - '5432:5432' # Expose PostgreSQL for external tools
+        environment:
+            - POSTGRES_HOST_AUTH_METHOD=trust # Easier dev authentication

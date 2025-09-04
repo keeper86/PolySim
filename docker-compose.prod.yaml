@@ -1,0 +1,14 @@
+services:
+    app:
+        build:
+            target: production
+        environment:
+            - NODE_ENV=production
+
+    caddy:
+        environment:
+            - CADDY_DOMAIN=localhost
+
+secrets:
+    database_url:
+        external: true
