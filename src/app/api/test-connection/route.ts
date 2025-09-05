@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
 import { testConnection } from '../../../util/db';
-import { log } from 'console';
 
 export async function POST() {
- 
-    
     try {
         const result = await testConnection();
         if (result.success) {
@@ -17,7 +14,7 @@ export async function POST() {
                 { status: 200 },
             );
         } else {
-               console.log("connect");
+            console.log('connect');
             return NextResponse.json(
                 {
                     error: 'Database connection failed',
@@ -27,7 +24,7 @@ export async function POST() {
             );
         }
     } catch (error) {
-           console.log("unexpected");
+        console.log('unexpected');
         return NextResponse.json(
             {
                 error: 'Unexpected error',

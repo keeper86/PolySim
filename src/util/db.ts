@@ -1,8 +1,13 @@
 import { Pool } from 'pg';
 
-const databaseUrl = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@db:5432/${process.env.POSTGRES_DB}`
+// In development, connect to localhost, in production to the Docker service name 'db'
+const dbDomain = process.env.NODE_ENV === 'production' ? 'db' : 'localhost';
+
+const databaseUrl = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${dbDomain}:5432/${process.env.POSTGRES_DB}`;
+console.log(databaseUrl);
+
 if (!databaseUrl) {
-    throw new Error('DATABASE_URL environment variable is not set');
+    throw new Error('DATABASE_URL environment variable is not set: ' + databaseUrl);
 }
 
 export const pool = new Pool({
@@ -11,6 +16,9 @@ export const pool = new Pool({
 
 export async function testConnection() {
     const client = await pool.connect();
+    const test = client.getMaxListeners();
+    console.log(test);
+
     try {
         const result = await client.query('SELECT NOW() as current_time, version() as version');
         return {
