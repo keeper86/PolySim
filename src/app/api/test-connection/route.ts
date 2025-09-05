@@ -1,9 +1,21 @@
 import { NextResponse } from 'next/server';
 import { testConnection } from '../../../util/db';
+import { getApiDocs } from '../../../util/swagger';
 
+/**
+ * @swagger
+ * /api/hello:
+ *   get:
+ *     description: Returns the hello world
+ *     responses:
+ *       200:
+ *         description: Hello World!
+ */
 export async function POST() {
     try {
         const result = await testConnection();
+        const test = getApiDocs();
+        console.log(test);
         if (result.success) {
             return NextResponse.json(
                 {

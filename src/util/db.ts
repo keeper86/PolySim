@@ -1,63 +1,38 @@
-import { Pool } from 'pg';
+import knex, { Knex } from 'knex';
 
-// In development, connect to localhost, in production to the Docker service name 'db'
 const dbDomain = process.env.NODE_ENV === 'production' ? 'db' : 'localhost';
 
-const databaseUrl = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${dbDomain}:5432/${process.env.POSTGRES_DB}`;
-console.log(databaseUrl);
+const databaseConfig: Knex.Config = {
+    client: 'pg',
+    connection: {
+        host: dbDomain,
+        port: 5432,
+        user: process.env.POSTGRES_USER,
+        password: process.env.POSTGRES_PASSWORD,
+        database: process.env.POSTGRES_DB,
+    },
+    pool: {
+        min: 2,
+        max: 10,
+    },
+};
 
-if (!databaseUrl) {
-    throw new Error('DATABASE_URL environment variable is not set: ' + databaseUrl);
-}
+export const db = knex(databaseConfig);
 
-export const pool = new Pool({
-    connectionString: databaseUrl,
-});
-
-export async function testConnection() {
-    const client = await pool.connect();
-    const test = client.getMaxListeners();
-    console.log(test);
-
-    try {
-        const result = await client.query('SELECT NOW() as current_time, version() as version');
-        return {
-            success: true,
-            time: result.rows[0].current_time,
-            version: result.rows[0].version,
-        };
-    } catch (error) {
-        return {
-            success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
-        };
-    } finally {
-        client.release();
-    }
-}
-
-export interface QueryResult<T = string> {
+export async function testConnection(): Promise<{
     success: boolean;
-    data?: T[];
+    time?: number;
+    version?: string;
     error?: string;
-    rowCount?: number;
-}
-
-export async function query<T = string>(text: string, params?: string[]): Promise<QueryResult<T>> {
-    const client = await pool.connect();
+}> {
+    const start = Date.now();
     try {
-        const result = await client.query(text, params);
-        return {
-            success: true,
-            data: result.rows,
-            rowCount: result.rowCount || undefined,
-        };
+        const result = await db.raw('SELECT version()');
+        const end = Date.now();
+        const time = end - start;
+        const version = result.rows[0].version;
+        return { success: true, time, version };
     } catch (error) {
-        return {
-            success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
-        };
-    } finally {
-        client.release();
+        return { success: false, error: error instanceof Error ? error.message : String(error) };
     }
 }
