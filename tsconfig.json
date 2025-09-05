@@ -1,9 +1,20 @@
 {
     "extends": "@tsconfig/next/tsconfig.json",
     "compilerOptions": {
+        "target": "es2017",
+        "lib": ["dom", "dom.iterable", "es6"],
+        "allowJs": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
         "jsx": "preserve",
-        "jsxImportSource": "react",
-        "target": "ES2017"
+        "jsxImportSource": "react"
     },
     "include": ["**/*.js", "**/*.json", "**/*.ts", "**/*.tsx", ".eslintrc.cjs", ".next/types/**/*.ts"],
     "exclude": ["node_modules", "./dist"]

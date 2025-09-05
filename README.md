@@ -2,20 +2,29 @@
 
 ## Getting Started
 
-### Dev setup
+This app is deployed via docker container. We use docker compose to start the app and additional services.
 
-Run the development server:
+### Local Development
+
+Start database and then the app
 
 ```bash
+docker compose -f docker-compose.database.yaml up
 npm run dev
 ```
 
-### Production setup
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-This app is deployed via docker container. We use docker compose to start the app and additional services.
+### Production
 
 ```bash
-sudo docker compose up
+docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Clean-up
+
+To stop and remove the containers run
+
+```bash
+docker compose down
+```

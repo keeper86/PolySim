@@ -1,4 +1,4 @@
-import { EnergyForecast } from '../components/client/EnergyForecast';
+import DatabaseTester from '../components/client/DbTester';
 
 export default async function Home() {
     return (
@@ -6,7 +6,7 @@ export default async function Home() {
             <h1 className='text-3xl font-bold mb-8 text-center'>PolySim - Event Chain im Web</h1>
 
             <div className='bg-white p-4 rounded-lg shadow-lg'>
-                <EnergyForecast />
+                <DatabaseTester />
             </div>
         </div>
     );
