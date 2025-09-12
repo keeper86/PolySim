@@ -2,12 +2,12 @@ import { createSwaggerSpec } from 'next-swagger-doc';
 
 export const getApiDocs = async () => {
     const spec = createSwaggerSpec({
-        apiFolder: 'app/api',
+        apiFolder: 'src/app/api',
         definition: {
             openapi: '3.0.0',
 
             info: {
-                title: 'Next Swagger API Example',
+                title: 'PolySim Swagger UI',
                 version: '1.0',
             },
             components: {
@@ -22,5 +22,8 @@ export const getApiDocs = async () => {
             security: [],
         },
     });
+
+    console.log('spec', spec);
+
     return spec;
 };

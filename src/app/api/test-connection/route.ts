@@ -4,8 +4,8 @@ import { getApiDocs } from '../../../util/swagger';
 
 /**
  * @swagger
- * /api/hello:
- *   get:
+ * /api/test-connection:
+ *   post:
  *     description: Returns the hello world
  *     responses:
  *       200:

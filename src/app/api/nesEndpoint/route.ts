@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 /**
  * @swagger
- * /api/health:
+ * /api/nesEndpoint:
  *   get:
  *     description: Returns the hello world
  *     responses:
