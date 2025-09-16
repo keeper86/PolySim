@@ -6,10 +6,12 @@ import { getApiDocs } from '../../../util/swagger';
  * @swagger
  * /api/test-connection:
  *   post:
- *     description: Returns the hello world
+ *     description: Tests the database connection
  *     responses:
  *       200:
- *         description: Hello World!
+ *         description: Database connection successful
+ *       500:
+ *         description: Database connection failed
  */
 export async function POST() {
     try {
@@ -26,7 +28,6 @@ export async function POST() {
                 { status: 200 },
             );
         } else {
-            console.log('connect');
             return NextResponse.json(
                 {
                     error: 'Database connection failed',
@@ -36,7 +37,6 @@ export async function POST() {
             );
         }
     } catch (error) {
-        console.log('unexpected');
         return NextResponse.json(
             {
                 error: 'Unexpected error',

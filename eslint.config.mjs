@@ -31,21 +31,22 @@ export default defineConfig([
     { files: ["**/*.{js,mjs,cjs,ts}"], plugins: { js }, extends: ["js/recommended"] },
     { files: ["**/*.{js,mjs,cjs,ts}"], languageOptions: { globals: globals.browser } },
     {
-        files: ["**/*.{js,ts}"],
+        files: ["src/app/api/**/*.{js,ts}"],
         plugins: {
             jsdoc,
         },
         rules: {
-            "jsdoc/require-jsdoc": [
+            "jsdoc/no-missing-syntax": [
                 "error",
                 {
-                    require: {
-                        FunctionDeclaration: true,
-                        MethodDefinition: true,
-                        ClassDeclaration: true,
-                        ArrowFunctionExpression: true,
-                        FunctionExpression: true,
-                    },
+                    contexts: [
+                        {
+                            comment: "JsdocBlock:has(JsdocTag[tag=swagger])",
+                            context: "any",
+                            message:
+                                "@swagger documentation is required on each API. Check this out for syntax info: https://github.com/jellydn/next-swagger-doc",
+                        },
+                    ],
                 },
             ],
         },

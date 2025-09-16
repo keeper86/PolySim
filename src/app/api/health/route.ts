@@ -1,14 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
 /**
  * @swagger
  * /api/health:
  *   get:
- *     description: Returns the hello world
+ *     description: Returns the health status
  *     responses:
  *       200:
- *         description: Hello World!
+ *         description: OK
  */
 export async function GET() {
-  return NextResponse.json({ status: "ok" }, { status: 200 });
+    return NextResponse.json({ status: 'ok' }, { status: 200 });
 }
