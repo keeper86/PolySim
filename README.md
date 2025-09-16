@@ -2,7 +2,15 @@
 
 ## Getting Started
 
-This app is deployed via docker container. We use docker compose to start the app and additional services.
+This NextJS-App is deployed via docker container. We use docker compose to start the app and additional services.
+
+First install all dependencies
+
+```bash
+npm i
+```
+
+_Note:_ This creates a node_modules folder and will resolve all dependencies (including transient ones). If something seems 'fishy' with dependencies try to delete 'node_modules' and run "npm i" again.
 
 ### Local Development
 
