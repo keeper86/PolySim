@@ -7,20 +7,17 @@ import { testServer } from "./setupTestServer";
 vi.mock("chartjs-adapter-date-fns", () => ({}));
 
 vi.mock("chart.js", async () => {
-  const actual = await vi.importActual<typeof import("chart.js")>("chart.js");
-  return {
-    ...actual,
-    Chart: class MockChart extends actual.Chart {
-      /**
-       *
-       */
-      constructor(ctx: CanvasRenderingContext2D, config: never) {
-        super(ctx, config);
-      }
-      // eslint-disable-next-line
+    const actual = await vi.importActual<typeof import("chart.js")>("chart.js");
+    return {
+        ...actual,
+        Chart: class MockChart extends actual.Chart {
+            constructor(ctx: CanvasRenderingContext2D, config: never) {
+                super(ctx, config);
+            }
+            // eslint-disable-next-line
             destroy() {}
-    },
-  };
+        },
+    };
 });
 
 beforeAll(() => testServer.listen({ onUnhandledRequest: "error" }));

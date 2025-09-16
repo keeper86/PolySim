@@ -5,7 +5,7 @@ import SwaggerUIProps from "swagger-ui-react/swagger-ui-react";
 import "swagger-ui-react/swagger-ui.css";
 
 function ReactSwagger({ spec }: SwaggerUIProps) {
-  return <SwaggerUI spec={spec} />;
+    return <SwaggerUI spec={spec} />;
 }
 
 export default ReactSwagger;
