@@ -1,22 +1,22 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { testServer } from "../../test/setupTestServer";
-import { ReactNode } from "react";
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import './globals.css';
+import { testServer } from '../../test/setupTestServer';
+import { ReactNode } from 'react';
 
 const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
+    variable: '--font-geist-sans',
+    subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
+    variable: '--font-geist-mono',
+    subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-    title: "PolySim",
-    description: "Playground for data",
+    title: 'PolySim',
+    description: 'Playground for data',
 };
 
 export default function RootLayout({
@@ -24,9 +24,9 @@ export default function RootLayout({
 }: Readonly<{
     children: ReactNode;
 }>) {
-    testServer.listen({ onUnhandledRequest: "error" });
+    testServer.listen({ onUnhandledRequest: 'error' });
     console.log(
-        "Mock server is running. All fetch requests to /api/v1/energy/historical and /api/v1/energy/forecast will be intercepted.",
+        'Mock server is running. All fetch requests to /api/v1/energy/historical and /api/v1/energy/forecast will be intercepted.',
     );
 
     return (

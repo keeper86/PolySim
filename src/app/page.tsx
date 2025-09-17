@@ -1,4 +1,4 @@
-import DatabaseTester from "../components/client/DbTester";
+import DatabaseTester from '../components/client/DbTester';
 
 export default async function Home() {
     return (

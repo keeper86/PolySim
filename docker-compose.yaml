@@ -1,4 +1,18 @@
 services:
+    caddy:
+        image: caddy:alpine
+        ports:
+            - '80:80'
+            - '443:443'
+        volumes:
+            - ./Caddyfile:/etc/caddy/Caddyfile
+            - caddy_data:/data
+            - caddy_config:/config
+        environment:
+            - CADDY_DOMAIN=localhost
+        depends_on:
+            - app
+
     app:
         build:
             context: .
@@ -6,11 +20,24 @@ services:
         environment:
             DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
             NODE_ENV: production
+            LOG_LEVEL: warn
         depends_on:
             db:
                 condition: service_healthy
             migrations:
                 condition: service_completed_successfully
+
+    migrations:
+        build:
+            context: .
+            target: migrator
+        environment:
+            DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+            NODE_ENV: production
+        depends_on:
+            db:
+                condition: service_healthy
+        restart: 'no'
 
     db:
         image: postgres:15-alpine
@@ -25,32 +52,6 @@ services:
             interval: 10s
             timeout: 3s
             retries: 10
-
-    migrations:
-        build:
-            context: .
-            target: migrator
-        environment:
-            DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-            NODE_ENV: production
-        depends_on:
-            db:
-                condition: service_healthy
-        restart: 'no'
-
-    caddy:
-        image: caddy:alpine
-        ports:
-            - '80:80'
-            - '443:443'
-        volumes:
-            - ./Caddyfile:/etc/caddy/Caddyfile
-            - caddy_data:/data
-            - caddy_config:/config
-        environment:
-            - CADDY_DOMAIN=localhost
-        depends_on:
-            - app
 
 volumes:
     postgres_data:
