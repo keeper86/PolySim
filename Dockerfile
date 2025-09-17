@@ -17,7 +17,6 @@ RUN \
   else echo "Lockfile not found." && exit 1; \
   fi
 
-
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
@@ -35,6 +34,20 @@ RUN \
   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
   else echo "Lockfile not found." && exit 1; \
   fi
+
+FROM base AS migrator
+WORKDIR /app
+
+# Install PostgreSQL client for the wait script
+RUN apk add --no-cache postgresql-client
+
+# Copy only what's needed for migrations
+COPY --from=deps /app/node_modules ./node_modules
+COPY package.json ./
+COPY knexfile.js ./
+COPY migrations/ ./migrations/
+
+CMD ["npx", "knex", "migrate:latest"]
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -64,3 +77,4 @@ ENV PORT=3000
 # https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
 ENV HOSTNAME="0.0.0.0"
 CMD ["node", "server.js"]
+

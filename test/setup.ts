@@ -14,6 +14,7 @@ vi.mock('chart.js', async () => {
             constructor(ctx: CanvasRenderingContext2D, config: never) {
                 super(ctx, config);
             }
+            // eslint-disable-next-line
             destroy() {}
         },
     };
