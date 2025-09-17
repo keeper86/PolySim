@@ -28,7 +28,6 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ```bash
 docker compose build app
 docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up
-npx knex migrate:latest
 ```
 
 ### Clean-up

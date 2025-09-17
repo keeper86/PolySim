@@ -1,15 +1,15 @@
-import knex, { Knex } from "knex";
+import knex, { Knex } from 'knex';
 
-const dbDomain = process.env.NODE_ENV === "production" ? "db" : "localhost";
+const dbConnectionString =
+    process.env.NODE_ENV === 'production'
+        ? process.env.DATABASE_URL
+        : `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost:5432/${process.env.POSTGRES_DB}`;
 
 const databaseConfig: Knex.Config = {
-    client: "pg",
+    client: 'pg',
+
     connection: {
-        host: dbDomain,
-        port: 5432,
-        user: process.env.POSTGRES_USER,
-        password: process.env.POSTGRES_PASSWORD,
-        database: process.env.POSTGRES_DB,
+        connectionString: dbConnectionString,
     },
     pool: {
         min: 2,
@@ -27,7 +27,7 @@ export async function testConnection(): Promise<{
 }> {
     const start = Date.now();
     try {
-        const result = await db.raw("SELECT version()");
+        const result = await db.raw('SELECT version()');
         const end = Date.now();
         const time = end - start;
         const version = result.rows[0].version;
