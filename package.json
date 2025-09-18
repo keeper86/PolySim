@@ -4,7 +4,8 @@
     "private": true,
     "scripts": {
         "dev": "next dev --turbopack",
-        "build": "next build",
+        "build": "npm run generate-swagger && next build",
+        "generate-swagger": "node generateSwaggerSpec.mjs",
         "start": "next start",
         "lint:check": "eslint .",
         "lint": "eslint --fix .",
