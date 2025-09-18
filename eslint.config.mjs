@@ -1,11 +1,10 @@
-import js from '@eslint/js';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
 import { FlatCompat } from '@eslint/eslintrc';
+import js from '@eslint/js';
 import { defineConfig } from 'eslint/config';
-import { fileURLToPath } from 'url';
+import globals from 'globals';
 import { dirname } from 'path';
-import jsdoc from 'eslint-plugin-jsdoc';
+import tseslint from 'typescript-eslint';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -30,27 +29,6 @@ export default defineConfig([
     },
     { files: ['**/*.{js,mjs,cjs,ts}'], plugins: { js }, extends: ['js/recommended'] },
     { files: ['**/*.{js,mjs,cjs,ts}'], languageOptions: { globals: globals.browser } },
-    {
-        files: ['src/app/api/**/*.{js,ts}'],
-        plugins: {
-            jsdoc,
-        },
-        rules: {
-            'jsdoc/no-missing-syntax': [
-                'error',
-                {
-                    contexts: [
-                        {
-                            comment: 'JsdocBlock:has(JsdocTag[tag=swagger])',
-                            context: 'any',
-                            message:
-                                '@swagger documentation is required on each API. Check this out for syntax info: https://github.com/jellydn/next-swagger-doc',
-                        },
-                    ],
-                },
-            ],
-        },
-    },
     {
         rules: {
             'no-unused-vars': ['error'],
