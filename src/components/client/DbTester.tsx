@@ -1,17 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { clientLogger } from '../../util/clientLogger';
+import { clientLogger } from '../../app/clientLogger';
+import { trpc } from '../../app/clientTrpc';
 
 interface TestResult {
     message: string;
-    time: string;
-    version: string;
+    time?: number | undefined;
+    version?: string | undefined;
 }
 
 interface TestError {
     error: string;
-    details: string;
+    details?: string | undefined;
 }
 
 const log = clientLogger.child('DbTester');
@@ -26,31 +27,17 @@ export default function DatabaseTester() {
         setError(null);
         setResult(null);
 
-        try {
-            const response = await fetch('/api/test-connection', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+        const response = await trpc['test-connection'].query();
 
-            const data = await response.json();
-
-            if (response.ok) {
-                setResult(data as TestResult);
-                log.error('Database connection successful');
-            } else {
-                setError(data as TestError);
-            }
-        } catch (error) {
-            setError({
-                error: 'Network error',
-                details: error instanceof Error ? error.message : 'Unknown error',
-            });
-            log.error('Failed to test database connection', { error });
-        } finally {
-            setLoading(false);
+        if ('error' in response) {
+            log.error('Database connection failed', response);
+            setError(response);
+        } else {
+            log.info('Database connection successful', response);
+            setResult(response);
         }
+
+        setLoading(false);
     };
 
     return (
@@ -84,7 +71,7 @@ export default function DatabaseTester() {
                 >
                     <h3 style={{ color: '#52c41a' }}>Success!</h3>
                     <p>{result.message}</p>
-                    <p>Database time: {new Date(result.time).toLocaleString()}</p>
+                    <p>Database time: {new Date(result.time ?? 0).toLocaleString()}</p>
                     <p>Version: {result.version}</p>
                 </div>
             )}
