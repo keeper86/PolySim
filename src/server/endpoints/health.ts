@@ -7,7 +7,9 @@ export const health = (t: TType, path: `/${string}`) => {
             openapi: {
                 method: 'GET',
                 path,
-                tags: ['health-check'],
+                tags: ['Technical'],
+                summary: 'Health Check',
+                description: 'Simple health check endpoint to verify the server is running',
             },
         })
         .input(z.void())

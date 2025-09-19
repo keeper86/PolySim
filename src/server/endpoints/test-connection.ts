@@ -26,7 +26,7 @@ export const testDbConnection = (t: TType, path: `/${string}`) => {
             openapi: {
                 method: 'GET',
                 path,
-                tags: ['Database'],
+                tags: ['Technical'],
                 summary: 'Test Database Connection',
                 description: 'Tests the connection to the PostgreSQL database and returns the status.',
             },

@@ -3,7 +3,6 @@ import { createOpenApiFetchHandler } from 'trpc-to-openapi';
 import { appRouter } from '../../../server/router';
 
 const handler = (req: Request) => {
-    // Handle incoming OpenAPI requests
     return createOpenApiFetchHandler({
         endpoint: '/api',
         router: appRouter,

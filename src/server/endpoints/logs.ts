@@ -2,28 +2,13 @@ import { z } from 'zod';
 import { logger } from '../logger';
 import { type TType } from '../router';
 
-const logEntry = z
-    .object({
-        level: z.literal('debug').or(z.literal('info')).or(z.literal('warn')).or(z.literal('error')),
-        message: z.string(),
-        data: z.any().optional(),
-        component: z.string().optional(),
-        timestamp: z.string().optional(),
-    })
-    .meta({
-        openapi: {
-            // This `openapi` object is specific to the trpc-openapi adapter
-            description: 'A single log entry from the client',
-            example: {
-                // Example can be added here for the entire object
-                level: 'error',
-                message: 'Failed to fetch user data',
-                data: { userId: '123', errorCode: 'NETWORK_ERROR' },
-                component: 'UserService',
-                timestamp: '2023-11-15T10:30:00.000Z',
-            },
-        },
-    });
+const logEntry = z.object({
+    level: z.literal('debug').or(z.literal('info')).or(z.literal('warn')).or(z.literal('error')),
+    message: z.string(),
+    data: z.any().optional(),
+    component: z.string().optional(),
+    timestamp: z.string().optional(),
+});
 export type LogEntry = z.infer<typeof logEntry>;
 
 export const logs = (t: TType, path: `/${string}`) => {
@@ -42,7 +27,7 @@ export const logs = (t: TType, path: `/${string}`) => {
             openapi: {
                 method: 'POST',
                 path,
-                tags: ['Logs'],
+                tags: ['Technical'],
                 summary: 'Receive client logs',
                 description: 'Endpoint to receive and store client-side logs',
             },
@@ -51,7 +36,7 @@ export const logs = (t: TType, path: `/${string}`) => {
             for (const entry of input.logs) {
                 const { level, message, data, component, timestamp } = entry;
                 const logData = {
-                    ...data,
+                    data,
                     component: component || 'client',
                     clientTimestamp: timestamp,
                 };
