@@ -78,9 +78,10 @@ services:
             - ./keycloak/initial/data:/opt/keycloak/data/import/
         command: start --import-realm
         healthcheck:
-            test: [
-                    "CMD-SHELL",
-      "exec 3<>/dev/tcp/127.0.0.1/9000; echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost:9000\\r\\nConnection: close\\r\\n\\r\\n' >&3; cat <&3 | grep -q '\"status\": \"UP\"' && exit 0 || exit 1"
+            test:
+                [
+                    'CMD-SHELL',
+                    "exec 3<>/dev/tcp/127.0.0.1/9000; echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost:9000\\r\\nConnection: close\\r\\n\\r\\n' >&3; cat <&3 | grep -q '\"status\": \"UP\"' && exit 0 || exit 1",
                 ]
             interval: 10s
             timeout: 3s

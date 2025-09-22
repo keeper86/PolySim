@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { clientLogger } from '../../app/clientLogger';
 import { trpc } from '../../app/clientTrpc';
+import { useSession } from 'next-auth/react';
 
 interface TestResult {
     message: string;
@@ -21,6 +22,8 @@ export default function DatabaseTester() {
     const [loading, setLoading] = useState<boolean>(false);
     const [result, setResult] = useState<TestResult | null>(null);
     const [error, setError] = useState<TestError | null>(null);
+
+    const session = useSession();
 
     const testConnection = async () => {
         setLoading(true);
@@ -43,6 +46,7 @@ export default function DatabaseTester() {
     return (
         <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
             <h2>Database Connection Tester</h2>
+            <div>{JSON.stringify(session, null, 2)}</div>
             <button
                 onClick={testConnection}
                 disabled={loading}
