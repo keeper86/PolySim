@@ -75,7 +75,8 @@ services:
                 condition: service_healthy
         volumes:
             - ./keycloak/themes:/opt/keycloak/themes
-        command: start
+            - ./keycloak/initial/data:/opt/keycloak/data/import/
+        command: start --import-realm
         healthcheck:
             test: [
                     "CMD-SHELL",
