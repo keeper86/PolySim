@@ -9,7 +9,7 @@ services:
             - caddy_data:/data
             - caddy_config:/config
         environment:
-            - CADDY_DOMAIN=localhost
+            - CADDY_DOMAIN=${CADDY_DOMAIN}
         depends_on:
             - app
 
@@ -19,14 +19,16 @@ services:
             target: runner
         environment:
             DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-            NEXT_PUBLIC_API_BASE_URL: http://localhost/api/trpc
+            NEXT_PUBLIC_API_BASE_URL: https://${CADDY_DOMAIN}/api/trpc
             NODE_ENV: production
-            LOG_LEVEL: warn
+            LOG_LEVEL: ${LOG_LEVEL}
         depends_on:
             db:
                 condition: service_healthy
             migrations:
                 condition: service_completed_successfully
+            keycloak:
+                condition: service_healthy
 
     migrations:
         build:
@@ -54,7 +56,54 @@ services:
             timeout: 3s
             retries: 10
 
+    keycloak:
+        image: quay.io/keycloak/keycloak:26.3.4
+        environment:
+            KC_DB: postgres
+            KC_DB_URL: jdbc:postgresql://keycloak-db:5433/keycloak
+            KC_DB_USERNAME: keycloak
+            KC_DB_PASSWORD: password
+            KC_BOOTSTRAP_ADMIN_USERNAME: admin
+            KC_BOOTSTRAP_ADMIN_PASSWORD: password
+            KC_HOSTNAME: auth.${CADDY_DOMAIN}
+            KC_HTTP_ENABLED: true # Keycloak uses HTTP, Caddy handles HTTPS
+            KC_HEALTH_ENABLED: true
+            KC_PROXY_HEADERS: xforwarded
+            KC_RUN_IN_CONTAINER: true
+        depends_on:
+            keycloak-db:
+                condition: service_healthy
+        volumes:
+            - ./keycloak/themes:/opt/keycloak/themes
+            - ./keycloak/initial/data:/opt/keycloak/data/import/
+        command: start --import-realm
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    "exec 3<>/dev/tcp/127.0.0.1/9000; echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost:9000\\r\\nConnection: close\\r\\n\\r\\n' >&3; cat <&3 | grep -q '\"status\": \"UP\"' && exit 0 || exit 1",
+                ]
+            interval: 10s
+            timeout: 3s
+            retries: 10
+
+    keycloak-db:
+        image: postgres:15-alpine
+        environment:
+            POSTGRES_DB: keycloak
+            POSTGRES_USER: keycloak
+            POSTGRES_PASSWORD: password
+        volumes:
+            - keycloak_db_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U keycloak -p 5433']
+            interval: 10s
+            timeout: 3s
+            retries: 10
+        command: postgres -p 5433
+
 volumes:
     postgres_data:
+    keycloak_db_data:
     caddy_data:
     caddy_config:

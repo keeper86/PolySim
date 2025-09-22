@@ -1,3 +1,13 @@
-http://localhost {
-    reverse_proxy app:3000
+{$CADDY_DOMAIN:localhost} {
+    reverse_proxy app:3000 {
+        header_up X-Forwarded-Proto https
+    }
+}
+
+auth.{$CADDY_DOMAIN:localhost} {
+    reverse_proxy keycloak:8080 { 
+        header_up X-Forwarded-Proto https
+        header_up X-Forwarded-Port 443
+        header_up X-Real-IP {remote}
+    }
 }

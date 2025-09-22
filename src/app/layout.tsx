@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
+import { getServerSession } from 'next-auth';
 import { Geist, Geist_Mono } from 'next/font/google';
-import './globals.css';
-import { testServer } from '../../test/setupTestServer';
 import { ReactNode } from 'react';
+import SessionProviderWrapper from '../components/client/SessionProviderWrapper';
+import { authOptions } from './api/auth/[...nextauth]/authOptions';
+import './globals.css';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -19,19 +21,18 @@ export const metadata: Metadata = {
     description: 'Playground for data',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: ReactNode;
 }>) {
-    testServer.listen({ onUnhandledRequest: 'error' });
-    console.log(
-        'Mock server is running. All fetch requests to /api/v1/energy/historical and /api/v1/energy/forecast will be intercepted.',
-    );
+    const session = await getServerSession(authOptions);
 
     return (
         <html lang='en'>
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                <SessionProviderWrapper session={session}>{children}</SessionProviderWrapper>
+            </body>
         </html>
     );
 }
