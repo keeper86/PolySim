@@ -2,9 +2,7 @@ const config = {
     development: {
         client: 'postgresql',
         connection: {
-            database: process.env.POSTGRES_DB || 'polysimdb',
-            user: process.env.POSTGRES_USER || 'postgres',
-            password: process.env.POSTGRES_PASSWORD || 'password',
+            connectionString: process.env.DATABASE_URL,
         },
         pool: {
             min: 2,

@@ -14,22 +14,34 @@ _Note:_ This creates a node_modules folder and will resolve all dependencies (in
 
 ### Local Development
 
+The development setup is as close to the production setup as possible.
+
+#### Certificates
+
+In order for that to work, we need to create certificates for local domains once:
+
+```
+mkdir certs
+mkcert -cert-file certs/polysim.crt -key-file certs/polysim.key polysim auth.polysim
+```
+
+#### Start dev
+
 Start database and then the app
 
 ```bash
-docker compose -f docker-compose.database.yaml up
-npm run dev
+docker compose -f docker-compose.development.yaml --env-file .env.development up --build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [https://polysim](https://polysim) with your browser to see the result.
 
 ### Production
+
+Copy over .env.development to .env and adapt the variables and run:
 
 ```bash
 docker compose up --build
 ```
-
-### Clean-up
 
 To stop and remove the containers run
 
