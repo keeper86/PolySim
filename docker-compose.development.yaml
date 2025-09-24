@@ -18,18 +18,17 @@ services:
             target: development
         environment:
             DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-app_dev}
-            NEXT_PUBLIC_API_BASE_URL: https://${DEV_DOMAIN}/api/trpc
-            NODE_ENV: development
-            LOG_LEVEL: debug
-            NODE_TLS_REJECT_UNAUTHORIZED: '0'
         volumes:
             - .:/app
             - /app/node_modules
         ports:
             - '3000:3000'
-        command: npm run dev
         depends_on:
             db:
+                condition: service_healthy
+            migrations:
+                condition: service_completed_successfully
+            keycloak:
                 condition: service_healthy
         extra_hosts:
             - 'auth.polysim:172.18.0.1' # replace with the docker host IP
@@ -64,20 +63,14 @@ services:
     keycloak:
         image: quay.io/keycloak/keycloak:26.3.4
         environment:
-            KC_DB: postgres
-            KC_DB_URL: jdbc:postgresql://keycloak-db:5433/keycloak
-            KC_DB_USERNAME: keycloak
-            KC_DB_PASSWORD: password
+            KC_DB: dev-mem
             KC_BOOTSTRAP_ADMIN_USERNAME: admin
             KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-            KC_HOSTNAME: auth.${DEV_DOMAIN}
+            KC_HOSTNAME: ${KEYCLOAK_DOMAIN}
             KC_HTTP_ENABLED: true
             KC_HEALTH_ENABLED: true
             KC_PROXY_HEADERS: xforwarded
             KC_RUN_IN_CONTAINER: true
-        depends_on:
-            keycloak-db:
-                condition: service_healthy
         volumes:
             - ./keycloak/themes:/opt/keycloak/themes
             - ./keycloak/initial/data/dev:/opt/keycloak/data/import/
@@ -88,21 +81,6 @@ services:
                     'CMD-SHELL',
                     "exec 3<>/dev/tcp/127.0.0.1/9000; echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost:9000\\r\\nConnection: close\\r\\n\\r\\n' >&3; cat <&3 | grep -q '\"status\": \"UP\"' && exit 0 || exit 1",
                 ]
-            interval: 10s
-            timeout: 3s
-            retries: 10
-
-    keycloak-db:
-        image: postgres:15-alpine
-        environment:
-            POSTGRES_USER: keycloak
-            POSTGRES_PASSWORD: password
-            POSTGRES_DB: keycloak
-        ports:
-            - '5433:5433'
-        command: postgres -p 5433
-        healthcheck:
-            test: ['CMD-SHELL', 'pg_isready -U keycloak -p 5433']
             interval: 10s
             timeout: 3s
             retries: 10
