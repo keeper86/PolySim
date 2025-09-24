@@ -13,6 +13,8 @@ export async function middleware(request: NextRequest) {
     }
 
     if (!token) {
+        console.log('Didnt found token. Redirect to login');
+
         const signInUrl = new URL('/api/auth/signin', request.url);
         signInUrl.searchParams.set('callbackUrl', request.nextUrl.pathname);
         return NextResponse.redirect(signInUrl);

@@ -1,5 +1,3 @@
-# syntax=docker.io/docker/dockerfile:1
-
 FROM node:24-alpine AS base
 
 # Install dependencies only when needed
@@ -38,9 +36,6 @@ RUN \
 FROM base AS migrator
 WORKDIR /app
 
-# Install PostgreSQL client for the wait script
-RUN apk add --no-cache postgresql-client
-
 # Copy only what's needed for migrations
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json ./
@@ -49,8 +44,23 @@ COPY migrations/ ./migrations/
 
 CMD ["npx", "knex", "migrate:latest"]
 
-# Production image, copy all the files and run next
-FROM base AS runner
+
+FROM base AS development
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+COPY next.config.ts ./next.config.ts
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]
+
+
+
+FROM base AS production
 WORKDIR /app
 
 ENV NODE_ENV=production
