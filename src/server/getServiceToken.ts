@@ -26,7 +26,10 @@ export async function getServiceAccountToken() {
     });
 
     if (!res.ok) {
-        throw new Error('Failed to fetch Keycloak token');
+        const errorBody = await res.text();
+        throw new Error(
+            `Failed to fetch Keycloak token. Status: ${res.status} ${res.statusText}. Response: ${errorBody}`,
+        );
     }
     const data = await res.json();
     cachedToken = data.access_token;
