@@ -7,7 +7,7 @@ export const GET = () => {
     const apiSpec = generateOpenApiDocument(appRouter, {
         title: 'PolySim API',
         version: '1.0.0',
-        baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api/trpc',
+        baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'baseUrl not set',
         description: 'This is the OpenAPI schema for the PolySim API',
         securitySchemes: {
             BearerAuth: {

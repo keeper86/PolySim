@@ -27,10 +27,11 @@ export const EnergyForecast: FC = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (typeof window !== 'undefined')
+        if (typeof window !== 'undefined') {
             import('chartjs-plugin-zoom').then((plugin) => {
                 Chart.register(plugin.default);
             });
+        }
 
         const fetchData = async () => {
             // fetch data from the server endpoint /api/user

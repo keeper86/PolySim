@@ -9,7 +9,7 @@ services:
             - caddy_data:/data
             - caddy_config:/config
         environment:
-            - CADDY_DOMAIN=${CADDY_DOMAIN}
+            - CADDY_DOMAIN=${APP_DOMAIN}
         depends_on:
             - app
 
@@ -19,9 +19,6 @@ services:
             target: production
         environment:
             DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-            NEXT_PUBLIC_API_BASE_URL: https://${CADDY_DOMAIN}/api/trpc
-            NODE_ENV: production
-            LOG_LEVEL: ${LOG_LEVEL}
         depends_on:
             db:
                 condition: service_healthy
@@ -65,7 +62,7 @@ services:
             KC_DB_PASSWORD: password
             KC_BOOTSTRAP_ADMIN_USERNAME: admin
             KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-            KC_HOSTNAME: auth.${CADDY_DOMAIN}
+            KC_HOSTNAME: ${KEYCLOAK_DOMAIN}
             KC_HTTP_ENABLED: true # Keycloak uses HTTP, Caddy handles HTTPS
             KC_HEALTH_ENABLED: true
             KC_PROXY_HEADERS: xforwarded

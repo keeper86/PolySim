@@ -44,6 +44,8 @@ export default defineConfig([
             'exhaustive-switch': 0,
             'no-case-declarations': 0,
             'no-fallthrough': 0,
+            'curly': ['error', 'all'],
+            '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
         },
     },
     js.configs.recommended,
