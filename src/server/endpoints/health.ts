@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { TType } from '../router';
+import { ProcedureBuilderType } from '../router';
 
-export const health = (t: TType, path: `/${string}`) => {
-    return t.procedure
+export const health = (procedure: ProcedureBuilderType, path: `/${string}`) => {
+    return procedure
         .meta({
             openapi: {
                 method: 'GET',

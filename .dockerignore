@@ -1,4 +1,2 @@
-**/.next
-**/node_modules
-Dockerfile
-.dockerignore
+.next
+node_modules

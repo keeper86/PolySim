@@ -19,8 +19,10 @@ services:
         environment:
             DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-app_dev}
         volumes:
-            - .:/app
-            - /app/node_modules
+            - ./src:/app/src
+            - ./public:/app/public
+            - ./package.json:/app/package.json
+            - ./next.config.ts:/app/next.config.ts
         ports:
             - '3000:3000'
         depends_on:

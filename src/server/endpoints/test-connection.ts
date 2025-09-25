@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { db } from '../db';
-import { TType } from '../router';
+import { ProcedureBuilderType } from '../router';
 
 async function testConnection(): Promise<{
     success: boolean;
@@ -20,8 +20,8 @@ async function testConnection(): Promise<{
     }
 }
 
-export const testDbConnection = (t: TType, path: `/${string}`) => {
-    return t.procedure
+export const testDbConnection = (procedure: ProcedureBuilderType, path: `/${string}`) => {
+    return procedure
         .meta({
             openapi: {
                 method: 'GET',
@@ -29,6 +29,7 @@ export const testDbConnection = (t: TType, path: `/${string}`) => {
                 tags: ['Technical'],
                 summary: 'Test Database Connection',
                 description: 'Tests the connection to the PostgreSQL database and returns the status.',
+                protect: true,
             },
         })
         .input(z.void())

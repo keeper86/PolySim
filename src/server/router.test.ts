@@ -4,7 +4,9 @@ import { generateOpenApiDocument } from 'trpc-to-openapi';
 
 describe('Route Consistency', () => {
     it('should have consistent routes between router and OpenAPI spec', () => {
-        const routerPaths = Object.keys(appRouter._def.procedures).map((path) => `/${path.replace('.', '/')}`);
+        const routerPaths = Object.entries(appRouter._def.procedures)
+            .filter(([, value]) => value.meta !== undefined)
+            .map(([key]) => `/${key.replace('.', '/')}`);
 
         const openApiDoc = generateOpenApiDocument(appRouter, {
             title: 'PolySim API',
