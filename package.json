@@ -13,6 +13,9 @@
         "test": "vitest",
         "test:watch": "vitest --watch",
         "test:coverage": "vitest --coverage",
+        "test:e2e": "playwright test",
+        "test:e2e:headed": "playwright test --headed",
+        "test:e2e:debug": "playwright test --debug",
         "migrate:make": "npx knex migrate:make",
         "migrate:latest": "npx knex migrate:latest",
         "migrate:rollback": "npx knex migrate:rollback"
@@ -60,6 +63,7 @@
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",
+        "@playwright/test": "^1.55.1",
         "@tailwindcss/postcss": "^4",
         "@testing-library/jest-dom": "^6.6.3",
         "@testing-library/react": "^16.3.0",
