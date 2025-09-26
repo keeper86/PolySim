@@ -62,14 +62,15 @@ This project includes Playwright-based e2e tests that validate the full applicat
 #### Prerequisites
 
 1. **Development Environment**: Start the development server first:
-   ```bash
-   docker compose -f docker-compose.development.yaml --env-file .env.development up --build
-   ```
+
+    ```bash
+    docker compose -f docker-compose.development.yaml --env-file .env.development up --build
+    ```
 
 2. **Playwright Browsers**: Install required browsers:
-   ```bash
-   npx playwright install
-   ```
+    ```bash
+    npx playwright install
+    ```
 
 #### Running E2E Tests
 
@@ -82,6 +83,7 @@ npm run test:e2e:debug     # Run tests in debug mode
 #### Test Coverage
 
 The e2e tests cover:
+
 - **Authentication**: Login with dev credentials (`adminuser`/`adminpassword`)
 - **API Documentation**: Swagger UI accessibility at `/api-doc`
 - **OpenAPI Specification**: JSON endpoint validation at `/api/openapi.json`

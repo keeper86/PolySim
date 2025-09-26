@@ -4,8 +4,8 @@ import { getToken } from 'next-auth/jwt';
 export async function middleware(request: NextRequest) {
     const token = await getToken({ req: request });
 
-    // Define paths that are always accessible (e.g., login, API auth, public assets)
-    const publicPaths = ['/api/auth', '/_next', '/favicon.ico'];
+    // Define paths that are always accessible (e.g., login, health check, API auth, public assets)
+    const publicPaths = ['/api/auth', '/api/health', '/_next', '/favicon.ico'];
     const publicExactPaths = ['/', '/imprint'];
 
     const isPublicPath =

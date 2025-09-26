@@ -64,6 +64,7 @@
         "zod": "^4.1.9"
     },
     "devDependencies": {
+        "wait-on": "^9.0.1",
         "@eslint/eslintrc": "^3",
         "@playwright/test": "^1.55.1",
         "@tailwindcss/postcss": "^4",
