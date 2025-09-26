@@ -50,6 +50,15 @@ jobs:
                   key: ${{ runner.os }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
                       ${{ runner.os }}-npm-cache-
+            - name: Cache Playwright browsers
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/ms-playwright
+                  key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-playwright-
+            - name: Install dependencies
+              run: npm ci
             - name: Add polysim hostnames to /etc/hosts
               run: |
                   echo "127.0.0.1 polysim auth.polysim" | sudo tee -a /etc/hosts
