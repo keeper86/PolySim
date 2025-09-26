@@ -6,15 +6,18 @@ export async function middleware(request: NextRequest) {
 
     // Define paths that are always accessible (e.g., login, API auth, public assets)
     const publicPaths = ['/api/auth', '/_next', '/favicon.ico'];
-    const isPublicPath = publicPaths.some((path) => request.nextUrl.pathname.startsWith(path));
+    const publicExactPaths = ['/', '/imprint'];
+
+    const isPublicPath =
+        publicExactPaths.includes(request.nextUrl.pathname) ||
+        publicPaths.some((path) => request.nextUrl.pathname.startsWith(path));
 
     if (isPublicPath) {
         return NextResponse.next();
     }
 
     if (!token) {
-        // If it's an API request, return JSON 401 error
-        if (request.nextUrl.pathname.startsWith('/api')) {
+        if (request.nextUrl.pathname.startsWith('/api/')) {
             return new NextResponse(JSON.stringify({ error: 'Unauthorized', message: 'Authentication required' }), {
                 status: 401,
                 headers: { 'Content-Type': 'application/json' },
