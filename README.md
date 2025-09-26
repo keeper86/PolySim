@@ -42,3 +42,49 @@ To stop and remove the containers run
 ```sh
 docker compose down
 ```
+
+## Testing
+
+### Unit Tests
+
+Run unit tests using Vitest:
+
+```bash
+npm run test          # Run tests once
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Run tests with coverage
+```
+
+### End-to-End Tests
+
+This project includes Playwright-based e2e tests that validate the full application flow including authentication and API documentation.
+
+#### Prerequisites
+
+1. **Development Environment**: Start the development server first:
+   ```bash
+   docker compose -f docker-compose.development.yaml --env-file .env.development up --build
+   ```
+
+2. **Playwright Browsers**: Install required browsers:
+   ```bash
+   npx playwright install
+   ```
+
+#### Running E2E Tests
+
+```bash
+npm run test:e2e           # Run all e2e tests
+npm run test:e2e:headed    # Run tests with browser UI visible
+npm run test:e2e:debug     # Run tests in debug mode
+```
+
+#### Test Coverage
+
+The e2e tests cover:
+- **Authentication**: Login with dev credentials (`adminuser`/`adminpassword`)
+- **API Documentation**: Swagger UI accessibility at `/api-doc`
+- **OpenAPI Specification**: JSON endpoint validation at `/api/openapi.json`
+- **Session Management**: Navigation and session persistence
+
+See `tests/e2e/README.md` for detailed testing documentation.
