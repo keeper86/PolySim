@@ -65,6 +65,9 @@ export default async function RootLayout({
                                     <Link href='/imprint' className='link link-hover flex items-center'>
                                         Imprint
                                     </Link>
+                                    <Link href='/pong' className='link link-hover flex items-center'>
+                                        Pong
+                                    </Link>
                                     <Link href='/api-doc' className='link link-hover flex items-center'>
                                         API Docs
                                     </Link>

@@ -1,28 +1,32 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+import dotenvExpand from 'dotenv-expand';
+
+const env = dotenv.config({ path: '.env.development' });
+dotenvExpand.expand(env);
 
 export default defineConfig({
     testDir: './tests/e2e',
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
-    retries: process.env.CI ? 2 : 0,
-    workers: process.env.CI ? 1 : undefined,
+    retries: 2,
+    workers: 1,
     reporter: 'html',
     use: {
-        baseURL: 'https://polysim',
+        baseURL: process.env.NEXTAUTH_URL || 'SomethingsWrongNoBasePath',
         trace: 'on-first-retry',
-        ignoreHTTPSErrors: true, // For local dev with self-signed certs
-        timeout: 30000, // 30 second timeout for individual actions
+        ignoreHTTPSErrors: true,
     },
-    // Timeout for each test
-    timeout: 60000, // 1 minute per test
-    // Expect timeout
+    timeout: 60000,
     expect: {
-        timeout: 10000, // 10 seconds for assertions
+        timeout: 10000,
     },
     projects: [
+        { name: 'setup', testMatch: '**/auth.setup.ts' },
         {
             name: 'chromium',
-            use: { ...devices['Desktop Chrome'] },
+            use: { ...devices['Desktop Chrome'], storageState: './playwright/.auth/auth.json' },
+            dependencies: ['setup'],
         },
         // Uncomment for comprehensive cross-browser testing
         // {
@@ -34,6 +38,5 @@ export default defineConfig({
         //     use: { ...devices['Desktop Safari'] },
         // },
     ],
-    // Only run if dev server is already running
     webServer: undefined,
 });
