@@ -62,6 +62,11 @@ jobs:
             - name: Add polysim hostnames to /etc/hosts
               run: |
                   echo "127.0.0.1 polysim auth.polysim" | sudo tee -a /etc/hosts
+            - name: Generate self-signed certificates
+              run: |
+                  mkdir -p certs
+                  openssl req -x509 -newkey rsa:2048 -nodes -keyout certs/polysim.key -out certs/polysim.crt -days 1 \
+                    -subj "/CN=polysim"
             - name: Start services with Docker Compose
               run: |
                   docker compose -f docker-compose.development.yaml --env-file .env.development up --build -d

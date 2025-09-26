@@ -25,7 +25,10 @@ export default defineConfig({
         { name: 'setup', testMatch: '**/auth.setup.ts' },
         {
             name: 'chromium',
-            use: { ...devices['Desktop Chrome'], storageState: './playwright/.auth/auth.json' },
+            use: {
+                ...devices['Desktop Chrome'],
+                storageState: process.env.DEV_ONLY_PLAYWRIGHT_AUTH_STORAGE_PATH || 'YouNeedToSetTheAuthPath',
+            },
             dependencies: ['setup'],
         },
         // Uncomment for comprehensive cross-browser testing
