@@ -20,10 +20,11 @@ const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
     }
     return next();
 });
+
 export type ProcedureBuilderType = typeof procedure | typeof protectedProcedure;
 
 export const appRouter = t.router({
-    'logs': logs(protectedProcedure, '/logs'),
+    'logs': logs(procedure, '/logs'),
     'test-connection': testDbConnection(protectedProcedure, '/test-connection'),
     'health': health(procedure, '/health'),
 });

@@ -1,10 +1,10 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { clientLogger } from '../../app/clientLogger';
-import { trpc } from '../../app/clientTrpc';
-import { useSession } from 'next-auth/react';
+import { trpcClient } from '@/app/clientTrpc';
 
 interface TestResult {
     message: string;
@@ -31,47 +31,24 @@ export default function DatabaseTester() {
         setError(null);
         setResult(null);
 
-        try {
-            const response = await trpc['test-connection'].query();
-
-            if ('error' in response) {
-                log.error('Database connection failed', response);
-                setError(response);
-                toast.error('Database connection failed', {
-                    description: response.details || response.error,
-                });
-            } else {
-                log.info('Database connection successful', response);
-                setResult(response);
-                toast.success('Database connection successful', {
-                    description: `Connected in ${response.time}ms`,
-                });
-            }
-        } catch (error) {
-            // Handle tRPC errors (like UNAUTHORIZED)
-            const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-            log.error('tRPC error during database connection test', { error: errorMessage });
-
-            if (errorMessage.includes('UNAUTHORIZED') || errorMessage.includes('logged in')) {
-                toast.error('Authentication required', {
-                    description: 'You must be logged in to test the database connection',
-                });
-                setError({
-                    error: 'Authentication Required',
-                    details: 'Please log in to access this feature',
-                });
-            } else {
-                toast.error('Connection test failed', {
-                    description: errorMessage,
-                });
-                setError({
-                    error: 'Request Failed',
-                    details: errorMessage,
-                });
-            }
-        } finally {
-            setLoading(false);
+        const response = await trpcClient['test-connection']
+            .query()
+            .catch((e: unknown) => {
+                log.error('Database connection failed');
+                setError(e instanceof Error ? { error: e.name, details: e.message } : { error: 'Unknown error' });
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+        if (!response) {
+            return;
         }
+
+        log.debug('Database connection successful', response);
+        setResult(response);
+        toast.success('Database connection successful', {
+            description: `Connected in ${response.time}ms`,
+        });
     };
 
     return (
