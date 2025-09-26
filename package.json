@@ -13,6 +13,9 @@
         "test": "vitest",
         "test:watch": "vitest --watch",
         "test:coverage": "vitest --coverage",
+        "test:e2e": "playwright test",
+        "test:e2e:headed": "playwright test --headed",
+        "test:e2e:debug": "playwright test --debug",
         "migrate:make": "npx knex migrate:make",
         "migrate:latest": "npx knex migrate:latest",
         "migrate:rollback": "npx knex migrate:rollback"
@@ -33,6 +36,8 @@
         "clsx": "^2.1.1",
         "daisyui": "^5.1.6",
         "date-fns": "^4.1.0",
+        "dotenv": "^17.2.2",
+        "dotenv-expand": "^12.0.3",
         "eslint-plugin-prefer-arrow": "^1.2.3",
         "eslint-plugin-react": "^7.37.5",
         "eslint-plugin-react-hooks": "^5.2.0",
@@ -60,6 +65,7 @@
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",
+        "@playwright/test": "^1.55.1",
         "@tailwindcss/postcss": "^4",
         "@testing-library/jest-dom": "^6.6.3",
         "@testing-library/react": "^16.3.0",
@@ -81,6 +87,7 @@
         "tailwindcss": "^4.1.13",
         "typescript": "^5",
         "vite-tsconfig-paths": "^5.1.4",
-        "vitest": "^3.1.3"
+        "vitest": "^3.1.3",
+        "wait-on": "^9.0.1"
     }
 }

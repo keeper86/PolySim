@@ -16,5 +16,12 @@ export default defineConfig({
                 resources: 'usable',
             },
         },
+        exclude: [
+            '**/node_modules/**',
+            '**/dist/**',
+            '**/cypress/**',
+            '**/.{idea,git,cache,output,temp}/**',
+            '**/tests/e2e/**', // Exclude Playwright e2e tests
+        ],
     },
 });
