@@ -13,6 +13,8 @@ mkdir certs
 mkcert -cert-file certs/polysim.crt -key-file certs/polysim.key polysim auth.polysim
 ```
 
+The CI will create self-signed certs automatically. DO not EVER push certificates/secrets to the repo, not even development ones.
+
 ### Start dev
 
 Start database and then the app

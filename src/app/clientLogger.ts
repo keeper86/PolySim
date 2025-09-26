@@ -1,10 +1,10 @@
 // A simple client-side logger that sends them to the server
-import { trpc } from './clientTrpc';
+import { trpcClient } from './clientTrpc';
 import type { LogEntry } from '../server/endpoints/logs';
 
 const createLogger = (component?: string) => {
     const logger = (level: LogEntry['level']) => (message: string, data?: unknown) =>
-        trpc.logs.mutate({
+        trpcClient.logs.mutate({
             logs: [{ level, message, component, data, timestamp: new Date().toISOString() }],
         });
 
