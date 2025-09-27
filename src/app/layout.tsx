@@ -1,24 +1,14 @@
 import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
-import { Geist, Geist_Mono } from 'next/font/google';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ReactNode } from 'react';
 import { authOptions } from './api/auth/[...nextauth]/authOptions';
-import Navbar from '../components/client/Navbar';
+import AppSidebar from '../components/client/AppSidebar';
+import { SidebarProvider, SidebarInset, SidebarTrigger } from '../components/ui/sidebar';
 import SessionProviderWrapper from '../components/client/SessionProviderWrapper';
 import { Toaster } from '../components/ui/sonner';
 import './globals.css';
-
-const geistSans = Geist({
-    variable: '--font-geist-sans',
-    subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-    variable: '--font-geist-mono',
-    subsets: ['latin'],
-});
 
 export const metadata: Metadata = {
     title: 'PolySim',
@@ -35,49 +25,57 @@ export default async function RootLayout({
     return (
         <html lang='en'>
             <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-gradient-to-br from-base-200 via-base-100 to-base-300`}
+                className={`antialiased min-h-screen bg-background`}
             >
                 <SessionProviderWrapper session={session ?? undefined}>
-                    <Navbar />
+                    <SidebarProvider>
+                        <AppSidebar />
+                        <SidebarInset>
+                            <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4'>
+                                <SidebarTrigger className='-ml-1' />
+                                <div className='flex flex-1 items-center gap-2'>
+                                    <h1 className='text-lg font-semibold'>PolySim</h1>
+                                </div>
+                            </header>
+                            <main className='flex-1 p-6'>
+                                <div className='max-w-4xl mx-auto'>{children}</div>
+                            </main>
 
-                    <main className='container mx-auto flex-1 px-2 md:px-6 py-8'>
-                        <div className='max-w-4xl mx-auto'>{children}</div>
-                    </main>
-
-                    <footer className='footer footer-center p-6 bg-base-100 text-base-content border-t border-base-300 mt-12'>
-                        <aside>
-                            <span className='flex flex-row justify-between items-center w-full'>
-                                <nav className='flex flex-row items-center gap-4 mt-2'>
-                                    <a
-                                        href='https://github.com/keeper86/PolySim'
-                                        target='_blank'
-                                        rel='noopener'
-                                        className='link link-hover flex items-center gap-2'
-                                    >
-                                        <Image
-                                            src='https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'
-                                            alt='GitHub'
-                                            width={24}
-                                            height={24}
-                                            className='inline-block align-middle'
-                                        />
-                                    </a>
-                                    <Link href='/imprint' className='link link-hover flex items-center'>
-                                        Imprint
-                                    </Link>
-                                    <Link href='/pong' className='link link-hover flex items-center'>
-                                        Pong
-                                    </Link>
-                                    <Link href='/api-doc' className='link link-hover flex items-center'>
-                                        API Docs
-                                    </Link>
-                                </nav>
-                                <p className='text-sm opacity-80'>
-                                    &copy; {new Date().getFullYear()} PolySim. All rights reserved.
-                                </p>
-                            </span>
-                        </aside>
-                    </footer>
+                            <footer className='border-t p-6 text-center text-sm text-muted-foreground'>
+                                <div className='flex flex-col gap-4'>
+                                    <nav className='flex justify-center items-center gap-4'>
+                                        <a
+                                            href='https://github.com/keeper86/PolySim'
+                                            target='_blank'
+                                            rel='noopener'
+                                            className='hover:text-foreground flex items-center gap-2'
+                                        >
+                                            <Image
+                                                src='https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'
+                                                alt='GitHub'
+                                                width={16}
+                                                height={16}
+                                                className='inline-block'
+                                            />
+                                            GitHub
+                                        </a>
+                                        <Link href='/imprint' className='hover:text-foreground'>
+                                            Imprint
+                                        </Link>
+                                        <Link href='/pong' className='hover:text-foreground'>
+                                            Pong
+                                        </Link>
+                                        <Link href='/api-doc' className='hover:text-foreground'>
+                                            API Docs
+                                        </Link>
+                                    </nav>
+                                    <p>
+                                        &copy; {new Date().getFullYear()} PolySim. All rights reserved.
+                                    </p>
+                                </div>
+                            </footer>
+                        </SidebarInset>
+                    </SidebarProvider>
                     <Toaster />
                 </SessionProviderWrapper>
             </body>
