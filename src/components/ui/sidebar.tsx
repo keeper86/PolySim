@@ -54,7 +54,18 @@ const SidebarProvider = React.forwardRef<
   ) => {
     const [_open, _setOpen] = React.useState(defaultOpen);
     const [openMobile, setOpenMobile] = React.useState(false);
-    const [isMobile] = React.useState(false);
+    const [isMobile, setIsMobile] = React.useState(false);
+
+    // Detect mobile screen size
+    React.useEffect(() => {
+      const checkMobile = () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+
+      checkMobile();
+      window.addEventListener('resize', checkMobile);
+      return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
@@ -175,25 +186,28 @@ const Sidebar = React.forwardRef<
 
     if (isMobile) {
       return (
-        <div
-          className="fixed inset-0 z-50 flex"
-          {...(openMobile && {
-            onAnimationEnd: () => setOpenMobile(false),
-          })}
-        >
-          <div className="absolute inset-0 bg-black/50" onClick={() => setOpenMobile(false)} />
-          <div
-            ref={ref}
-            className={cn(
-              "relative flex h-full w-[--sidebar-width-mobile] flex-col bg-sidebar text-sidebar-foreground shadow-lg",
-              side === "right" && "ml-auto",
-              className
-            )}
-            {...props}
-          >
-            {children}
-          </div>
-        </div>
+        <>
+          {openMobile && (
+            <div
+              className="fixed inset-0 z-50 flex"
+              onClick={() => setOpenMobile(false)}
+            >
+              <div className="absolute inset-0 bg-black/50" />
+              <div
+                ref={ref}
+                className={cn(
+                  "relative flex h-full w-[18rem] flex-col bg-sidebar text-sidebar-foreground shadow-lg",
+                  side === "right" && "ml-auto",
+                  className
+                )}
+                onClick={(e) => e.stopPropagation()}
+                {...props}
+              >
+                {children}
+              </div>
+            </div>
+          )}
+        </>
       );
     }
 
