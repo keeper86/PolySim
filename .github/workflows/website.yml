@@ -59,19 +59,40 @@ jobs:
                       ${{ runner.os }}-playwright-
             - name: Install dependencies
               run: npm ci
-            - name: Add polysim hostnames to /etc/hosts
+            - name: Add polysim hostnames to /etc/hosts (idempotent, from .env.development)
               run: |
-                  echo "127.0.0.1 polysim auth.polysim" | sudo tee -a /etc/hosts
-            - name: Generate self-signed certificates
+                  set -a
+                  source .env.development
+                  set +a
+                  HOST_IP="${DEV_ONLY_DOCKER_HOST_IP:-127.0.0.1}"
+                  DOMAIN="${DEV_DOMAIN}"
+                  KC_DOMAIN="${KEYCLOAK_DOMAIN}"
+                  HOSTS_LINE="$HOST_IP $DOMAIN $KC_DOMAIN"
+                  # Only add if not already present
+                  if ! grep -q "$DOMAIN" /etc/hosts; then
+                    echo "$HOSTS_LINE" | sudo tee -a /etc/hosts
+                  else
+                    echo "/etc/hosts already contains $HOSTS_LINE, skipping."
+                  fi
+            - name: Generate self-signed certificates (overwrite, idempotent, from .env.development)
               run: |
+                  set -a
+                  source .env.development
+                  set +a
                   mkdir -p certs
+                  rm -f certs/polysim.key certs/polysim.crt
+                  DOMAIN="${DEV_DOMAIN}"
                   openssl req -x509 -newkey rsa:2048 -nodes -keyout certs/polysim.key -out certs/polysim.crt -days 1 \
-                    -subj "/CN=polysim"
+                    -subj "/CN=$DOMAIN"
             - name: Start services with Docker Compose
               run: |
                   docker compose -f docker-compose.development.yaml --env-file .env.development up --build -d
             - name: Wait for app to be ready
-              run: npx wait-on --timeout=60000 https://polysim/api/health
+              run: |
+                  set -a
+                  source .env.development
+                  set +a
+                  npx wait-on --timeout=60000 https://${DEV_DOMAIN}/api/health
             - name: Print container logs on failure
               if: failure()
               run: docker compose -f docker-compose.development.yaml --env-file .env.development logs && printenv

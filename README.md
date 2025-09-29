@@ -1,36 +1,5 @@
 # PolySim
 
-## Local Development
-
-The development setup is as close to the production setup as possible.
-
-### Certificates
-
-In order for that to work, we need to create certificates for local domains once (mkcert is widely available):
-
-```
-mkdir certs
-mkcert -cert-file certs/polysim.crt -key-file certs/polysim.key polysim auth.polysim
-```
-
-The CI will create self-signed certs automatically. DO not EVER push certificates/secrets to the repo, not even development ones.
-
-### Start dev
-
-Start database and then the app
-
-```sh
-docker compose -f docker-compose.development.yaml --env-file .env.development up --build
-```
-
-Open [https://polysim](https://polysim) with your browser to see the result.
-
-Dont forget:
-
-```sh
-docker compose -f docker-compose.development.yaml --env-file .env.development --volumes down
-```
-
 ## Production
 
 Copy .env.development over to .env, adapt the variables and run:
@@ -43,6 +12,58 @@ To stop and remove the containers run
 
 ```sh
 docker compose down
+```
+
+## Local Development
+
+The development setup is as close to the production setup as possible.
+
+### Automatically detect Docker host IP for extra_hosts
+
+For robust local networking between containers and your host, the `DOCKER_HOST_IP` variable in `.env.development` should match your Docker bridge IP (commonly `172.17.0.1` or `172.18.0.1`).
+
+You can use this script to print out the Docker bridge IP before running Docker Compose:
+
+```sh
+ip -4 addr show docker0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}'
+```
+
+Use the printed IP as the value for `DOCKER_HOST_IP` in your `.env.development` file if needed.
+
+### Certificates
+
+In order for that to work, we need to create certificates for local domains once (mkcert is widely available):
+
+```
+mkdir certs
+mkcert -cert-file certs/polysim.crt -key-file certs/polysim.key polysim auth.polysim
+```
+
+The CI will create self-signed certs automatically. DO not EVER push certificates/secrets to the repo, not even development ones.
+
+### Add hosts
+
+Add the following lines to your `/etc/hosts` file:
+
+```
+127.0.0.1   polysim.local
+127.0.0.1   auth.polysim.local
+```
+
+### Start dev
+
+Start database and then the app
+
+```sh
+docker compose -f docker-compose.development.yaml --env-file .env.development up --build
+```
+
+Open [https://polysim](https://polysim) with your browser to see the result.
+
+Dont forget, when you are done:
+
+```sh
+docker compose -f docker-compose.development.yaml --env-file .env.development --volumes down
 ```
 
 ## Testing

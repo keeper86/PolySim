@@ -8,14 +8,6 @@ export const GET = () => {
         title: 'PolySim API',
         version: '1.0.0',
         baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'baseUrl not set',
-        description: 'This is the OpenAPI schema for the PolySim API',
-        securitySchemes: {
-            BearerAuth: {
-                type: 'http',
-                scheme: 'bearer',
-                bearerFormat: 'JWT',
-            },
-        },
     });
     return NextResponse.json(apiSpec);
 };
