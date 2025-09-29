@@ -44,22 +44,6 @@ COPY migrations/ ./migrations/
 
 CMD ["npx", "knex", "migrate:latest"]
 
-
-FROM base AS development
-WORKDIR /app
-
-COPY package.json package-lock.json ./
-RUN npm ci
-
-COPY . .
-COPY next.config.ts ./next.config.ts
-
-EXPOSE 3000
-
-CMD ["npm", "run", "dev"]
-
-
-
 FROM base AS production
 WORKDIR /app
 

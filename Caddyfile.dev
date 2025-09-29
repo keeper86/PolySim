@@ -4,12 +4,12 @@
     auto_https off
 }
 
-polysim {
+polysim.local {
     tls /etc/caddy/certs/polysim.crt /etc/caddy/certs/polysim.key
     reverse_proxy app:3000
 }
 
-auth.polysim {
+auth.polysim.local {
     tls /etc/caddy/certs/polysim.crt /etc/caddy/certs/polysim.key
     reverse_proxy keycloak:8080
 }

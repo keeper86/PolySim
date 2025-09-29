@@ -11,11 +11,12 @@ services:
             - CADDY_DOMAIN=${DEV_DOMAIN}
         depends_on:
             - app
+        container_name: polysim-dev-caddy
 
     app:
         build:
             context: .
-            target: development
+            dockerfile: Dockerfile.dev
         environment:
             DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-app_dev}
         volumes:
@@ -33,13 +34,14 @@ services:
             keycloak:
                 condition: service_healthy
         extra_hosts:
-            - 'auth.polysim:172.18.0.1' # replace with the docker host IP
-            - 'polysim:172.18.0.1'
+            - 'auth.polysim.local:${DEV_ONLY_DOCKER_HOST_IP}'
+            - 'polysim.local:${DEV_ONLY_DOCKER_HOST_IP}'
+        container_name: polysim-dev-app
 
     migrations:
         build:
             context: .
-            target: migrator
+            dockerfile: Dockerfile.dev
         environment:
             DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
             NODE_ENV: development
@@ -47,6 +49,8 @@ services:
             db:
                 condition: service_healthy
         restart: 'no'
+        command: ['npx', 'knex', 'migrate:latest']
+        container_name: polysim-dev-migrations
 
     db:
         image: postgres:15-alpine
@@ -61,6 +65,7 @@ services:
             interval: 10s
             timeout: 3s
             retries: 10
+        container_name: polysim-dev-db
 
     keycloak:
         image: quay.io/keycloak/keycloak:26.3.4
@@ -86,3 +91,4 @@ services:
             interval: 10s
             timeout: 3s
             retries: 10
+        container_name: polysim-dev-keycloak

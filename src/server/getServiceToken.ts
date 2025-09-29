@@ -20,8 +20,8 @@ export async function getServiceAccountToken() {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
             grant_type: 'client_credentials',
-            client_id: process.env.KEYCLOAK_CLIENT_ID!,
-            client_secret: process.env.KEYCLOAK_CLIENT_SECRET!,
+            client_id: KEYCLOAK_CLIENT_ID!,
+            client_secret: KEYCLOAK_CLIENT_SECRET!,
         }),
     });
 
