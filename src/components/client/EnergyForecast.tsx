@@ -28,9 +28,13 @@ export const EnergyForecast: FC = () => {
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            import('chartjs-plugin-zoom').then((plugin) => {
-                Chart.register(plugin.default);
-            });
+            import('chartjs-plugin-zoom')
+                .then((plugin) => {
+                    Chart.register(plugin.default);
+                })
+                .catch((error) => {
+                    console.error('Error loading chartjs-plugin-zoom:', error);
+                });
         }
 
         const fetchData = async () => {

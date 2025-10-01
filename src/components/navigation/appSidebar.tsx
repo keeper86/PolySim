@@ -1,0 +1,57 @@
+'use client';
+
+import * as React from 'react';
+
+import { NavMain } from '@/components/navigation/navMain';
+import { NavSecondary } from '@/components/navigation/navSecondary';
+import { NavUser } from '@/components/navigation/navUser';
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+} from '@/components/ui/sidebar';
+import { PAGE_ROUTES } from '@/lib/pageRoutes';
+import Image from 'next/image';
+import Link from 'next/link';
+
+import logo from '../../../public/logo.png';
+import { Separator } from '../ui/separator';
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    return (
+        <Sidebar variant='inset' {...props}>
+            <SidebarHeader>
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton size='lg' className='' asChild>
+                            <Link href={PAGE_ROUTES.root.path} className='flex items-center gap-2'>
+                                <div className='flex aspect-square size-7 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
+                                    <Image
+                                        src={logo}
+                                        alt='PolySim Logo'
+                                        width={75}
+                                        height={75}
+                                        className='rounded-lg border border-black'
+                                    />
+                                </div>
+                                <span className='truncate font-bold text-lg leading-tight'>PolySim</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarHeader>
+            <Separator />
+            <SidebarContent>
+                <NavMain />
+                <NavSecondary className='mt-auto' />
+            </SidebarContent>
+            <SidebarFooter>
+                <NavUser />
+            </SidebarFooter>
+        </Sidebar>
+    );
+}

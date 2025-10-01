@@ -25,12 +25,25 @@ export default defineConfig([
             'next-env.d.ts',
             'postcss.config.js',
             'tailwind.config.cjs',
+            'playwright**',
         ],
     },
-    { files: ['**/*.{js,mjs,cjs,ts}'], plugins: { js }, extends: ['js/recommended'] },
+    {
+        files: ['**/*.{js,mjs,cjs,ts}'],
+        plugins: { js },
+        extends: ['js/recommended'],
+    },
     { files: ['**/*.{js,mjs,cjs,ts}'], languageOptions: { globals: globals.browser } },
     {
+        files: ['**/*.{ts,tsx}'],
+        languageOptions: {
+            parserOptions: {
+                project: './tsconfig.json',
+                tsconfigRootDir: __dirname,
+            },
+        },
         rules: {
+            '@typescript-eslint/no-floating-promises': 'error',
             'no-unused-vars': ['error'],
             'no-undef': ['warn'],
             'semi': ['warn', 'always'],

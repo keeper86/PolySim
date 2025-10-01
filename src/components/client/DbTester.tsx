@@ -44,7 +44,7 @@ export default function DatabaseTester() {
             return;
         }
 
-        log.debug('Database connection successful', response);
+        void log.debug('Database connection successful', response);
         setResult(response);
         toast.success('Database connection successful', {
             description: `Connected in ${response.time}ms`,
