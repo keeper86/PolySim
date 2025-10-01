@@ -4,6 +4,7 @@ import { type OpenApiMeta } from 'trpc-to-openapi';
 import { authOptions } from '../app/api/auth/[...nextauth]/authOptions';
 import { health } from './endpoints/health';
 import { logs } from './endpoints/logs';
+import { createProject } from './endpoints/projects';
 import { testDbConnection } from './endpoints/test-connection';
 
 export async function createContext() {
@@ -23,10 +24,16 @@ const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
 
 export type ProcedureBuilderType = typeof procedure | typeof protectedProcedure;
 
-export const appRouter = t.router({
-    'logs': logs(procedure, '/logs'),
+export const protectedAppRouter = t.router({
     'test-connection': testDbConnection(protectedProcedure, '/test-connection'),
-    'health': health(procedure, '/health'),
+    'projects-create': createProject(protectedProcedure, '/projects-create'),
 });
+
+export const publicAppRouter = t.router({
+    logs: logs(procedure, '/logs'),
+    health: health(procedure, '/health'),
+});
+
+export const appRouter = t.mergeRouters(publicAppRouter, protectedAppRouter);
 
 export type AppRouter = typeof appRouter;

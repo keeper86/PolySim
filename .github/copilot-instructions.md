@@ -25,7 +25,7 @@ src/
 │   └── layout.tsx    # Root layout with providers
 ├── components/       # React components
 │   ├── client/       # Client-side components
-│   └── ui/           # Reusable UI components (shadcn/ui pattern)
+│   └── ui/           # Reusable UI components (shadcn/ui generator pattern)
 ├── server/           # tRPC server code
 │   └── endpoints/    # API endpoint definitions
 ├── lib/              # Utility functions and configs
@@ -40,7 +40,7 @@ src/
 2. **File Naming**:
     - Components: `ComponentName.tsx`
     - Tests: `ComponentName.test.tsx`
-    - API routes: `route.ts` (App Router)
+    - API routes: tRPC handlers in `src/app/api/` and centralized manifest in `src/lib/pageRoutes.ts`
 3. **Import Organization**: Use `@/*` path aliases, group imports by external → internal
 4. **TypeScript**: Strict mode enabled, prefer explicit types over `any`
 
@@ -55,6 +55,7 @@ src/
 
 - Use Tailwind CSS utilities primarily
 - DaisyUI components for complex UI elements (buttons, dropdowns, etc.)
+- For reusable UI primitives, use the [shadcn/ui](https://ui.shadcn.com/) generator and conventions. New UI components should be generated or structured according to shadcn/ui best practices (see `components.json`).
 - Consistent spacing: `px-2 md:px-6` for responsive padding
 - Theme variables: Use DaisyUI theme colors (`primary`, `base-100`, etc.)
 - Responsive design: Mobile-first approach with `md:`, `lg:` breakpoints
@@ -93,6 +94,87 @@ export const exampleEndpoint = (procedure: ProcedureBuilderType, path: string) =
 - Keycloak integration for SSO
 - Session available in both client and server components
 - Protected routes use `protectedProcedure` in tRPC
+
+### Route Management
+
+PolySim uses a centralized route manifest system for type-safe navigation and consistent routing.
+
+#### Route Manifest (`src/lib/pageRoutes.ts`)
+
+All application routes are defined in a single source of truth:
+
+```typescript
+import { ROUTES, APP_ROUTES, buildPath, getRouteMetadata } from '@/lib/pageRoutes';
+
+// Use route constants instead of hardcoded strings
+<Link href={ROUTES.projects}>Projects</Link>
+
+// Access route metadata
+const metadata = getRouteMetadata('projects');
+console.log(metadata.label, metadata.icon);
+
+// Build dynamic paths (future extensibility)
+const path = buildPath('projects', { id: '123' }); // /projects/123
+```
+
+#### Key Features
+
+- **Type Safety**: All routes are strongly typed with TypeScript
+- **Metadata**: Each route includes label, icon, visibility, and description
+- **Helper Functions**: Utilities for path building, active route detection, and breadcrumbs
+- **Single Source**: One manifest replaces multiple hardcoded route references
+
+#### Available Helpers
+
+- `buildPath(routeKey, params?)` - Build paths with optional parameters
+- `getRouteMetadata(routeKey)` - Get full route metadata
+- `getRouteLabel(path)` - Get human-readable label for any path
+- `isActiveRoute(path, routeKey)` - Check if a route is currently active
+- `getBreadcrumbData(pathname)` - Generate breadcrumb trail
+- `getMainNavRoutes()` - Get primary navigation routes
+- `getSecondaryNavRoutes()` - Get secondary navigation routes
+- `getPublicRoutes()` / `getProtectedRoutes()` - Filter by access level
+
+#### Navigation Components
+
+All navigation components use the manifest:
+
+- `DynamicBreadcrumbs` - Auto-generates breadcrumbs from route metadata
+- `NavMain` - Primary sidebar navigation using `getMainNavRoutes()`
+- `NavSecondary` - Secondary navigation using `getSecondaryNavRoutes()`
+- `AppSidebar` - Main sidebar container with logo and navigation
+
+#### Best Practices
+
+1. **Never use hardcoded route strings** - Always import from `ROUTES` or use helpers
+2. **Add new routes to the manifest** - Update `pageRoutes.ts` when adding new pages
+3. **Use route metadata** - Leverage labels, icons, and descriptions from the manifest
+4. **Test route changes** - Route manifest has comprehensive unit tests
+5. **Update middleware** - Public/protected route logic uses `getPublicRoutes()`
+
+#### Example: Adding a New Route
+
+```typescript
+// 1. Add to ROUTES constant
+export const ROUTES = {
+    // existing routes...
+    newFeature: '/new-feature',
+} as const;
+
+// 2. Add metadata to APP_ROUTES
+newFeature: {
+    path: ROUTES.newFeature,
+    label: 'New Feature',
+    icon: NewIcon,
+    isPublic: false,
+    description: 'Description of new feature',
+},
+
+// 3. Use in components
+<Link href={ROUTES.newFeature}>
+    {getRouteMetadata('newFeature').label}
+</Link>
+```
 
 ### Testing Standards
 
@@ -171,7 +253,7 @@ export const exampleEndpoint = (procedure: ProcedureBuilderType, path: string) =
 
 #### UI Components
 
-- Follow shadcn/ui patterns in `src/components/ui/`
+- UI primitives in `src/components/ui/` follow the [shadcn/ui](https://ui.shadcn.com/) generator structure. Use the shadcn/ui generator for new primitives and keep to its conventions for consistency and maintainability.
 - Use class-variance-authority for variant management
 - Export components with proper TypeScript interfaces
 

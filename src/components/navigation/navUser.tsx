@@ -15,27 +15,29 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { PAGE_ROUTES } from '@/lib/pageRoutes';
 
 export function NavUser() {
     const { isMobile } = useSidebar();
     const { data: session, status } = useSession();
     const loggedIn = status === 'authenticated';
 
+    const callbackUrl = typeof window !== 'undefined' ? window.location.href : undefined;
+
     if (!loggedIn) {
         return (
             <SidebarMenu>
                 <SidebarMenuItem>
-                    <SidebarMenuButton size='lg' onClick={() => signIn('keycloak', { callbackUrl: '/' })}>
+                    <SidebarMenuButton size='lg' onClick={() => signIn('keycloak', { callbackUrl })}>
                         <Avatar className='h-8 w-8 rounded-lg'>
                             <AvatarFallback className='rounded-lg p-1 bg-muted'>
-                                {/* Simple grey portrait SVG placeholder */}
                                 <svg viewBox='0 0 24 24' fill='none' className='w-6 h-6 text-muted-foreground'>
                                     <circle cx='12' cy='8' r='4' fill='currentColor' />
                                     <rect x='4' y='16' width='16' height='6' rx='3' fill='currentColor' />
                                 </svg>
                             </AvatarFallback>
                         </Avatar>
-                        <span className='ml-2 font-semibold'>Login</span>
+                        <span className='font-semibold'>Login</span>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>
@@ -58,7 +60,6 @@ export function NavUser() {
                                     <AvatarImage src={user.image} alt={user.name || 'User'} />
                                 ) : (
                                     <AvatarFallback className='rounded-lg p-1 bg-muted'>
-                                        {/* Show initials if available, else empty */}
                                         {user.name
                                             ? user.name
                                                   .split(' ')
@@ -84,12 +85,12 @@ export function NavUser() {
                         sideOffset={4}
                     >
                         <DropdownMenuLabel className='p-0 font-normal'>
-                            <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
+                            <div className='flex items-center gap-2 py-1.5 text-left text-sm'>
                                 <Avatar className='h-8 w-8 rounded-lg'>
                                     {user.image ? (
                                         <AvatarImage src={user.image} alt={user.name || 'User'} />
                                     ) : (
-                                        <AvatarFallback className='rounded-lg p-1 bg-muted'>
+                                        <AvatarFallback className='rounded-lg bg-muted'>
                                             {user.name
                                                 ? user.name
                                                       .split(' ')
@@ -110,7 +111,7 @@ export function NavUser() {
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
                             <DropdownMenuItem asChild>
-                                <Link href='/account' className='flex items-center gap-2'>
+                                <Link href={PAGE_ROUTES.account.path} className='flex items-center gap-2'>
                                     <BadgeCheck />
                                     Account
                                 </Link>
@@ -121,7 +122,10 @@ export function NavUser() {
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/' })}>
+                        <DropdownMenuItem
+                            onClick={() => signOut({ callbackUrl: PAGE_ROUTES.root.path })}
+                            className='text-destructive'
+                        >
                             <LogOut />
                             Log out
                         </DropdownMenuItem>

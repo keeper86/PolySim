@@ -91,6 +91,7 @@
         "eslint-plugin-prettier": "^5.5.4",
         "jsdom": "^26.1.0",
         "msw": "^2.8.2",
+        "nextjs-routes": "^2.2.5",
         "tailwindcss": "^4.1.13",
         "typescript": "^5",
         "vite-tsconfig-paths": "^5.1.4",

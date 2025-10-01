@@ -1,10 +1,12 @@
-import type { NextConfig } from 'next';
+const nextRoutes = require('nextjs-routes/config');
+const withRoutes = nextRoutes();
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
     output: 'standalone',
     serverExternalPackages: ['knex', 'pino', 'pino-pretty'],
     reactStrictMode: true,
-    typedRoutes: true,
+    trailingSlash: false,
     images: {
         remotePatterns: [
             {
@@ -14,7 +16,7 @@ const nextConfig: NextConfig = {
             },
         ],
     },
-    //@ts-expect-error just for hot reload in dev
+    // just for hot reload in dev
     webpackDevMiddleware: (config) => {
         if (process.env.NODE_ENV === 'development') {
             config.watchOptions = {
@@ -26,4 +28,4 @@ const nextConfig: NextConfig = {
     },
 };
 
-export default nextConfig;
+module.exports = withRoutes(nextConfig);

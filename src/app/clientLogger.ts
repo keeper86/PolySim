@@ -3,10 +3,13 @@ import { trpcClient } from './clientTrpc';
 import type { LogEntry } from '../server/endpoints/logs';
 
 const createLogger = (component?: string) => {
-    const logger = (level: LogEntry['level']) => (message: string, data?: unknown) =>
-        trpcClient.logs.mutate({
-            logs: [{ level, message, component, data, timestamp: new Date().toISOString() }],
-        });
+    const logger = (level: LogEntry['level']) => (message: string, data?: unknown) => {
+        trpcClient.logs
+            .mutate({
+                logs: [{ level, message, component, data, timestamp: new Date().toISOString() }],
+            })
+            .catch(() => {});
+    };
 
     return {
         debug: logger('debug'),

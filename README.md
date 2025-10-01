@@ -16,7 +16,21 @@ docker compose down
 
 ## Local Development
 
-The development setup is as close to the production setup as possible.
+The development setup is as close to the production setup as possible. First install dependencies:
+
+```sh
+npm i
+```
+
+## Unit Tests
+
+Run unit tests using Vitest:
+
+```bash
+npm run test          # Run tests once
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Run tests with coverage
+```
 
 ### Automatically detect Docker host IP for extra_hosts
 
@@ -58,7 +72,7 @@ Start database and then the app
 docker compose -f docker-compose.development.yaml --env-file .env.development up --build
 ```
 
-Open [https://polysim](https://polysim) with your browser to see the result.
+Open [https://polysim.local](https://polysim.local) with your browser to see the result.
 
 Dont forget, when you are done:
 
@@ -66,34 +80,15 @@ Dont forget, when you are done:
 docker compose -f docker-compose.development.yaml --env-file .env.development --volumes down
 ```
 
-## Testing
-
-### Unit Tests
-
-Run unit tests using Vitest:
-
-```bash
-npm run test          # Run tests once
-npm run test:watch    # Run tests in watch mode
-npm run test:coverage # Run tests with coverage
-```
-
 ### End-to-End Tests
 
 This project includes Playwright-based e2e tests that validate the full application flow including authentication and API documentation.
 
-#### Prerequisites
+Note: Install required **Playwright Browsers**:
 
-1. **Development Environment**: Start the development server first:
-
-    ```bash
-    docker compose -f docker-compose.development.yaml --env-file .env.development up --build
-    ```
-
-2. **Playwright Browsers**: Install required browsers:
-    ```bash
+```bash
     npx playwright install
-    ```
+```
 
 #### Running E2E Tests
 
@@ -103,13 +98,13 @@ npm run test:e2e:headed    # Run tests with browser UI visible
 npm run test:e2e:debug     # Run tests in debug mode
 ```
 
-#### Test Coverage
+## Types
 
-The e2e tests cover:
+This project uses strict TypeScript for all application and API code. Key type conventions and patterns:
 
-- **Authentication**: Login with dev credentials (`adminuser`/`adminpassword`)
-- **API Documentation**: Swagger UI accessibility at `/api-doc`
-- **OpenAPI Specification**: JSON endpoint validation at `/api/openapi.json`
-- **Session Management**: Navigation and session persistence
+- All routes and navigation are type-safe, validated at compile time using the `nextjs-routes` package; See `src/lib/pageRoutes.ts` for details.
+- API endpoints use Zod schemas for input/output validation and tRPC for end-to-end type safety.
 
-See `tests/e2e/README.md` for detailed testing documentation.
+### About `nextjs-routes`
+
+[`nextjs-routes`](https://github.com/blitz-js/nextjs-routes) is a codegen tool that provides type-safe route autocompletion and validation for Next.js App Router projects. It scans your app directory and generates TypeScript types for all valid routes, ensuring that route paths used in your code are always correct and up-to-date. This eliminates hardcoded strings and prevents navigation errors at compile time.

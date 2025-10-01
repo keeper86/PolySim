@@ -23,7 +23,6 @@ services:
             - ./src:/app/src
             - ./public:/app/public
             - ./package.json:/app/package.json
-            - ./next.config.ts:/app/next.config.ts
         ports:
             - '3000:3000'
         depends_on:

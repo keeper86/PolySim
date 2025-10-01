@@ -12,7 +12,7 @@ import './swagger-ui-overrides.css';
 //NOTE: As of 5/30/25, next in strict mode will put up an error due to Swagger using a deprecated unsafe component
 //May be addressed in PR #10373
 
-const childLogger = clientLogger.child('ApiDocPage');
+const log = clientLogger.child('ApiDocPage');
 
 export default function PageContent() {
     const swaggerRef = useRef<HTMLDivElement>(null);
@@ -28,7 +28,7 @@ export default function PageContent() {
             })
             .catch((error) => {
                 toast.error('Error fetching OpenAPI schema', { description: String(error) });
-                childLogger.error('Error fetching OpenAPI schema', { error });
+                log.error('Error fetching OpenAPI schema', { error });
             });
     }, []);
 
