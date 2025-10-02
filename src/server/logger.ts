@@ -1,4 +1,5 @@
-import pino, { Logger } from 'pino';
+import type { Logger } from 'pino';
+import pino from 'pino';
 
 const getLoggerConfig = () => {
     const isProduction = process.env.NODE_ENV === 'production';

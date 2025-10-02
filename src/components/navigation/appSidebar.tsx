@@ -29,16 +29,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuItem>
                         <SidebarMenuButton size='lg' className='' asChild>
                             <Link href={PAGE_ROUTES.root.path} className='flex items-center gap-2'>
-                                <div className='flex aspect-square size-7 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
+                                <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
                                     <Image
                                         src={logo}
                                         alt='PolySim Logo'
-                                        width={75}
-                                        height={75}
+                                        width={120}
+                                        height={120}
                                         className='rounded-lg border border-black'
                                     />
                                 </div>
-                                <span className='truncate font-bold text-lg leading-tight'>PolySim</span>
+                                <span className='truncate font-bold text-[26px] leading-tight'>PolySim</span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>

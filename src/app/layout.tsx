@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { authOptions } from './api/auth/[...nextauth]/authOptions';
 import { AppSidebar } from '@/components/navigation/appSidebar';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
@@ -50,7 +50,7 @@ export default async function RootLayout({
                                     <DynamicBreadcrumbs />
                                 </div>
                             </header>
-                            <main className='flex-1 p-4 break-all max-w-full overflow-x-auto'>{children}</main>
+                            <main className='flex-1 p-4 overflow-x-auto break-words'>{children}</main>
                             <Footer />
                         </SidebarInset>
                     </SidebarProvider>

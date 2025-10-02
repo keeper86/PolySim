@@ -1,5 +1,6 @@
 'use client';
-import React, { FC, useEffect, useState } from 'react';
+import type { FC } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
     CategoryScale,
@@ -16,7 +17,7 @@ import {
 
 import 'chartjs-adapter-date-fns';
 
-import { TimeSeriesData } from '../../types/timeSeriesData';
+import type { TimeSeriesData } from '../../types/timeSeriesData';
 
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, TimeScale, Filler);
 

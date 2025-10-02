@@ -1,8 +1,9 @@
 'use client';
-import { PAGE_ROUTES, RouteMetadata, isRoute, isRouteManifest } from '@/lib/pageRoutes';
+import type { RouteMetadata } from '@/lib/pageRoutes';
+import { PAGE_ROUTES, isRoute, isRouteManifest } from '@/lib/pageRoutes';
 import Link from 'next/link';
 import React from 'react';
-import { JSX } from 'react/jsx-runtime';
+import type { JSX } from 'react/jsx-runtime';
 
 const ICON_WIDTH = 18;
 
@@ -13,10 +14,10 @@ function renderNavEntry(route: RouteMetadata, opts?: { isSub?: boolean }): JSX.E
             <Link
                 href={route.path}
                 className={[
-                    'flex items-center gap-1.5 rounded',
+                    'flex items-center gap-2 rounded',
                     isSub
-                        ? 'font-normal text-[11px] text-muted-foreground pb-1 mb-1 -mt-1'
-                        : 'font-medium text-[13px] text-base-content',
+                        ? 'font-normal text-[14px] text-muted-foreground pb-1 mb-1 -mt-1.5'
+                        : 'font-medium text-[16px] text-base-content',
                 ].join(' ')}
             >
                 <span style={{ display: 'inline-block', width: ICON_WIDTH, minWidth: ICON_WIDTH }} aria-hidden='true'>

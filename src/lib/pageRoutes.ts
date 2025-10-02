@@ -1,4 +1,4 @@
-import { type LucideIcon, BookOpen, Frame, Gamepad, Map, PieChart, User, Home, FileText } from 'lucide-react';
+import { type LucideIcon, BookOpen, Frame, Gamepad, Map, PieChart, User, Home, FileText, Brain } from 'lucide-react';
 
 import type { Route } from 'nextjs-routes';
 
@@ -87,11 +87,19 @@ export const PAGE_ROUTES = {
         isSecondaryNav: true,
     },
     account: {
-        path: '/account',
-        label: 'Account',
-        icon: User,
-        description: 'User account settings',
-    } as const,
+        root: {
+            path: '/account',
+            label: 'Account',
+            icon: User,
+            description: 'User account settings',
+        },
+        skillsAssessment: {
+            path: '/account/skills-assessment',
+            label: 'Skills Assessment',
+            icon: Brain,
+            description: 'Assess and track your technical skills',
+        },
+    },
     imprint: {
         path: '/imprint',
         label: 'Imprint',

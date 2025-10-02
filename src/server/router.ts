@@ -5,6 +5,7 @@ import { authOptions } from '../app/api/auth/[...nextauth]/authOptions';
 import { health } from './endpoints/health';
 import { logs } from './endpoints/logs';
 import { createProject } from './endpoints/projects';
+import { getSkillsAssessment, saveSkillsAssessment } from './endpoints/skills-assessment';
 import { testDbConnection } from './endpoints/test-connection';
 
 export async function createContext() {
@@ -27,6 +28,8 @@ export type ProcedureBuilderType = typeof procedure | typeof protectedProcedure;
 export const protectedAppRouter = t.router({
     'test-connection': testDbConnection(protectedProcedure, '/test-connection'),
     'projects-create': createProject(protectedProcedure, '/projects-create'),
+    'skills-assessment-get': getSkillsAssessment(protectedProcedure, '/skills-assessment-get'),
+    'skills-assessment-save': saveSkillsAssessment(protectedProcedure, '/skills-assessment-save'),
 });
 
 export const publicAppRouter = t.router({
