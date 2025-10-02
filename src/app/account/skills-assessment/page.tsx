@@ -15,53 +15,26 @@ import { Loader, Plus, Star, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-import type { SkillAssessment, SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
+import type { SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
 import { getDefaultSkillsAssessment } from './getDefaultAssessmentList';
+import { clientLogger } from '@/app/clientLogger';
+
+const childLogger = clientLogger.child('SkillsAssessmentPage');
 
 export default function SkillsAssessmentPage() {
-    function handleDeleteItem(category: string, itemIndex: number) {
-        const item = data[category]?.[itemIndex];
-        if (!item) {
-            return;
-        }
-        if (item.subSkills && item.subSkills.some((s) => s.level > 0)) {
-            setConfirmDelete({ category, itemIndex });
-        } else {
-            actuallyDeleteItem(category, itemIndex);
-        }
-    }
-    const [confirmDelete, setConfirmDelete] = useState<{
-        category: string;
-        itemIndex: number;
-    } | null>(null);
+    // Array-based state
+    const [data, setData] = useState<SkillsAssessmentSchema>([]);
+    const [loading, setLoading] = useState(true);
+    const [newItem, setNewItem] = useState<Record<string, string>>({});
+    const [newSubSkill, setNewSubSkill] = useState<Record<string, Record<number, string>>>({});
+    const [confirmDelete, setConfirmDelete] = useState<{ categoryIdx: number; itemIndex: number } | null>(null);
+    const saveTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+    const savingRef = useRef(false);
 
-    const setSkillToNoExperience = (skill: SkillAssessment) => {
-        skill.level = 0;
-        if (skill.subSkills) {
-            skill.subSkills.forEach((sub) => (sub.level = 0));
-        }
-    };
+    // Helper to get category index by name
+    const getCategoryIdx = (category: string) => data.findIndex((c) => c.name === category);
 
-    function actuallyDeleteItem(category: string, index: number) {
-        setData((prev) => {
-            const newData = { ...prev };
-            if (!newData[category] || !newData[category][index]) {
-                return newData;
-            }
-            setSkillToNoExperience(newData[category][index]);
-            return newData;
-        });
-        setConfirmDelete(null);
-    }
-
-    function handleConfirmDelete(_deleteSubSkills: boolean) {
-        if (!confirmDelete) {
-            return;
-        }
-        const { category, itemIndex } = confirmDelete;
-        actuallyDeleteItem(category, itemIndex);
-    }
-
+    // Star display for legend
     const StarDisplay = ({ level, max = 3 }: { level: number; max?: number }) => (
         <div className='flex items-center gap-1'>
             {Array.from({ length: max }).map((_, i) => (
@@ -76,23 +49,14 @@ export default function SkillsAssessmentPage() {
             ))}
         </div>
     );
-    const defaultOrder = Object.keys(getDefaultSkillsAssessment());
-
-    const [data, setData] = useState<SkillsAssessmentSchema>({});
-    const [loading, setLoading] = useState(true);
-    const [newItem, setNewItem] = useState<Record<string, string>>({});
-    const [newSubSkill, setNewSubSkill] = useState<Record<string, Record<number, string>>>({});
-    const saveTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
-    const savingRef = useRef(false);
 
     const loadData = async () => {
         setLoading(true);
         try {
             const result = await trpcClient['skills-assessment-get'].query();
-            if (!result || Object.keys(result).length === 0) {
+            if (!result || result.length === 0) {
                 console.log('No existing skills assessment found, loading default');
-                const def = getDefaultSkillsAssessment();
-                setData(def);
+                setData(getDefaultSkillsAssessment());
             } else {
                 console.log('Loaded existing skills assessment:', result);
                 setData(result);
@@ -105,7 +69,6 @@ export default function SkillsAssessmentPage() {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         void loadData();
     }, []);
@@ -114,37 +77,28 @@ export default function SkillsAssessmentPage() {
         if (loading) {
             return;
         }
-
         const saveData = async () => {
             if (savingRef.current) {
-                console.log('Save already in progress, skipping');
-
                 return;
             }
-
             savingRef.current = true;
             try {
-                console.log('Auto-saving skills assessment...', data);
-
                 await trpcClient['skills-assessment-save'].mutate(data);
             } catch (error) {
                 toast.error('Failed to save skills assessment', {
                     description: error instanceof Error ? error.message : 'Unknown error',
                 });
+                childLogger.error('Failed to save skills assessment', { error });
             } finally {
                 savingRef.current = false;
             }
         };
-
         if (saveTimeoutRef.current) {
             clearTimeout(saveTimeoutRef.current);
         }
-        console.log('Scheduling auto-save in 1 second...');
-
         saveTimeoutRef.current = setTimeout(() => {
             void saveData();
         }, 1000);
-
         return () => {
             if (saveTimeoutRef.current) {
                 clearTimeout(saveTimeoutRef.current);
@@ -157,51 +111,74 @@ export default function SkillsAssessmentPage() {
         if (!value) {
             return;
         }
-        if (data[category]?.some((item) => item.name.toLowerCase() === value.toLowerCase())) {
+        const idx = getCategoryIdx(category);
+        if (idx === -1) {
+            return;
+        }
+        if (data[idx].skills.some((item) => item.name.toLowerCase() === value.toLowerCase())) {
             toast.error('This entry already exists');
             return;
         }
-        setData({
-            ...data,
-            [category]: [...(data[category] || []), { name: value, level: 0, subSkills: [] }],
-        });
+        const updated = [...data];
+        updated[idx] = {
+            ...updated[idx],
+            skills: [...updated[idx].skills, { name: value, level: 0, subSkills: [] }],
+        };
+        setData(updated);
         setNewItem((prev) => ({ ...prev, [category]: '' }));
     };
 
     const updateItemLevel = (category: string, index: number, level: number) => {
-        const updated = [...(data[category] || [])];
-        updated[index].level = level;
-        setData({ ...data, [category]: updated });
+        const idx = getCategoryIdx(category);
+        if (idx === -1) {
+            return;
+        }
+        const updated = [...data];
+        const skills = [...updated[idx].skills];
+        skills[index] = { ...skills[index], level };
+        updated[idx] = { ...updated[idx], skills };
+        setData(updated);
     };
 
     const addSubSkillToItem = (category: string, itemIndex: number, subSkillName: string) => {
         if (!subSkillName.trim()) {
             return;
         }
-        const updated = [...(data[category] || [])];
-        if (!updated[itemIndex].subSkills) {
-            updated[itemIndex].subSkills = [];
+        const idx = getCategoryIdx(category);
+        if (idx === -1) {
+            return;
         }
-        if (updated[itemIndex].subSkills.some((s) => s.name.toLowerCase() === subSkillName.toLowerCase())) {
+        const updated = [...data];
+        const skills = [...updated[idx].skills];
+        const item = { ...skills[itemIndex] };
+        item.subSkills = item.subSkills ? [...item.subSkills] : [];
+        if (item.subSkills.some((s) => s.name.toLowerCase() === subSkillName.toLowerCase())) {
             toast.error('This sub-skill already exists');
             return;
         }
-        updated[itemIndex].subSkills = [...updated[itemIndex].subSkills, { name: subSkillName, level: 0 }];
-        setData({ ...data, [category]: updated });
-        setNewSubSkill((prev) => ({
-            ...prev,
-            [category]: { ...prev[category], [itemIndex]: '' },
-        }));
+        item.subSkills.push({ name: subSkillName, level: 0 });
+        skills[itemIndex] = item;
+        updated[idx] = { ...updated[idx], skills };
+        setData(updated);
+        setNewSubSkill((prev) => ({ ...prev, [category]: { ...(prev[category] || {}), [itemIndex]: '' } }));
     };
 
     const updateSubSkillLevel = (category: string, itemIndex: number, subSkillIndex: number, level: number) => {
-        const updated = [...(data[category] || [])];
-        if (!updated[itemIndex].subSkills) {
+        const idx = getCategoryIdx(category);
+        if (idx === -1) {
             return;
         }
-        updated[itemIndex].subSkills = [...updated[itemIndex].subSkills];
-        updated[itemIndex].subSkills[subSkillIndex].level = level;
-        setData({ ...data, [category]: updated });
+        const updated = [...data];
+        const skills = [...updated[idx].skills];
+        const item = { ...skills[itemIndex] };
+        if (!item.subSkills) {
+            return;
+        }
+        item.subSkills = [...item.subSkills];
+        item.subSkills[subSkillIndex] = { ...item.subSkills[subSkillIndex], level };
+        skills[itemIndex] = item;
+        updated[idx] = { ...updated[idx], skills };
+        setData(updated);
     };
 
     const StarRating = ({
@@ -263,8 +240,6 @@ export default function SkillsAssessmentPage() {
     if (loading) {
         return (
             <div className='flex items-center justify-center min-h-[400px]'>
-                {/* FIXME: Create Ticket and add reference here */}
-                {/* TODO: Implement skeleton loading state */}
                 <Loader className='w-8 h-8 text-muted-foreground animate-spin' style={{ animationDuration: '2s' }} />
             </div>
         );
@@ -272,6 +247,7 @@ export default function SkillsAssessmentPage() {
 
     return (
         <div className='max-w-4xl mx-auto px-4 py-6 space-y-6' style={{ minWidth: 320 }}>
+            {/* Delete dialog logic updated for array-based categories */}
             <Dialog open={!!confirmDelete} onOpenChange={(open) => !open && setConfirmDelete(null)}>
                 <DialogContent>
                     <DialogHeader>
@@ -285,7 +261,25 @@ export default function SkillsAssessmentPage() {
                         <Button variant='outline' onClick={() => setConfirmDelete(null)}>
                             Cancel
                         </Button>
-                        <Button variant='destructive' onClick={() => handleConfirmDelete(true)}>
+                        <Button
+                            variant='destructive'
+                            onClick={() => {
+                                if (confirmDelete) {
+                                    // Set all levels to 0 for the skill and its sub-skills
+                                    const updated = [...data];
+                                    const { categoryIdx, itemIndex } = confirmDelete;
+                                    const skills = [...updated[categoryIdx].skills];
+                                    const skill = { ...skills[itemIndex], level: 0 };
+                                    if (skill.subSkills) {
+                                        skill.subSkills = skill.subSkills.map((s) => ({ ...s, level: 0 }));
+                                    }
+                                    skills[itemIndex] = skill;
+                                    updated[categoryIdx] = { ...updated[categoryIdx], skills };
+                                    setData(updated);
+                                    setConfirmDelete(null);
+                                }
+                            }}
+                        >
                             Delete with sub-skills
                         </Button>
                     </DialogFooter>
@@ -310,12 +304,9 @@ export default function SkillsAssessmentPage() {
                     ))}
                 </div>
             </div>
-
-            {defaultOrder.map((category) => {
-                const items = data[category];
-                if (!items) {
-                    return null;
-                }
+            {data.map((categoryObj, categoryIdx) => {
+                const category = categoryObj.name;
+                const items = categoryObj.skills;
                 return (
                     <div className='space-y-4' key={category}>
                         <h2 className='text-2xl font-semibold capitalize'>{category.replace(/([A-Z])/g, ' $1')}</h2>
@@ -332,7 +323,25 @@ export default function SkillsAssessmentPage() {
                                         <StarRating
                                             level={item.level}
                                             onChange={(level) => updateItemLevel(category, itemIndex, level)}
-                                            onDelete={() => handleDeleteItem(category, itemIndex)}
+                                            onDelete={() => {
+                                                if (item.subSkills && item.subSkills.some((s) => s.level > 0)) {
+                                                    setConfirmDelete({ categoryIdx, itemIndex });
+                                                } else {
+                                                    // Set all levels to 0 for the skill and its sub-skills
+                                                    const updated = [...data];
+                                                    const skills = [...updated[categoryIdx].skills];
+                                                    const skill = { ...skills[itemIndex], level: 0 };
+                                                    if (skill.subSkills) {
+                                                        skill.subSkills = skill.subSkills.map((s) => ({
+                                                            ...s,
+                                                            level: 0,
+                                                        }));
+                                                    }
+                                                    skills[itemIndex] = skill;
+                                                    updated[categoryIdx] = { ...updated[categoryIdx], skills };
+                                                    setData(updated);
+                                                }
+                                            }}
                                         />
                                     </div>
                                     {item.level > 0 && (

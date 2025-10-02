@@ -12,7 +12,12 @@ const skillAssessment = skillDefinition.extend({
 });
 export type SkillAssessment = z.infer<typeof skillAssessment>;
 
-const skillsAssessmentSchema = z.record(z.string(), z.array(skillAssessment));
+const skillsAssessmentSchema = z.array(
+    z.object({
+        name: z.string(),
+        skills: z.array(skillAssessment),
+    }),
+);
 export type SkillsAssessmentSchema = z.infer<typeof skillsAssessmentSchema>;
 
 export const getSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${string}`) => {
@@ -44,7 +49,7 @@ export const getSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${s
 
             logger.debug({ component: 'skills-assessment' }, `Skills assessment data: ${JSON.stringify(result)}`);
 
-            return result?.assessment_data ?? {};
+            return result?.assessment_data ?? [];
         });
 };
 
@@ -80,17 +85,17 @@ export const saveSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${
                 .where({ user_id: userId, assessment_date: today })
                 .first();
 
+            const serialized = JSON.stringify(input);
+
             if (existing) {
-                // Update today's entry
                 await db('skills_assessment_history')
                     .where({ user_id: userId, assessment_date: today })
-                    .update({ assessment_data: input });
+                    .update({ assessment_data: serialized });
             } else {
-                // Create new entry for today
                 await db('skills_assessment_history').insert({
                     user_id: userId,
                     assessment_date: today,
-                    assessment_data: input,
+                    assessment_data: serialized,
                 });
             }
 
