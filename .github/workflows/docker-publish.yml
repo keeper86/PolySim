@@ -3,14 +3,19 @@ name: Build and Publish Docker image to GHCR
 on:
     push:
         branches: [main]
+    workflow_run:
+        workflows: ['Website CI']
+        types:
+            - completed
+        branches: [main]
 
 jobs:
     build-and-push:
+        if: ${{ github.event.workflow_run.conclusion == 'success' }}
         runs-on: ubuntu-latest
         permissions:
             contents: read
             packages: write
-
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
