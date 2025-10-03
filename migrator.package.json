@@ -1,0 +1,14 @@
+{
+    "name": "polysim-migrator",
+    "version": "1.0.0",
+    "description": "Minimal dependencies for running Knex migrations in PolySim.",
+    "main": "knexfile.js",
+    "scripts": {
+        "migrate": "knex migrate:latest",
+        "rollback": "knex migrate:rollback"
+    },
+    "dependencies": {
+        "knex": "^3.0.0",
+        "pg": "^8.0.0"
+    }
+}
