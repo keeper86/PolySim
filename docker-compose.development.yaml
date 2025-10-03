@@ -40,7 +40,7 @@ services:
     migrations:
         build:
             context: .
-            dockerfile: Dockerfile.dev
+            dockerfile: Dockerfile.migrator
         environment:
             DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
             NODE_ENV: development

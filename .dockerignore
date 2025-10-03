@@ -1,2 +1,31 @@
 .next
 node_modules
+
+# Exclude environment files
+
+.env\*
+
+# Exclude certificates and private keys
+
+certs/
+
+# Exclude test and mock data
+
+test/
+test-results/
+tests/
+
+# Exclude local scripts and config not needed in image
+
+scripts/
+
+# Exclude Playwright and E2E artifacts
+
+playwright/
+playwright-report/
+
+# Exclude misc editor/project files
+
+_.log
+_.md
+\*.tsbuildinfo
