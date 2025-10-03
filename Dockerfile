@@ -19,12 +19,7 @@ FROM base AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY package.json ./
-COPY package-lock.json* yarn.lock* pnpm-lock.yaml* .npmrc* ./
-COPY next.config.js ./
-COPY tsconfig.json ./
-COPY public ./public
-COPY src ./src
+COPY . .
 
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
