@@ -1,4 +1,4 @@
-import { TimeSeriesData } from '../src/types/timeSeriesData';
+import type { TimeSeriesData } from '../src/types/timeSeriesData';
 
 export const mockHistoricData: TimeSeriesData[] = [
     { date: '2020-01-01T00:00', value: 6206.8125 },

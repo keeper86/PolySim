@@ -16,7 +16,7 @@ const nextConfig = {
             },
         ],
     },
-    // just for hot reload in dev
+    // just for hot reload in dev; the warning can be ignored
     webpackDevMiddleware: (config) => {
         if (process.env.NODE_ENV === 'development') {
             config.watchOptions = {

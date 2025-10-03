@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ProcedureBuilderType } from '../router';
+import type { ProcedureBuilderType } from '../router';
 
 export const health = (procedure: ProcedureBuilderType, path: `/${string}`) => {
     return procedure

@@ -56,6 +56,13 @@ export default defineConfig([
             'no-loop-func': 0,
             'exhaustive-switch': 0,
             'no-case-declarations': 0,
+            '@typescript-eslint/consistent-type-imports': [
+                'error',
+                {
+                    prefer: 'type-imports',
+                    disallowTypeAnnotations: false,
+                },
+            ],
             'no-fallthrough': 0,
             'curly': ['error', 'all'],
             '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],

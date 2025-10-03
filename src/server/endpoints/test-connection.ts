@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { db } from '../db';
-import { ProcedureBuilderType } from '../router';
+import type { ProcedureBuilderType } from '../router';
 import { TRPCError } from '@trpc/server';
 
 export const testDbConnection = (procedure: ProcedureBuilderType, path: `/${string}`) => {

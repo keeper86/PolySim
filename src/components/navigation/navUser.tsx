@@ -111,7 +111,7 @@ export function NavUser() {
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
                             <DropdownMenuItem asChild>
-                                <Link href={PAGE_ROUTES.account.path} className='flex items-center gap-2'>
+                                <Link href={PAGE_ROUTES.account.root.path} className='flex items-center gap-2'>
                                     <BadgeCheck />
                                     Account
                                 </Link>
