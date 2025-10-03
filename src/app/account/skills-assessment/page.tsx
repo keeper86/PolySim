@@ -22,7 +22,6 @@ import { clientLogger } from '@/app/clientLogger';
 const childLogger = clientLogger.child('SkillsAssessmentPage');
 
 export default function SkillsAssessmentPage() {
-    // Array-based state
     const [data, setData] = useState<SkillsAssessmentSchema>([]);
     const [loading, setLoading] = useState(true);
     const [newItem, setNewItem] = useState<Record<string, string>>({});
@@ -31,10 +30,8 @@ export default function SkillsAssessmentPage() {
     const saveTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
     const savingRef = useRef(false);
 
-    // Helper to get category index by name
     const getCategoryIdx = (category: string) => data.findIndex((c) => c.name === category);
 
-    // Star display for legend
     const StarDisplay = ({ level, max = 3 }: { level: number; max?: number }) => (
         <div className='flex items-center gap-1'>
             {Array.from({ length: max }).map((_, i) => (
@@ -73,12 +70,15 @@ export default function SkillsAssessmentPage() {
         void loadData();
     }, []);
 
+    const pendingDirtyRef = useRef(false);
+
     useEffect(() => {
         if (loading) {
             return;
         }
         const saveData = async () => {
             if (savingRef.current) {
+                pendingDirtyRef.current = true;
                 return;
             }
             savingRef.current = true;
@@ -91,6 +91,10 @@ export default function SkillsAssessmentPage() {
                 childLogger.error('Failed to save skills assessment', { error });
             } finally {
                 savingRef.current = false;
+                if (pendingDirtyRef.current) {
+                    pendingDirtyRef.current = false;
+                    void saveData();
+                }
             }
         };
         if (saveTimeoutRef.current) {
@@ -247,7 +251,6 @@ export default function SkillsAssessmentPage() {
 
     return (
         <div className='max-w-4xl mx-auto px-4 py-6 space-y-6' style={{ minWidth: 320 }}>
-            {/* Reset ratings dialog for items with sub-skills */}
             <Dialog open={!!confirmDelete} onOpenChange={(open) => !open && setConfirmDelete(null)}>
                 <DialogContent>
                     <DialogHeader>
@@ -265,7 +268,6 @@ export default function SkillsAssessmentPage() {
                             variant='destructive'
                             onClick={() => {
                                 if (confirmDelete) {
-                                    // Set all levels to 0 for the skill and its sub-skills
                                     const updated = [...data];
                                     const { categoryIdx, itemIndex } = confirmDelete;
                                     const skills = [...updated[categoryIdx].skills];
@@ -327,7 +329,6 @@ export default function SkillsAssessmentPage() {
                                                 if (item.subSkills && item.subSkills.some((s) => s.level > 0)) {
                                                     setConfirmDelete({ categoryIdx, itemIndex });
                                                 } else {
-                                                    // Set all levels to 0 for the skill and its sub-skills
                                                     const updated = [...data];
                                                     const skills = [...updated[categoryIdx].skills];
                                                     const skill = { ...skills[itemIndex], level: 0 };
