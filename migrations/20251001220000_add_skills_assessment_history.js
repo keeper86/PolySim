@@ -1,6 +1,6 @@
 exports.up = async function (knex) {
     if (process.env.NODE_ENV === 'development') {
-        console.log('Add skills_assessment table.');
+        console.log('Add skills_assessment_history table.');
     }
 
     await knex.schema.createTable('skills_assessment_history', (table) => {
@@ -18,7 +18,7 @@ exports.up = async function (knex) {
 
 exports.down = async function (knex) {
     if (process.env.NODE_ENV === 'development') {
-        console.log('Remove skills_assessment table.');
+        console.log('Remove skills_assessment_history table.');
     }
     await knex.schema.dropTableIfExists('skills_assessment_history');
 };

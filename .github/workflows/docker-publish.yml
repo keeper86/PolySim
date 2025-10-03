@@ -1,6 +1,3 @@
-# This workflow builds and publishes a Docker image to GitHub Container Registry (ghcr.io) on push to main
-# Make sure to add a repository secret named CR_PAT with write:packages and read:packages scopes
-
 name: Build and Publish Docker image to GHCR
 
 on:
@@ -28,19 +25,36 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.CR_PAT }}
 
-            - name: Extract metadata (tags, labels) for Docker
-              id: meta
+            - name: Extract metadata (tags, labels) for app image
+              id: meta-app
               uses: docker/metadata-action@v5
               with:
                   images: ghcr.io/${{ github.repository }}
 
-            - name: Build and push Docker image
+            - name: Build and push app image
               uses: docker/build-push-action@v5
               with:
                   context: .
+                  target: production
                   push: true
-                  tags: ${{ steps.meta.outputs.tags }}
-                  labels: ${{ steps.meta.outputs.labels }}
+                  tags: ${{ steps.meta-app.outputs.tags }}
+                  labels: ${{ steps.meta-app.outputs.labels }}
+
+            # Build and push migrator image
+            - name: Extract metadata (tags, labels) for migrator image
+              id: meta-migrator
+              uses: docker/metadata-action@v5
+              with:
+                  images: ghcr.io/${{ github.repository }}-migrator
+
+            - name: Build and push migrator image
+              uses: docker/build-push-action@v5
+              with:
+                  context: .
+                  target: migrator
+                  push: true
+                  tags: ${{ steps.meta-migrator.outputs.tags }}
+                  labels: ${{ steps.meta-migrator.outputs.labels }}
 
             - name: Logout from GitHub Container Registry
               run: docker logout ghcr.io
