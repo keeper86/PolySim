@@ -14,9 +14,7 @@ services:
             - app
 
     app:
-        build:
-            context: .
-            target: production
+        image: ghcr.io/keeper86/polysim:latest
         environment:
             DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
         depends_on:
@@ -28,9 +26,7 @@ services:
                 condition: service_healthy
 
     migrations:
-        build:
-            context: .
-            target: migrator
+        image: ghcr.io/keeper86/polysim-migrator:latest
         environment:
             DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
             NODE_ENV: production

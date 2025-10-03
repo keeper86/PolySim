@@ -72,7 +72,7 @@ export const saveSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${
             }),
         )
         .mutation(async ({ input, ctx }) => {
-            const userId = ctx.session?.user?.email || ctx.session?.user?.name;
+            const userId = ctx.session?.user?.id || ctx.session?.user?.email;
             if (!userId) {
                 throw new Error('User ID not found');
             }
