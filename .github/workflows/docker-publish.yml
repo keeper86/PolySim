@@ -51,7 +51,7 @@ jobs:
               uses: docker/build-push-action@v5
               with:
                   context: .
-                  target: migrator
+                  file: Dockerfile.migrator
                   push: true
                   tags: ${{ steps.meta-migrator.outputs.tags }}
                   labels: ${{ steps.meta-migrator.outputs.labels }}

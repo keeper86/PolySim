@@ -1,0 +1,17 @@
+FROM node:24-alpine AS migrator
+WORKDIR /app
+
+COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* .npmrc* ./
+RUN \
+  if [ -f yarn.lock ]; then yarn install --production --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci --omit=dev; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --prod --frozen-lockfile; \
+  else \
+    echo "Lockfile not found. Please ensure you have a yarn.lock, package-lock.json, or pnpm-lock.yaml in your project root."; \
+    exit 1; \
+  fi
+
+COPY knexfile.js ./
+COPY migrations/ ./migrations/
+
+CMD ["npx", "knex", "migrate:latest"]
