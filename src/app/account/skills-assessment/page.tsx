@@ -247,14 +247,14 @@ export default function SkillsAssessmentPage() {
 
     return (
         <div className='max-w-4xl mx-auto px-4 py-6 space-y-6' style={{ minWidth: 320 }}>
-            {/* Delete dialog logic updated for array-based categories */}
+            {/* Reset ratings dialog for items with sub-skills */}
             <Dialog open={!!confirmDelete} onOpenChange={(open) => !open && setConfirmDelete(null)}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Delete Entry?</DialogTitle>
+                        <DialogTitle>Reset Ratings?</DialogTitle>
                         <DialogDescription>
-                            This entry has sub-skills with a non-zero rating. Do you want to delete the sub-skills as
-                            well?
+                            This entry has sub-skills with a non-zero rating. Do you want to reset the ratings for the
+                            sub-skills as well?
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className='flex gap-2 justify-end'>
@@ -280,7 +280,7 @@ export default function SkillsAssessmentPage() {
                                 }
                             }}
                         >
-                            Delete with sub-skills
+                            Reset all ratings
                         </Button>
                     </DialogFooter>
                 </DialogContent>
