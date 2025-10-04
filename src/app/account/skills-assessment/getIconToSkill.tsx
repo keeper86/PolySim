@@ -1,38 +1,49 @@
 import type { IconType } from 'react-icons';
 import { AiOutlineJava } from 'react-icons/ai';
-import { DiVisualstudio } from 'react-icons/di';
-import { SiGithubcopilot } from 'react-icons/si';
 import { BiLogoVisualStudio } from 'react-icons/bi';
+import { DiVisualstudio } from 'react-icons/di';
+import { FaAws, FaGit } from 'react-icons/fa';
 import { ImCross } from 'react-icons/im';
-import { FaAws } from 'react-icons/fa';
 import {
+    SiAndroidstudio,
     SiAngular,
     SiAnsible,
+    SiApachecassandra,
     SiApachemaven,
     SiApachenetbeanside,
+    SiAstro,
     SiBitbucket,
     SiChartdotjs,
     SiCmake,
     SiConfluence,
     SiCplusplus,
+    SiD3Dotjs,
     SiDjango,
     SiDocker,
     SiDotnet,
     SiEclipseide,
+    SiElasticsearch,
     SiEslint,
     SiExpress,
     SiFastapi,
     SiFigma,
+    SiFlask,
     SiGithub,
+    SiGithubcopilot,
     SiGitlab,
     SiGo,
+    SiGooglecloud,
     SiGradle,
+    SiHelm,
+    SiHibernate,
+    SiInkscape,
     SiIntellijidea,
     SiJavascript,
     SiJenkins,
     SiJest,
     SiJetbrains,
     SiJira,
+    SiJquery,
     SiJunit5,
     SiJupyter,
     SiKotlin,
@@ -44,7 +55,9 @@ import {
     SiNextdotjs,
     SiNginx,
     SiNodedotjs,
+    SiNotion,
     SiNumpy,
+    SiNuxtdotjs,
     SiOpenai,
     SiOpencv,
     SiPandas,
@@ -52,38 +65,73 @@ import {
     SiPrettier,
     SiPycharm,
     SiPython,
+    SiPytorch,
     SiQt,
     SiReact,
     SiRedis,
     SiRedux,
     SiRollupdotjs,
     SiRust,
+    SiScikitlearn,
     SiScrumalliance,
     SiSharp,
+    SiSlack,
     SiSpring,
+    SiSpringboot,
     SiSqlite,
+    SiSubversion,
+    SiTensorflow,
     SiTerraform,
     SiThreedotjs,
     SiTypescript,
+    SiUnity,
     SiVault,
     SiVite,
     SiVuedotjs,
     SiWebpack,
     SiWebstorm,
     SiXcode,
-    SiJquery,
 } from 'react-icons/si';
+import { TbBrandAzure } from 'react-icons/tb';
 
-import { GoDot } from 'react-icons/go';
+import { FaPython } from 'react-icons/fa';
+import { GiSwan } from 'react-icons/gi';
 
-export const getIconToSkill: (name: string) => IconType = (name) => {
+export const getIconToSkill: (name: string) => IconType | undefined = (name) => {
     if (!name) {
-        return GoDot;
+        return undefined;
     }
 
     switch (name.toLowerCase()) {
+        case 'git':
+            return FaGit;
+        case 'azure':
+            return TbBrandAzure;
+        case 'inkscape':
+            return SiInkscape;
+        case 'cassandra':
+            return SiApachecassandra;
         case 'javascript':
             return SiJavascript;
+        case 'nuxt.js':
+        case 'nuxt':
+            return SiNuxtdotjs;
+        case 'astro':
+            return SiAstro;
+        case 'd3.js':
+        case 'd3':
+            return SiD3Dotjs;
+        case 'tensorflow':
+            return SiTensorflow;
+        case 'pytest':
+            return FaPython;
+        case 'unity':
+            return SiUnity;
+        case 'swing':
+            return GiSwan;
+        case 'svn':
+        case 'subversion':
+            return SiSubversion;
         case 'jquery':
             return SiJquery;
         case 'typescript':
@@ -135,8 +183,6 @@ export const getIconToSkill: (name: string) => IconType = (name) => {
             return SiMysql;
         case 'scrum':
             return SiScrumalliance;
-        case 'kanban':
-            return GoDot;
         case 'chatgpt':
             return SiOpenai;
         case 'vscode':
@@ -161,8 +207,6 @@ export const getIconToSkill: (name: string) => IconType = (name) => {
             return SiExpress;
         case 'node.js':
             return SiNodedotjs;
-        case 'playwright':
-            return GoDot;
         case 'jest':
             return SiJest;
         case 'mocha':
@@ -178,9 +222,6 @@ export const getIconToSkill: (name: string) => IconType = (name) => {
             return SiEslint;
         case 'prettier':
             return SiPrettier;
-        case 'd3.js':
-        case 'd3':
-            return GoDot;
         case 'chart.js':
         case 'chart':
             return SiChartdotjs;
@@ -197,8 +238,6 @@ export const getIconToSkill: (name: string) => IconType = (name) => {
             return SiPandas;
         case 'numpy':
             return SiNumpy;
-        case 'pytest':
-            return GoDot;
         case 'jupyter':
             return SiJupyter;
         case 'spring':
@@ -257,7 +296,32 @@ export const getIconToSkill: (name: string) => IconType = (name) => {
             return ImCross;
         case 'xcode':
             return SiXcode;
+        case 'flask':
+            return SiFlask;
+        case 'pytorch':
+            return SiPytorch;
+        case 'scikit-learn':
+        case 'sklearn':
+            return SiScikitlearn;
+        case 'spring boot':
+        case 'springboot':
+            return SiSpringboot;
+        case 'hibernate':
+            return SiHibernate;
+        case 'google cloud':
+        case 'gcp':
+            return SiGooglecloud;
+        case 'helm':
+            return SiHelm;
+        case 'slack':
+            return SiSlack;
+        case 'notion':
+            return SiNotion;
+        case 'elasticsearch':
+            return SiElasticsearch;
+        case 'android studio':
+            return SiAndroidstudio;
         default:
-            return GoDot;
+            return undefined;
     }
 };
