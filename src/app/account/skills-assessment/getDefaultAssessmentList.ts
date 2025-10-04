@@ -1,5 +1,6 @@
-// Returns an array of { name, skills } objects for OpenAPI compatibility
-export function getDefaultSkillsAssessment() {
+import type { SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
+
+export function getDefaultSkillsAssessment(): SkillsAssessmentSchema {
     return [
         {
             name: 'Programming Languages',
@@ -14,7 +15,6 @@ export function getDefaultSkillsAssessment() {
                         { name: 'React', level: 0 },
                         { name: 'Vue.js', level: 0 },
                         { name: 'Angular', level: 0 },
-                        { name: 'Next.js', level: 0 },
                         { name: 'Playwright', level: 0 },
                         { name: 'Jest', level: 0 },
                         { name: 'Mocha', level: 0 },
@@ -23,7 +23,6 @@ export function getDefaultSkillsAssessment() {
                         { name: 'Rollup', level: 0 },
                         { name: 'ESLint', level: 0 },
                         { name: 'Prettier', level: 0 },
-                        { name: 'jQuery', level: 0 },
                         { name: 'D3.js', level: 0 },
                         { name: 'Chart.js', level: 0 },
                         { name: 'Three.js', level: 0 },
@@ -39,7 +38,7 @@ export function getDefaultSkillsAssessment() {
                         { name: 'Pandas', level: 0 },
                         { name: 'NumPy', level: 0 },
                         { name: 'TensorFlow', level: 0 },
-                        { name: 'Matplotlib', level: 0 },
+                        { name: 'pytest', level: 0 },
                         { name: 'PyTest', level: 0 },
                         { name: 'Jupyter', level: 0 },
                     ],
