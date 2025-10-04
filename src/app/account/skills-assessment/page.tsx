@@ -15,9 +15,10 @@ import { Loader, Plus, Star, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
+import { clientLogger } from '@/app/clientLogger';
 import type { SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
 import { getDefaultSkillsAssessment } from './getDefaultAssessmentList';
-import { clientLogger } from '@/app/clientLogger';
+import { getIconToSkill } from './getIconToSkill';
 
 const childLogger = clientLogger.child('SkillsAssessmentPage');
 
@@ -319,7 +320,11 @@ export default function SkillsAssessmentPage() {
                                     className='flex flex-col border rounded px-3 py-2 text-secondary-foreground'
                                 >
                                     <div className='flex flex-row justify-between items-center gap-4'>
-                                        <span className='font-medium min-w-0 truncate break-words sm:min-w-[100px] md:min-w-[100px]'>
+                                        <span className='font-medium min-w-0 truncate break-words sm:min-w-[100px] md:min-w-[100px] flex items-center gap-2'>
+                                            {(() => {
+                                                const Icon = getIconToSkill(item.name);
+                                                return <Icon className='w-6 h-6 text-primary shrink-0' />;
+                                            })()}
                                             {item.name}
                                         </span>
                                         <StarRating
@@ -350,25 +355,31 @@ export default function SkillsAssessmentPage() {
                                             <label className='text-sm font-medium'>Sub-Skills:</label>
                                             <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
                                                 {item.subSkills &&
-                                                    item.subSkills.map((sub, subIndex) => (
-                                                        <div
-                                                            key={subIndex}
-                                                            className='flex flex-row justify-between items-center border rounded px-3 py-2 bg-secondary text-secondary-foreground sm:gap-4'
-                                                        >
-                                                            <div className='font-medium'>{sub.name}</div>
-                                                            <StarRating
-                                                                level={sub.level}
-                                                                onChange={(level) =>
-                                                                    updateSubSkillLevel(
-                                                                        category,
-                                                                        itemIndex,
-                                                                        subIndex,
-                                                                        level,
-                                                                    )
-                                                                }
-                                                            />
-                                                        </div>
-                                                    ))}
+                                                    item.subSkills.map((sub, subIndex) => {
+                                                        const SubIcon = getIconToSkill(sub.name);
+                                                        return (
+                                                            <div
+                                                                key={subIndex}
+                                                                className='flex flex-row justify-between items-center border rounded px-3 py-2 bg-secondary text-secondary-foreground sm:gap-4'
+                                                            >
+                                                                <div className='font-medium flex items-center gap-2'>
+                                                                    <SubIcon className='w-5 h-5 text-primary shrink-0' />
+                                                                    {sub.name}
+                                                                </div>
+                                                                <StarRating
+                                                                    level={sub.level}
+                                                                    onChange={(level) =>
+                                                                        updateSubSkillLevel(
+                                                                            category,
+                                                                            itemIndex,
+                                                                            subIndex,
+                                                                            level,
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        );
+                                                    })}
                                             </div>
                                             <div className='flex gap-2 mt-2'>
                                                 <Input
