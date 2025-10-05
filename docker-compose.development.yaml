@@ -19,6 +19,7 @@ services:
             dockerfile: Dockerfile.dev
         environment:
             DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-app_dev}
+            NODE_TLS_REJECT_UNAUTHORIZED: 0
         volumes:
             - ./src:/app/src
             - ./public:/app/public
@@ -44,6 +45,7 @@ services:
         environment:
             DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
             NODE_ENV: development
+            NODE_TLS_REJECT_UNAUTHORIZED: 0
         depends_on:
             db:
                 condition: service_healthy

@@ -1,3 +1,6 @@
+html {
+    scrollbar-gutter: stable;
+}
 @import 'tailwindcss';
 @tailwind base;
 @tailwind components;
