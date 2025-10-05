@@ -34,6 +34,9 @@ jobs:
 
     e2e:
         runs-on: ubuntu-latest
+        container:
+            image: mcr.microsoft.com/playwright:v1.55.0-noble
+            options: --user 1001
         needs: checks
         if: (github.ref == 'refs/heads/main' || github.event.pull_request.base.ref == 'main')
         steps:
