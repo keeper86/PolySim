@@ -341,7 +341,7 @@ export default function SkillsAssessmentPage() {
                             <span className='text-2xl font-semibold capitalize'>{category}</span>
                         </button>
                         <div
-                            className={`transition-all duration-200 ease-out overflow-hidden ${isCollapsed ? 'max-h-0 opacity-0 pointer-events-none' : 'max-h-[2000px] opacity-100 mb-6'}`}
+                            className={`transition-all duration-200 ease-out overflow-hidden ${isCollapsed ? 'max-h-0 opacity-0 pointer-events-none' : 'opacity-100 mb-6'}`}
                             style={{ willChange: 'max-height, opacity' }}
                         >
                             <div className='space-y-3 mb-3'>
