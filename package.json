@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
+        "svg:icons": "node ./scripts/svg-to-react-icons.cjs",
         "dev": "npm run migrate:latest && next dev --turbopack",
         "build": "next build",
         "start": "next start",
@@ -75,6 +76,7 @@
     "devDependencies": {
         "@eslint/eslintrc": "^3",
         "@playwright/test": "^1.55.1",
+        "@svgr/cli": "^8.1.0",
         "@tailwindcss/postcss": "^4",
         "@testing-library/jest-dom": "^6.6.3",
         "@testing-library/react": "^16.3.0",
