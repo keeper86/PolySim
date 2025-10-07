@@ -43,6 +43,7 @@ src/
     - API routes: tRPC handlers in `src/app/api/` and centralized manifest in `src/lib/pageRoutes.ts`
 3. **Import Organization**: Use `@/*` path aliases, group imports by external → internal
 4. **TypeScript**: Strict mode enabled, prefer explicit types over `any`
+5. **Comments**: Comments are considered technical debt; strive for self-documenting code
 
 ### React Patterns
 

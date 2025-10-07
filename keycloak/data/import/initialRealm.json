@@ -1,0 +1,58 @@
+{
+    "id": "polysim",
+    "realm": "polysim",
+    "displayName": "polysim Realm",
+    "enabled": true,
+    "clients": [
+        {
+            "clientId": "polysim-app",
+            "name": "PolySim Application",
+            "description": "Client for PolySim",
+            "rootUrl": "https://polysim.work",
+            "adminUrl": "https://polysim.work",
+            "baseUrl": "https://polysim.work",
+            "surrogateAuthRequired": false,
+            "enabled": true,
+            "alwaysDisplayInConsole": false,
+            "clientAuthenticatorType": "client-secret",
+            "secret": "super-secret",
+            "redirectUris": ["https://polysim.work/*"],
+            "webOrigins": ["https://polysim.work"],
+            "notBefore": 0,
+            "bearerOnly": false,
+            "consentRequired": false,
+            "standardFlowEnabled": true,
+            "implicitFlowEnabled": false,
+            "directAccessGrantsEnabled": true,
+            "serviceAccountsEnabled": false,
+            "publicClient": false,
+            "frontchannelLogout": true,
+            "protocol": "openid-connect",
+            "attributes": {},
+            "authenticationFlowBindingOverrides": {},
+            "fullScopeAllowed": true,
+            "nodeReRegistrationTimeout": -1
+        }
+    ],
+    "users": [
+        {
+            "username": "adminuser",
+            "email": "admin@example.com",
+            "firstName": "Admin",
+            "lastName": "User",
+            "enabled": true,
+            "credentials": [
+                {
+                    "type": "password",
+                    "value": "adminpassword",
+                    "temporary": false
+                }
+            ],
+            "realmRoles": ["user", "admin"],
+            "clientRoles": {
+                "account": ["view-profile", "manage-account"],
+                "realm-management": ["realm-admin"]
+            }
+        }
+    ]
+}
