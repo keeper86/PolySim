@@ -36,6 +36,7 @@ jobs:
               run: npm run build
 
     e2e:
+        name: Run end-to-end tests
         runs-on: ubuntu-latest
         needs: checks
         if: (github.ref == 'refs/heads/main' || github.event.pull_request.base.ref == 'main')
@@ -78,6 +79,8 @@ jobs:
             - name: Print container logs on failure
               if: failure()
               run: docker compose -f docker-compose.development.yaml logs && printenv
+            - name: Wait for Keycloak to be ready
+              run: npx wait-on --timeout=60000 http://localhost:8080/realms/polysim/.well-known/openid-configuration
             - name: Run Playwright tests
               run: |
                   npm run test:e2e
