@@ -39,6 +39,8 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
+            - name: Copy development env file
+              run: cp .env.example.development .env
             - name: Set up Node.js
               uses: actions/setup-node@v4
               with:
@@ -59,47 +61,37 @@ jobs:
                       ${{ runner.os }}-playwright-
             - name: Install dependencies
               run: npm ci
-            - name: Add polysim hostnames to /etc/hosts (idempotent, from .env.development)
+            - name: Start Keycloak and DB with Docker Compose
               run: |
-                  set -a
-                  source .env.development
-                  set +a
-                  HOST_IP="${DEV_ONLY_DOCKER_HOST_IP:-127.0.0.1}"
-                  DOMAIN="${DEV_DOMAIN}"
-                  KC_DOMAIN="${KEYCLOAK_DOMAIN}"
-                  HOSTS_LINE="$HOST_IP $DOMAIN $KC_DOMAIN"
-                  # Only add if not already present
-                  if ! grep -q "$DOMAIN" /etc/hosts; then
-                    echo "$HOSTS_LINE" | sudo tee -a /etc/hosts
-                  else
-                    echo "/etc/hosts already contains $HOSTS_LINE, skipping."
-                  fi
-            - name: Generate self-signed certificates (overwrite, idempotent, from .env.development)
+                  docker compose -f docker-compose.development.yaml up -d
+            - name: Wait for DB to be ready
+              run: npx wait-on --timeout=60000 tcp:localhost:5432
+            - name: Start app locally
               run: |
-                  set -a
-                  source .env.development
-                  set +a
-                  mkdir -p certs
-                  rm -f certs/polysim.key certs/polysim.crt
-                  DOMAIN="${DEV_DOMAIN}"
-                  openssl req -x509 -newkey rsa:2048 -nodes -keyout certs/polysim.key -out certs/polysim.crt -days 1 \
-                    -subj "/CN=$DOMAIN"
-            - name: Start services with Docker Compose
-              run: |
-                  docker compose -f docker-compose.development.yaml --env-file .env.development up --build -d
+                  npm run dev &
             - name: Wait for app to be ready
               run: |
-                  set -a
-                  source .env.development
-                  set +a
-                  npx wait-on --timeout=60000 https://${DEV_DOMAIN}/api/health
+                  npx wait-on --timeout=60000 http://localhost:3000/api/health
             - name: Print container logs on failure
               if: failure()
-              run: docker compose -f docker-compose.development.yaml --env-file .env.development logs && printenv
+              run: docker compose -f docker-compose.development.yaml logs && printenv
             - name: Run Playwright tests
               run: |
-                  npx playwright install --with-deps
                   npm run test:e2e
+            - name: Upload Playwright report on failure
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: playwright-report
+                  path: playwright-report/
+                  retention-days: 7
+            - name: Upload Playwright test results on failure
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: playwright-test-results
+                  path: test-results/
+                  retention-days: 7
             - name: Stop all containers
               if: always()
-              run: docker compose -f docker-compose.development.yaml --env-file .env.development down
+              run: docker compose -f docker-compose.development.yaml down
