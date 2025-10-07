@@ -1,23 +1,23 @@
 {
-    "id": "polysim",
-    "realm": "polysim",
-    "displayName": "PolySim Realm",
+    "id": "${KEYCLOAK_REALM}",
+    "realm": "${KEYCLOAK_REALM}",
+    "displayName": "${KEYCLOAK_REALM} Realm",
     "enabled": true,
     "clients": [
         {
-            "clientId": "polysim-app",
+            "clientId": "${KEYCLOAK_CLIENT_ID}",
             "name": "PolySim Application",
             "description": "Client for PolySim",
-            "rootUrl": "https://polysim.duckdns.org",
-            "adminUrl": "https://polysim.duckdns.org",
-            "baseUrl": "https://polysim.duckdns.org",
+            "rootUrl": "https://${APP_DOMAIN}",
+            "adminUrl": "https://${APP_DOMAIN}",
+            "baseUrl": "https://${APP_DOMAIN}",
             "surrogateAuthRequired": false,
             "enabled": true,
             "alwaysDisplayInConsole": false,
             "clientAuthenticatorType": "client-secret",
-            "secret": "super-secret",
-            "redirectUris": ["https://polysim.duckdns.org/*"],
-            "webOrigins": ["https://polysim.duckdns.org"],
+            "secret": "${KEYCLOAK_CLIENT_SECRET}",
+            "redirectUris": ["https://${APP_DOMAIN}/*"],
+            "webOrigins": ["https://${APP_DOMAIN}"],
             "notBefore": 0,
             "bearerOnly": false,
             "consentRequired": false,
@@ -35,24 +35,6 @@
         }
     ],
     "users": [
-        {
-            "username": "regularuser",
-            "email": "user@example.com",
-            "firstName": "Regular",
-            "lastName": "User",
-            "enabled": true,
-            "credentials": [
-                {
-                    "type": "password",
-                    "value": "userpassword",
-                    "temporary": false
-                }
-            ],
-            "realmRoles": ["user"],
-            "clientRoles": {
-                "account": ["view-profile", "manage-account"]
-            }
-        },
         {
             "username": "adminuser",
             "email": "admin@example.com",

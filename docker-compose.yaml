@@ -16,6 +16,10 @@ services:
     app:
         env_file: .env
         image: ghcr.io/keeper86/polysim:main
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: production
         environment:
             DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
         depends_on:
@@ -28,6 +32,9 @@ services:
 
     migrations:
         image: ghcr.io/keeper86/polysim-migrator:main
+        build:
+            context: .
+            dockerfile: Dockerfile.migrator
         environment:
             DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
             NODE_ENV: production
@@ -69,8 +76,8 @@ services:
                 condition: service_healthy
         volumes:
             - ./keycloak/themes:/opt/keycloak/themes
-            - ./keycloak/initial/data:/opt/keycloak/data/import/
-        command: start --import-realm
+            - ./keycloak/data/import:/opt/keycloak/data/import/
+        entrypoint: ['/opt/keycloak/data/import/docker-entrypoint.sh']
         healthcheck:
             test:
                 [

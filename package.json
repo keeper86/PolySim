@@ -18,7 +18,8 @@
         "test:e2e:debug": "playwright test --debug",
         "migrate:make": "npx knex migrate:make",
         "migrate:latest": "npx knex migrate:latest",
-        "migrate:rollback": "npx knex migrate:rollback"
+        "migrate:rollback": "npx knex migrate:rollback",
+        "generate-keycloak-realm": "set -a && . ./.env && set +a && envsubst < ./keycloak/data/template.json > ./keycloak/data/import/initialRealm.json"
     },
     "dependencies": {
         "@radix-ui/react-avatar": "^1.1.10",

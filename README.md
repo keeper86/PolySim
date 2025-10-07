@@ -41,10 +41,26 @@ Install [docker](https://docs.docker.com/engine/install/).
 
 ## Production
 
-Copy .env.development over to .env, adapt the variables and run:
+### Initial Setup
+
+Copy .env.development over to .env, adapt the variables.
+
+A first-time deployment will import a default keycloak realm and client configuration. In order to set `rootUrl, adminUrl, baseUrl, redirectUris, and webOrigins` correctly, use the script to generate a valid initial realm config:
+
+```
+npm run generate-realm
+```
+
+This will read env variables and interpolate them into the template to create a valid initial realm config.
+
+This can be adapted later in the Keycloak admin UI.
+
+### Start
+
+Then start the containers with
 
 ```sh
-docker compose up --build
+docker compose up
 ```
 
 To stop and remove the containers run
