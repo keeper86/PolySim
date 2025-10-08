@@ -166,6 +166,12 @@ npm run build
 npm run test
 ```
 
+To check whether a container can be built successfully, run
+
+```sh
+docker build . # can take a while
+```
+
 ## Types
 
 This project uses strict TypeScript for all application and API code. Key type conventions and patterns:
