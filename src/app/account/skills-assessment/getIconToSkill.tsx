@@ -96,6 +96,13 @@ import { TbBrandAzure } from 'react-icons/tb';
 
 import { FaPython } from 'react-icons/fa';
 import { GiSwan } from 'react-icons/gi';
+import SvgGnuplotIcon from '@/components/icons/GnuplotIcon';
+
+export const GnuplotGreyIcon: IconType = (props) => (
+    <span style={{ filter: 'grayscale(1) contrast(130%)' }}>
+        <SvgGnuplotIcon {...props} />
+    </span>
+);
 
 export const getIconToSkill: (name: string) => IconType | undefined = (name) => {
     if (!name) {
@@ -103,6 +110,8 @@ export const getIconToSkill: (name: string) => IconType | undefined = (name) => 
     }
 
     switch (name.toLowerCase()) {
+        case 'gnuplot':
+            return GnuplotGreyIcon;
         case 'git':
             return FaGit;
         case 'azure':

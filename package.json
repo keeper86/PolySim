@@ -19,7 +19,8 @@
         "migrate:make": "npx knex migrate:make",
         "migrate:latest": "npx knex migrate:latest",
         "migrate:rollback": "npx knex migrate:rollback",
-        "generate-keycloak-realm": "set -a && . ./.env && set +a && envsubst < ./keycloak/data/template.json > ./keycloak/data/import/initialRealm.json"
+        "generate-keycloak-realm": "set -a && . ./.env && set +a && envsubst < ./keycloak/data/template.json > ./keycloak/data/import/initialRealm.json",
+        "svg:icons": "node ./scripts/svg-to-react-icons.cjs"
     },
     "dependencies": {
         "@radix-ui/react-avatar": "^1.1.10",
@@ -75,6 +76,7 @@
     "devDependencies": {
         "@eslint/eslintrc": "^3",
         "@playwright/test": "^1.55.1",
+        "@svgr/cli": "^8.1.0",
         "@tailwindcss/postcss": "^4",
         "@testing-library/jest-dom": "^6.6.3",
         "@testing-library/react": "^16.3.0",

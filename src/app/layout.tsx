@@ -50,7 +50,7 @@ export default async function RootLayout({
                                     <DynamicBreadcrumbs />
                                 </div>
                             </header>
-                            <main className='flex-1 p-4 overflow-x-auto break-words'>{children}</main>
+                            <main className='flex-1 p-0 sm:p-4 overflow-x-auto break-words'>{children}</main>
                             <Footer />
                         </SidebarInset>
                     </SidebarProvider>
