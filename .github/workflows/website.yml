@@ -11,7 +11,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
             - name: Set up Node.js
               uses: actions/setup-node@v4
               with:
@@ -38,7 +38,7 @@ jobs:
         if: (github.ref == 'refs/heads/main' || github.event.pull_request.base.ref == 'main')
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
             - name: Copy development env file
               run: cp .env.example.development .env
             - name: Set up Node.js
