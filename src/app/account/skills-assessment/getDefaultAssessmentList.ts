@@ -1,429 +1,372 @@
 import type { SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
 
-const defaultSkillsAssessment = [
+const defaultSkillsAssessment: SkillsAssessmentSchema = [
     {
-        name: 'Programming Languages',
+        category: 'Programming Languages',
         skills: [
             {
                 name: 'JavaScript',
-                level: 0,
                 subSkills: [
-                    { name: 'TypeScript', level: 0 },
-                    { name: 'Node.js', level: 0 },
-                    { name: 'Deno', level: 0 },
-                    { name: 'Bun', level: 0 },
-                    { name: 'Express.js', level: 0 },
-                    { name: 'React', level: 0 },
-                    { name: 'Next.js', level: 0 },
-                    { name: 'Remix', level: 0 },
-                    { name: 'Vue.js', level: 0 },
-                    { name: 'Nuxt.js', level: 0 },
-                    { name: 'Svelte', level: 0 },
-                    { name: 'SvelteKit', level: 0 },
-                    { name: 'Solid.js', level: 0 },
-                    { name: 'Astro', level: 0 },
-                    { name: 'Angular', level: 0 },
-                    { name: 'Playwright', level: 0 },
-                    { name: 'Cypress', level: 0 },
-                    { name: 'Vitest', level: 0 },
-                    { name: 'Jest', level: 0 },
-                    { name: 'Mocha', level: 0 },
-                    { name: 'Vite', level: 0 },
-                    { name: 'esbuild', level: 0 },
-                    { name: 'SWC', level: 0 },
-                    { name: 'Webpack', level: 0 },
-                    { name: 'Rollup', level: 0 },
-                    { name: 'ESLint', level: 0 },
-                    { name: 'Prettier', level: 0 },
-                    { name: 'Redux', level: 0 },
-                    { name: 'MobX', level: 0 },
-                    { name: 'pnpm', level: 0 },
-                    { name: 'yarn', level: 0 },
-                    { name: 'npm', level: 0 },
-                    { name: 'D3.js', level: 0 },
-                    { name: 'Chart.js', level: 0 },
-                    { name: 'Three.js', level: 0 },
+                    { name: 'TypeScript' },
+                    { name: 'Node.js' },
+                    { name: 'Deno' },
+                    { name: 'Bun' },
+                    { name: 'Express.js' },
+                    { name: 'React' },
+                    { name: 'Next.js' },
+                    { name: 'Remix' },
+                    { name: 'Vue.js' },
+                    { name: 'Nuxt.js' },
+                    { name: 'Svelte' },
+                    { name: 'SvelteKit' },
+                    { name: 'Solid.js' },
+                    { name: 'Astro' },
+                    { name: 'Angular' },
+                    { name: 'Playwright' },
+                    { name: 'Cypress' },
+                    { name: 'Vitest' },
+                    { name: 'Jest' },
+                    { name: 'Mocha' },
+                    { name: 'Vite' },
+                    { name: 'esbuild' },
+                    { name: 'SWC' },
+                    { name: 'Webpack' },
+                    { name: 'Rollup' },
+                    { name: 'ESLint' },
+                    { name: 'Prettier' },
+                    { name: 'Redux' },
+                    { name: 'MobX' },
+                    { name: 'pnpm' },
+                    { name: 'yarn' },
+                    { name: 'npm' },
+                    { name: 'D3.js' },
+                    { name: 'Chart.js' },
+                    { name: 'Three.js' },
                 ],
             },
             {
                 name: 'Python',
-                level: 0,
                 subSkills: [
-                    { name: 'Django', level: 0 },
-                    { name: 'FastAPI', level: 0 },
-                    { name: 'Flask', level: 0 },
-                    { name: 'Pandas', level: 0 },
-                    { name: 'NumPy', level: 0 },
-                    { name: 'SciPy', level: 0 },
-                    { name: 'Matplotlib', level: 0 },
-                    { name: 'TensorFlow', level: 0 },
-                    { name: 'PyTorch', level: 0 },
-                    { name: 'Scikit-learn', level: 0 },
-                    { name: 'pytest', level: 0 },
-                    { name: 'unittest', level: 0 },
-                    { name: 'Jupyter', level: 0 },
-                    { name: 'pip', level: 0 },
-                    { name: 'Poetry', level: 0 },
-                    { name: 'Conda', level: 0 },
+                    { name: 'Django' },
+                    { name: 'FastAPI' },
+                    { name: 'Flask' },
+                    { name: 'Pandas' },
+                    { name: 'NumPy' },
+                    { name: 'SciPy' },
+                    { name: 'Matplotlib' },
+                    { name: 'TensorFlow' },
+                    { name: 'PyTorch' },
+                    { name: 'Scikit-learn' },
+                    { name: 'pytest' },
+                    { name: 'unittest' },
+                    { name: 'Jupyter' },
+                    { name: 'pip' },
+                    { name: 'Poetry' },
+                    { name: 'Conda' },
                 ],
             },
             {
                 name: 'Java',
-                level: 0,
                 subSkills: [
-                    { name: 'Spring', level: 0 },
-                    { name: 'Spring Boot', level: 0 },
-                    { name: 'Hibernate', level: 0 },
-                    { name: 'Maven', level: 0 },
-                    { name: 'Gradle', level: 0 },
-                    { name: 'JUnit', level: 0 },
-                    { name: 'TestNG', level: 0 },
-                    { name: 'Mockito', level: 0 },
-                    { name: 'JavaFX', level: 0 },
-                    { name: 'Swing', level: 0 },
-                    { name: 'Tomcat', level: 0 },
-                    { name: 'JSP/Servlets', level: 0 },
-                    { name: 'Groovy', level: 0 },
+                    { name: 'Spring' },
+                    { name: 'Spring Boot' },
+                    { name: 'Hibernate' },
+                    { name: 'Maven' },
+                    { name: 'Gradle' },
+                    { name: 'JUnit' },
+                    { name: 'TestNG' },
+                    { name: 'Mockito' },
+                    { name: 'JavaFX' },
+                    { name: 'Swing' },
+                    { name: 'Tomcat' },
+                    { name: 'JSP/Servlets' },
+                    { name: 'Groovy' },
                 ],
             },
             {
                 name: 'Kotlin',
-                level: 0,
-                subSkills: [
-                    { name: 'Ktor', level: 0 },
-                    { name: 'Coroutines', level: 0 },
-                    { name: 'Android Development', level: 0 },
-                ],
+                subSkills: [{ name: 'Ktor' }, { name: 'Coroutines' }, { name: 'Android Development' }],
             },
             {
                 name: 'C/C++',
-                level: 0,
                 subSkills: [
-                    { name: 'Qt', level: 0 },
-                    { name: 'Boost', level: 0 },
-                    { name: 'OpenCV', level: 0 },
-                    { name: 'STL', level: 0 },
-                    { name: 'CMake', level: 0 },
-                    { name: 'Make', level: 0 },
-                    { name: 'Conan', level: 0 },
-                    { name: 'gcc/g++', level: 0 },
-                    { name: 'clang', level: 0 },
-                    { name: 'gdb', level: 0 },
-                    { name: 'Valgrind', level: 0 },
+                    { name: 'Qt' },
+                    { name: 'Boost' },
+                    { name: 'OpenCV' },
+                    { name: 'STL' },
+                    { name: 'CMake' },
+                    { name: 'Make' },
+                    { name: 'Conan' },
+                    { name: 'gcc/g++' },
+                    { name: 'clang' },
+                    { name: 'gdb' },
+                    { name: 'Valgrind' },
                 ],
             },
             {
                 name: 'C#',
-                level: 0,
                 subSkills: [
-                    { name: '.NET', level: 0 },
-                    { name: '.NET Core', level: 0 },
-                    { name: 'ASP.NET', level: 0 },
-                    { name: 'Entity Framework', level: 0 },
-                    { name: 'LINQ', level: 0 },
-                    { name: 'WPF', level: 0 },
-                    { name: 'Unity', level: 0 },
-                    { name: 'Blazor', level: 0 },
+                    { name: '.NET' },
+                    { name: '.NET Core' },
+                    { name: 'ASP.NET' },
+                    { name: 'Entity Framework' },
+                    { name: 'LINQ' },
+                    { name: 'WPF' },
+                    { name: 'Unity' },
+                    { name: 'Blazor' },
                 ],
             },
             {
                 name: 'Go',
-                level: 0,
                 subSkills: [
-                    { name: 'Gin', level: 0 },
-                    { name: 'Echo', level: 0 },
-                    { name: 'Goroutines', level: 0 },
-                    { name: 'gRPC', level: 0 },
-                    { name: 'Go Modules', level: 0 },
+                    { name: 'Gin' },
+                    { name: 'Echo' },
+                    { name: 'Goroutines' },
+                    { name: 'gRPC' },
+                    { name: 'Go Modules' },
                 ],
             },
             {
                 name: 'Rust',
-                level: 0,
                 subSkills: [
-                    { name: 'Cargo', level: 0 },
-                    { name: 'Actix', level: 0 },
-                    { name: 'Tokio', level: 0 },
-                    { name: 'Rocket', level: 0 },
-                    { name: 'WebAssembly', level: 0 },
+                    { name: 'Cargo' },
+                    { name: 'Actix' },
+                    { name: 'Tokio' },
+                    { name: 'Rocket' },
+                    { name: 'WebAssembly' },
                 ],
             },
-            { name: 'Ruby', level: 0, subSkills: [{ name: 'Ruby on Rails', level: 0 }] },
+            { name: 'Ruby', subSkills: [{ name: 'Ruby on Rails' }] },
             {
                 name: 'PHP',
-                level: 0,
                 subSkills: [
-                    { name: 'Laravel', level: 0 },
-                    { name: 'Symfony', level: 0 },
-                    { name: 'CodeIgniter', level: 0 },
-                    { name: 'WordPress', level: 0 },
-                    { name: 'Drupal', level: 0 },
-                    { name: 'Joomla', level: 0 },
-                    { name: 'Composer', level: 0 },
+                    { name: 'Laravel' },
+                    { name: 'Symfony' },
+                    { name: 'CodeIgniter' },
+                    { name: 'WordPress' },
+                    { name: 'Drupal' },
+                    { name: 'Joomla' },
+                    { name: 'Composer' },
                 ],
             },
             {
                 name: 'HTML/CSS',
-                level: 0,
                 subSkills: [
-                    { name: 'Sass', level: 0 },
-                    { name: 'Less', level: 0 },
-                    { name: 'Tailwind CSS', level: 0 },
-                    { name: 'Bootstrap', level: 0 },
-                    { name: 'Bulma', level: 0 },
-                    { name: 'Foundation', level: 0 },
+                    { name: 'Sass' },
+                    { name: 'Less' },
+                    { name: 'Tailwind CSS' },
+                    { name: 'Bootstrap' },
+                    { name: 'Bulma' },
+                    { name: 'Foundation' },
                 ],
             },
-            { name: 'Swift', level: 0, subSkills: [] },
+            { name: 'Swift', subSkills: [] },
             {
                 name: 'R',
-                level: 0,
-                subSkills: [
-                    { name: 'Shiny', level: 0 },
-                    { name: 'ggplot2', level: 0 },
-                    { name: 'dplyr', level: 0 },
-                    { name: 'tidyr', level: 0 },
-                ],
+                subSkills: [{ name: 'Shiny' }, { name: 'ggplot2' }, { name: 'dplyr' }, { name: 'tidyr' }],
             },
             {
                 name: 'MATLAB',
-                level: 0,
-                subSkills: [{ name: 'Simulink', level: 0 }],
+                subSkills: [{ name: 'Simulink' }],
             },
-            { name: 'Perl', level: 0, subSkills: [] },
-            { name: 'Lua', level: 0 },
-            { name: 'Haskell', level: 0 },
-            { name: 'Scala', level: 0 },
-            { name: 'Elixir', level: 0 },
-            { name: 'Clojure', level: 0 },
+            { name: 'Perl', subSkills: [] },
+            { name: 'Lua' },
+            { name: 'Haskell' },
+            { name: 'Scala' },
+            { name: 'Elixir' },
+            { name: 'Clojure' },
             {
                 name: 'Shell Scripting',
-                level: 0,
-                subSkills: [
-                    { name: 'awk', level: 0 },
-                    { name: 'sed', level: 0 },
-                    { name: 'grep', level: 0 },
-                ],
+                subSkills: [{ name: 'awk' }, { name: 'sed' }, { name: 'grep' }],
             },
-            { name: 'Erlang', level: 0 },
+            { name: 'Erlang' },
             {
                 name: 'Julia',
-                level: 0,
                 subSkills: [
-                    { name: 'DataFrames.jl', level: 0 },
-                    { name: 'Flux.jl', level: 0 },
-                    { name: 'Plots.jl', level: 0 },
-                    { name: 'JuMP.jl', level: 0 },
-                    { name: 'DifferentialEquations.jl', level: 0 },
+                    { name: 'DataFrames.jl' },
+                    { name: 'Flux.jl' },
+                    { name: 'Plots.jl' },
+                    { name: 'JuMP.jl' },
+                    { name: 'DifferentialEquations.jl' },
                 ],
             },
-            { name: 'Fortran', level: 0 },
-            { name: 'COBOL', level: 0 },
-            { name: 'Delphi', level: 0, subSkills: [] },
-            { name: 'Object Pascal', level: 0, subSkills: [] },
-            { name: 'Pascal', level: 0, subSkills: [] },
+            { name: 'Fortran' },
+            { name: 'Pascal/Delphi', subSkills: [] },
         ],
     },
     {
-        name: 'DevOps',
+        category: 'DevOps',
         skills: [
-            { name: 'Ansible', level: 0 },
-            { name: 'Nginx', level: 0 },
+            { name: 'Ansible' },
+            { name: 'Nginx' },
             {
                 name: 'Docker',
-                level: 0,
-                subSkills: [
-                    { name: 'Docker Compose', level: 0 },
-                    { name: 'Dockerfile', level: 0 },
-                    { name: 'Docker Swarm', level: 0 },
-                ],
+                subSkills: [{ name: 'Docker Compose' }, { name: 'Dockerfile' }, { name: 'Docker Swarm' }],
             },
             {
                 name: 'Kubernetes',
-                level: 0,
-                subSkills: [
-                    { name: 'kubectl', level: 0 },
-                    { name: 'Helm', level: 0 },
-                    { name: 'K9s', level: 0 },
-                    { name: 'Ingress', level: 0 },
-                ],
+                subSkills: [{ name: 'kubectl' }, { name: 'Helm' }, { name: 'K9s' }, { name: 'Ingress' }],
             },
-            { name: 'Terraform', level: 0 },
+            { name: 'Terraform' },
             {
                 name: 'AWS',
-                level: 0,
                 subSkills: [
-                    { name: 'EC2', level: 0 },
-                    { name: 'S3', level: 0 },
-                    { name: 'Lambda', level: 0 },
-                    { name: 'RDS', level: 0 },
-                    { name: 'ECS', level: 0 },
-                    { name: 'CloudFormation', level: 0 },
+                    { name: 'EC2' },
+                    { name: 'S3' },
+                    { name: 'Lambda' },
+                    { name: 'RDS' },
+                    { name: 'ECS' },
+                    { name: 'CloudFormation' },
                 ],
             },
             {
                 name: 'Azure',
-                level: 0,
-                subSkills: [
-                    { name: 'Azure DevOps', level: 0 },
-                    { name: 'Azure Functions', level: 0 },
-                    { name: 'Azure Blob Storage', level: 0 },
-                ],
+                subSkills: [{ name: 'Azure DevOps' }, { name: 'Azure Functions' }, { name: 'Azure Blob Storage' }],
             },
             {
                 name: 'Google Cloud',
-                level: 0,
                 subSkills: [
-                    { name: 'Google Compute Engine', level: 0 },
-                    { name: 'Google Cloud Storage', level: 0 },
-                    { name: 'Google Kubernetes Engine', level: 0 },
+                    { name: 'Google Compute Engine' },
+                    { name: 'Google Cloud Storage' },
+                    { name: 'Google Kubernetes Engine' },
                 ],
             },
-            { name: 'HashiCorp Vault', level: 0 },
+            { name: 'HashiCorp Vault' },
             {
                 name: 'CI/CD',
-                level: 0,
                 subSkills: [
-                    { name: 'GitHub Actions', level: 0 },
-                    { name: 'GitLab CI', level: 0 },
-                    { name: 'CircleCI', level: 0 },
-                    { name: 'Jenkins', level: 0 },
+                    { name: 'GitHub Actions' },
+                    { name: 'GitLab CI' },
+                    { name: 'CircleCI' },
+                    { name: 'Jenkins' },
                 ],
             },
             {
                 name: 'Monitoring & Logging',
-                level: 0,
                 subSkills: [
-                    { name: 'Prometheus', level: 0 },
-                    { name: 'Grafana', level: 0 },
-                    { name: 'ELK Stack', level: 0 },
-                    { name: 'OpenTelemetry', level: 0 },
-                    { name: 'Jaeger', level: 0 },
-                    { name: 'Datadog', level: 0 },
-                    { name: 'New Relic', level: 0 },
+                    { name: 'Prometheus' },
+                    { name: 'Grafana' },
+                    { name: 'ELK Stack' },
+                    { name: 'OpenTelemetry' },
+                    { name: 'Jaeger' },
+                    { name: 'Datadog' },
+                    { name: 'New Relic' },
                 ],
             },
         ],
     },
     {
-        name: 'Productivity Tools',
+        category: 'Productivity Tools',
         skills: [
             {
                 name: 'Git',
-                level: 0,
-                subSkills: [
-                    { name: 'GitHub', level: 0 },
-                    { name: 'GitLab', level: 0 },
-                    { name: 'Bitbucket', level: 0 },
-                ],
+                subSkills: [{ name: 'GitHub' }, { name: 'GitLab' }, { name: 'Bitbucket' }],
             },
-            { name: 'SVN', level: 0 },
-            { name: 'Jira', level: 0 },
-            { name: 'Confluence', level: 0 },
-            { name: 'Figma', level: 0 },
-            { name: 'Miro', level: 0 },
-            { name: 'Notion', level: 0 },
-            { name: 'GnuPlot', level: 0 },
-            { name: 'Inkscape', level: 0 },
+            { name: 'SVN' },
+            { name: 'Jira' },
+            { name: 'Confluence' },
+            { name: 'Figma' },
+            { name: 'Miro' },
+            { name: 'Notion' },
+            { name: 'GnuPlot' },
+            { name: 'Inkscape' },
             {
                 name: 'Agile Methodologies',
-                level: 0,
                 subSkills: [
-                    { name: 'Pair Programming', level: 0 },
-                    { name: 'Test-Driven Development', level: 0 },
-                    { name: 'Refactoring', level: 0 },
-                    { name: 'Scrum', level: 0 },
-                    { name: 'Kanban', level: 0 },
+                    { name: 'Pair Programming' },
+                    { name: 'Test-Driven Development' },
+                    { name: 'Refactoring' },
+                    { name: 'Scrum' },
+                    { name: 'Kanban' },
                 ],
             },
             {
                 name: 'AI Tools',
-                level: 0,
                 subSkills: [
-                    { name: 'Prompt Engineering', level: 0 },
-                    { name: 'Chain-of-Thought Prompting', level: 0 },
-                    { name: 'LangChain', level: 0 },
-                    { name: 'Model Context Protocol', level: 0 },
-                    { name: 'Hugging Face', level: 0 },
-                    { name: 'GitHub Copilot', level: 0 },
-                    { name: 'Cursor', level: 0 },
-                    { name: 'Codex', level: 0 },
+                    { name: 'Prompt Engineering' },
+                    { name: 'Chain-of-Thought Prompting' },
+                    { name: 'LangChain' },
+                    { name: 'Model Context Protocol' },
+                    { name: 'Hugging Face' },
+                    { name: 'GitHub Copilot' },
+                    { name: 'Cursor' },
+                    { name: 'Codex' },
                 ],
             },
             {
                 name: 'IDEs',
-                level: 0,
                 subSkills: [
-                    {
-                        name: 'VS Code',
-                        level: 0,
-                    },
-                    { name: 'IntelliJ IDEA', level: 0 },
-                    { name: 'PyCharm', level: 0 },
-                    { name: 'WebStorm', level: 0 },
-                    { name: 'Eclipse', level: 0 },
-                    { name: 'NetBeans', level: 0 },
-                    { name: 'CLion', level: 0 },
-                    { name: 'Rider', level: 0 },
-                    { name: 'Atom', level: 0 },
-                    { name: 'Sublime Text', level: 0 },
-                    { name: 'Vim', level: 0 },
-                    { name: 'Emacs', level: 0 },
-                    { name: 'Visual Studio', level: 0 },
-                    { name: 'Xcode', level: 0 },
-                    { name: 'Android Studio', level: 0 },
+                    { name: 'VS Code' },
+                    { name: 'IntelliJ IDEA' },
+                    { name: 'PyCharm' },
+                    { name: 'WebStorm' },
+                    { name: 'Eclipse' },
+                    { name: 'NetBeans' },
+                    { name: 'CLion' },
+                    { name: 'Rider' },
+                    { name: 'Atom' },
+                    { name: 'Sublime Text' },
+                    { name: 'Vim' },
+                    { name: 'Emacs' },
+                    { name: 'Visual Studio' },
+                    { name: 'Xcode' },
+                    { name: 'Android Studio' },
                 ],
             },
         ],
     },
     {
-        name: 'Databases',
+        category: 'Databases',
         skills: [
             {
                 name: 'PostgreSQL',
-                level: 0,
-                subSkills: [
-                    { name: 'PL/pgSQL', level: 0 },
-                    { name: 'PostGIS', level: 0 },
-                    { name: 'pg_dump/restore', level: 0 },
-                ],
+                subSkills: [{ name: 'PL/pgSQL' }, { name: 'PostGIS' }, { name: 'pg_dump/restore' }],
             },
             {
                 name: 'MongoDB',
-                level: 0,
-                subSkills: [
-                    { name: 'Mongoose', level: 0 },
-                    { name: 'Aggregation', level: 0 },
-                    { name: 'Atlas', level: 0 },
-                ],
+                subSkills: [{ name: 'Mongoose' }, { name: 'Aggregation' }, { name: 'Atlas' }],
             },
-            { name: 'Redis', level: 0 },
-            { name: 'SQLite', level: 0 },
+            { name: 'Redis' },
+            { name: 'SQLite' },
             {
                 name: 'MySQL',
-                level: 0,
-                subSkills: [
-                    { name: 'MariaDB', level: 0 },
-                    { name: 'Stored Procedures', level: 0 },
-                ],
+                subSkills: [{ name: 'MariaDB' }, { name: 'Stored Procedures' }],
             },
-            { name: 'Cassandra', level: 0 },
-            { name: 'Elasticsearch', level: 0 },
-            { name: 'Firebase', level: 0 },
-            { name: 'DynamoDB', level: 0 },
-            { name: 'Neo4j', level: 0 },
-            { name: 'InfluxDB', level: 0 },
-            { name: 'CockroachDB', level: 0 },
+            { name: 'Cassandra' },
+            { name: 'Elasticsearch' },
+            { name: 'Firebase' },
+            { name: 'DynamoDB' },
+            { name: 'Neo4j' },
+            { name: 'InfluxDB' },
+            { name: 'CockroachDB' },
         ],
     },
 ];
+
+export const isDefaultSkill = (skillName: string) => {
+    for (const category of defaultSkillsAssessment) {
+        for (const skill of category.skills) {
+            if (skill.name.toLowerCase() === skillName.toLowerCase()) {
+                return true;
+            }
+            if (skill.subSkills) {
+                for (const subSkill of skill.subSkills) {
+                    if (subSkill.name.toLowerCase() === skillName.toLowerCase()) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+};
 
 export function getDefaultSkillsAssessment(mergeWith?: SkillsAssessmentSchema): SkillsAssessmentSchema {
     if (!mergeWith) {
         return defaultSkillsAssessment;
     }
     const merged = defaultSkillsAssessment.map((defaultCategory) => {
-        const mergeCategory = mergeWith.find((c) => c.name === defaultCategory.name);
+        const mergeCategory = mergeWith.find((c) => c.category === defaultCategory.category);
         if (!mergeCategory) {
             return defaultCategory;
         }
@@ -434,14 +377,25 @@ export function getDefaultSkillsAssessment(mergeWith?: SkillsAssessmentSchema): 
                 if (!mergeSkill) {
                     return skill;
                 }
-                const mergedSubSkills = skill.subSkills?.map((subSkill) => {
-                    const mergeSubSkill = mergeSkill.subSkills?.find((ss) => ss.name === subSkill.name);
-                    return mergeSubSkill ? { ...subSkill, level: mergeSubSkill.level } : subSkill;
-                });
+
+                const defaultSubSkills = skill.subSkills || [];
+                const mergeSubSkills = mergeSkill.subSkills || [];
+
+                const defaultSubSkillsMap = new Map(defaultSubSkills.map((ss) => [ss.name, ss]));
+                const mergeSubSkillsMap = new Map(mergeSubSkills.map((ss) => [ss.name, ss]));
+
+                const mergedSubSkills = [
+                    ...defaultSubSkills.map((subSkill) => {
+                        const mergeSubSkill = mergeSubSkillsMap.get(subSkill.name);
+                        return mergeSubSkill ? { ...subSkill, level: mergeSubSkill.level } : subSkill;
+                    }),
+                    ...mergeSubSkills.filter((ss) => !defaultSubSkillsMap.has(ss.name)),
+                ];
+
                 return {
                     ...skill,
                     level: mergeSkill.level,
-                    subSkills: mergedSubSkills,
+                    subSkills: mergedSubSkills.length > 0 ? mergedSubSkills : undefined,
                 };
             }),
             ...mergeCategory.skills.filter(
@@ -461,8 +415,21 @@ export function cleanEmptyDefaultSkillsAssessment(data: SkillsAssessmentSchema):
         .map((category) => {
             const cleanedSkills = category.skills
                 .map((skill) => {
-                    if (skill.level > 0) {
-                        const cleanedSubSkills = skill.subSkills?.filter((subSkill) => subSkill.level > 0);
+                    if (!isDefaultSkill(skill.name)) {
+                        console.log(`Keeping user-defined skill: ${skill.name}`);
+
+                        return skill;
+                    }
+                    if (skill.level && skill.level > 0) {
+                        let cleanedSubSkills = skill.subSkills;
+                        if (Array.isArray(skill.subSkills)) {
+                            cleanedSubSkills = skill.subSkills.filter((subSkill) => {
+                                if (!isDefaultSkill(subSkill.name)) {
+                                    return true;
+                                }
+                                return subSkill.level && subSkill.level > 0;
+                            });
+                        }
                         return {
                             ...skill,
                             subSkills: cleanedSubSkills,

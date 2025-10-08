@@ -2,9 +2,10 @@ import type { IconType } from 'react-icons';
 import { AiOutlineJava } from 'react-icons/ai';
 import { BiLogoVisualStudio } from 'react-icons/bi';
 import { DiVisualstudio } from 'react-icons/di';
-import { FaAws, FaGit } from 'react-icons/fa';
+import { FaAws, FaGit, FaPhp, FaHtml5 } from 'react-icons/fa';
 import { ImCross } from 'react-icons/im';
 import {
+    SiAndroid,
     SiAndroidstudio,
     SiAngular,
     SiAnsible,
@@ -13,29 +14,53 @@ import {
     SiApachenetbeanside,
     SiAstro,
     SiBitbucket,
+    SiBoost,
+    SiBootstrap,
+    SiBulma,
+    SiBun,
     SiChartdotjs,
+    SiCircleci,
+    SiClojure,
     SiCmake,
+    SiCockroachlabs,
+    SiCodeigniter,
+    SiComposer,
+    SiConan,
     SiConfluence,
     SiCplusplus,
+    SiCypress,
     SiD3Dotjs,
+    SiDatadog,
+    SiDeno,
     SiDjango,
     SiDocker,
     SiDotnet,
+    SiDrupal,
     SiEclipseide,
     SiElasticsearch,
+    SiElixir,
+    SiErlang,
+    SiEsbuild,
     SiEslint,
     SiExpress,
     SiFastapi,
     SiFigma,
+    SiFirebase,
     SiFlask,
     SiGithub,
+    SiGithubactions,
     SiGithubcopilot,
     SiGitlab,
+    SiGnuemacs,
     SiGo,
     SiGooglecloud,
     SiGradle,
+    SiGrafana,
+    SiHaskell,
     SiHelm,
     SiHibernate,
+    SiHuggingface,
+    SiInfluxdb,
     SiInkscape,
     SiIntellijidea,
     SiJavascript,
@@ -43,35 +68,55 @@ import {
     SiJest,
     SiJetbrains,
     SiJira,
+    SiJoomla,
     SiJquery,
+    SiJulia,
     SiJunit5,
     SiJupyter,
     SiKotlin,
+    SiKtor,
     SiKubernetes,
+    SiLaravel,
+    SiLess,
+    SiLua,
     SiMiro,
+    SiMobx,
     SiMocha,
     SiMongodb,
     SiMysql,
+    SiNeo4J,
+    SiNewrelic,
     SiNextdotjs,
     SiNginx,
     SiNodedotjs,
     SiNotion,
+    SiNpm,
     SiNumpy,
     SiNuxtdotjs,
     SiOpenai,
     SiOpencv,
+    SiOpentelemetry,
     SiPandas,
+    SiPerl,
+    SiPnpm,
     SiPostgresql,
     SiPrettier,
+    SiPrometheus,
     SiPycharm,
     SiPython,
     SiPytorch,
     SiQt,
+    SiR,
     SiReact,
     SiRedis,
     SiRedux,
+    SiRemix,
     SiRollupdotjs,
+    SiRuby,
+    SiRubyonrails,
     SiRust,
+    SiSass,
+    SiScala,
     SiScikitlearn,
     SiScrumalliance,
     SiSharp,
@@ -79,24 +124,44 @@ import {
     SiSpring,
     SiSpringboot,
     SiSqlite,
+    SiSublimetext,
     SiSubversion,
+    SiSvelte,
+    SiSwc,
+    SiSwift,
+    SiSymfony,
+    SiTailwindcss,
     SiTensorflow,
     SiTerraform,
     SiThreedotjs,
     SiTypescript,
     SiUnity,
     SiVault,
+    SiVim,
     SiVite,
+    SiVitest,
     SiVuedotjs,
+    SiWebassembly,
     SiWebpack,
     SiWebstorm,
+    SiWordpress,
     SiXcode,
+    SiYarn,
+    SiFortran,
+    SiDelphi,
 } from 'react-icons/si';
-import { TbBrandAzure } from 'react-icons/tb';
+import { TbTerminal2 } from 'react-icons/tb';
+import { FaBrain } from 'react-icons/fa6';
 
+import { TbBrandAzure } from 'react-icons/tb';
+import { TiArrowLoop } from 'react-icons/ti';
+import { TbMathIntegral } from 'react-icons/tb';
+import { SiAmazondynamodb } from 'react-icons/si';
+import { FaInfinity } from 'react-icons/fa6';
+
+import SvgGnuplotIcon from '@/components/icons/GnuplotIcon';
 import { FaPython } from 'react-icons/fa';
 import { GiSwan } from 'react-icons/gi';
-import SvgGnuplotIcon from '@/components/icons/GnuplotIcon';
 
 export const GnuplotGreyIcon: IconType = (props) => (
     <span style={{ filter: 'grayscale(1) contrast(130%)' }}>
@@ -110,6 +175,16 @@ export const getIconToSkill: (name: string) => IconType | undefined = (name) => 
     }
 
     switch (name.toLowerCase()) {
+        case 'ci/cd':
+            return FaInfinity;
+        case 'dynamodb':
+            return SiAmazondynamodb;
+        case 'ides':
+            return TbMathIntegral;
+        case 'agile methodologies':
+            return TiArrowLoop;
+        case 'ai tools':
+            return FaBrain;
         case 'gnuplot':
             return GnuplotGreyIcon;
         case 'git':
@@ -179,6 +254,7 @@ export const getIconToSkill: (name: string) => IconType | undefined = (name) => 
         case 'github':
             return SiGithub;
         case 'gitlab':
+        case 'gitlab ci':
             return SiGitlab;
         case 'bitbucket':
             return SiBitbucket;
@@ -253,6 +329,9 @@ export const getIconToSkill: (name: string) => IconType | undefined = (name) => 
             return SiSpring;
         case 'maven':
             return SiApachemaven;
+        case 'aws':
+        case 'amazonaws':
+            return FaAws;
         case 'gradle':
             return SiGradle;
         case 'junit':
@@ -269,13 +348,16 @@ export const getIconToSkill: (name: string) => IconType | undefined = (name) => 
             return SiCmake;
         case 'terraform':
             return SiTerraform;
-        case 'aws':
-        case 'amazonaws':
-            return FaAws;
-        case 'vault':
+        case 'hashicorp vault':
             return SiVault;
         case 'nginx':
             return SiNginx;
+        case 'shell scripting':
+        case 'shell':
+        case 'bash':
+        case 'zsh':
+        case 'sh':
+            return TbTerminal2;
         case 'ansible':
             return SiAnsible;
         case 'sqlite':
@@ -293,8 +375,6 @@ export const getIconToSkill: (name: string) => IconType | undefined = (name) => 
             return SiApachenetbeanside;
         case 'clion':
             return SiCmake;
-        case 'rider':
-            return SiJetbrains;
         case 'visual studio':
             return DiVisualstudio;
         case 'github copilot':
@@ -330,6 +410,138 @@ export const getIconToSkill: (name: string) => IconType | undefined = (name) => 
             return SiElasticsearch;
         case 'android studio':
             return SiAndroidstudio;
+        case 'rider':
+            return SiJetbrains;
+        case 'webassembly':
+            return SiWebassembly;
+        case 'deno':
+            return SiDeno;
+        case 'bun':
+            return SiBun;
+        case 'remix':
+            return SiRemix;
+        case 'svelte':
+            return SiSvelte;
+        case 'cypress':
+            return SiCypress;
+        case 'vitest':
+            return SiVitest;
+        case 'esbuild':
+            return SiEsbuild;
+        case 'swc':
+            return SiSwc;
+        case 'mobx':
+            return SiMobx;
+        case 'pnpm':
+            return SiPnpm;
+        case 'yarn':
+            return SiYarn;
+        case 'npm':
+            return SiNpm;
+        case 'ktor':
+            return SiKtor;
+        case 'android':
+        case 'android development':
+            return SiAndroid;
+        case 'boost':
+            return SiBoost;
+        case 'conan':
+            return SiConan;
+        case 'ruby':
+            return SiRuby;
+        case 'ruby on rails':
+            return SiRubyonrails;
+        case 'laravel':
+            return SiLaravel;
+        case 'symfony':
+            return SiSymfony;
+        case 'codeigniter':
+            return SiCodeigniter;
+        case 'wordpress':
+            return SiWordpress;
+        case 'drupal':
+            return SiDrupal;
+        case 'joomla':
+            return SiJoomla;
+        case 'composer':
+            return SiComposer;
+        case 'sass':
+            return SiSass;
+        case 'less':
+            return SiLess;
+        case 'tailwind css':
+        case 'tailwindcss':
+            return SiTailwindcss;
+        case 'bootstrap':
+            return SiBootstrap;
+        case 'bulma':
+            return SiBulma;
+        case 'swift':
+            return SiSwift;
+        case 'r':
+            return SiR;
+        case 'perl':
+            return SiPerl;
+        case 'lua':
+            return SiLua;
+        case 'haskell':
+            return SiHaskell;
+        case 'scala':
+            return SiScala;
+        case 'elixir':
+            return SiElixir;
+        case 'clojure':
+            return SiClojure;
+        case 'erlang':
+            return SiErlang;
+        case 'julia':
+            return SiJulia;
+        case 'github actions':
+            return SiGithubactions;
+        case 'circleci':
+            return SiCircleci;
+        case 'prometheus':
+            return SiPrometheus;
+        case 'grafana':
+            return SiGrafana;
+        case 'opentelemetry':
+            return SiOpentelemetry;
+        case 'datadog':
+            return SiDatadog;
+        case 'new relic':
+        case 'newrelic':
+            return SiNewrelic;
+        case 'hugging face':
+        case 'huggingface':
+            return SiHuggingface;
+        case 'sublime text':
+        case 'sublimetext':
+            return SiSublimetext;
+        case 'vim':
+            return SiVim;
+        case 'emacs':
+        case 'gnu emacs':
+            return SiGnuemacs;
+        case 'firebase':
+            return SiFirebase;
+        case 'neo4j':
+            return SiNeo4J;
+        case 'influxdb':
+            return SiInfluxdb;
+        case 'cockroachdb':
+            return SiCockroachlabs;
+        case 'fortran':
+            return SiFortran;
+        case 'pascal':
+        case 'delphi':
+        case 'object pascal':
+        case 'pascal/delphi':
+            return SiDelphi;
+        case 'html/css':
+        case 'html5':
+            return FaHtml5;
+        case 'php':
+            return FaPhp;
         default:
             return undefined;
     }

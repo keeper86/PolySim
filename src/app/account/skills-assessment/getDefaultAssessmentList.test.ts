@@ -1,28 +1,30 @@
-import { describe, it, expect } from 'vitest';
-import { getDefaultSkillsAssessment, cleanEmptyDefaultSkillsAssessment } from './getDefaultAssessmentList';
 import type { SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
+import { describe, expect, it } from 'vitest';
+import { cleanEmptyDefaultSkillsAssessment, getDefaultSkillsAssessment } from './getDefaultAssessmentList';
 
 const defaultSkills = getDefaultSkillsAssessment();
 
-const firstCategory = defaultSkills[0].name;
+const firstCategory = defaultSkills[0].category;
 const firstSkill = defaultSkills[0].skills[0].name;
-const firstSubSkill1 = defaultSkills[0].skills[0].subSkills![0].name;
-const firstSubSkill2 = defaultSkills[0].skills[0].subSkills![1].name;
+const firstSubSkill = defaultSkills[0].skills[0].subSkills![0].name;
+const secondSubSkill = defaultSkills[0].skills[0].subSkills![1].name;
 
 const someNewSkill = 'Some New Skill';
+const someNewSubSkill = 'Some New SubSkill';
 const minimalMerge: SkillsAssessmentSchema = [
     {
-        name: firstCategory,
+        category: firstCategory,
         skills: [
             {
                 name: firstSkill,
                 level: 3,
                 subSkills: [
-                    { name: firstSubSkill1, level: 2 },
-                    { name: firstSubSkill2, level: 0 },
+                    { name: firstSubSkill, level: 2 },
+                    { name: secondSubSkill, level: 0 },
+                    { name: someNewSubSkill, level: 0 },
                 ],
             },
-            { name: someNewSkill, level: 2, subSkills: [{ name: 'SubSkill1', level: 1 }] },
+            { name: someNewSkill, level: 2, subSkills: [{ name: someNewSubSkill, level: 1 }] },
         ],
     },
 ];
@@ -30,49 +32,156 @@ const minimalMerge: SkillsAssessmentSchema = [
 const nonDefaultCategory = 'Non-default category';
 const wrongMerge1: SkillsAssessmentSchema = [
     {
-        name: nonDefaultCategory, // This category does not exist in the default; categories cannot be added
+        category: nonDefaultCategory, // This category does not exist in the default; categories cannot be added
         skills: [{ name: 'New Skill', level: 1 }],
     },
 ];
 
 describe('getDefaultSkillsAssessment', () => {
-    it('merges levels from mergeWith argument', () => {
+    it('preserves the toMerge structure', () => {
         const result = getDefaultSkillsAssessment(minimalMerge);
-        const js = result.find((cat) => cat.name === firstCategory)?.skills.find((s) => s.name === firstSkill);
-        expect(js?.level).toBe(3);
 
-        const ts = js?.subSkills?.find((ss) => ss.name === firstSubSkill1);
-        expect(ts?.level).toBe(2);
+        const cat = result.find((cat) => cat.category === firstCategory);
+        expect(cat).toBeDefined();
 
-        const node = js?.subSkills?.find((ss) => ss.name === firstSubSkill2);
-        expect(node?.level).toBe(0);
+        const skill = cat!.skills.find((s) => s.name === firstSkill);
+        expect(skill).toBeDefined();
+
+        expect(skill?.level).toBe(3);
+        expect(skill?.subSkills?.find((ss) => ss.name === someNewSubSkill)?.level).toBeDefined();
+
+        expect(cat?.skills.find((s) => s.name === someNewSkill)).toBeDefined();
     });
 
     it('ignores categories in mergeWith that are not in the default', () => {
-        expect(wrongMerge1.find((cat) => cat.name === nonDefaultCategory)).toBeDefined();
+        expect(wrongMerge1.find((cat) => cat.category === nonDefaultCategory)).toBeDefined();
 
         const result = getDefaultSkillsAssessment(wrongMerge1);
 
-        expect(result.find((cat) => cat.name === nonDefaultCategory)).toBeUndefined();
+        expect(result.find((cat) => cat.category === nonDefaultCategory)).toBeUndefined();
     });
 
     it('includes user-defined skills in the merged result', () => {
         const result = getDefaultSkillsAssessment(minimalMerge);
-        const cat = result.find((cat) => cat.name === firstCategory);
+        const cat = result.find((cat) => cat.category === firstCategory);
 
         expect(cat?.skills.find((s) => s.name === someNewSkill)).toBeDefined();
         expect(cat?.skills.find((s) => s.name === someNewSkill)?.level).toBe(2);
-        expect(cat?.skills.find((s) => s.name === someNewSkill)?.subSkills?.[0].name).toBe('SubSkill1');
+        expect(cat?.skills.find((s) => s.name === someNewSkill)?.subSkills?.[0].name).toBe(someNewSubSkill);
         expect(cat?.skills.find((s) => s.name === someNewSkill)?.subSkills?.[0].level).toBe(1);
     });
 });
 
 describe('cleanEmptyDefaultSkillsAssessment', () => {
+    it('keeps custom (non-default) skills with level 0', () => {
+        const input: SkillsAssessmentSchema = [
+            {
+                category: 'Custom Category',
+                skills: [{ name: 'Custom Skill', level: 0 }],
+            },
+        ];
+        const cleaned = cleanEmptyDefaultSkillsAssessment(input);
+        expect(cleaned).toEqual([
+            {
+                category: 'Custom Category',
+                skills: [{ name: 'Custom Skill', level: 0 }],
+            },
+        ]);
+    });
+
+    it('keeps custom (non-default) subSkills with level 0', () => {
+        const input: SkillsAssessmentSchema = [
+            {
+                category: 'Custom Category',
+                skills: [
+                    {
+                        name: 'Custom Skill',
+                        level: 2,
+                        subSkills: [
+                            { name: 'Custom SubSkill', level: 0 },
+                            { name: 'Another SubSkill', level: 1 },
+                        ],
+                    },
+                ],
+            },
+        ];
+        const cleaned = cleanEmptyDefaultSkillsAssessment(input);
+        expect(cleaned).toEqual([
+            {
+                category: 'Custom Category',
+                skills: [
+                    {
+                        name: 'Custom Skill',
+                        level: 2,
+                        subSkills: [
+                            { name: 'Custom SubSkill', level: 0 },
+                            { name: 'Another SubSkill', level: 1 },
+                        ],
+                    },
+                ],
+            },
+        ]);
+    });
+
+    it('removes default skills with level 0 but keeps custom skills with level 0', () => {
+        const input: SkillsAssessmentSchema = [
+            {
+                category: firstCategory,
+                skills: [
+                    { name: firstSkill, level: 0 },
+                    { name: 'Custom Skill', level: 0 },
+                ],
+            },
+        ];
+        const cleaned = cleanEmptyDefaultSkillsAssessment(input);
+        expect(cleaned).toEqual([
+            {
+                category: firstCategory,
+                skills: [{ name: 'Custom Skill', level: 0 }],
+            },
+        ]);
+    });
+
+    it('removes default subSkills with level 0 but keeps custom subSkills with level 0', () => {
+        const input: SkillsAssessmentSchema = [
+            {
+                category: firstCategory,
+                skills: [
+                    {
+                        name: firstSkill,
+                        level: 2,
+                        subSkills: [
+                            { name: firstSubSkill, level: 0 },
+                            { name: someNewSkill, level: 0 },
+                            { name: secondSubSkill, level: 1 },
+                        ],
+                    },
+                ],
+            },
+        ];
+        const cleaned = cleanEmptyDefaultSkillsAssessment(input);
+        expect(cleaned).toEqual([
+            {
+                category: firstCategory,
+                skills: [
+                    {
+                        name: firstSkill,
+                        level: 2,
+                        subSkills: [
+                            { name: someNewSkill, level: 0 },
+                            { name: secondSubSkill, level: 1 },
+                        ],
+                    },
+                ],
+            },
+        ]);
+    });
+
     it('removes entire category if all skills are level 0', () => {
         const input: SkillsAssessmentSchema = [
             {
-                name: firstCategory,
-                skills: [{ name: 'Skill1', level: 0 }],
+                category: firstCategory,
+                skills: [{ name: firstSkill, level: 0 }],
             },
         ];
         const cleaned = cleanEmptyDefaultSkillsAssessment(input);
@@ -82,14 +191,14 @@ describe('cleanEmptyDefaultSkillsAssessment', () => {
     it('removes subSkills with level 0 but keeps skill if skill.level > 0', () => {
         const input: SkillsAssessmentSchema = [
             {
-                name: firstCategory,
+                category: firstCategory,
                 skills: [
                     {
-                        name: 'Skill',
+                        name: firstSkill,
                         level: 2,
                         subSkills: [
-                            { name: 'Sub1', level: 0 },
-                            { name: 'Sub2', level: 1 },
+                            { name: firstSubSkill, level: 0 },
+                            { name: secondSubSkill, level: 1 },
                         ],
                     },
                 ],
@@ -99,12 +208,12 @@ describe('cleanEmptyDefaultSkillsAssessment', () => {
 
         expect(cleaned).toEqual([
             {
-                name: firstCategory,
+                category: firstCategory,
                 skills: [
                     {
-                        name: 'Skill',
+                        name: firstSkill,
                         level: 2,
-                        subSkills: [{ name: 'Sub2', level: 1 }],
+                        subSkills: [{ name: secondSubSkill, level: 1 }],
                     },
                 ],
             },
@@ -114,17 +223,18 @@ describe('cleanEmptyDefaultSkillsAssessment', () => {
     it('removes skill if skill.level is 0, even if subSkills have level > 0', () => {
         const input: SkillsAssessmentSchema = [
             {
-                name: firstCategory,
+                category: firstCategory,
                 skills: [
                     {
-                        name: 'Skill',
+                        name: firstSkill,
                         level: 0,
-                        subSkills: [{ name: 'Sub1', level: 2 }],
+                        subSkills: [{ name: firstSubSkill, level: 2 }],
                     },
                 ],
             },
         ];
         const cleaned = cleanEmptyDefaultSkillsAssessment(input);
+
         expect(cleaned.length).toBe(0);
     });
 
@@ -133,23 +243,27 @@ describe('cleanEmptyDefaultSkillsAssessment', () => {
         expect(cleaned).toEqual([]);
     });
 
-    it('keeps known default-categories and ignores unknown ones', () => {
+    it('keeps known default and unknown categories', () => {
         const input: SkillsAssessmentSchema = [
             {
-                name: firstCategory,
-                skills: [{ name: 'Skill1', level: 1 }],
+                category: firstCategory,
+                skills: [{ name: firstSkill, level: 1 }],
             },
             {
-                name: 'Non-default category',
-                skills: [{ name: 'Skill3', level: 3 }],
+                category: nonDefaultCategory,
+                skills: [{ name: someNewSkill, level: 3 }],
             },
         ];
         const cleaned = cleanEmptyDefaultSkillsAssessment(input);
 
         expect(cleaned).toEqual([
             {
-                name: firstCategory,
-                skills: [{ name: 'Skill1', level: 1 }],
+                category: firstCategory,
+                skills: [{ name: firstSkill, level: 1 }],
+            },
+            {
+                category: nonDefaultCategory,
+                skills: [{ name: someNewSkill, level: 3 }],
             },
         ]);
     });

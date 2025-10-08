@@ -21,7 +21,11 @@ import { GoDot } from 'react-icons/go';
 import { clientLogger } from '@/app/clientLogger';
 import { Separator } from '@/components/ui/separator';
 import type { SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
-import { cleanEmptyDefaultSkillsAssessment, getDefaultSkillsAssessment } from './getDefaultAssessmentList';
+import {
+    cleanEmptyDefaultSkillsAssessment,
+    getDefaultSkillsAssessment,
+    isDefaultSkill,
+} from './getDefaultAssessmentList';
 import { getIconToSkill } from './getIconToSkill';
 
 const childLogger = clientLogger.child('SkillsAssessmentPage');
@@ -37,17 +41,52 @@ export default function SkillsAssessmentPage() {
     const saveTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
     const savingRef = useRef(false);
 
-    const getCategoryIdx = (category: string) => data.findIndex((c) => c.name === category);
+    function deleteCustomSubSkill(category: string, itemIndex: number, subIndex: number): void {
+        const idx = getCategoryIdx(category);
+        if (idx === -1) {
+            return;
+        }
+        const updated = [...data];
+        const skills = [...updated[idx].skills];
+        const item = { ...skills[itemIndex] };
+        if (!item.subSkills) {
+            return;
+        }
+        item.subSkills = item.subSkills.filter((_, i) => i !== subIndex);
+        skills[itemIndex] = item;
+        updated[idx] = { ...updated[idx], skills };
+        setData(updated);
+    }
+
+    function deleteCustomSkill(category: string, itemIndex: number): void {
+        const idx = getCategoryIdx(category);
+        if (idx === -1) {
+            return;
+        }
+        const updated = [...data];
+        const skills = [...updated[idx].skills];
+        const item = { ...skills[itemIndex] };
+        if (item.subSkills && item.subSkills.some((s) => s.level && s.level > 0)) {
+            toast.error('Cannot delete skill with rated sub-skills. Reset ratings first.');
+            return;
+        }
+        updated[idx] = { ...updated[idx], skills: skills.filter((_, i) => i !== itemIndex) };
+        setData(updated);
+    }
+
+    const getCategoryIdx = (category: string) => data.findIndex((c) => c.category === category);
 
     const loadData = async () => {
         setLoading(true);
         try {
             const result = await trpcClient['skills-assessment-get'].query();
             if (!result || result.length === 0) {
-                console.log('No existing skills assessment found, loading default');
+                childLogger.debug('No existing skills assessment found, loading default');
                 setData(getDefaultSkillsAssessment());
             } else {
-                console.log('Loaded existing skills assessment:', result);
+                childLogger.debug(
+                    'Loaded existing skills assessment:' + JSON.stringify(getDefaultSkillsAssessment(result)),
+                );
                 setData(getDefaultSkillsAssessment(result));
             }
         } catch (error) {
@@ -242,7 +281,7 @@ export default function SkillsAssessmentPage() {
             case 3:
                 return {
                     label: 'Expert',
-                    description: 'Expertise, can mentor others and handle complex challenges, knows their limitations',
+                    description: 'Can mentor others and handle complex challenges, knows their limitations',
                 };
             default:
                 return {
@@ -314,7 +353,11 @@ export default function SkillsAssessmentPage() {
                                     <span className='px-2 py-1 rounded bg-muted text-muted-foreground text-xs min-w-[90px] text-center'>
                                         {getLevelText(level).label}
                                     </span>
-                                    <div className='flex items-center gap-1'>
+                                    <div className='sm:hidden flex flex-row items-center justify-start gap-2 w-full mt-1 text-xs text-muted-foreground'>
+                                        <StarRating level={level} />
+                                        <span className='break-words text-left'>{getLevelText(level).description}</span>
+                                    </div>
+                                    <div className='hidden sm:flex items-center gap-1'>
                                         <StarRating level={level} />
                                     </div>
                                 </div>
@@ -327,7 +370,7 @@ export default function SkillsAssessmentPage() {
                 </div>
             </div>
             {data.map((categoryObj, categoryIdx) => {
-                const category = categoryObj.name;
+                const category = categoryObj.category;
                 const items = categoryObj.skills;
                 const isCollapsed = collapsedCategories[category];
                 return (
@@ -347,156 +390,179 @@ export default function SkillsAssessmentPage() {
                             style={{ willChange: 'max-height, opacity' }}
                         >
                             <div className='space-y-3 mb-3'>
-                                {items.map((item, itemIndex) => (
-                                    <div
-                                        key={itemIndex}
-                                        className='flex flex-col border rounded px-3 py-2 text-secondary-foreground'
-                                    >
-                                        <div className='flex flex-row justify-between items-center gap-4'>
-                                            <span className='font-medium min-w-0 truncate break-words sm:min-w-[100px] md:min-w-[100px] flex items-center gap-2'>
-                                                {(() => {
-                                                    const Icon = getIconToSkill(item.name) || GoDot;
-                                                    return <Icon className='w-6 h-6 text-primary shrink-0' />;
-                                                })()}
-                                                {item.name}
-                                            </span>
-                                            <StarRating
-                                                level={item.level}
-                                                onChange={(level) => updateItemLevel(category, itemIndex, level)}
-                                                onDelete={() => {
-                                                    if (item.subSkills && item.subSkills.some((s) => s.level > 0)) {
-                                                        setConfirmDelete({ categoryIdx, itemIndex });
-                                                    } else {
-                                                        const updated = [...data];
-                                                        const skills = [...updated[categoryIdx].skills];
-                                                        const skill = { ...skills[itemIndex], level: 0 };
-                                                        if (skill.subSkills) {
-                                                            skill.subSkills = skill.subSkills.map((s) => ({
-                                                                ...s,
-                                                                level: 0,
-                                                            }));
-                                                        }
-                                                        skills[itemIndex] = skill;
-                                                        updated[categoryIdx] = { ...updated[categoryIdx], skills };
-                                                        setData(updated);
-                                                    }
-                                                }}
-                                            />
-                                        </div>
-                                        {item.level > 0 && (
-                                            <div className='mt-3 space-y-2'>
-                                                <div className='flex items-center gap-2 '>
-                                                    <button
-                                                        type='button'
-                                                        onClick={() => {
-                                                            const key = `${category}-${itemIndex}`;
-                                                            setCollapsedSkills((prev) => ({
-                                                                ...prev,
-                                                                [key]: !prev[key],
-                                                            }));
-                                                        }}
-                                                        className='text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors  cursor-pointer'
-                                                        aria-label={
-                                                            collapsedSkills[`${category}-${itemIndex}`]
-                                                                ? 'Expand sub-skills'
-                                                                : 'Collapse sub-skills'
-                                                        }
-                                                    >
-                                                        {collapsedSkills[`${category}-${itemIndex}`] ? (
-                                                            <ChevronDown className='w-4 h-4' />
-                                                        ) : (
-                                                            <ChevronUp className='w-4 h-4' />
-                                                        )}
-
-                                                        <label className='text-sm font-medium  cursor-pointer'>
-                                                            Sub-Skills
-                                                        </label>
-                                                    </button>
-                                                </div>
-                                                <div
-                                                    className={`transition-all duration-250 overflow-hidden ${collapsedSkills[`${category}-${itemIndex}`] ? 'max-h-0 opacity-0 pointer-events-none' : 'max-h-[1000px] opacity-100'}`}
-                                                    style={{ willChange: 'max-height, opacity' }}
-                                                >
-                                                    <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
-                                                        {item.subSkills &&
-                                                            item.subSkills.map((sub, subIndex) => {
-                                                                const SubIcon =
-                                                                    getIconToSkill(sub.name) ||
-                                                                    getIconToSkill(item.name) ||
-                                                                    GoDot;
-                                                                return (
-                                                                    <div
-                                                                        key={subIndex}
-                                                                        className='flex flex-row justify-between items-center border rounded px-3 py-2 bg-secondary text-secondary-foreground sm:gap-4'
-                                                                    >
-                                                                        <div className='font-medium flex items-center gap-2'>
-                                                                            <SubIcon className='w-5 h-5 text-primary shrink-0' />
-                                                                            {sub.name}
-                                                                        </div>
-                                                                        <StarRating
-                                                                            level={sub.level}
-                                                                            onChange={(level) =>
-                                                                                updateSubSkillLevel(
-                                                                                    category,
-                                                                                    itemIndex,
-                                                                                    subIndex,
-                                                                                    level,
-                                                                                )
-                                                                            }
-                                                                            onDelete={() => {
-                                                                                updateSubSkillLevel(
-                                                                                    category,
-                                                                                    itemIndex,
-                                                                                    subIndex,
-                                                                                    0,
-                                                                                );
-                                                                            }}
-                                                                        />
-                                                                    </div>
-                                                                );
-                                                            })}
-                                                    </div>
-                                                    <div className='flex gap-2 mt-2'>
-                                                        <Input
-                                                            type='text'
-                                                            placeholder='Add a sub-skill'
-                                                            value={newSubSkill[category]?.[itemIndex] || ''}
-                                                            onChange={(e) =>
-                                                                setNewSubSkill((prev) => ({
-                                                                    ...prev,
-                                                                    [category]: {
-                                                                        ...(prev[category] || {}),
-                                                                        [itemIndex]: e.target.value,
-                                                                    },
-                                                                }))
+                                {items.map((item, itemIndex) => {
+                                    const ItemIcon = getIconToSkill(item.name) || GoDot;
+                                    return (
+                                        <div
+                                            key={itemIndex}
+                                            className='flex flex-col border rounded px-3 py-2 text-secondary-foreground'
+                                        >
+                                            <div className='flex flex-row justify-between items-center gap-4'>
+                                                <span className='font-medium min-w-0 truncate break-words sm:min-w-[100px] md:min-w-[100px] flex items-center gap-2'>
+                                                    {!isDefaultSkill(item.name) ? (
+                                                        <button onClick={() => deleteCustomSkill(category, itemIndex)}>
+                                                            <Trash2 className='w-6 h-6 text-red-500 hover:text-red-600' />
+                                                        </button>
+                                                    ) : (
+                                                        <ItemIcon className='w-6 h-6 text-primary shrink-0' />
+                                                    )}
+                                                    {item.name}
+                                                </span>
+                                                <StarRating
+                                                    level={item.level || 0}
+                                                    onChange={(level) => updateItemLevel(category, itemIndex, level)}
+                                                    onDelete={() => {
+                                                        if (
+                                                            item.subSkills &&
+                                                            item.subSkills.some((s) => s.level && s.level > 0)
+                                                        ) {
+                                                            setConfirmDelete({ categoryIdx, itemIndex });
+                                                        } else {
+                                                            const updated = [...data];
+                                                            const skills = [...updated[categoryIdx].skills];
+                                                            const skill = { ...skills[itemIndex], level: 0 };
+                                                            if (skill.subSkills) {
+                                                                skill.subSkills = skill.subSkills.map((s) => ({
+                                                                    ...s,
+                                                                    level: 0,
+                                                                }));
                                                             }
-                                                            onKeyDown={(e) => {
-                                                                if (e.key === 'Enter') {
+                                                            skills[itemIndex] = skill;
+                                                            updated[categoryIdx] = { ...updated[categoryIdx], skills };
+                                                            setData(updated);
+                                                        }
+                                                    }}
+                                                />
+                                            </div>
+                                            {(item.level ?? 0) > 0 && (
+                                                <div className='mt-3 space-y-2'>
+                                                    <div className='flex items-center gap-2 '>
+                                                        <button
+                                                            type='button'
+                                                            onClick={() => {
+                                                                const key = `${category}-${itemIndex}`;
+                                                                setCollapsedSkills((prev) => ({
+                                                                    ...prev,
+                                                                    [key]: !prev[key],
+                                                                }));
+                                                            }}
+                                                            className='text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors  cursor-pointer'
+                                                            aria-label={
+                                                                collapsedSkills[`${category}-${itemIndex}`]
+                                                                    ? 'Expand sub-skills'
+                                                                    : 'Collapse sub-skills'
+                                                            }
+                                                        >
+                                                            {collapsedSkills[`${category}-${itemIndex}`] ? (
+                                                                <ChevronDown className='w-4 h-4' />
+                                                            ) : (
+                                                                <ChevronUp className='w-4 h-4' />
+                                                            )}
+
+                                                            <label className='text-sm font-medium  cursor-pointer'>
+                                                                Sub-Skills
+                                                            </label>
+                                                        </button>
+                                                    </div>
+                                                    <div
+                                                        className={`transition-all duration-250 overflow-hidden ${collapsedSkills[`${category}-${itemIndex}`] ? 'max-h-0 opacity-0 pointer-events-none' : 'opacity-100'}`}
+                                                        style={{ willChange: 'max-height, opacity' }}
+                                                    >
+                                                        <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
+                                                            {item.subSkills &&
+                                                                item.subSkills.map((sub, subIndex) => {
+                                                                    const SubIcon =
+                                                                        getIconToSkill(sub.name) ||
+                                                                        getIconToSkill(item.name) ||
+                                                                        GoDot;
+                                                                    return (
+                                                                        <div
+                                                                            key={subIndex}
+                                                                            className='flex flex-row justify-between items-center border rounded px-3 py-2 bg-secondary text-secondary-foreground sm:gap-4'
+                                                                        >
+                                                                            <div className='font-medium flex items-center gap-2'>
+                                                                                {!isDefaultSkill(sub.name) ? (
+                                                                                    <button
+                                                                                        onClick={() =>
+                                                                                            deleteCustomSubSkill(
+                                                                                                category,
+                                                                                                itemIndex,
+                                                                                                subIndex,
+                                                                                            )
+                                                                                        }
+                                                                                    >
+                                                                                        <Trash2 className='w-4 h-4 text-red-500 hover:text-red-600' />
+                                                                                    </button>
+                                                                                ) : (
+                                                                                    <SubIcon className='w-5 h-5 text-primary shrink-0' />
+                                                                                )}
+                                                                                {sub.name}
+                                                                            </div>
+                                                                            <StarRating
+                                                                                level={sub.level || 0}
+                                                                                onChange={(level) =>
+                                                                                    updateSubSkillLevel(
+                                                                                        category,
+                                                                                        itemIndex,
+                                                                                        subIndex,
+                                                                                        level,
+                                                                                    )
+                                                                                }
+                                                                                onDelete={() => {
+                                                                                    updateSubSkillLevel(
+                                                                                        category,
+                                                                                        itemIndex,
+                                                                                        subIndex,
+                                                                                        0,
+                                                                                    );
+                                                                                }}
+                                                                            />
+                                                                        </div>
+                                                                    );
+                                                                })}
+                                                        </div>
+                                                        <div className='flex gap-2 mt-2'>
+                                                            <Input
+                                                                type='text'
+                                                                placeholder='Add a sub-skill'
+                                                                value={newSubSkill[category]?.[itemIndex] || ''}
+                                                                onChange={(e) =>
+                                                                    setNewSubSkill((prev) => ({
+                                                                        ...prev,
+                                                                        [category]: {
+                                                                            ...(prev[category] || {}),
+                                                                            [itemIndex]: e.target.value,
+                                                                        },
+                                                                    }))
+                                                                }
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        addSubSkillToItem(
+                                                                            category,
+                                                                            itemIndex,
+                                                                            newSubSkill[category]?.[itemIndex] || '',
+                                                                        );
+                                                                    }
+                                                                }}
+                                                            />
+                                                            <Button
+                                                                onClick={() =>
                                                                     addSubSkillToItem(
                                                                         category,
                                                                         itemIndex,
                                                                         newSubSkill[category]?.[itemIndex] || '',
-                                                                    );
+                                                                    )
                                                                 }
-                                                            }}
-                                                        />
-                                                        <Button
-                                                            onClick={() =>
-                                                                addSubSkillToItem(
-                                                                    category,
-                                                                    itemIndex,
-                                                                    newSubSkill[category]?.[itemIndex] || '',
-                                                                )
-                                                            }
-                                                        >
-                                                            <Plus className='w-4 h-4' />
-                                                        </Button>
+                                                            >
+                                                                <Plus className='w-4 h-4' />
+                                                            </Button>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
                             <div className='flex gap-2'>
                                 <Input

@@ -5,7 +5,7 @@ import type { ProcedureBuilderType } from '../router';
 
 const skillDefinition = z.object({
     name: z.string(),
-    level: z.number().min(0).max(3),
+    level: z.number().min(0).max(3).optional(),
 });
 const skillAssessment = skillDefinition.extend({
     subSkills: z.array(skillDefinition).optional(),
@@ -14,7 +14,7 @@ export type SkillAssessment = z.infer<typeof skillAssessment>;
 
 const skillsAssessmentSchema = z.array(
     z.object({
-        name: z.string(),
+        category: z.string(),
         skills: z.array(skillAssessment),
     }),
 );
