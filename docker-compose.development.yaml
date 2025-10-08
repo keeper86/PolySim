@@ -1,58 +1,4 @@
 services:
-    caddy:
-        image: caddy:alpine
-        ports:
-            - '80:80'
-            - '443:443'
-        volumes:
-            - ./Caddyfile.dev:/etc/caddy/Caddyfile
-            - ./certs:/etc/caddy/certs
-        environment:
-            - CADDY_DOMAIN=${DEV_DOMAIN}
-        depends_on:
-            - app
-        container_name: polysim-dev-caddy
-
-    app:
-        build:
-            context: .
-            dockerfile: Dockerfile.dev
-        environment:
-            DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-app_dev}
-            NODE_TLS_REJECT_UNAUTHORIZED: 0
-        volumes:
-            - ./src:/app/src
-            - ./public:/app/public
-            - ./package.json:/app/package.json
-        ports:
-            - '3000:3000'
-        depends_on:
-            db:
-                condition: service_healthy
-            migrations:
-                condition: service_completed_successfully
-            keycloak:
-                condition: service_healthy
-        extra_hosts:
-            - 'auth.polysim.local:${DEV_ONLY_DOCKER_HOST_IP}'
-            - 'polysim.local:${DEV_ONLY_DOCKER_HOST_IP}'
-        container_name: polysim-dev-app
-
-    migrations:
-        build:
-            context: .
-            dockerfile: Dockerfile.migrator
-        environment:
-            DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-            NODE_ENV: development
-            NODE_TLS_REJECT_UNAUTHORIZED: 0
-        depends_on:
-            db:
-                condition: service_healthy
-        restart: 'no'
-        command: ['npx', 'knex', 'migrate:latest']
-        container_name: polysim-dev-migrations
-
     db:
         image: postgres:15-alpine
         environment:
@@ -74,14 +20,16 @@ services:
             KC_DB: dev-mem
             KC_BOOTSTRAP_ADMIN_USERNAME: admin
             KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-            KC_HOSTNAME: ${KEYCLOAK_DOMAIN}
+            KC_HOSTNAME: localhost
             KC_HTTP_ENABLED: true
             KC_HEALTH_ENABLED: true
             KC_PROXY_HEADERS: xforwarded
             KC_RUN_IN_CONTAINER: true
+            KC_HOSTNAME_STRICT: false
+            KC_HOSTNAME_STRICT_HTTPS: false
         volumes:
             - ./keycloak/themes:/opt/keycloak/themes
-            - ./keycloak/initial/data/dev:/opt/keycloak/data/import/
+            - ./keycloak/data/devImport:/opt/keycloak/data/import/
         command: start-dev --import-realm --verbose
         healthcheck:
             test:
@@ -92,4 +40,6 @@ services:
             interval: 10s
             timeout: 3s
             retries: 10
+        ports:
+            - '8080:8080'
         container_name: polysim-dev-keycloak

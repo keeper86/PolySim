@@ -1,5 +1,9 @@
 import KeycloakProvider from 'next-auth/providers/keycloak';
 
+if (process.env.NODE_ENV === 'development') {
+    console.log(process.env.KEYCLOAK_ISSUER);
+}
+
 export const authOptions = {
     providers: [
         KeycloakProvider({
@@ -8,7 +12,6 @@ export const authOptions = {
             issuer: process.env.KEYCLOAK_ISSUER!,
         }),
     ],
-    // Optional: Add Keycloak tokens to the session for use in tRPC
     callbacks: {
         // @ts-expect-error todo
         async jwt({ token, account }) {

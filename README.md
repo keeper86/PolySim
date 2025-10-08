@@ -20,6 +20,8 @@ Install [nvm](https://github.com/nvm-sh/nvm) and use it to install the node vers
 
 Install [docker](https://docs.docker.com/engine/install/).
 
+Troubleshooting tips:
+
 - To stop and remove all running containers (brute-force cleanup):
 
 ```sh
@@ -43,7 +45,7 @@ Install [docker](https://docs.docker.com/engine/install/).
 
 ### Initial Setup
 
-Copy .env.development over to .env, adapt the variables.
+Copy .env.example.production over to .env, adapt the variables.
 
 A first-time deployment will import a default keycloak realm and client configuration. In order to set `rootUrl, adminUrl, baseUrl, redirectUris, and webOrigins` correctly, use the script to generate a valid initial realm config:
 
@@ -53,7 +55,7 @@ npm run generate-realm
 
 This will read env variables and interpolate them into the template to create a valid initial realm config.
 
-This can be adapted later in the Keycloak admin UI.
+The settings can be adapted later in the Keycloak admin UI.
 
 ### Start
 
@@ -71,75 +73,51 @@ docker compose down
 
 ## Local Development
 
-The development setup is as close to the production setup as possible. First install dependencies.
+Run the app locally and run infrastructure (Keycloak, database) in Docker.
+
+### Initial Setup
+
+Copy .env.example.development over to .env.
+
+1. Copy .env.example.development over to .env
 
 ```sh
-npm i
+cp .env.example.development .env
 ```
 
-### Automatically detect Docker host IP for extra_hosts
+Adapt the variables as needed as well as in the Keycloak configuration (see keycloak/data/devImport/myRealmDev.json). The defaults should work for most local development scenarios, but if something goes wrong, check the variables first.
 
-For robust local networking between containers and your host, the `DEV_ONLY_DOCKER_HOST_IP` variable in `.env.development` should match your Docker bridge IP (commonly `172.17.0.1` or `172.18.0.1`).
-
-You can use this script to print out the Docker bridge IP before running Docker Compose:
+2. Install dependencies
 
 ```sh
-DOCKER_BRIDGE_IP=$(ip -4 addr show docker0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
-if [ -n "$DOCKER_BRIDGE_IP" ]; then
-  if grep -q '^DEV_ONLY_DOCKER_HOST_IP=' .env.development; then
-    sed -i "s/^DEV_ONLY_DOCKER_HOST_IP=.*/DEV_ONLY_DOCKER_HOST_IP=$DOCKER_BRIDGE_IP/" .env.development
-  else
-    echo "DEV_ONLY_DOCKER_HOST_IP=$DOCKER_BRIDGE_IP" >> .env.development
-  fi
-  echo "Set DEV_ONLY_DOCKER_HOST_IP to $DOCKER_BRIDGE_IP in .env.development"
-else
-  echo "Could not detect docker0 bridge IP."
-fi
+npm install
 ```
 
-### Certificates
-
-We use self-signed certificates, we need to create certificates for local domains once (mkcert is widely available):
-
-```
-mkdir certs
-mkcert -cert-file certs/polysim.crt -key-file certs/polysim.key polysim auth.polysim
-```
-
-The CI will create self-signed certs automatically. **DO NOT EVER** push certificates/secrets to the repo, not even development ones.
-
-### Add hosts
-
-Add the following line to your `/etc/hosts` file:
-
-```text
-127.0.0.1 polysim.local auth.polysim.local
-```
-
-or add it automatically (if not already present) with:
+2. Start infrastructure (Keycloak, DB) in Docker
 
 ```sh
-if ! grep -qxF '127.0.0.1 polysim.local auth.polysim.local' /etc/hosts; then
-  echo '127.0.0.1 polysim.local auth.polysim.local' | sudo tee -a /etc/hosts
-fi
+docker compose -f docker-compose.development.yaml up
 ```
 
-These host entries are required so your browser can resolve the custom local domains (polysim.local and auth.polysim.local) to your local machine. This enables HTTPS and authentication to work correctly in the development environment.
-
-### Start dev
-
-Start database and then the app
+3. Run the app locally
 
 ```sh
-docker compose -f docker-compose.development.yaml --env-file .env.development up --build
+npx wait-on-port 5432 --  # wait for the database to be ready; dev will try to connect immediately
+npm run dev
 ```
 
-Open [https://polysim.local](https://polysim.local) with your browser to see the result.
+The app will be available at [http://localhost:3000](http://localhost:3000), Keycloak at [http://localhost:8080](http://localhost:8080) and the postgres database at [http://localhost:5432](http://localhost:5432).
 
-Dont forget, when you are done:
+**Note:** Make sure these ports are free and not used by other applications.
+
+**Note:** Database migrations are run automatically every time you start the dev server with `npm run dev`. This ensures your local database schema is always up to date such that a restart of the dev server will execute any pending migrations.
+
+### 4. Stopping services
+
+When finished, stop Docker services with:
 
 ```sh
-docker compose -f docker-compose.development.yaml --env-file .env.development down
+docker compose -f docker-compose.development.yaml down
 ```
 
 ## Testing
@@ -156,21 +134,36 @@ npm run test:coverage # Run tests with coverage
 
 ### End-to-End Tests
 
+The tests assume the development version of PolySim is running and accessible via `http://localhost:3000` (app) and `http://localhost:8080` (Keycloak) unlike unit tests.
+
 This project includes Playwright-based e2e tests that validate the full application flow including authentication and API documentation.
 
-Note: Install require **Playwright Browsers** and dependencies once before running tests:
+Install required **Playwright Browsers** and dependencies once before running tests
 
 ```sh
 npx playwright install
 npx playwright install-deps
 ```
 
-#### Running E2E Tests
+Run E2E Tests
 
 ```sh
 npm run test:e2e           # Run all e2e tests
 npm run test:e2e:headed    # Run tests with browser UI visible
 npm run test:e2e:debug     # Run tests in debug mode
+```
+
+### CI
+
+The CI pipeline is configured in `.github/workflows/website.yaml` and runs on every push and pull request.
+
+Make sure to run E2E as described above before pushing code. Run all following checks locally and make sure they pass:
+
+```sh
+npm run format
+npm run lint
+npm run build
+npm run test
 ```
 
 ## Types

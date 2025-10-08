@@ -1,8 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
+import pathToAuthStorage from 'tests/e2e/auth.path';
 
-const env = dotenv.config({ path: '.env.development' });
+const env = dotenv.config({ path: '.env.example.development' });
 dotenvExpand.expand(env);
 
 export default defineConfig({
@@ -27,7 +28,7 @@ export default defineConfig({
             name: 'chromium',
             use: {
                 ...devices['Desktop Chrome'],
-                storageState: process.env.DEV_ONLY_PLAYWRIGHT_AUTH_STORAGE_PATH || 'YouNeedToSetTheAuthPath',
+                storageState: pathToAuthStorage,
             },
             dependencies: ['setup'],
         },
