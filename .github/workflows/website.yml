@@ -8,6 +8,7 @@ on:
 
 jobs:
     checks:
+        name: Run formatting, linting, unit tests and build
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
@@ -31,6 +32,8 @@ jobs:
               run: npm run lint:check
             - name: Run unit tests
               run: npm run test
+            - name: Build
+              run: npm run build
 
     e2e:
         runs-on: ubuntu-latest
