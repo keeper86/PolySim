@@ -75,7 +75,9 @@ export default function SkillsAssessmentPage() {
             }
             savingRef.current = true;
             try {
-                await trpcClient['skills-assessment-save'].mutate(cleanEmptyDefaultSkillsAssessment(data));
+                const dataToSave = cleanEmptyDefaultSkillsAssessment(data);
+                childLogger.debug('Saving skills assessment', { data: dataToSave });
+                await trpcClient['skills-assessment-save'].mutate(dataToSave);
             } catch (error) {
                 toast.error('Failed to save skills assessment', {
                     description: error instanceof Error ? error.message : 'Unknown error',
