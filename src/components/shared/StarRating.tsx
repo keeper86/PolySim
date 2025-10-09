@@ -51,7 +51,7 @@ export function StarRating({ level, maxStars = 3, onChange, onDelete }: StarRati
                     className={getDeleteButtonClass(level)}
                     aria-label='Reset to no experience'
                 >
-                    <Trash2 className={`w-4 h-4${level !== 0 ? ' text-red-500' : ''}`} />
+                    <Trash2 className={`w-4 h-4${level && level !== 0 ? ' text-red-500' : ''}`} />
                 </button>
             )}
         </div>

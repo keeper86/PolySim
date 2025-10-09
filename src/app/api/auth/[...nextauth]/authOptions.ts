@@ -1,9 +1,5 @@
 import KeycloakProvider from 'next-auth/providers/keycloak';
 
-if (process.env.NODE_ENV === 'development') {
-    console.log(process.env.KEYCLOAK_ISSUER);
-}
-
 export const authOptions = {
     providers: [
         KeycloakProvider({

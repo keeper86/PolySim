@@ -1,10 +1,9 @@
 'use client';
 
+import { trpcClient } from '@/app/clientTrpc';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { toast } from 'sonner';
 import { clientLogger } from '../../app/clientLogger';
-import { trpcClient } from '@/app/clientTrpc';
 
 interface TestResult {
     message: string;
@@ -44,17 +43,17 @@ export default function DatabaseTester() {
             return;
         }
 
-        void log.debug('Database connection successful', response);
-        setResult(response);
-        toast.success('Database connection successful', {
+        log.success('Database connection successful', undefined, {
+            show: true,
             description: `Connected in ${response.time}ms`,
         });
+        setResult(response);
     };
 
     return (
         <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
             <h2>Database Connection Tester</h2>
-            <div>{JSON.stringify(session, null, 2)}</div>
+            <div className='break-all'>{JSON.stringify(session, null, 2)}</div>
             <button
                 onClick={testConnection}
                 disabled={loading}

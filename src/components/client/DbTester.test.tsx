@@ -9,6 +9,7 @@ vi.mock('../../app/clientLogger', () => ({
         child: () => ({
             error: vi.fn(),
             debug: vi.fn(),
+            success: vi.fn(),
         }),
     },
 }));
@@ -17,6 +18,7 @@ vi.mock('../../app/clientTrpc', () => ({
         'test-connection': {
             query: vi.fn(),
         },
+        'logs': { mutate: vi.fn() },
     },
 }));
 
