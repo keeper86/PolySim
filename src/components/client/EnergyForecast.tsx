@@ -21,6 +21,7 @@ import type { TimeSeriesData } from '../../types/timeSeriesData';
 
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, TimeScale, Filler);
 
+// Example for chartJS usage
 export const EnergyForecast: FC = () => {
     const [historicalData, setHistoricalData] = useState<TimeSeriesData[]>([]);
     const [forecastData, setForecastData] = useState<TimeSeriesData[]>([]);

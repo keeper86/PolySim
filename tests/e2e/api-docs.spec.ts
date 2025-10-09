@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
+import authPath from './auth.path';
 
-test.use({ storageState: './playwright/.auth/auth.json' });
+test.use({ storageState: authPath });
 
 test.describe('API Documentation', () => {
     test('should have accessible Swagger UI at /api-doc', async ({ page }) => {

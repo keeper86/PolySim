@@ -33,14 +33,6 @@ export function SkillItem({
 
     const hasRatedSubSkills = Array.isArray(subSkills) && subSkills.some((s) => s.level && s.level > 0);
 
-    const handleDelete = () => {
-        if (hasRatedSubSkills) {
-            setShowResetDialog(true);
-        } else {
-            actions.deleteCustomSkill(category, skillIndex);
-        }
-    };
-
     return (
         <>
             <ConfirmResetDialog
@@ -56,7 +48,10 @@ export function SkillItem({
                     <span className='font-medium min-w-0 truncate break-words sm:min-w-[100px] md:min-w-[100px] flex items-center gap-2'>
                         {!isDefault ? (
                             <>
-                                <button onClick={handleDelete}>
+                                <button
+                                    aria-label='Delete skill'
+                                    onClick={() => actions.deleteCustomSkill(category, skillIndex)}
+                                >
                                     <Trash2 className='w-6 h-6 text-red-500 hover:text-red-600' />
                                 </button>
                             </>
@@ -68,7 +63,13 @@ export function SkillItem({
                     <StarRating
                         level={level}
                         onChange={(level) => actions.updateItemLevel(category, skillIndex, level)}
-                        onDelete={handleDelete}
+                        onDelete={() => {
+                            if (hasRatedSubSkills) {
+                                setShowResetDialog(true);
+                            } else {
+                                actions.updateItemLevel(category, skillIndex, 0);
+                            }
+                        }}
                     />
                 </div>
                 {level > 0 && (
