@@ -7,6 +7,7 @@ const skillDefinition = z.object({
     name: z.string(),
     level: z.number().min(0).max(3).optional(),
 });
+export type SkillDefinition = z.infer<typeof skillDefinition>;
 const skillAssessment = skillDefinition.extend({
     subSkills: z.array(skillDefinition).optional(),
 });

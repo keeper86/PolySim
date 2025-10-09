@@ -5,12 +5,8 @@ import { Input } from '@/components/ui/input';
 import type { SkillsAssessmentCategory } from '@/server/endpoints/skills-assessment';
 import { ChevronDown, ChevronUp, Plus } from 'lucide-react';
 import { useState } from 'react';
-import { GoDot } from 'react-icons/go';
 import type { SkillsAssessmentActions } from '../hooks/useSkillsAssessmentActions';
 import { SkillItem } from './SkillItem';
-
-import { isDefaultSkill } from '../utils/getDefaultAssessmentList';
-import { getIconToSkill } from '../utils/getIconToSkill';
 
 export function CategorySection({
     categoryObj,
@@ -22,9 +18,14 @@ export function CategorySection({
     const { category, skills } = categoryObj;
 
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-    const [collapsedSkills, setCollapsedSkills] = useState<Record<number, boolean>>({});
     const [newItemValue, setNewItemValue] = useState<string>('');
-    const [newSubSkillValues, setNewSubSkillValues] = useState<Record<number, string>>({});
+
+    const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            actions.addItemToCategory(category, newItemValue);
+            setNewItemValue('');
+        }
+    };
 
     return (
         <div className='space-y-4 -mb-0.5'>
@@ -43,46 +44,15 @@ export function CategorySection({
                 style={{ willChange: 'max-height, opacity' }}
             >
                 <div className='space-y-3 mb-3'>
-                    {skills.map((skill, skillIndex) => {
-                        const ItemIcon = getIconToSkill(skill.name) || GoDot;
-                        return (
-                            <SkillItem
-                                key={skillIndex}
-                                name={skill.name}
-                                level={skill.level || 0}
-                                subSkills={skill.subSkills}
-                                icon={ItemIcon}
-                                isDefault={isDefaultSkill(skill.name)}
-                                isCollapsed={collapsedSkills[skillIndex] || false}
-                                newSubSkillValue={newSubSkillValues[skillIndex] || ''}
-                                onLevelChange={(level) => actions.updateItemLevel(category, skillIndex, level)}
-                                onDelete={() => actions.deleteCustomSkill(category, skillIndex)}
-                                onResetRatings={() => actions.resetSkillRatings(category, skillIndex)}
-                                onToggleCollapse={() =>
-                                    setCollapsedSkills((prev) => ({ ...prev, [skillIndex]: !prev[skillIndex] }))
-                                }
-                                onNewSubSkillChange={(value) =>
-                                    setNewSubSkillValues((prev) => ({ ...prev, [skillIndex]: value }))
-                                }
-                                onAddSubSkill={() => {
-                                    actions.addSubSkillToItem(
-                                        category,
-                                        skillIndex,
-                                        newSubSkillValues[skillIndex] || '',
-                                    );
-                                    setNewSubSkillValues((prev) => ({ ...prev, [skillIndex]: '' }));
-                                }}
-                                onSubSkillLevelChange={(subSkillIndex, level) =>
-                                    actions.updateSubSkillLevel(category, skillIndex, subSkillIndex, level)
-                                }
-                                onSubSkillDelete={(subSkillIndex) =>
-                                    actions.deleteCustomSubSkill(category, skillIndex, subSkillIndex)
-                                }
-                                getSubSkillIcon={(subSkillName) => getIconToSkill(subSkillName) || ItemIcon}
-                                isSubSkillDefault={isDefaultSkill}
-                            />
-                        );
-                    })}
+                    {skills.map((skill, skillIndex) => (
+                        <SkillItem
+                            key={skillIndex}
+                            skill={skill}
+                            skillIndex={skillIndex}
+                            category={category}
+                            actions={actions}
+                        />
+                    ))}
                 </div>
                 <div className='flex gap-2'>
                     <Input
@@ -90,13 +60,7 @@ export function CategorySection({
                         placeholder={`Add to ${category}`}
                         value={newItemValue}
                         onChange={(e) => setNewItemValue(e.target.value)}
-                        onKeyDown={(e) =>
-                            e.key === 'Enter' &&
-                            (() => {
-                                actions.addItemToCategory(category, newItemValue);
-                                setNewItemValue('');
-                            })()
-                        }
+                        onKeyDown={handleInputKeyDown}
                     />
                     <Button
                         onClick={() => {
