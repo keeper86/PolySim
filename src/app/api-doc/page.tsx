@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react';
 import { SwaggerUIBundle } from 'swagger-ui-dist';
 import 'swagger-ui-dist/swagger-ui.css';
 
-import { toast } from 'sonner';
 import { clientLogger } from '../clientLogger';
 import './swagger-ui-overrides.css';
 
@@ -27,8 +26,7 @@ export default function PageContent() {
                 });
             })
             .catch((error) => {
-                toast.error('Error fetching OpenAPI schema', { description: String(error) });
-                log.error('Error fetching OpenAPI schema', { error });
+                log.error('Failed to load API spec', error);
             });
     }, []);
 

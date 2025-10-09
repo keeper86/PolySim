@@ -1,9 +1,8 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { TextInputWithButton } from '@/components/shared/TextInputWithButton';
 import type { SkillsAssessmentCategory } from '@/server/endpoints/skills-assessment';
-import { ChevronDown, ChevronUp, Plus } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 import type { SkillsAssessmentActions } from '../hooks/useSkillsAssessmentActions';
 import { SkillItem } from './SkillItem';
@@ -20,11 +19,9 @@ export function CategorySection({
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
     const [newItemValue, setNewItemValue] = useState<string>('');
 
-    const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            actions.addItemToCategory(category, newItemValue);
-            setNewItemValue('');
-        }
+    const handleAdd = () => {
+        actions.addItemToCategory(category, newItemValue);
+        setNewItemValue('');
     };
 
     return (
@@ -54,24 +51,13 @@ export function CategorySection({
                         />
                     ))}
                 </div>
-                <div className='flex gap-2'>
-                    <Input
-                        type='text'
-                        placeholder={`Add to ${category}`}
-                        value={newItemValue}
-                        onChange={(e) => setNewItemValue(e.target.value)}
-                        onKeyDown={handleInputKeyDown}
-                    />
-                    <Button
-                        onClick={() => {
-                            actions.addItemToCategory(category, newItemValue);
-                            setNewItemValue('');
-                        }}
-                    >
-                        <Plus className='w-4 h-4 cursor-pointer' />
-                        Add
-                    </Button>
-                </div>
+                <TextInputWithButton
+                    value={newItemValue}
+                    onChange={setNewItemValue}
+                    onSubmit={handleAdd}
+                    placeholder={`Add to ${category}`}
+                    buttonLabel='Add Skill'
+                />
             </div>
         </div>
     );
