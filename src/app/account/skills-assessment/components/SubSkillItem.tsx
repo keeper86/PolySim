@@ -20,7 +20,7 @@ export function SubSkillItem({ item, parentName, onLevelChange, onDelete }: SubS
         <div className='flex flex-row justify-between items-center border rounded px-3 py-2 bg-secondary text-secondary-foreground sm:gap-4'>
             <div className='font-medium flex items-center gap-2'>
                 {!isDefaultSkill(item.name) ? (
-                    <button onClick={onDelete}>
+                    <button aria-label='Delete sub-skill' onClick={onDelete}>
                         <Trash2 className='w-4 h-4 text-red-500 hover:text-red-600' />
                     </button>
                 ) : (

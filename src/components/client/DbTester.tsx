@@ -53,7 +53,7 @@ export default function DatabaseTester() {
     return (
         <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
             <h2>Database Connection Tester</h2>
-            <div className='break-all'>{JSON.stringify(session, null, 2)}</div>
+            <div className='bg-gray-100 p-2 rounded break-all'>{JSON.stringify(session, null, 2)}</div>
             <button
                 onClick={testConnection}
                 disabled={loading}
