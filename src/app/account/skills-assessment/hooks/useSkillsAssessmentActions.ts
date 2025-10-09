@@ -148,3 +148,5 @@ export function useSkillsAssessmentActions(
         deleteCustomSubSkill,
     };
 }
+
+export type SkillsAssessmentActions = ReturnType<typeof useSkillsAssessmentActions>;

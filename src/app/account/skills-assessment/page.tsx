@@ -1,51 +1,35 @@
 'use client';
 
-import { trpcClient } from '@/app/clientTrpc';
 import { CategorySection } from '@/app/account/skills-assessment/components/CategorySection';
 import { ConfirmResetDialog } from '@/app/account/skills-assessment/components/ConfirmResetDialog';
+import { useSkillsAssessment } from '@/app/account/skills-assessment/hooks/useSkillsAssessment';
+import { useSkillsAssessmentActions } from '@/app/account/skills-assessment/hooks/useSkillsAssessmentActions';
+import { getLevelText } from '@/app/account/skills-assessment/utils/getLevelText';
+import { trpcClient } from '@/app/clientTrpc';
 import { StarRating } from '@/components/shared/StarRating';
 import { SyncStatusIndicator } from '@/components/shared/SyncStatusIndicator';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useSkillsAssessment } from '@/app/account/skills-assessment/hooks/useSkillsAssessment';
-import { useSkillsAssessmentActions } from '@/app/account/skills-assessment/hooks/useSkillsAssessmentActions';
 import type { SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
-import { getIconToSkill } from '@/app/account/skills-assessment/utils/getIconToSkill';
-import { getLevelText } from '@/app/account/skills-assessment/utils/getLevelText';
-import { isDefaultSkill } from '@/app/account/skills-assessment/utils/getDefaultAssessmentList';
 import { Loader } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function SkillsAssessmentPage() {
     const [data, setData] = useState<SkillsAssessmentSchema>([]);
-    const [newItem, setNewItem] = useState<Record<string, string>>({});
-    const [newSubSkill, setNewSubSkill] = useState<Record<string, Record<number, string>>>({});
     const [confirmDelete, setConfirmDelete] = useState<{ categoryIdx: number; itemIndex: number } | null>(null);
-    const [collapsedSkills, setCollapsedSkills] = useState<Record<string, boolean>>({});
-    const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
 
     const { data: queryData, isInitializing, isLoadError, loadError, saveMutation } = useSkillsAssessment();
 
-    const {
-        addItemToCategory,
-        updateItemLevel,
-        deleteCustomSkill,
-        resetSkillRatings,
-        addSubSkillToItem,
-        updateSubSkillLevel,
-        deleteCustomSubSkill,
-    } = useSkillsAssessmentActions(data, setData, saveMutation);
+    const skillAssessmentActions = useSkillsAssessmentActions(data, setData, saveMutation);
 
-    // Sync query data to local state
     useEffect(() => {
         if (queryData) {
             setData(queryData);
         }
     }, [queryData]);
 
-    // Show error toast on load error
     useEffect(() => {
         if (isLoadError) {
             toast.error('Failed to load skills assessment', {
@@ -84,7 +68,7 @@ export default function SkillsAssessmentPage() {
                     if (confirmDelete) {
                         const { categoryIdx, itemIndex } = confirmDelete;
                         const category = data[categoryIdx].category;
-                        resetSkillRatings(category, itemIndex);
+                        skillAssessmentActions.resetSkillRatings(category, itemIndex);
                         setConfirmDelete(null);
                     }
                 }}
@@ -121,67 +105,13 @@ export default function SkillsAssessmentPage() {
                     ))}
                 </div>
             </div>
-            {data.map((categoryObj, categoryIdx) => {
-                const category = categoryObj.category;
-                const items = categoryObj.skills;
-                const isCollapsed = collapsedCategories[category];
-
-                return (
-                    <CategorySection
-                        key={category}
-                        category={category}
-                        skills={items}
-                        isCollapsed={isCollapsed}
-                        collapsedSkills={collapsedSkills}
-                        newItemValue={newItem[category] || ''}
-                        newSubSkillValues={newSubSkill[category] || {}}
-                        onToggleCollapse={() =>
-                            setCollapsedCategories((prev) => ({ ...prev, [category]: !prev[category] }))
-                        }
-                        onNewItemChange={(value) => setNewItem((prev) => ({ ...prev, [category]: value }))}
-                        onAddItem={() => {
-                            addItemToCategory(category, newItem[category] || '');
-                            setNewItem((prev) => ({ ...prev, [category]: '' }));
-                        }}
-                        onSkillLevelChange={(skillIndex, level) => updateItemLevel(category, skillIndex, level)}
-                        onSkillDelete={(skillIndex) => deleteCustomSkill(category, skillIndex)}
-                        onSkillResetRatings={(skillIndex) => {
-                            const item = items[skillIndex];
-                            if (item.subSkills && item.subSkills.some((s) => s.level && s.level > 0)) {
-                                setConfirmDelete({ categoryIdx, itemIndex: skillIndex });
-                            } else {
-                                resetSkillRatings(category, skillIndex);
-                            }
-                        }}
-                        onToggleSkillCollapse={(skillIndex) => {
-                            const key = `${category}-${skillIndex}`;
-                            setCollapsedSkills((prev) => ({ ...prev, [key]: !prev[key] }));
-                        }}
-                        onNewSubSkillChange={(skillIndex, value) =>
-                            setNewSubSkill((prev) => ({
-                                ...prev,
-                                [category]: { ...(prev[category] || {}), [skillIndex]: value },
-                            }))
-                        }
-                        onAddSubSkill={(skillIndex) => {
-                            const subSkillName = newSubSkill[category]?.[skillIndex] || '';
-                            addSubSkillToItem(category, skillIndex, subSkillName);
-                            setNewSubSkill((prev) => ({
-                                ...prev,
-                                [category]: { ...(prev[category] || {}), [skillIndex]: '' },
-                            }));
-                        }}
-                        onSubSkillLevelChange={(skillIndex, subSkillIndex, level) =>
-                            updateSubSkillLevel(category, skillIndex, subSkillIndex, level)
-                        }
-                        onSubSkillDelete={(skillIndex, subSkillIndex) =>
-                            deleteCustomSubSkill(category, skillIndex, subSkillIndex)
-                        }
-                        getSkillIcon={getIconToSkill}
-                        isSkillDefault={isDefaultSkill}
-                    />
-                );
-            })}
+            {data.map((categoryObj) => (
+                <CategorySection
+                    key={categoryObj.category}
+                    categoryObj={categoryObj}
+                    actions={skillAssessmentActions}
+                />
+            ))}
             <Separator className='mt-8' />
             <div className='h-16 mt-auto'>
                 <Button

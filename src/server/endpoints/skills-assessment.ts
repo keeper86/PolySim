@@ -12,12 +12,13 @@ const skillAssessment = skillDefinition.extend({
 });
 export type SkillAssessment = z.infer<typeof skillAssessment>;
 
-const skillsAssessmentSchema = z.array(
-    z.object({
-        category: z.string(),
-        skills: z.array(skillAssessment),
-    }),
-);
+const skillsAssessmentCategory = z.object({
+    category: z.string(),
+    skills: z.array(skillAssessment),
+});
+export type SkillsAssessmentCategory = z.infer<typeof skillsAssessmentCategory>;
+
+const skillsAssessmentSchema = z.array(skillsAssessmentCategory);
 export type SkillsAssessmentSchema = z.infer<typeof skillsAssessmentSchema>;
 
 export const getSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${string}`) => {
