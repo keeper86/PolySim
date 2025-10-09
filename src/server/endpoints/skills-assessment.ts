@@ -7,17 +7,19 @@ const skillDefinition = z.object({
     name: z.string(),
     level: z.number().min(0).max(3).optional(),
 });
+export type SkillDefinition = z.infer<typeof skillDefinition>;
 const skillAssessment = skillDefinition.extend({
     subSkills: z.array(skillDefinition).optional(),
 });
 export type SkillAssessment = z.infer<typeof skillAssessment>;
 
-const skillsAssessmentSchema = z.array(
-    z.object({
-        category: z.string(),
-        skills: z.array(skillAssessment),
-    }),
-);
+const skillsAssessmentCategory = z.object({
+    category: z.string(),
+    skills: z.array(skillAssessment),
+});
+export type SkillsAssessmentCategory = z.infer<typeof skillsAssessmentCategory>;
+
+const skillsAssessmentSchema = z.array(skillsAssessmentCategory);
 export type SkillsAssessmentSchema = z.infer<typeof skillsAssessmentSchema>;
 
 export const getSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${string}`) => {
