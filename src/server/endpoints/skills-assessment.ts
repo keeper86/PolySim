@@ -5,7 +5,7 @@ import type { ProcedureBuilderType } from '../router';
 
 const skillDefinition = z.object({
     name: z.string(),
-    level: z.number().min(0).max(3),
+    level: z.number().min(0).max(3).optional(),
 });
 const skillAssessment = skillDefinition.extend({
     subSkills: z.array(skillDefinition).optional(),
@@ -14,7 +14,7 @@ export type SkillAssessment = z.infer<typeof skillAssessment>;
 
 const skillsAssessmentSchema = z.array(
     z.object({
-        name: z.string(),
+        category: z.string(),
         skills: z.array(skillAssessment),
     }),
 );
@@ -40,14 +40,14 @@ export const getSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${s
                 throw new Error('User ID not found');
             }
 
-            logger.info({ component: 'skills-assessment' }, `Fetching skills assessment for user: ${userId}`);
+            logger.debug({ component: 'skills-assessment-get' }, `Fetching skills assessment for user: ${userId}`);
 
             const result = await db('skills_assessment_history')
                 .where({ user_id: userId })
                 .orderBy('assessment_date', 'desc')
                 .first();
 
-            logger.debug({ component: 'skills-assessment' }, `Skills assessment data: ${JSON.stringify(result)}`);
+            logger.debug({ component: 'skills-assessment-get' }, `Skills assessment data: ${JSON.stringify(result)}`);
 
             return result?.assessment_data ?? [];
         });
@@ -77,8 +77,6 @@ export const saveSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${
                 throw new Error('User ID not found');
             }
 
-            logger.info({ component: 'skills-assessment' }, `Saving skills assessment for user: ${userId}`);
-
             const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
 
             const existing = await db('skills_assessment_history')
@@ -88,10 +86,18 @@ export const saveSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${
             const serialized = JSON.stringify(input);
 
             if (existing) {
+                logger.debug(
+                    { component: 'skills-assessment-upsert' },
+                    `Updating skills assessment for user: ${userId} with data: ${serialized}`,
+                );
                 await db('skills_assessment_history')
                     .where({ user_id: userId, assessment_date: today })
                     .update({ assessment_data: serialized });
             } else {
+                logger.debug(
+                    { component: 'skills-assessment-upsert' },
+                    `Inserting new skills assessment for user: ${userId} with data: ${serialized}`,
+                );
                 await db('skills_assessment_history').insert({
                     user_id: userId,
                     assessment_date: today,
