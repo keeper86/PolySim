@@ -1,19 +1,19 @@
 'use client';
 
 import { trpcClient } from '@/app/clientTrpc';
-import { CategorySection } from '@/components/skills-assessment/CategorySection';
-import { ConfirmResetDialog } from '@/components/skills-assessment/ConfirmResetDialog';
+import { CategorySection } from '@/app/account/skills-assessment/components/CategorySection';
+import { ConfirmResetDialog } from '@/app/account/skills-assessment/components/ConfirmResetDialog';
 import { StarRating } from '@/components/shared/StarRating';
 import { SyncStatusIndicator } from '@/components/shared/SyncStatusIndicator';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useSkillsAssessment } from '@/hooks/useSkillsAssessment';
-import { useSkillsAssessmentActions } from '@/hooks/useSkillsAssessmentActions';
+import { useSkillsAssessment } from '@/app/account/skills-assessment/hooks/useSkillsAssessment';
+import { useSkillsAssessmentActions } from '@/app/account/skills-assessment/hooks/useSkillsAssessmentActions';
 import type { SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
-import { getIconToSkill } from '@/utils/getIconToSkill';
-import { getLevelText } from '@/utils/getLevelText';
-import { isDefaultSkill } from '@/utils/getDefaultAssessmentList';
+import { getIconToSkill } from '@/app/account/skills-assessment/utils/getIconToSkill';
+import { getLevelText } from '@/app/account/skills-assessment/utils/getLevelText';
+import { isDefaultSkill } from '@/app/account/skills-assessment/utils/getDefaultAssessmentList';
 import { Loader } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -63,8 +63,12 @@ export default function SkillsAssessmentPage() {
     }
 
     const getSyncStatus = () => {
-        if (saveMutation.isPending) {return 'pending';}
-        if (saveMutation.isError) {return 'error';}
+        if (saveMutation.isPending) {
+            return 'pending';
+        }
+        if (saveMutation.isError) {
+            return 'error';
+        }
         return 'success';
     };
 

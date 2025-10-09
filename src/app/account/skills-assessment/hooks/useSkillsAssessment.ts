@@ -3,10 +3,7 @@ import { clientLogger } from '@/app/clientLogger';
 import type { SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import {
-    cleanEmptyDefaultSkillsAssessment,
-    getDefaultSkillsAssessment,
-} from '@/utils/getDefaultAssessmentList';
+import { cleanEmptyDefaultSkillsAssessment, getDefaultSkillsAssessment } from '../utils/getDefaultAssessmentList';
 
 const childLogger = clientLogger.child('useSkillsAssessment');
 
