@@ -12,10 +12,10 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { CheckCircle2, ChevronDown, ChevronUp, Loader, Loader2, Plus, Star, Trash2, XCircle } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { CheckCircle2, ChevronDown, ChevronUp, Loader, Loader2, Plus, Star, Trash2, XCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { GoDot } from 'react-icons/go';
 
@@ -38,16 +38,14 @@ export default function SkillsAssessmentPage() {
     const [confirmDelete, setConfirmDelete] = useState<{ categoryIdx: number; itemIndex: number } | null>(null);
     const [collapsedSkills, setCollapsedSkills] = useState<Record<string, boolean>>({});
     const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
-    const saveTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-    // Save mutation with React Query
     const saveMutation = useMutation({
         mutationFn: async (dataToSave: SkillsAssessmentSchema) => {
             const cleanedData = cleanEmptyDefaultSkillsAssessment(dataToSave);
             childLogger.debug('Saving skills assessment', { data: cleanedData });
             await trpcClient['skills-assessment-save'].mutate(cleanedData);
         },
-        onError: (error) => {
+        onError: (error: unknown) => {
             toast.error('Failed to save skills assessment', {
                 description: error instanceof Error ? error.message : 'Unknown error',
             });
@@ -70,6 +68,7 @@ export default function SkillsAssessmentPage() {
         skills[itemIndex] = item;
         updated[idx] = { ...updated[idx], skills };
         setData(updated);
+        saveMutation.mutate(updated);
     }
 
     function deleteCustomSkill(category: string, itemIndex: number): void {
@@ -86,11 +85,11 @@ export default function SkillsAssessmentPage() {
         }
         updated[idx] = { ...updated[idx], skills: skills.filter((_, i) => i !== itemIndex) };
         setData(updated);
+        saveMutation.mutate(updated);
     }
 
     const getCategoryIdx = (category: string) => data.findIndex((c) => c.category === category);
 
-    // Initialize data from query result
     const {
         data: queryData,
         isLoading: isInitializing,
@@ -128,28 +127,6 @@ export default function SkillsAssessmentPage() {
         }
     }, [isLoadError, loadError]);
 
-    // Debounced auto-save effect
-    useEffect(() => {
-        if (isInitializing || data.length === 0) {
-            return;
-        }
-
-        if (saveTimeoutRef.current) {
-            clearTimeout(saveTimeoutRef.current);
-        }
-
-        saveTimeoutRef.current = setTimeout(() => {
-            saveMutation.mutate(data);
-        }, 1000);
-
-        return () => {
-            if (saveTimeoutRef.current) {
-                clearTimeout(saveTimeoutRef.current);
-            }
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data, isInitializing]);
-
     const addItemToCategory = (category: string) => {
         const value = newItem[category]?.trim();
         if (!value) {
@@ -169,6 +146,7 @@ export default function SkillsAssessmentPage() {
             skills: [...updated[idx].skills, { name: value, level: 0, subSkills: [] }],
         };
         setData(updated);
+        saveMutation.mutate(updated);
         setNewItem((prev) => ({ ...prev, [category]: '' }));
     };
 
@@ -182,6 +160,7 @@ export default function SkillsAssessmentPage() {
         skills[index] = { ...skills[index], level };
         updated[idx] = { ...updated[idx], skills };
         setData(updated);
+        saveMutation.mutate(updated);
     };
 
     const addSubSkillToItem = (category: string, itemIndex: number, subSkillName: string) => {
@@ -204,6 +183,7 @@ export default function SkillsAssessmentPage() {
         skills[itemIndex] = item;
         updated[idx] = { ...updated[idx], skills };
         setData(updated);
+        saveMutation.mutate(updated);
         setNewSubSkill((prev) => ({ ...prev, [category]: { ...(prev[category] || {}), [itemIndex]: '' } }));
     };
 
@@ -223,6 +203,7 @@ export default function SkillsAssessmentPage() {
         skills[itemIndex] = item;
         updated[idx] = { ...updated[idx], skills };
         setData(updated);
+        saveMutation.mutate(updated);
     };
 
     const StarRating = ({
@@ -306,23 +287,21 @@ export default function SkillsAssessmentPage() {
         );
     }
 
-    // Compute sync status
-    const getSyncStatus = () => {
+    const SyncStatusIndicator = () => {
+        let icon = <CheckCircle2 className='w-5 h-5 text-green-500' />;
         if (saveMutation.isPending) {
-            return { icon: Loader2, text: 'Saving...', className: 'text-blue-500 animate-spin' };
+            icon = <Loader2 className='w-5 h-5 text-blue-500 animate-spin' />;
+        } else if (saveMutation.isError) {
+            icon = <XCircle className='w-5 h-5 text-red-500 animate-pulse' />;
         }
-        if (saveMutation.isError) {
-            return { icon: XCircle, text: 'Save failed', className: 'text-red-500' };
-        }
-        if (saveMutation.isSuccess) {
-            return { icon: CheckCircle2, text: 'All changes saved', className: 'text-green-500' };
-        }
-        return null;
+        return <div className='flex items-center justify-end min-w-[32px] h-8 select-none'>{icon}</div>;
     };
-    const syncStatus = getSyncStatus();
 
     return (
-        <div className='max-w-4xl mx-auto px-4 py-6 space-y-6' style={{ minWidth: 320 }}>
+        <div className='max-w-4xl mx-auto px-4 py-6 space-y-6 relative' style={{ minWidth: 320 }}>
+            <div className='fixed right-4 top-4 z-10'>
+                <SyncStatusIndicator />
+            </div>
             <Dialog open={!!confirmDelete} onOpenChange={(open) => !open && setConfirmDelete(null)}>
                 <DialogContent>
                     <DialogHeader>
@@ -350,6 +329,7 @@ export default function SkillsAssessmentPage() {
                                     skills[itemIndex] = skill;
                                     updated[categoryIdx] = { ...updated[categoryIdx], skills };
                                     setData(updated);
+                                    saveMutation.mutate(updated);
                                     setConfirmDelete(null);
                                 }
                             }}
@@ -361,12 +341,6 @@ export default function SkillsAssessmentPage() {
             </Dialog>
             <div className='flex items-center justify-between'>
                 <h1 className='text-3xl font-bold'>Skills Assessment</h1>
-                {syncStatus && (
-                    <div className='flex items-center gap-2 text-sm'>
-                        <syncStatus.icon className={`w-4 h-4 ${syncStatus.className}`} />
-                        <span className={syncStatus.className}>{syncStatus.text}</span>
-                    </div>
-                )}
             </div>
             <div className='space-y-2'>
                 <p className='text-muted-foreground'>
@@ -458,6 +432,7 @@ export default function SkillsAssessmentPage() {
                                                             skills[itemIndex] = skill;
                                                             updated[categoryIdx] = { ...updated[categoryIdx], skills };
                                                             setData(updated);
+                                                            saveMutation.mutate(updated);
                                                         }
                                                     }}
                                                 />
