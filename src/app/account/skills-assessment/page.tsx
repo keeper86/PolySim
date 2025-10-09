@@ -12,9 +12,10 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { ChevronDown, ChevronUp, Loader, Plus, Star, Trash2 } from 'lucide-react';
+import { CheckCircle2, ChevronDown, ChevronUp, Loader, Loader2, Plus, Star, Trash2, XCircle } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { GoDot } from 'react-icons/go';
 
@@ -32,14 +33,27 @@ const childLogger = clientLogger.child('SkillsAssessmentPage');
 
 export default function SkillsAssessmentPage() {
     const [data, setData] = useState<SkillsAssessmentSchema>([]);
-    const [loading, setLoading] = useState(true);
     const [newItem, setNewItem] = useState<Record<string, string>>({});
     const [newSubSkill, setNewSubSkill] = useState<Record<string, Record<number, string>>>({});
     const [confirmDelete, setConfirmDelete] = useState<{ categoryIdx: number; itemIndex: number } | null>(null);
     const [collapsedSkills, setCollapsedSkills] = useState<Record<string, boolean>>({});
     const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
     const saveTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
-    const savingRef = useRef(false);
+
+    // Save mutation with React Query
+    const saveMutation = useMutation({
+        mutationFn: async (dataToSave: SkillsAssessmentSchema) => {
+            const cleanedData = cleanEmptyDefaultSkillsAssessment(dataToSave);
+            childLogger.debug('Saving skills assessment', { data: cleanedData });
+            await trpcClient['skills-assessment-save'].mutate(cleanedData);
+        },
+        onError: (error) => {
+            toast.error('Failed to save skills assessment', {
+                description: error instanceof Error ? error.message : 'Unknown error',
+            });
+            childLogger.error('Failed to save skills assessment', { error });
+        },
+    });
 
     function deleteCustomSubSkill(category: string, itemIndex: number, subIndex: number): void {
         const idx = getCategoryIdx(category);
@@ -76,72 +90,65 @@ export default function SkillsAssessmentPage() {
 
     const getCategoryIdx = (category: string) => data.findIndex((c) => c.category === category);
 
-    const loadData = async () => {
-        setLoading(true);
-        try {
+    // Initialize data from query result
+    const {
+        data: queryData,
+        isLoading: isInitializing,
+        isError: isLoadError,
+        error: loadError,
+    } = useQuery({
+        queryKey: ['skills-assessment'],
+        queryFn: async () => {
+            childLogger.debug('Fetching skills assessment');
             const result = await trpcClient['skills-assessment-get'].query();
             if (!result || result.length === 0) {
                 childLogger.debug('No existing skills assessment found, loading default');
-                setData(getDefaultSkillsAssessment());
+                return getDefaultSkillsAssessment();
             } else {
-                childLogger.debug(
-                    'Loaded existing skills assessment:' + JSON.stringify(getDefaultSkillsAssessment(result)),
-                );
-                setData(getDefaultSkillsAssessment(result));
+                childLogger.debug('Loaded existing skills assessment');
+                return getDefaultSkillsAssessment(result);
             }
-        } catch (error) {
-            toast.error('Failed to load skills assessment', {
-                description: error instanceof Error ? error.message : 'Unknown error',
-            });
-        } finally {
-            setLoading(false);
+        },
+        staleTime: 5 * 60 * 1000, // 5 minutes
+    });
+
+    // Sync query data to local state
+    useEffect(() => {
+        if (queryData) {
+            setData(queryData);
         }
-    };
-    useEffect(() => {
-        void loadData();
-    }, []);
+    }, [queryData]);
 
-    const pendingDirtyRef = useRef(false);
-
+    // Show error toast on load error
     useEffect(() => {
-        if (loading) {
+        if (isLoadError) {
+            toast.error('Failed to load skills assessment', {
+                description: loadError instanceof Error ? loadError.message : 'Unknown error',
+            });
+        }
+    }, [isLoadError, loadError]);
+
+    // Debounced auto-save effect
+    useEffect(() => {
+        if (isInitializing || data.length === 0) {
             return;
         }
-        const saveData = async () => {
-            if (savingRef.current) {
-                pendingDirtyRef.current = true;
-                return;
-            }
-            savingRef.current = true;
-            try {
-                const dataToSave = cleanEmptyDefaultSkillsAssessment(data);
-                childLogger.debug('Saving skills assessment', { data: dataToSave });
-                await trpcClient['skills-assessment-save'].mutate(dataToSave);
-            } catch (error) {
-                toast.error('Failed to save skills assessment', {
-                    description: error instanceof Error ? error.message : 'Unknown error',
-                });
-                childLogger.error('Failed to save skills assessment', { error });
-            } finally {
-                savingRef.current = false;
-                if (pendingDirtyRef.current) {
-                    pendingDirtyRef.current = false;
-                    void saveData();
-                }
-            }
-        };
+
         if (saveTimeoutRef.current) {
             clearTimeout(saveTimeoutRef.current);
         }
+
         saveTimeoutRef.current = setTimeout(() => {
-            void saveData();
+            saveMutation.mutate(data);
         }, 1000);
+
         return () => {
             if (saveTimeoutRef.current) {
                 clearTimeout(saveTimeoutRef.current);
             }
         };
-    }, [data, loading]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data, isInitializing]);
 
     const addItemToCategory = (category: string) => {
         const value = newItem[category]?.trim();
@@ -291,13 +298,28 @@ export default function SkillsAssessmentPage() {
         }
     };
 
-    if (loading) {
+    if (isInitializing) {
         return (
             <div className='flex items-center justify-center min-h-[400px]'>
                 <Loader className='w-8 h-8 text-muted-foreground animate-spin' style={{ animationDuration: '2s' }} />
             </div>
         );
     }
+
+    // Compute sync status
+    const getSyncStatus = () => {
+        if (saveMutation.isPending) {
+            return { icon: Loader2, text: 'Saving...', className: 'text-blue-500 animate-spin' };
+        }
+        if (saveMutation.isError) {
+            return { icon: XCircle, text: 'Save failed', className: 'text-red-500' };
+        }
+        if (saveMutation.isSuccess) {
+            return { icon: CheckCircle2, text: 'All changes saved', className: 'text-green-500' };
+        }
+        return null;
+    };
+    const syncStatus = getSyncStatus();
 
     return (
         <div className='max-w-4xl mx-auto px-4 py-6 space-y-6' style={{ minWidth: 320 }}>
@@ -339,6 +361,12 @@ export default function SkillsAssessmentPage() {
             </Dialog>
             <div className='flex items-center justify-between'>
                 <h1 className='text-3xl font-bold'>Skills Assessment</h1>
+                {syncStatus && (
+                    <div className='flex items-center gap-2 text-sm'>
+                        <syncStatus.icon className={`w-4 h-4 ${syncStatus.className}`} />
+                        <span className={syncStatus.className}>{syncStatus.text}</span>
+                    </div>
+                )}
             </div>
             <div className='space-y-2'>
                 <p className='text-muted-foreground'>

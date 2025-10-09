@@ -11,6 +11,7 @@ import SessionProviderWrapper from './SessionProviderWrapper';
 import { Toaster } from '../components/ui/sonner';
 import './globals.css';
 import Footer from '@/app/Footer';
+import { QueryClientProvider } from './QueryClientProvider';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -39,23 +40,25 @@ export default async function RootLayout({
     return (
         <html lang='en'>
             <body className={`${geistSans.variable} ${geistMono.variable}`}>
-                <SessionProviderWrapper session={session}>
-                    <SidebarProvider>
-                        <AppSidebar />
-                        <SidebarInset>
-                            <header className='flex h-16 shrink-0 items-center gap-2'>
-                                <div className='flex items-center gap-2 px-4'>
-                                    <SidebarTrigger className='-ml-1' />
-                                    <Separator orientation='vertical' className='mr-2 h-4' />
-                                    <DynamicBreadcrumbs />
-                                </div>
-                            </header>
-                            <main className='flex-1 p-0 sm:p-4 overflow-x-auto break-words'>{children}</main>
-                            <Footer />
-                        </SidebarInset>
-                    </SidebarProvider>
-                    <Toaster />
-                </SessionProviderWrapper>
+                <QueryClientProvider>
+                    <SessionProviderWrapper session={session}>
+                        <SidebarProvider>
+                            <AppSidebar />
+                            <SidebarInset>
+                                <header className='flex h-16 shrink-0 items-center gap-2'>
+                                    <div className='flex items-center gap-2 px-4'>
+                                        <SidebarTrigger className='-ml-1' />
+                                        <Separator orientation='vertical' className='mr-2 h-4' />
+                                        <DynamicBreadcrumbs />
+                                    </div>
+                                </header>
+                                <main className='flex-1 p-0 sm:p-4 overflow-x-auto break-words'>{children}</main>
+                                <Footer />
+                            </SidebarInset>
+                        </SidebarProvider>
+                        <Toaster />
+                    </SessionProviderWrapper>
+                </QueryClientProvider>
             </body>
         </html>
     );
