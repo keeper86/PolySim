@@ -22,6 +22,7 @@ declare module "nextjs-routes" {
     | DynamicRoute<"/api/trpc/[trpc]", { "trpc": string }>
     | StaticRoute<"/files">
     | StaticRoute<"/imprint">
+    | StaticRoute<"/messages">
     | StaticRoute<"/pong">
     | StaticRoute<"/projects">
     | StaticRoute<"/projects/create">
