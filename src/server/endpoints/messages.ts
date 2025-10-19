@@ -1,6 +1,5 @@
 import { z } from 'zod';
-import { createServerSupabase } from '@/lib/supabaseClient';
-import { db } from '../db'; // Keep for participant check
+import { db } from '../db';
 import { logger } from '../logger';
 import type { ProcedureBuilderType } from '../router';
 
@@ -49,46 +48,32 @@ export const getConversations = (procedure: ProcedureBuilderType, path: `/${stri
 
             logger.info({ component: 'messages', userId }, 'Getting conversations');
 
-            // Supabase: get all conversation IDs for this user
-            // Use server-side Supabase client (service role key). We enforce auth/permissions
-            // on the server using NextAuth session rather than passing Keycloak tokens to Supabase,
-            // because those tokens are not signed with the Supabase JWT secret and will fail verification.
-            const supabase = createServerSupabase();
-            const { data: participantRows, error: participantError } = await supabase
-                .from(TABLES.conversationParticipants)
+            // Get all conversation IDs for this user using direct database access
+            const participantRows = await db(TABLES.conversationParticipants)
                 .select('conversation_id')
-                .eq('user_id', userId);
-            if (participantError) {
-                throw new Error(participantError.message);
-            }
-            const conversationIds = (participantRows || []).map((row) => row.conversation_id);
+                .where('user_id', userId);
+
+            const conversationIds = participantRows.map((row) => row.conversation_id);
             if (conversationIds.length === 0) {
                 return [];
             }
 
             // Fetch conversations for these IDs
-            const { data: conversations, error: convError } = await supabase
-                .from(TABLES.conversations)
+            const conversations = await db(TABLES.conversations)
                 .select('*')
-                .in('id', conversationIds)
-                .order('updated_at', { ascending: false });
-            if (convError) {
-                throw new Error(convError.message);
-            }
+                .whereIn('id', conversationIds)
+                .orderBy('updated_at', 'desc');
 
             // For each conversation, fetch the last message (content and created_at)
             const results = await Promise.all(
-                (conversations || []).map(async (conv) => {
-                    const { data: lastMsg, error: lastMsgError } = await supabase
-                        .from(TABLES.messages)
-                        .select('content, created_at')
-                        .eq('conversation_id', conv.id)
-                        .order('created_at', { ascending: false })
+                conversations.map(async (conv) => {
+                    const lastMsg = await db(TABLES.messages)
+                        .select('content', 'created_at')
+                        .where('conversation_id', conv.id)
+                        .orderBy('created_at', 'desc')
                         .limit(1)
-                        .single();
-                    if (lastMsgError) {
-                        throw new Error(lastMsgError.message);
-                    }
+                        .first();
+
                     return {
                         ...conv,
                         created_at: new Date(conv.created_at).toISOString(),
@@ -127,30 +112,25 @@ export const getMessages = (procedure: ProcedureBuilderType, path: `/${string}`)
 
             logger.info({ component: 'messages', userId, conversationId: input.conversationId }, 'Getting messages');
 
-            // Verify user is a participant in this conversation (Supabase)
-            const supabase = createServerSupabase();
-            const { data: participant, error: participantError } = await supabase
-                .from(TABLES.conversationParticipants)
+            // Verify user is a participant in this conversation
+            const participant = await db(TABLES.conversationParticipants)
                 .select('*')
-                .eq('conversation_id', input.conversationId)
-                .eq('user_id', userId)
-                .single();
-            if (participantError || !participant) {
+                .where('conversation_id', input.conversationId)
+                .where('user_id', userId)
+                .first();
+
+            if (!participant) {
                 throw new Error('Not a participant in this conversation');
             }
 
-            const { data: messages, error } = await supabase
-                .from(TABLES.messages)
+            const messages = await db(TABLES.messages)
                 .select('*')
-                .eq('conversation_id', input.conversationId)
-                .order('created_at', { ascending: true })
-                .range(input.offset, input.offset + input.limit - 1);
+                .where('conversation_id', input.conversationId)
+                .orderBy('created_at', 'asc')
+                .limit(input.limit)
+                .offset(input.offset);
 
-            if (error) {
-                throw new Error(error.message);
-            }
-
-            return (messages || []).map((msg) => ({
+            return messages.map((msg) => ({
                 ...msg,
                 created_at: new Date(msg.created_at).toISOString(),
             }));
@@ -181,37 +161,27 @@ export const sendMessage = (procedure: ProcedureBuilderType, path: `/${string}`)
 
             logger.info({ component: 'messages', userId, conversationId: input.conversationId }, 'Sending message');
 
-            // Verify user is a participant in this conversation (Supabase)
-            const supabase = createServerSupabase();
-            const { data: participant, error: participantError } = await supabase
-                .from(TABLES.conversationParticipants)
+            // Verify user is a participant in this conversation
+            const participant = await db(TABLES.conversationParticipants)
                 .select('*')
-                .eq('conversation_id', input.conversationId)
-                .eq('user_id', userId)
-                .single();
-            if (participantError || !participant) {
+                .where('conversation_id', input.conversationId)
+                .where('user_id', userId)
+                .first();
+
+            if (!participant) {
                 throw new Error('Not a participant in this conversation');
             }
 
-            const { data: message, error } = await supabase
-                .from(TABLES.messages)
+            const [message] = await db(TABLES.messages)
                 .insert({
                     conversation_id: input.conversationId,
                     sender_id: userId,
                     content: input.content,
                 })
-                .select()
-                .single();
+                .returning('*');
 
-            if (error) {
-                throw new Error(error.message);
-            }
-
-            // Optionally update conversation's updated_at timestamp via Supabase
-            await supabase
-                .from(TABLES.conversations)
-                .update({ updated_at: new Date().toISOString() })
-                .eq('id', input.conversationId);
+            // Update conversation's updated_at timestamp
+            await db(TABLES.conversations).update({ updated_at: db.fn.now() }).where('id', input.conversationId);
 
             return {
                 ...message,

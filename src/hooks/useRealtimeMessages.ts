@@ -15,12 +15,14 @@ type Message = {
     created_at: string;
 };
 
-// Create Supabase client for realtime subscriptions
+// Create Supabase client for realtime subscriptions to self-hosted Realtime server
 const getSupabaseClient = () => {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:8000';
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
+    // Connect directly to Supabase Realtime (port 4000)
+    const realtimeUrl = process.env.NEXT_PUBLIC_REALTIME_URL || 'http://localhost:4000';
+    // Use a dummy key - authentication is handled by tRPC endpoints with NextAuth
+    const dummyKey = 'public-anon-key';
 
-    return createClient(supabaseUrl, supabaseKey, {
+    return createClient(realtimeUrl, dummyKey, {
         realtime: {
             params: {
                 eventsPerSecond: 10,
@@ -77,7 +79,7 @@ export default function useRealtimeMessages(conversationId: number | null) {
                     if (mounted && newMsg) {
                         setMessages((prev) => [...prev, newMsg]);
                     }
-                }
+                },
             )
             .subscribe((status) => {
                 log.info(`Supabase subscription status: ${status}`);
@@ -91,4 +93,3 @@ export default function useRealtimeMessages(conversationId: number | null) {
 
     return { messages, loading, setMessages };
 }
-

@@ -99,23 +99,26 @@ This provides a self-hosted solution using Supabase Realtime Docker container co
 - **Message Input**: Bottom bar for composing new messages
 - **Empty States**: Helpful prompts when no conversations or messages exist
 
-## Docker Services
+## Architecture
 
-The messaging feature requires the following Docker services:
+The messaging feature uses a simplified, self-hosted architecture:
 
 1. **PostgreSQL** (postgres:15-alpine)
     - With `wal_level=logical` for replication
     - Hosts all messaging tables
-    - Publishes NOTIFY events via triggers
+    - Direct database access via Knex.js from Next.js
 
 2. **Supabase Realtime** (supabase/realtime:v2.30.23)
-    - Listens to PostgreSQL logical replication
+    - Listens to PostgreSQL logical replication (STREAM mode)
     - Provides WebSocket endpoint on port 4000
-    - Broadcasts database changes to connected clients
+    - Broadcasts database INSERT events to connected clients
 
 3. **Next.js App**
-    - Connects to Realtime via WebSocket
+    - tRPC API endpoints for CRUD operations (via direct database access)
+    - Frontend connects to Realtime via Supabase JS client for WebSocket subscriptions
     - Displays messages in real-time
+
+**Note**: PostgREST is NOT used. All database operations go through tRPC endpoints with Knex.js. Realtime is ONLY used for WebSocket subscriptions to database changes.
 
 Configuration in `docker-compose.development.yaml` and `docker-compose.yaml`.
 
@@ -132,8 +135,8 @@ Configuration in `docker-compose.development.yaml` and `docker-compose.yaml`.
 
 - **Message Endpoints** (`src/server/endpoints/messages.ts`): tRPC API handlers
     - Input validation with Zod schemas
-    - Authorization checks (verify participants)
-    - Database queries using Knex.js
+    - Authorization checks using NextAuth session (verify participants)
+    - Direct database queries using Knex.js (no PostgREST)
     - Proper error handling
 
 ### Database Migrations
@@ -206,7 +209,7 @@ INSERT INTO messages (conversation_id, sender_id, content) VALUES
 Key dependencies used:
 
 - `@radix-ui/react-scroll-area`: Accessible scrolling component for message lists
-- `@supabase/realtime-js`: WebSocket client for Supabase Realtime integration
+- `@supabase/supabase-js`: WebSocket client for Supabase Realtime subscriptions (realtime only, not PostgREST)
 
 ## Environment Variables
 
@@ -218,10 +221,10 @@ POSTGRES_USER=postgres
 POSTGRES_PASSWORD=password
 POSTGRES_DB=polysimdb
 
-# Realtime WebSocket
-NEXT_PUBLIC_REALTIME_URL=ws://localhost:4000/socket
+# Realtime WebSocket URL (connects to Supabase Realtime server)
+NEXT_PUBLIC_REALTIME_URL=http://localhost:4000
 
-# Authentication (for Realtime JWT)
+# Authentication
 NEXTAUTH_SECRET=super-secret
 ```
 
