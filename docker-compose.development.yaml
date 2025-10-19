@@ -13,6 +13,29 @@ services:
             timeout: 3s
             retries: 10
         container_name: polysim-dev-db
+        command: postgres -c wal_level=logical
+
+    realtime:
+        image: supabase/realtime:v2.30.23
+        environment:
+            DB_HOST: db
+            DB_PORT: 5432
+            DB_USER: ${POSTGRES_USER}
+            DB_PASSWORD: ${POSTGRES_PASSWORD}
+            DB_NAME: ${POSTGRES_DB}
+            DB_SSL: 'false'
+            PORT: 4000
+            REPLICATION_MODE: RLS
+            REPLICATION_POLL_INTERVAL: 100
+            SECURE_CHANNELS: 'false'
+            SLOT_NAME: supabase_realtime_rls
+            TEMPORARY_SLOT: 'true'
+        ports:
+            - '4000:4000'
+        depends_on:
+            db:
+                condition: service_healthy
+        container_name: polysim-dev-realtime
 
     keycloak:
         image: quay.io/keycloak/keycloak:26.3.4

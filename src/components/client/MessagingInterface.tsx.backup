@@ -10,8 +10,6 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';
-import type { RealtimeChannel} from '@supabase/realtime-js';
-import { RealtimeClient } from '@supabase/realtime-js';
 
 const log = clientLogger.child('MessagingInterface');
 
@@ -43,71 +41,29 @@ export default function MessagingInterface() {
     const [newConversationName, setNewConversationName] = useState('');
     const [newConversationParticipants, setNewConversationParticipants] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const realtimeClient = useRef<RealtimeClient | null>(null);
-    const messageChannel = useRef<RealtimeChannel | null>(null);
+    const pollingInterval = useRef<NodeJS.Timeout | null>(null);
 
     const userId = session?.user?.email || session?.user?.name || 'unknown';
-
-    // Initialize Realtime client
-    useEffect(() => {
-        const realtimeUrl = process.env.NEXT_PUBLIC_REALTIME_URL || 'ws://localhost:4000/socket';
-
-        realtimeClient.current = new RealtimeClient(realtimeUrl, {
-            params: {
-                apikey: 'public-anon-key', // For development
-            },
-        });
-
-        realtimeClient.current.connect();
-
-        log.success('Realtime client connected', undefined, { show: false });
-
-        return () => {
-            if (realtimeClient.current) {
-                realtimeClient.current.disconnect();
-            }
-        };
-    }, []);
 
     // Load conversations on mount
     useEffect(() => {
         void loadConversations();
     }, []);
 
-    // Subscribe to message updates when a conversation is selected
+    // Poll for new messages when a conversation is selected
     useEffect(() => {
-        if (selectedConversation && realtimeClient.current) {
+        if (selectedConversation) {
             void loadMessages(selectedConversation);
 
-            // Subscribe to realtime updates for this conversation
-            messageChannel.current = realtimeClient.current.channel(`messages:conversation_id=eq.${selectedConversation}`);
-
-            messageChannel.current
-                .on(
-                    'postgres_changes',
-                    {
-                        event: 'INSERT',
-                        schema: 'public',
-                        table: 'messages',
-                        filter: `conversation_id=eq.${selectedConversation}`,
-                    },
-                    (payload) => {
-                        log.info('New message received via realtime', payload);
-                        const newMsg = payload.new as Message;
-                        setMessages((prev) => [...prev, {
-                            ...newMsg,
-                            created_at: newMsg.created_at,
-                        }]);
-                    }
-                )
-                .subscribe((status) => {
-                    log.info(`Subscription status: ${status}`);
-                });
+            // Set up polling for new messages (every 2 seconds)
+            pollingInterval.current = setInterval(() => {
+                void loadMessages(selectedConversation, true);
+            }, 2000);
         }
 
         return () => {
-            if (messageChannel.current) {
-                void messageChannel.current.unsubscribe();
+            if (pollingInterval.current) {
+                clearInterval(pollingInterval.current);
             }
         };
     }, [selectedConversation]);
@@ -144,11 +100,11 @@ export default function MessagingInterface() {
 
         setLoading(true);
         try {
-            await trpcClient['messages-send'].mutate({
+            const message = await trpcClient['messages-send'].mutate({
                 conversationId: selectedConversation,
                 content: newMessage,
             });
-            // Message will be added via realtime subscription
+            setMessages([...messages, message]);
             setNewMessage('');
             void loadConversations(); // Refresh to update last message
             log.success('Message sent', undefined, { show: false });

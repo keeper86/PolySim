@@ -61,14 +61,15 @@ All endpoints are protected and require authentication:
 
 ### Real-time Updates
 
-The messaging interface uses **polling** to achieve real-time updates:
+The messaging interface uses **Supabase Realtime** with WebSockets for true real-time updates:
 
-- Messages are polled every 2 seconds when a conversation is selected
-- Automatic scrolling to newest messages
-- Silent polling to avoid UI disruption
-- Polling stops when conversation is deselected
+- WebSocket connection established on component mount
+- Subscriptions to PostgreSQL changes via Supabase Realtime
+- Automatic message delivery when new messages are inserted
+- Database triggers publish NOTIFY events on message inserts
+- Connection cleanup when component unmounts or conversation changes
 
-This approach provides a self-hosted solution without requiring WebSocket infrastructure.
+This provides a self-hosted solution using Supabase Realtime Docker container connected to PostgreSQL logical replication.
 
 ## Usage
 
@@ -98,13 +99,32 @@ This approach provides a self-hosted solution without requiring WebSocket infras
 - **Message Input**: Bottom bar for composing new messages
 - **Empty States**: Helpful prompts when no conversations or messages exist
 
-## Technical Implementation
+## Docker Services
+
+The messaging feature requires the following Docker services:
+
+1. **PostgreSQL** (postgres:15-alpine)
+   - With `wal_level=logical` for replication
+   - Hosts all messaging tables
+   - Publishes NOTIFY events via triggers
+
+2. **Supabase Realtime** (supabase/realtime:v2.30.23)
+   - Listens to PostgreSQL logical replication
+   - Provides WebSocket endpoint on port 4000
+   - Broadcasts database changes to connected clients
+
+3. **Next.js App**
+   - Connects to Realtime via WebSocket
+   - Displays messages in real-time
+
+Configuration in `docker-compose.development.yaml` and `docker-compose.yaml`.
 
 ### Client Components
 
 - **MessagingInterface** (`src/components/client/MessagingInterface.tsx`): Main messaging UI component
   - Uses React hooks for state management
-  - Implements polling with setInterval
+  - Integrates Supabase Realtime WebSocket client
+  - Subscribes to PostgreSQL changes via realtime channels
   - Auto-scrolls to latest messages
   - Displays sender information and timestamps
 
@@ -119,8 +139,12 @@ This approach provides a self-hosted solution without requiring WebSocket infras
 ### Database Migrations
 
 - Migration: `20251019001441_create_conversations_and_messages_tables.js`
-- Creates all tables with proper indexes and foreign key constraints
-- Cascade deletes for data integrity
+  - Creates all tables with proper indexes and foreign key constraints
+  - Cascade deletes for data integrity
+- Migration: `20251019003407_add_realtime_triggers_for_messages.js`
+  - Adds PostgreSQL NOTIFY triggers for message inserts
+  - Enables logical replication for Supabase Realtime
+  - Creates notification functions for real-time events
 
 ## Security Considerations
 
@@ -134,16 +158,16 @@ This approach provides a self-hosted solution without requiring WebSocket infras
 
 Potential improvements for the messaging feature:
 
-1. **WebSocket Support**: Replace polling with WebSockets for true real-time updates
-2. **Read Receipts**: Track which messages have been read by participants
-3. **Typing Indicators**: Show when other users are typing
-4. **File Attachments**: Support sending images and files
-5. **Message Editing/Deletion**: Allow users to edit or delete their messages
-6. **Search**: Full-text search across messages
-7. **Notifications**: Browser notifications for new messages
-8. **Message Reactions**: Emoji reactions to messages
-9. **User Presence**: Show online/offline status
-10. **Direct Messages**: Support for 1-on-1 conversations
+1. **Read Receipts**: Track which messages have been read by participants
+2. **Typing Indicators**: Show when other users are typing
+3. **File Attachments**: Support sending images and files
+4. **Message Editing/Deletion**: Allow users to edit or delete their messages
+5. **Search**: Full-text search across messages
+6. **Notifications**: Browser notifications for new messages
+7. **Message Reactions**: Emoji reactions to messages
+8. **User Presence**: Show online/offline status
+9. **Direct Messages**: Support for 1-on-1 conversations
+10. **Message Threading**: Reply to specific messages
 
 ## Testing
 
@@ -182,3 +206,18 @@ INSERT INTO messages (conversation_id, sender_id, content) VALUES
 Key dependencies used:
 
 - `@radix-ui/react-scroll-area`: Accessible scrolling component for message lists
+- `@supabase/realtime-js`: WebSocket client for Supabase Realtime integration
+
+## Environment Variables
+
+Required environment variables:
+
+```bash
+# Database
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=password
+POSTGRES_DB=polysimdb
+
+# Realtime WebSocket
+NEXT_PUBLIC_REALTIME_URL=ws://localhost:4000/socket
+```
