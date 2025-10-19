@@ -179,6 +179,6 @@ INSERT INTO messages (conversation_id, sender_id, content) VALUES
 
 ## Dependencies
 
-New dependencies added:
+Key dependencies used:
 
 - `@radix-ui/react-scroll-area`: Accessible scrolling component for message lists
