@@ -33,6 +33,7 @@
         "@radix-ui/react-slot": "^1.2.3",
         "@radix-ui/react-tooltip": "^1.2.8",
         "@supabase/realtime-js": "^2.75.1",
+        "@supabase/supabase-js": "^2.75.1",
         "@tanstack/eslint-plugin-query": "^5.86.0",
         "@tanstack/react-query": "^5.90.2",
         "@trpc/client": "^11.5.1",

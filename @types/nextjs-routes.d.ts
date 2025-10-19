@@ -19,6 +19,8 @@ declare module "nextjs-routes" {
     | DynamicRoute<"/api/[...trpc]", { "trpc": string[] }>
     | DynamicRoute<"/api/auth/[...nextauth]", { "nextauth": string[] }>
     | StaticRoute<"/api/openapi.json">
+    | StaticRoute<"/api/realtime">
+    | StaticRoute<"/api/realtime/sse">
     | DynamicRoute<"/api/trpc/[trpc]", { "trpc": string }>
     | StaticRoute<"/files">
     | StaticRoute<"/imprint">

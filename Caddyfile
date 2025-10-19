@@ -11,3 +11,10 @@ auth.{$CADDY_DOMAIN} {
         header_up X-Real-IP {remote}
     }
 }
+
+realtime.{$CADDY_DOMAIN} {
+    reverse_proxy realtime:4000 {
+        header_up X-Forwarded-Proto https
+        header_up X-Real-IP {remote}
+    }
+}

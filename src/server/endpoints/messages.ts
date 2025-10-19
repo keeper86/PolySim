@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { db } from '../db';
+import { createServerSupabase } from '@/lib/supabaseClient';
+import { db } from '../db'; // Keep for participant check
 import { logger } from '../logger';
 import type { ProcedureBuilderType } from '../router';
 
@@ -22,6 +23,13 @@ const ConversationSchema = z.object({
     last_message_at: z.string().nullable(),
 });
 
+// Table name constants to avoid magic strings
+const TABLES = {
+    conversationParticipants: 'conversation_participants',
+    messages: 'messages',
+    conversations: 'conversations',
+};
+
 // Get all conversations for the current user
 export const getConversations = (procedure: ProcedureBuilderType, path: `/${string}`) => {
     return procedure
@@ -41,29 +49,56 @@ export const getConversations = (procedure: ProcedureBuilderType, path: `/${stri
 
             logger.info({ component: 'messages', userId }, 'Getting conversations');
 
-            const conversations = await db('conversations')
-                .select(
-                    'conversations.id',
-                    'conversations.name',
-                    'conversations.created_at',
-                    'conversations.updated_at',
-                    db.raw(
-                        '(SELECT content FROM messages WHERE conversation_id = conversations.id ORDER BY created_at DESC LIMIT 1) as last_message',
-                    ),
-                    db.raw(
-                        '(SELECT created_at FROM messages WHERE conversation_id = conversations.id ORDER BY created_at DESC LIMIT 1) as last_message_at',
-                    ),
-                )
-                .join('conversation_participants', 'conversations.id', 'conversation_participants.conversation_id')
-                .where('conversation_participants.user_id', userId)
-                .orderBy('conversations.updated_at', 'desc');
+            // Supabase: get all conversation IDs for this user
+            // Use server-side Supabase client (service role key). We enforce auth/permissions
+            // on the server using NextAuth session rather than passing Keycloak tokens to Supabase,
+            // because those tokens are not signed with the Supabase JWT secret and will fail verification.
+            const supabase = createServerSupabase();
+            const { data: participantRows, error: participantError } = await supabase
+                .from(TABLES.conversationParticipants)
+                .select('conversation_id')
+                .eq('user_id', userId);
+            if (participantError) {
+                throw new Error(participantError.message);
+            }
+            const conversationIds = (participantRows || []).map((row) => row.conversation_id);
+            if (conversationIds.length === 0) {
+                return [];
+            }
 
-            return conversations.map((conv) => ({
-                ...conv,
-                created_at: conv.created_at.toISOString(),
-                updated_at: conv.updated_at.toISOString(),
-                last_message_at: conv.last_message_at ? new Date(conv.last_message_at).toISOString() : null,
-            }));
+            // Fetch conversations for these IDs
+            const { data: conversations, error: convError } = await supabase
+                .from(TABLES.conversations)
+                .select('*')
+                .in('id', conversationIds)
+                .order('updated_at', { ascending: false });
+            if (convError) {
+                throw new Error(convError.message);
+            }
+
+            // For each conversation, fetch the last message (content and created_at)
+            const results = await Promise.all(
+                (conversations || []).map(async (conv) => {
+                    const { data: lastMsg, error: lastMsgError } = await supabase
+                        .from(TABLES.messages)
+                        .select('content, created_at')
+                        .eq('conversation_id', conv.id)
+                        .order('created_at', { ascending: false })
+                        .limit(1)
+                        .single();
+                    if (lastMsgError) {
+                        throw new Error(lastMsgError.message);
+                    }
+                    return {
+                        ...conv,
+                        created_at: new Date(conv.created_at).toISOString(),
+                        updated_at: new Date(conv.updated_at).toISOString(),
+                        last_message: lastMsg ? lastMsg.content : null,
+                        last_message_at: lastMsg ? new Date(lastMsg.created_at).toISOString() : null,
+                    };
+                }),
+            );
+            return results;
         });
 };
 
@@ -92,29 +127,37 @@ export const getMessages = (procedure: ProcedureBuilderType, path: `/${string}`)
 
             logger.info({ component: 'messages', userId, conversationId: input.conversationId }, 'Getting messages');
 
-            // Verify user is a participant in this conversation
-            const participant = await db('conversation_participants')
-                .where({ conversation_id: input.conversationId, user_id: userId })
-                .first();
-
-            if (!participant) {
+            // Verify user is a participant in this conversation (Supabase)
+            const supabase = createServerSupabase();
+            const { data: participant, error: participantError } = await supabase
+                .from(TABLES.conversationParticipants)
+                .select('*')
+                .eq('conversation_id', input.conversationId)
+                .eq('user_id', userId)
+                .single();
+            if (participantError || !participant) {
                 throw new Error('Not a participant in this conversation');
             }
 
-            const messages = await db('messages')
-                .where({ conversation_id: input.conversationId })
-                .orderBy('created_at', 'asc')
-                .limit(input.limit)
-                .offset(input.offset);
+            const { data: messages, error } = await supabase
+                .from(TABLES.messages)
+                .select('*')
+                .eq('conversation_id', input.conversationId)
+                .order('created_at', { ascending: true })
+                .range(input.offset, input.offset + input.limit - 1);
 
-            return messages.map((msg) => ({
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            return (messages || []).map((msg) => ({
                 ...msg,
-                created_at: msg.created_at.toISOString(),
+                created_at: new Date(msg.created_at).toISOString(),
             }));
         });
 };
 
-// Send a message to a conversation
+// Send a message to a conversation (Supabase-powered)
 export const sendMessage = (procedure: ProcedureBuilderType, path: `/${string}`) => {
     return procedure
         .meta({
@@ -138,30 +181,41 @@ export const sendMessage = (procedure: ProcedureBuilderType, path: `/${string}`)
 
             logger.info({ component: 'messages', userId, conversationId: input.conversationId }, 'Sending message');
 
-            // Verify user is a participant in this conversation
-            const participant = await db('conversation_participants')
-                .where({ conversation_id: input.conversationId, user_id: userId })
-                .first();
-
-            if (!participant) {
+            // Verify user is a participant in this conversation (Supabase)
+            const supabase = createServerSupabase();
+            const { data: participant, error: participantError } = await supabase
+                .from(TABLES.conversationParticipants)
+                .select('*')
+                .eq('conversation_id', input.conversationId)
+                .eq('user_id', userId)
+                .single();
+            if (participantError || !participant) {
                 throw new Error('Not a participant in this conversation');
             }
 
-            // Insert the message
-            const [message] = await db('messages')
+            const { data: message, error } = await supabase
+                .from(TABLES.messages)
                 .insert({
                     conversation_id: input.conversationId,
                     sender_id: userId,
                     content: input.content,
                 })
-                .returning('*');
+                .select()
+                .single();
 
-            // Update conversation's updated_at timestamp
-            await db('conversations').where({ id: input.conversationId }).update({ updated_at: db.fn.now() });
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            // Optionally update conversation's updated_at timestamp via Supabase
+            await supabase
+                .from(TABLES.conversations)
+                .update({ updated_at: new Date().toISOString() })
+                .eq('id', input.conversationId);
 
             return {
                 ...message,
-                created_at: message.created_at.toISOString(),
+                created_at: new Date(message.created_at).toISOString(),
             };
         });
 };
@@ -190,25 +244,74 @@ export const createConversation = (procedure: ProcedureBuilderType, path: `/${st
 
             logger.info({ component: 'messages', userId, name: input.name }, 'Creating conversation');
 
-            // Create the conversation
-            const [conversation] = await db('conversations').insert({ name: input.name }).returning('*');
+            try {
+                // Create the conversation
+                const [conversation] = await db('conversations').insert({ name: input.name }).returning('*');
 
-            // Add the creator as a participant
-            const participantIds = new Set([userId, ...input.participantIds]);
+                // Add the creator as a participant (Supabase)
+                const participantIds = new Set([userId, ...input.participantIds]);
+                const accessToken = ctx.session?.accessToken;
+                logger.debug(
+                    {
+                        component: 'messages',
+                        userId,
+                        hasAccessToken: !!accessToken,
+                    },
+                    'Preparing Supabase client for participant insert (server will use service-role key)',
+                );
+                // Use service-role client for server-side inserts
+                const supabase = createServerSupabase();
+                try {
+                    const { error: participantInsertError } = await supabase
+                        .from(TABLES.conversationParticipants)
+                        .insert(
+                            Array.from(participantIds).map((participantId) => ({
+                                conversation_id: conversation.id,
+                                user_id: participantId,
+                            })),
+                        );
+                    if (participantInsertError) {
+                        throw new Error(participantInsertError.message);
+                    }
+                } catch (innerErr: unknown) {
+                    let innerMsg: string | undefined;
+                    if (
+                        innerErr &&
+                        typeof innerErr === 'object' &&
+                        'message' in innerErr &&
+                        typeof (innerErr as Record<string, unknown>)['message'] === 'string'
+                    ) {
+                        innerMsg = String((innerErr as Record<string, unknown>)['message']);
+                    }
+                    logger.error(
+                        { component: 'messages', userId, errMessage: innerMsg },
+                        'participant insert failed (thrown)',
+                    );
+                    throw innerErr;
+                }
 
-            await db('conversation_participants').insert(
-                Array.from(participantIds).map((participantId) => ({
-                    conversation_id: conversation.id,
-                    user_id: participantId,
-                })),
-            );
-
-            return {
-                ...conversation,
-                created_at: conversation.created_at.toISOString(),
-                updated_at: conversation.updated_at.toISOString(),
-                last_message: null,
-                last_message_at: null,
-            };
+                return {
+                    ...conversation,
+                    created_at: conversation.created_at.toISOString(),
+                    updated_at: conversation.updated_at.toISOString(),
+                    last_message: null,
+                    last_message_at: null,
+                };
+            } catch (err: unknown) {
+                let errMessage: string | undefined;
+                if (
+                    err &&
+                    typeof err === 'object' &&
+                    'message' in err &&
+                    typeof (err as Record<string, unknown>)['message'] === 'string'
+                ) {
+                    errMessage = String((err as Record<string, unknown>)['message']);
+                }
+                logger.error(
+                    { component: 'messages', userId, name: input.name, errMessage },
+                    'createConversation failed',
+                );
+                throw err;
+            }
         });
 };

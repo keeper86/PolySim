@@ -1,5 +1,7 @@
 # PolySim - GitHub Copilot Instructions
 
+!!IMPORTANT: Keep this file in sync with the arc42 architecture documentation at docs/arc42/arc42-template.md. Try to reduce the size of this file. Only important, very general information should be included!!
+
 ## Project Overview
 
 PolySim is a Next.js 15 application serving as a playground for data visualization and analysis. It's a full-stack TypeScript application with modern tooling and containerized deployment.

@@ -10,18 +10,9 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';
-import type { RealtimeChannel } from '@supabase/realtime-js';
-import { RealtimeClient } from '@supabase/realtime-js';
+import useRealtimeMessages from '@/hooks/useRealtimeMessages';
 
 const log = clientLogger.child('MessagingInterface');
-
-type Message = {
-    id: number;
-    conversation_id: number;
-    sender_id: string;
-    content: string;
-    created_at: string;
-};
 
 type Conversation = {
     id: number;
@@ -36,85 +27,27 @@ export default function MessagingInterface() {
     const { data: session } = useSession();
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
-    const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const [showNewConversation, setShowNewConversation] = useState(false);
     const [newConversationName, setNewConversationName] = useState('');
     const [newConversationParticipants, setNewConversationParticipants] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const realtimeClient = useRef<RealtimeClient | null>(null);
-    const messageChannel = useRef<RealtimeChannel | null>(null);
+    const { messages } = useRealtimeMessages(selectedConversation);
 
     const userId = session?.user?.email || session?.user?.name || 'unknown';
-
-    // Initialize Realtime client
-    useEffect(() => {
-        const realtimeUrl = process.env.NEXT_PUBLIC_REALTIME_URL || 'ws://localhost:4000/socket';
-
-        realtimeClient.current = new RealtimeClient(realtimeUrl, {
-            params: {
-                apikey: 'public-anon-key', // For development
-            },
-        });
-
-        realtimeClient.current.connect();
-
-        log.success('Realtime client connected', undefined, { show: false });
-
-        return () => {
-            if (realtimeClient.current) {
-                realtimeClient.current.disconnect();
-            }
-        };
-    }, []);
 
     // Load conversations on mount
     useEffect(() => {
         void loadConversations();
     }, []);
 
-    // Subscribe to message updates when a conversation is selected
+    // when selectedConversation changes, our hook already loads messages and subscribes
     useEffect(() => {
-        if (selectedConversation && realtimeClient.current) {
-            void loadMessages(selectedConversation);
-
-            // Subscribe to realtime updates for this conversation
-            messageChannel.current = realtimeClient.current.channel(
-                `messages:conversation_id=eq.${selectedConversation}`,
-            );
-
-            messageChannel.current
-                .on(
-                    'postgres_changes',
-                    {
-                        event: 'INSERT',
-                        schema: 'public',
-                        table: 'messages',
-                        filter: `conversation_id=eq.${selectedConversation}`,
-                    },
-                    (payload) => {
-                        log.info('New message received via realtime', payload);
-                        const newMsg = payload.new as Message;
-                        setMessages((prev) => [
-                            ...prev,
-                            {
-                                ...newMsg,
-                                created_at: newMsg.created_at,
-                            },
-                        ]);
-                    },
-                )
-                .subscribe((status) => {
-                    log.info(`Subscription status: ${status}`);
-                });
+        if (selectedConversation) {
+            // sync hook messages into local state for convenience
+            // handled by hook; no-op here
         }
-
-        return () => {
-            if (messageChannel.current) {
-                void messageChannel.current.unsubscribe();
-            }
-        };
     }, [selectedConversation]);
 
     // Scroll to bottom when messages change
@@ -132,17 +65,7 @@ export default function MessagingInterface() {
         }
     };
 
-    const loadMessages = async (conversationId: number, silent = false) => {
-        try {
-            const data = await trpcClient['messages-get'].query({ conversationId });
-            setMessages(data);
-            if (!silent) {
-                log.success('Loaded messages', undefined, { show: false });
-            }
-        } catch (error) {
-            log.error('Failed to load messages', error);
-        }
-    };
+    // message loading is handled by the hook
 
     const sendMessage = async () => {
         if (!selectedConversation || !newMessage.trim()) {

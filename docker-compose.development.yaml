@@ -18,6 +18,7 @@ services:
     realtime:
         image: supabase/realtime:v2.30.23
         environment:
+            APP_NAME: polysim_dev
             DB_HOST: db
             DB_PORT: 5432
             DB_USER: ${POSTGRES_USER}
@@ -39,6 +40,22 @@ services:
             db:
                 condition: service_healthy
         container_name: polysim-dev-realtime
+        restart: unless-stopped
+
+    postgrest:
+        image: postgrest/postgrest:v11.2.0
+        environment:
+            PGRST_DB_URI: postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@db:5432/$POSTGRES_DB
+            PGRST_DB_ANON_ROLE: anon
+            PGRST_JWT_SECRET: ${NEXTAUTH_SECRET:-super-secret-realtime-key}
+            PGRST_DB_SCHEMA: public
+            PGRST_SERVER_PORT: 8000
+        ports:
+            - '8000:8000'
+        depends_on:
+            db:
+                condition: service_healthy
+        container_name: polysim-dev-postgrest
         restart: unless-stopped
 
     keycloak:
