@@ -1,4 +1,4 @@
-import { type LucideIcon, BookOpen, Frame, Gamepad, Map, PieChart, User, Home, FileText, Brain } from 'lucide-react';
+import { type LucideIcon, BookOpen, Frame, Gamepad, Map, PieChart, User, Home, FileText, Brain, MessageSquare } from 'lucide-react';
 
 import type { Route } from 'nextjs-routes';
 
@@ -68,6 +68,13 @@ export const PAGE_ROUTES = {
         label: 'Files',
         icon: Map,
         description: 'File management and uploads',
+        isMainNav: true,
+    },
+    messages: {
+        path: '/messages',
+        label: 'Messages',
+        icon: MessageSquare,
+        description: 'Group messaging and conversations',
         isMainNav: true,
     },
     apiDoc: {

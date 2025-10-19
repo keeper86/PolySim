@@ -7,6 +7,7 @@ import { logs } from './endpoints/logs';
 import { createProject } from './endpoints/projects';
 import { getSkillsAssessment, saveSkillsAssessment } from './endpoints/skills-assessment';
 import { testDbConnection } from './endpoints/test-connection';
+import { getConversations, getMessages, sendMessage, createConversation } from './endpoints/messages';
 
 export async function createContext() {
     const session = await getServerSession(authOptions);
@@ -30,6 +31,10 @@ export const protectedAppRouter = t.router({
     'projects-create': createProject(protectedProcedure, '/projects-create'),
     'skills-assessment-get': getSkillsAssessment(protectedProcedure, '/skills-assessment-get'),
     'skills-assessment-save': saveSkillsAssessment(protectedProcedure, '/skills-assessment-save'),
+    'conversations-get': getConversations(protectedProcedure, '/conversations-get'),
+    'messages-get': getMessages(protectedProcedure, '/messages-get'),
+    'messages-send': sendMessage(protectedProcedure, '/messages-send'),
+    'conversations-create': createConversation(protectedProcedure, '/conversations-create'),
 });
 
 export const publicAppRouter = t.router({
