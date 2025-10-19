@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { trpcClient } from '@/app/clientTrpc';
 import { clientLogger } from '@/app/clientLogger';
+import { createClient } from '@supabase/supabase-js';
 
 const log = clientLogger.child('useRealtimeMessages');
 
@@ -14,17 +15,32 @@ type Message = {
     created_at: string;
 };
 
+// Create Supabase client for realtime subscriptions
+const getSupabaseClient = () => {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:8000';
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
+
+    return createClient(supabaseUrl, supabaseKey, {
+        realtime: {
+            params: {
+                eventsPerSecond: 10,
+            },
+        },
+    });
+};
+
 export default function useRealtimeMessages(conversationId: number | null) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(false);
-    const wsRef = useRef<WebSocket | null>(null);
-    const esRef = useRef<EventSource | null>(null);
 
     useEffect(() => {
         if (!conversationId) {
+            setMessages([]);
             return;
         }
+
         let mounted = true;
+        const supabase = getSupabaseClient();
 
         const load = async () => {
             setLoading(true);
@@ -34,7 +50,7 @@ export default function useRealtimeMessages(conversationId: number | null) {
                     return;
                 }
                 setMessages(data);
-                log.success('Loaded messages');
+                log.success('Loaded messages', undefined, { show: false });
             } catch (err) {
                 log.error('Failed to load messages', err);
             } finally {
@@ -44,92 +60,35 @@ export default function useRealtimeMessages(conversationId: number | null) {
 
         void load();
 
-        // Prefer server-side proxied realtime via WebSocket, fall back to SSE.
-        const realtimeWsUrl =
-            (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_REALTIME_URL) || `/api/realtime`;
-        const realtimeSseUrl =
-            (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_REALTIME_SSE_URL) || `/api/realtime/sse`;
-
-        const connectWebSocket = () => {
-            try {
-                const url = new URL(realtimeWsUrl, window.location.href);
-                if (conversationId) {
-                    url.searchParams.set('conversationId', String(conversationId));
-                }
-                const ws = new WebSocket(url.toString());
-                wsRef.current = ws;
-
-                ws.addEventListener('open', () => log.info('Realtime WS open'));
-                ws.addEventListener('message', (ev) => {
-                    try {
-                        const payload = JSON.parse(ev.data);
-                        if (payload && payload.type === 'message' && payload.data) {
-                            const newMsg = payload.data as Message;
-                            setMessages((prev) => [...prev, { ...newMsg, created_at: newMsg.created_at }]);
-                        }
-                    } catch {
-                        // ignore parse errors
+        // Subscribe to realtime changes
+        const channel = supabase
+            .channel(`messages:conversation_id=eq.${conversationId}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'messages',
+                    filter: `conversation_id=eq.${conversationId}`,
+                },
+                (payload) => {
+                    log.info('New message via Supabase Realtime', payload);
+                    const newMsg = payload.new as Message;
+                    if (mounted && newMsg) {
+                        setMessages((prev) => [...prev, newMsg]);
                     }
-                });
-                ws.addEventListener('close', () => log.info('Realtime WS closed'));
-                ws.addEventListener('error', () => {
-                    log.info('Realtime WS error, falling back to SSE');
-                    connectSSE();
-                });
-            } catch (e) {
-                log.info('WS connect failed, falling back to SSE', e);
-                connectSSE();
-            }
-        };
-
-        const connectSSE = () => {
-            try {
-                const url = new URL(realtimeSseUrl, window.location.href);
-                if (conversationId) {
-                    url.searchParams.set('conversationId', String(conversationId));
                 }
-                const es = new EventSource(url.toString());
-                esRef.current = es;
-                es.addEventListener('message', (ev) => {
-                    try {
-                        const payload = JSON.parse(ev.data);
-                        // payload is the raw message object
-                        const newMsg = payload as Message;
-                        setMessages((prev) => [...prev, { ...newMsg, created_at: newMsg.created_at }]);
-                    } catch {
-                        // ignore
-                    }
-                });
-                es.addEventListener('open', () => log.info('Realtime SSE open'));
-                es.addEventListener('error', (err) => log.info('Realtime SSE error', err));
-            } catch (e) {
-                log.error('SSE connect failed', e);
-            }
-        };
-
-        // Start with WebSocket then SSE fallback
-        connectWebSocket();
+            )
+            .subscribe((status) => {
+                log.info(`Supabase subscription status: ${status}`);
+            });
 
         return () => {
             mounted = false;
-            try {
-                if (wsRef.current) {
-                    wsRef.current.close();
-                    wsRef.current = null;
-                }
-            } catch {
-                // ignore
-            }
-            try {
-                if (esRef.current) {
-                    esRef.current.close();
-                    esRef.current = null;
-                }
-            } catch {
-                // ignore
-            }
+            void supabase.removeChannel(channel);
         };
     }, [conversationId]);
 
     return { messages, loading, setMessages };
 }
+

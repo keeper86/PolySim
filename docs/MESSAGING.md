@@ -237,6 +237,7 @@ If you see `RLIMIT_NOFILE: unbound variable` error:
 ### Startup Order Issues
 
 The services must start in this order:
+
 1. **PostgreSQL** (with `wal_level=logical`)
 2. **Migrations** (creates tables and triggers)
 3. **Realtime** (connects to PostgreSQL)
@@ -245,6 +246,7 @@ The services must start in this order:
 In production (docker-compose.yaml), this is handled automatically with `depends_on` conditions.
 
 In development:
+
 1. Start docker services: `docker compose -f docker-compose.development.yaml up`
 2. Wait for database to be ready
 3. Run app locally: `npm run dev` (migrations run automatically)

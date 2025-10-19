@@ -26,14 +26,14 @@ services:
             DB_NAME: ${POSTGRES_DB}
             DB_SSL: 'false'
             PORT: 4000
-            REPLICATION_MODE: RLS
+            REPLICATION_MODE: STREAM
             REPLICATION_POLL_INTERVAL: 100
             SECURE_CHANNELS: 'false'
             SLOT_NAME: supabase_realtime_rls
             TEMPORARY_SLOT: 'true'
             RLIMIT_NOFILE: 10000
-            SECRET_KEY_BASE: ${NEXTAUTH_SECRET:-super-secret-realtime-key}
-            JWT_SECRET: ${NEXTAUTH_SECRET:-super-secret-realtime-key}
+            SECRET_KEY_BASE: super-secret-jwt-token-with-at-least-32-characters-for-realtime
+            JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters
         ports:
             - '4000:4000'
         depends_on:
@@ -47,7 +47,7 @@ services:
         environment:
             PGRST_DB_URI: postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@db:5432/$POSTGRES_DB
             PGRST_DB_ANON_ROLE: anon
-            PGRST_JWT_SECRET: ${NEXTAUTH_SECRET:-super-secret-realtime-key}
+            PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters
             PGRST_DB_SCHEMA: public
             PGRST_SERVER_PORT: 8000
         ports:
