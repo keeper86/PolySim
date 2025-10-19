@@ -30,12 +30,16 @@ services:
             SECURE_CHANNELS: 'false'
             SLOT_NAME: supabase_realtime_rls
             TEMPORARY_SLOT: 'true'
+            RLIMIT_NOFILE: 10000
+            SECRET_KEY_BASE: ${NEXTAUTH_SECRET:-super-secret-realtime-key}
+            JWT_SECRET: ${NEXTAUTH_SECRET:-super-secret-realtime-key}
         ports:
             - '4000:4000'
         depends_on:
             db:
                 condition: service_healthy
         container_name: polysim-dev-realtime
+        restart: unless-stopped
 
     keycloak:
         image: quay.io/keycloak/keycloak:26.3.4

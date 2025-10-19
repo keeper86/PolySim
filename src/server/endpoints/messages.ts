@@ -47,8 +47,12 @@ export const getConversations = (procedure: ProcedureBuilderType, path: `/${stri
                     'conversations.name',
                     'conversations.created_at',
                     'conversations.updated_at',
-                    db.raw('(SELECT content FROM messages WHERE conversation_id = conversations.id ORDER BY created_at DESC LIMIT 1) as last_message'),
-                    db.raw('(SELECT created_at FROM messages WHERE conversation_id = conversations.id ORDER BY created_at DESC LIMIT 1) as last_message_at')
+                    db.raw(
+                        '(SELECT content FROM messages WHERE conversation_id = conversations.id ORDER BY created_at DESC LIMIT 1) as last_message',
+                    ),
+                    db.raw(
+                        '(SELECT created_at FROM messages WHERE conversation_id = conversations.id ORDER BY created_at DESC LIMIT 1) as last_message_at',
+                    ),
                 )
                 .join('conversation_participants', 'conversations.id', 'conversation_participants.conversation_id')
                 .where('conversation_participants.user_id', userId)
@@ -80,7 +84,7 @@ export const getMessages = (procedure: ProcedureBuilderType, path: `/${string}`)
                 conversationId: z.number(),
                 limit: z.number().optional().default(100),
                 offset: z.number().optional().default(0),
-            })
+            }),
         )
         .output(z.array(MessageSchema))
         .query(async ({ input, ctx }) => {
@@ -126,7 +130,7 @@ export const sendMessage = (procedure: ProcedureBuilderType, path: `/${string}`)
             z.object({
                 conversationId: z.number(),
                 content: z.string().min(1, 'Message content is required'),
-            })
+            }),
         )
         .output(MessageSchema)
         .mutation(async ({ input, ctx }) => {
@@ -153,9 +157,7 @@ export const sendMessage = (procedure: ProcedureBuilderType, path: `/${string}`)
                 .returning('*');
 
             // Update conversation's updated_at timestamp
-            await db('conversations')
-                .where({ id: input.conversationId })
-                .update({ updated_at: db.fn.now() });
+            await db('conversations').where({ id: input.conversationId }).update({ updated_at: db.fn.now() });
 
             return {
                 ...message,
@@ -180,7 +182,7 @@ export const createConversation = (procedure: ProcedureBuilderType, path: `/${st
             z.object({
                 name: z.string().min(1, 'Conversation name is required'),
                 participantIds: z.array(z.string()).min(1, 'At least one participant is required'),
-            })
+            }),
         )
         .output(ConversationSchema)
         .mutation(async ({ input, ctx }) => {
@@ -189,18 +191,16 @@ export const createConversation = (procedure: ProcedureBuilderType, path: `/${st
             logger.info({ component: 'messages', userId, name: input.name }, 'Creating conversation');
 
             // Create the conversation
-            const [conversation] = await db('conversations')
-                .insert({ name: input.name })
-                .returning('*');
+            const [conversation] = await db('conversations').insert({ name: input.name }).returning('*');
 
             // Add the creator as a participant
             const participantIds = new Set([userId, ...input.participantIds]);
 
             await db('conversation_participants').insert(
-                Array.from(participantIds).map(participantId => ({
+                Array.from(participantIds).map((participantId) => ({
                     conversation_id: conversation.id,
                     user_id: participantId,
-                }))
+                })),
             );
 
             return {

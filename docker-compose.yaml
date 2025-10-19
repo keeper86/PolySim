@@ -73,9 +73,15 @@ services:
             SECURE_CHANNELS: 'false'
             SLOT_NAME: supabase_realtime_rls
             TEMPORARY_SLOT: 'true'
+            RLIMIT_NOFILE: 10000
+            SECRET_KEY_BASE: ${NEXTAUTH_SECRET}
+            JWT_SECRET: ${NEXTAUTH_SECRET}
         depends_on:
             db:
                 condition: service_healthy
+            migrations:
+                condition: service_completed_successfully
+        restart: unless-stopped
 
     keycloak:
         image: quay.io/keycloak/keycloak:26.3.4

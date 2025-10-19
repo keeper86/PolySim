@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';
-import type { RealtimeChannel} from '@supabase/realtime-js';
+import type { RealtimeChannel } from '@supabase/realtime-js';
 import { RealtimeClient } from '@supabase/realtime-js';
 
 const log = clientLogger.child('MessagingInterface');
@@ -80,7 +80,9 @@ export default function MessagingInterface() {
             void loadMessages(selectedConversation);
 
             // Subscribe to realtime updates for this conversation
-            messageChannel.current = realtimeClient.current.channel(`messages:conversation_id=eq.${selectedConversation}`);
+            messageChannel.current = realtimeClient.current.channel(
+                `messages:conversation_id=eq.${selectedConversation}`,
+            );
 
             messageChannel.current
                 .on(
@@ -94,11 +96,14 @@ export default function MessagingInterface() {
                     (payload) => {
                         log.info('New message received via realtime', payload);
                         const newMsg = payload.new as Message;
-                        setMessages((prev) => [...prev, {
-                            ...newMsg,
-                            created_at: newMsg.created_at,
-                        }]);
-                    }
+                        setMessages((prev) => [
+                            ...prev,
+                            {
+                                ...newMsg,
+                                created_at: newMsg.created_at,
+                            },
+                        ]);
+                    },
                 )
                 .subscribe((status) => {
                     log.info(`Subscription status: ${status}`);
@@ -140,7 +145,9 @@ export default function MessagingInterface() {
     };
 
     const sendMessage = async () => {
-        if (!selectedConversation || !newMessage.trim()) {return;}
+        if (!selectedConversation || !newMessage.trim()) {
+            return;
+        }
 
         setLoading(true);
         try {
@@ -160,14 +167,16 @@ export default function MessagingInterface() {
     };
 
     const createConversation = async () => {
-        if (!newConversationName.trim()) {return;}
+        if (!newConversationName.trim()) {
+            return;
+        }
 
         setLoading(true);
         try {
             const participantIds = newConversationParticipants
                 .split(',')
-                .map(p => p.trim())
-                .filter(p => p.length > 0);
+                .map((p) => p.trim())
+                .filter((p) => p.length > 0);
 
             const conversation = await trpcClient['conversations-create'].mutate({
                 name: newConversationName,
@@ -239,11 +248,7 @@ export default function MessagingInterface() {
                                 >
                                     Create
                                 </Button>
-                                <Button
-                                    size='sm'
-                                    variant='outline'
-                                    onClick={() => setShowNewConversation(false)}
-                                >
+                                <Button size='sm' variant='outline' onClick={() => setShowNewConversation(false)}>
                                     Cancel
                                 </Button>
                             </div>
@@ -276,9 +281,7 @@ export default function MessagingInterface() {
                                     )}
                                 </div>
                                 {conv.last_message && (
-                                    <p className='text-sm text-muted-foreground truncate'>
-                                        {conv.last_message}
-                                    </p>
+                                    <p className='text-sm text-muted-foreground truncate'>{conv.last_message}</p>
                                 )}
                             </div>
                         ))
@@ -292,7 +295,7 @@ export default function MessagingInterface() {
                     <>
                         <div className='p-4 border-b'>
                             <h2 className='font-semibold'>
-                                {conversations.find(c => c.id === selectedConversation)?.name}
+                                {conversations.find((c) => c.id === selectedConversation)?.name}
                             </h2>
                         </div>
 
@@ -314,9 +317,7 @@ export default function MessagingInterface() {
                                             >
                                                 <div
                                                     className={`max-w-[70%] rounded-lg p-3 ${
-                                                        isOwnMessage
-                                                            ? 'bg-primary text-primary-foreground'
-                                                            : 'bg-muted'
+                                                        isOwnMessage ? 'bg-primary text-primary-foreground' : 'bg-muted'
                                                     }`}
                                                 >
                                                     {!isOwnMessage && (

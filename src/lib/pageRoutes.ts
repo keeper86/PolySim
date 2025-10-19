@@ -1,4 +1,16 @@
-import { type LucideIcon, BookOpen, Frame, Gamepad, Map, PieChart, User, Home, FileText, Brain, MessageSquare } from 'lucide-react';
+import {
+    type LucideIcon,
+    BookOpen,
+    Frame,
+    Gamepad,
+    Map,
+    PieChart,
+    User,
+    Home,
+    FileText,
+    Brain,
+    MessageSquare,
+} from 'lucide-react';
 
 import type { Route } from 'nextjs-routes';
 

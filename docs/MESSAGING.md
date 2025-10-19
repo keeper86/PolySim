@@ -19,45 +19,45 @@ PolySim now includes a self-hosted real-time group messaging feature that allows
 The messaging feature uses three PostgreSQL tables:
 
 1. **conversations**: Stores conversation metadata
-   - `id`: Primary key
-   - `name`: Conversation name
-   - `created_at`: Creation timestamp
-   - `updated_at`: Last update timestamp
+    - `id`: Primary key
+    - `name`: Conversation name
+    - `created_at`: Creation timestamp
+    - `updated_at`: Last update timestamp
 
 2. **conversation_participants**: Many-to-many relationship between users and conversations
-   - `id`: Primary key
-   - `conversation_id`: Foreign key to conversations
-   - `user_id`: User identifier (email or username)
-   - `joined_at`: When the user joined
+    - `id`: Primary key
+    - `conversation_id`: Foreign key to conversations
+    - `user_id`: User identifier (email or username)
+    - `joined_at`: When the user joined
 
 3. **messages**: Stores all messages
-   - `id`: Primary key
-   - `conversation_id`: Foreign key to conversations
-   - `sender_id`: User who sent the message
-   - `content`: Message text content
-   - `created_at`: Message timestamp
+    - `id`: Primary key
+    - `conversation_id`: Foreign key to conversations
+    - `sender_id`: User who sent the message
+    - `content`: Message text content
+    - `created_at`: Message timestamp
 
 ### API Endpoints (tRPC)
 
 All endpoints are protected and require authentication:
 
 1. **conversations-get**: List all conversations for the current user
-   - Returns conversations with last message preview
-   - Ordered by most recent activity
+    - Returns conversations with last message preview
+    - Ordered by most recent activity
 
 2. **messages-get**: Retrieve messages for a specific conversation
-   - Input: `conversationId`, optional `limit` and `offset`
-   - Returns messages ordered chronologically
+    - Input: `conversationId`, optional `limit` and `offset`
+    - Returns messages ordered chronologically
 
 3. **messages-send**: Send a message to a conversation
-   - Input: `conversationId`, `content`
-   - Verifies user is a participant
-   - Returns the created message
+    - Input: `conversationId`, `content`
+    - Verifies user is a participant
+    - Returns the created message
 
 4. **conversations-create**: Create a new conversation
-   - Input: `name`, `participantIds` (array of user IDs)
-   - Automatically adds the creator as a participant
-   - Returns the created conversation
+    - Input: `name`, `participantIds` (array of user IDs)
+    - Automatically adds the creator as a participant
+    - Returns the created conversation
 
 ### Real-time Updates
 
@@ -104,47 +104,47 @@ This provides a self-hosted solution using Supabase Realtime Docker container co
 The messaging feature requires the following Docker services:
 
 1. **PostgreSQL** (postgres:15-alpine)
-   - With `wal_level=logical` for replication
-   - Hosts all messaging tables
-   - Publishes NOTIFY events via triggers
+    - With `wal_level=logical` for replication
+    - Hosts all messaging tables
+    - Publishes NOTIFY events via triggers
 
 2. **Supabase Realtime** (supabase/realtime:v2.30.23)
-   - Listens to PostgreSQL logical replication
-   - Provides WebSocket endpoint on port 4000
-   - Broadcasts database changes to connected clients
+    - Listens to PostgreSQL logical replication
+    - Provides WebSocket endpoint on port 4000
+    - Broadcasts database changes to connected clients
 
 3. **Next.js App**
-   - Connects to Realtime via WebSocket
-   - Displays messages in real-time
+    - Connects to Realtime via WebSocket
+    - Displays messages in real-time
 
 Configuration in `docker-compose.development.yaml` and `docker-compose.yaml`.
 
 ### Client Components
 
 - **MessagingInterface** (`src/components/client/MessagingInterface.tsx`): Main messaging UI component
-  - Uses React hooks for state management
-  - Integrates Supabase Realtime WebSocket client
-  - Subscribes to PostgreSQL changes via realtime channels
-  - Auto-scrolls to latest messages
-  - Displays sender information and timestamps
+    - Uses React hooks for state management
+    - Integrates Supabase Realtime WebSocket client
+    - Subscribes to PostgreSQL changes via realtime channels
+    - Auto-scrolls to latest messages
+    - Displays sender information and timestamps
 
 ### Server Components
 
 - **Message Endpoints** (`src/server/endpoints/messages.ts`): tRPC API handlers
-  - Input validation with Zod schemas
-  - Authorization checks (verify participants)
-  - Database queries using Knex.js
-  - Proper error handling
+    - Input validation with Zod schemas
+    - Authorization checks (verify participants)
+    - Database queries using Knex.js
+    - Proper error handling
 
 ### Database Migrations
 
 - Migration: `20251019001441_create_conversations_and_messages_tables.js`
-  - Creates all tables with proper indexes and foreign key constraints
-  - Cascade deletes for data integrity
+    - Creates all tables with proper indexes and foreign key constraints
+    - Cascade deletes for data integrity
 - Migration: `20251019003407_add_realtime_triggers_for_messages.js`
-  - Adds PostgreSQL NOTIFY triggers for message inserts
-  - Enables logical replication for Supabase Realtime
-  - Creates notification functions for real-time events
+    - Adds PostgreSQL NOTIFY triggers for message inserts
+    - Enables logical replication for Supabase Realtime
+    - Creates notification functions for real-time events
 
 ## Security Considerations
 
@@ -184,7 +184,7 @@ To test manually:
 INSERT INTO conversations (name) VALUES ('Test Group');
 
 -- Add participants
-INSERT INTO conversation_participants (conversation_id, user_id) VALUES 
+INSERT INTO conversation_participants (conversation_id, user_id) VALUES
 (1, 'user1@example.com'),
 (1, 'user2@example.com');
 
@@ -220,4 +220,56 @@ POSTGRES_DB=polysimdb
 
 # Realtime WebSocket
 NEXT_PUBLIC_REALTIME_URL=ws://localhost:4000/socket
+
+# Authentication (for Realtime JWT)
+NEXTAUTH_SECRET=super-secret
 ```
+
+## Troubleshooting
+
+### Realtime Container Fails to Start
+
+If you see `RLIMIT_NOFILE: unbound variable` error:
+
+- **Solution**: The `RLIMIT_NOFILE` environment variable is now set in docker-compose files (default: 10000)
+- Ensure you're using the latest docker-compose configuration
+
+### Startup Order Issues
+
+The services must start in this order:
+1. **PostgreSQL** (with `wal_level=logical`)
+2. **Migrations** (creates tables and triggers)
+3. **Realtime** (connects to PostgreSQL)
+4. **Next.js App** (connects to both)
+
+In production (docker-compose.yaml), this is handled automatically with `depends_on` conditions.
+
+In development:
+1. Start docker services: `docker compose -f docker-compose.development.yaml up`
+2. Wait for database to be ready
+3. Run app locally: `npm run dev` (migrations run automatically)
+
+### WebSocket Connection Fails
+
+If messages don't appear in real-time:
+
+1. Check Realtime container is running: `docker ps | grep realtime`
+2. Verify `NEXT_PUBLIC_REALTIME_URL` is set correctly
+3. Check browser console for WebSocket errors
+4. Ensure port 4000 is accessible
+
+### Database Triggers Not Working
+
+If messages are saved but not broadcast:
+
+1. Verify triggers exist: `\df notify_message_insert` in psql
+2. Check migration was applied: `SELECT * FROM knex_migrations`
+3. Restart Realtime container to reconnect to PostgreSQL
+
+### Performance Issues
+
+If message delivery is slow:
+
+- Check `REPLICATION_POLL_INTERVAL` (default: 100ms)
+- Verify database indexes are created
+- Monitor PostgreSQL replication slot usage
