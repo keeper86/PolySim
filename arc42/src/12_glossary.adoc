@@ -1,0 +1,25 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-glossary]]
+== Glossary
+
+[cols="e,2e" options="header"]
+|===
+|Term |Definition
+
+|Provenance
+|The complete history of how a research artifact was created, including code, parameters, environment, and outputs.
+
+|Adapter
+|A software component that automatically captures and reports provenance metadata from simulation code.
+
+|Governance
+|Ensuring that provenance tracking happens consistently and correctly, driven by convenience rather than enforcement.
+
+|Minimal Friction
+|Design principle that integration should require minimal effort from the user.
+
+|Output Agnosticism
+|Ability to support various output formats and types without restrictions.
+
+|===

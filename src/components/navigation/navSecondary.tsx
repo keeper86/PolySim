@@ -7,7 +7,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { getSecondaryNavRoutes } from '@/lib/pageRoutes';
+import { getSecondaryNavRoutes } from '@/app/appRoutes';
 import Link from 'next/link';
 
 export function NavSecondary({ ...props }: React.ComponentPropsWithoutRef<typeof SidebarGroup>) {

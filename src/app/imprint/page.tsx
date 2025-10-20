@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { PAGE_ROUTES } from '@/lib/pageRoutes';
+import { APP_ROUTES } from '@/app/appRoutes';
 
 export default function ImprintPage() {
     return (
@@ -16,7 +16,7 @@ export default function ImprintPage() {
                 <p>This is a placeholder. Please update with your actual legal information as required by law.</p>
             </div>
             <div className='mt-8'>
-                <Link href={PAGE_ROUTES.root.path} className='btn btn-outline'>
+                <Link href={APP_ROUTES.root.path} className='btn btn-outline'>
                     Back to Home
                 </Link>
             </div>

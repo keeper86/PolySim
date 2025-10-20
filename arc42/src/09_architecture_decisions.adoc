@@ -1,0 +1,11 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-design-decisions]]
+== Architecture Decisions
+
+- Adapters chosen for minimal integration effort
+- Header-only C++ library for build system agnosticism
+- Decorator-driven Python adapter for simplicity
+- Central server for organization and search
+- Output agnosticism for flexibility
+- Security and privacy considered from the start

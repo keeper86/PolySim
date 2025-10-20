@@ -21,8 +21,15 @@ export const createProject = (procedure: ProcedureBuilderType, _: `/${string}`) 
                 `Creating project: ${input.name}`,
             );
 
-            db.insert({ name: input.name }).into('projects');
+            const result = await db.insert({ name: input.name }).into('projects');
 
+            if (result.length === 0) {
+                logger.error(
+                    { component: 'projects', clientTimestamp: new Date().toISOString() },
+                    `Failed to create project: ${input.name}`,
+                );
+                throw new Error('Failed to create project');
+            }
             return { success: true };
         });
 };

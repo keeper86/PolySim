@@ -1,0 +1,12 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-solution-strategy]]
+== Solution Strategy
+
+- Adapters for Python (decorator) and C/C++ (header-only, RAII) for minimal integration
+- CLI tool for linking modifying scripts and outputs
+- Central server for automated organization and search
+- Automatic metadata capture (code version, environment, parameters)
+- Output agnosticism: support for various file types and formats
+- Sensible defaults, overridable by user
+- Security and privacy by design

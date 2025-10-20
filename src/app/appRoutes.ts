@@ -27,7 +27,7 @@ export interface RouteManifest {
 
 export type RouteManifestEntry = RouteMetadata | RouteManifest;
 
-export const PAGE_ROUTES = {
+export const APP_ROUTES = {
     root: {
         path: '/',
         label: 'PolySim',
@@ -126,7 +126,7 @@ export function getMainNavRoutes(): RouteMetadata[] {
     if (mainNavRoutes.length > 0) {
         return mainNavRoutes;
     }
-    mainNavRoutes = filterRoutes(PAGE_ROUTES, (route) => route.isMainNav === true);
+    mainNavRoutes = filterRoutes(APP_ROUTES, (route) => route.isMainNav === true);
     return mainNavRoutes;
 }
 
@@ -135,7 +135,7 @@ export const getPublicRoutes = () => {
     if (publicRoutes.length > 0) {
         return publicRoutes;
     }
-    publicRoutes = filterRoutes(PAGE_ROUTES, (route) => route.isPublic === true).map((route) => route.path);
+    publicRoutes = filterRoutes(APP_ROUTES, (route) => route.isPublic === true).map((route) => route.path);
     return publicRoutes;
 };
 
@@ -144,7 +144,7 @@ export function getProtectedRoutes(): RouteMetadata[] {
     if (protectedRoutes.length > 0) {
         return protectedRoutes;
     }
-    protectedRoutes = filterRoutes(PAGE_ROUTES, (route) => route.isPublic !== true);
+    protectedRoutes = filterRoutes(APP_ROUTES, (route) => route.isPublic !== true);
     return protectedRoutes;
 }
 
@@ -153,7 +153,7 @@ export function getSecondaryNavRoutes(): RouteMetadata[] {
     if (secondaryNavRoutes.length > 0) {
         return secondaryNavRoutes;
     }
-    secondaryNavRoutes = filterRoutes(PAGE_ROUTES, (route) => route.isSecondaryNav === true);
+    secondaryNavRoutes = filterRoutes(APP_ROUTES, (route) => route.isSecondaryNav === true);
     return secondaryNavRoutes;
 }
 
@@ -172,7 +172,7 @@ export function getBreadcrumbData(pathname: string): Array<{ path: string; label
             }
         }
     }
-    flatten(PAGE_ROUTES);
+    flatten(APP_ROUTES);
 
     const segments = pathname.split('/').filter(Boolean);
     const breadcrumbs: Array<{ path: string; label: string; isLast: boolean }> = [
