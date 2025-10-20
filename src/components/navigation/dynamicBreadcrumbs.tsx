@@ -9,7 +9,7 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { getBreadcrumbData } from '@/app/appRoutes';
+import { getBreadcrumbData } from '@/lib/appRoutes';
 
 export function DynamicBreadcrumbs() {
     const pathname = usePathname();

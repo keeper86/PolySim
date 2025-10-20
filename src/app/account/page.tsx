@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { APP_ROUTES } from '@/app/appRoutes';
+import { APP_ROUTES } from '@/lib/appRoutes';
 
 export default function AccountPage() {
     return (

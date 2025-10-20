@@ -2,12 +2,13 @@
 
 ## Project Overview
 
-PolySim is a Next.js 15 application serving as a playground for data visualization and analysis. It's a full-stack TypeScript application with modern tooling and containerized deployment.
+PolySim is a Next.js 15 application. It's a full-stack TypeScript application with modern tooling and containerized deployment.
 
 ## Tech Stack
 
 - **Framework**: Next.js 15 with TypeScript and App Router
-- **Styling**: Tailwind CSS + DaisyUI for components
+- **Styling**: Tailwind CSS + DaisyUI for components or shadcn/ui for UI primitives
+- **State Management**: React Query for server state
 - **Authentication**: NextAuth.js with Keycloak provider
 - **API**: tRPC for type-safe API routes with OpenAPI generation
 - **Database**: PostgreSQL with Knex.js migrations

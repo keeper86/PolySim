@@ -16,16 +16,6 @@ const nextConfig = {
             },
         ],
     },
-    // just for hot reload in dev; the warning can be ignored
-    webpackDevMiddleware: (config) => {
-        if (process.env.NODE_ENV === 'development') {
-            config.watchOptions = {
-                poll: 1000,
-                aggregateTimeout: 300,
-            };
-        }
-        return config;
-    },
 };
 
 module.exports = withRoutes(nextConfig);

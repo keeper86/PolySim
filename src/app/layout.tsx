@@ -11,7 +11,7 @@ import SessionProviderWrapper from './SessionProviderWrapper';
 import { Toaster } from '../components/ui/sonner';
 import './globals.css';
 import Footer from '@/app/Footer';
-import { QueryClientProvider } from './QueryClientProvider';
+import AppProviders from './QueryClientProvider';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -27,7 +27,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
     title: 'PolySim',
-    description: 'Playground for data',
+    description: 'Governance for Provenance',
 };
 
 export default async function RootLayout({
@@ -40,7 +40,7 @@ export default async function RootLayout({
     return (
         <html lang='en'>
             <body className={`${geistSans.variable} ${geistMono.variable}`}>
-                <QueryClientProvider>
+                <AppProviders>
                     <SessionProviderWrapper session={session}>
                         <SidebarProvider>
                             <AppSidebar />
@@ -58,7 +58,7 @@ export default async function RootLayout({
                         </SidebarProvider>
                         <Toaster />
                     </SessionProviderWrapper>
-                </QueryClientProvider>
+                </AppProviders>
             </body>
         </html>
     );

@@ -4,16 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import DatabaseTester from './DbTester';
 
 vi.mock('next-auth/react');
-vi.mock('../../app/clientLogger', () => ({
-    clientLogger: {
-        child: () => ({
-            error: vi.fn(),
-            debug: vi.fn(),
-            success: vi.fn(),
-        }),
-    },
-}));
-vi.mock('../../app/clientTrpc', () => ({
+vi.mock('../../lib/clientTrpc', () => ({
     trpcClient: {
         'test-connection': {
             query: vi.fn(),
@@ -22,7 +13,8 @@ vi.mock('../../app/clientTrpc', () => ({
     },
 }));
 
-import { trpcClient } from '../../app/clientTrpc';
+import AppProviders from '@/app/QueryClientProvider';
+import { trpcClient } from '../../lib/clientTrpc';
 
 const mockUseSession = vi.mocked(useSession);
 const mockTrpcQuery = vi.mocked(trpcClient['test-connection'].query);
@@ -41,10 +33,17 @@ describe('DatabaseTester Error Handling', () => {
         vi.restoreAllMocks();
     });
 
+    const renderComponent = () =>
+        render(
+            <AppProviders>
+                <DatabaseTester />
+            </AppProviders>,
+        );
+
     it('shows error state when trpc query rejects', async () => {
         mockTrpcQuery.mockRejectedValue(new Error('UNAUTHORIZED: You must be logged in to access this resource'));
 
-        render(<DatabaseTester />);
+        renderComponent();
 
         const button = screen.getByText('Test Database Connection');
         fireEvent.click(button);
@@ -69,7 +68,7 @@ describe('DatabaseTester Error Handling', () => {
             version: 'PostgreSQL 15.0',
         });
 
-        render(<DatabaseTester />);
+        renderComponent();
 
         const button = screen.getByText('Test Database Connection');
         fireEvent.click(button);
@@ -85,7 +84,7 @@ describe('DatabaseTester Error Handling', () => {
     it('shows error state for generic trpc errors', async () => {
         mockTrpcQuery.mockRejectedValue(new Error('Network error'));
 
-        render(<DatabaseTester />);
+        renderComponent();
 
         const button = screen.getByText('Test Database Connection');
         fireEvent.click(button);
@@ -101,7 +100,7 @@ describe('DatabaseTester Error Handling', () => {
     it('resets loading state even when error occurs', async () => {
         mockTrpcQuery.mockRejectedValue(new Error('Some error'));
 
-        render(<DatabaseTester />);
+        renderComponent();
 
         const button = screen.getByText('Test Database Connection');
 

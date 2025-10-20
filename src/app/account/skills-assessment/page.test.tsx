@@ -1,99 +1,137 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, waitFor, fireEvent, within } from '@testing-library/react';
+import React from 'react';
+
 import SkillsAssessmentPage from './page';
-import * as clientTrpc from '@/app/clientTrpc';
 
-vi.mock('@/app/clientTrpc', () => ({
-    trpcClient: {
-        'skills-assessment-get': {
-            query: vi.fn(),
-        },
-        'skills-assessment-save': {
-            mutate: vi.fn(),
-        },
-    },
+let assessment = [
+    { category: 'Languages', skills: [{ name: 'TypeScript', level: 2 }] },
+    { category: 'Tools', skills: [{ name: 'Git', level: 3 }] },
+];
+
+let isLoading = false;
+let saveMutation = { isPending: false, isError: false };
+
+let publishStatus = false;
+let isPublishStatusLoading = false;
+
+const mockMutate = vi.fn();
+
+const addItemMock = vi.fn();
+const updateItemLevelMock = vi.fn();
+
+vi.mock('./hooks/useSkillsAssessment', () => ({
+    useSkillsAssessment: () => ({
+        skillsQuery: { data: assessment, isLoading },
+        saveMutation,
+    }),
 }));
 
-vi.mock('@/app/clientLogger', () => ({
-    clientLogger: {
-        child: vi.fn(() => ({
-            debug: vi.fn(),
-            error: vi.fn(),
-        })),
-    },
+vi.mock('./hooks/usePublishSkillsAssessment', () => ({
+    usePublishSkillsAssessment: () => ({
+        publishStatus,
+        isPublishStatusLoading,
+        mutateAssessmentPublishStatus: { mutate: mockMutate },
+    }),
 }));
 
-vi.mock('sonner', () => ({
-    toast: {
-        error: vi.fn(),
-        success: vi.fn(),
-    },
+vi.mock('./hooks/useSkillsAssessmentActions', () => ({
+    useSkillsAssessmentActions: () => ({
+        addItemToCategory: addItemMock,
+        updateItemLevel: updateItemLevelMock,
+        resetSkillRatings: vi.fn(),
+        setSkillLevel: vi.fn(),
+        deleteCustomSkill: vi.fn(),
+        updateSubSkillLevel: vi.fn(),
+        addSubSkillToItem: vi.fn(),
+        deleteCustomSubSkill: vi.fn(),
+    }),
 }));
 
-describe('SkillsAssessmentPage with React Query', () => {
-    let queryClient: QueryClient;
+vi.mock('./components/ConfirmResetDialog', () => ({
+    ConfirmResetDialog: ({ open }: { open?: boolean }) => (
+        <div data-testid='confirm-reset' data-open={open ? 'true' : 'false'} />
+    ),
+}));
 
+vi.mock('@/components/shared/SyncStatusIndicator', () => ({
+    SyncStatusIndicator: ({ status }: { status: 'pending' | 'success' | 'error' }) => (
+        <div data-testid='sync-status'>{status}</div>
+    ),
+}));
+
+describe('SkillsAssessmentPage', () => {
     beforeEach(() => {
-        queryClient = new QueryClient({
-            defaultOptions: {
-                queries: {
-                    retry: false,
-                },
-                mutations: {
-                    retry: false,
-                },
-            },
-        });
-        vi.clearAllMocks();
+        assessment = [
+            { category: 'Languages', skills: [{ name: 'TypeScript', level: 2 }] },
+            { category: 'Tools', skills: [{ name: 'Git', level: 3 }] },
+        ];
+        isLoading = false;
+        saveMutation = { isPending: false, isError: false };
+        publishStatus = false;
+        isPublishStatusLoading = false;
+        mockMutate.mockReset();
+        addItemMock.mockReset();
+        updateItemLevelMock.mockReset();
     });
 
-    it('shows loading state initially', () => {
-        const mockQuery = vi.fn().mockImplementation(() => new Promise(() => {}));
-        vi.mocked(clientTrpc.trpcClient['skills-assessment-get'].query).mockImplementation(mockQuery);
+    it('renders header, categories, publish switch and download button', async () => {
+        render(<SkillsAssessmentPage />);
 
-        render(
-            <QueryClientProvider client={queryClient}>
-                <SkillsAssessmentPage />
-            </QueryClientProvider>,
-        );
+        expect(screen.getByRole('heading', { name: /Skills Assessment/i })).toBeInTheDocument();
 
-        const loader = document.querySelector('.lucide-loader');
-        expect(loader).toBeInTheDocument();
+        expect(screen.getByText(/Rating Scale/i)).toBeInTheDocument();
+
+        const languagesMatches = screen.getAllByText(/Languages/i);
+        expect(languagesMatches.some((el) => el.tagName === 'SPAN')).toBeTruthy();
+
+        const toolsMatches = screen.getAllByText(/Tools/i);
+        expect(toolsMatches.some((el) => el.tagName === 'SPAN')).toBeTruthy();
+
+        expect(screen.getByTestId('sync-status').textContent).toBe('success');
+
+        expect(screen.getByText(/Publish/i)).toBeInTheDocument();
+        const publishSwitch = screen.getByRole('switch');
+        expect(publishSwitch).toHaveAttribute('aria-checked', 'false');
+        fireEvent.click(publishSwitch);
+        await waitFor(() => expect(mockMutate).toHaveBeenCalledWith(true));
+
+        expect(screen.getByRole('button', { name: /Download Data as JSON/i })).toBeInTheDocument();
     });
 
-    it('loads and displays default skills assessment', async () => {
-        const mockQuery = vi.fn().mockResolvedValue([]);
-        vi.mocked(clientTrpc.trpcClient['skills-assessment-get'].query).mockImplementation(mockQuery);
+    it('shows loading state when skills query or publish status is loading', () => {
+        isLoading = true;
+        render(<SkillsAssessmentPage />);
 
-        render(
-            <QueryClientProvider client={queryClient}>
-                <SkillsAssessmentPage />
-            </QueryClientProvider>,
-        );
-
-        await waitFor(() => {
-            expect(screen.getByText('Skills Assessment')).toBeInTheDocument();
-        });
-
-        expect(mockQuery).toHaveBeenCalledTimes(1);
+        expect(screen.queryByRole('heading', { name: /Skills Assessment/i })).toBeNull();
     });
 
-    it('displays sync status indicator when saving', async () => {
-        const mockQuery = vi.fn().mockResolvedValue([]);
-        vi.mocked(clientTrpc.trpcClient['skills-assessment-get'].query).mockImplementation(mockQuery);
+    it('adds a custom skill when using the input and button', async () => {
+        render(<SkillsAssessmentPage />);
 
-        const mockMutate = vi.fn().mockImplementation(() => new Promise(() => {}));
-        vi.mocked(clientTrpc.trpcClient['skills-assessment-save'].mutate).mockImplementation(mockMutate);
+        const input = screen.getByPlaceholderText('Add to Languages');
+        fireEvent.change(input, { target: { value: 'MyCustomSkill' } });
 
-        render(
-            <QueryClientProvider client={queryClient}>
-                <SkillsAssessmentPage />
-            </QueryClientProvider>,
-        );
+        const container = input.closest('div');
+        expect(container).toBeTruthy();
+        const addButton = within(container as HTMLElement).getByRole('button', { name: /Add Skill/i });
+        fireEvent.click(addButton);
 
-        await waitFor(() => {
-            expect(screen.getByText('Skills Assessment')).toBeInTheDocument();
-        });
+        expect(addItemMock).toHaveBeenCalledWith('Languages', 'MyCustomSkill');
+    });
+
+    it('updates the item level when clicking a star inside a skill item', async () => {
+        render(<SkillsAssessmentPage />);
+
+        const skillText = screen.getByText('TypeScript');
+        const skillContainer = skillText.closest('div');
+        expect(skillContainer).toBeTruthy();
+
+        const withinContainer = within(skillContainer as HTMLElement);
+        const starButton = withinContainer.getByRole('button', { name: 'Set level to 3' });
+
+        fireEvent.click(starButton);
+
+        expect(updateItemLevelMock).toHaveBeenCalledWith('Languages', 0, 3);
     });
 });

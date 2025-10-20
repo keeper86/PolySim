@@ -7,6 +7,7 @@ import { logs } from './endpoints/logs';
 import { createProject } from './endpoints/projects';
 import { getSkillsAssessment, saveSkillsAssessment } from './endpoints/skills-assessment';
 import { testDbConnection } from './endpoints/test-connection';
+import { getUser, getUsers, updateUser } from './endpoints/user';
 
 export async function createContext() {
     const session = await getServerSession(authOptions);
@@ -16,10 +17,12 @@ type Context = Awaited<ReturnType<typeof createContext>>;
 
 const t = initTRPC.meta<OpenApiMeta>().context<Context>().create();
 const procedure = t.procedure;
+
 const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
-    if (!ctx.session || !ctx.session.user) {
+    if (!ctx.session?.user?.id) {
         throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You must be logged in to access this resource' });
     }
+
     return next();
 });
 
@@ -30,6 +33,9 @@ export const protectedAppRouter = t.router({
     'projects-create': createProject(protectedProcedure, '/projects-create'),
     'skills-assessment-get': getSkillsAssessment(protectedProcedure, '/skills-assessment-get'),
     'skills-assessment-save': saveSkillsAssessment(protectedProcedure, '/skills-assessment-save'),
+    'users': getUsers(protectedProcedure, '/users'),
+    'user': getUser(protectedProcedure, '/user'),
+    'user-update': updateUser(protectedProcedure, '/user-update'),
 });
 
 export const publicAppRouter = t.router({

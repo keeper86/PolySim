@@ -1,9 +1,9 @@
 'use client';
 
-import { trpcClient } from '@/app/clientTrpc';
+import { trpcClient } from '@/lib/clientTrpc';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { clientLogger } from '../../app/clientLogger';
+import { useLogger } from '../../hooks/useLogger';
 
 interface TestResult {
     message: string;
@@ -16,12 +16,12 @@ interface TestError {
     details?: string | undefined;
 }
 
-const log = clientLogger.child('DbTester');
-
 export default function DatabaseTester() {
     const [loading, setLoading] = useState<boolean>(false);
     const [result, setResult] = useState<TestResult | null>(null);
     const [error, setError] = useState<TestError | null>(null);
+
+    const logger = useLogger('DbTester');
 
     const session = useSession();
 
@@ -33,7 +33,7 @@ export default function DatabaseTester() {
         const response = await trpcClient['test-connection']
             .query()
             .catch((e: unknown) => {
-                log.error('Database connection failed');
+                logger.error('Database connection failed');
                 setError(e instanceof Error ? { error: e.name, details: e.message } : { error: 'Unknown error' });
             })
             .finally(() => {
@@ -43,7 +43,7 @@ export default function DatabaseTester() {
             return;
         }
 
-        log.success('Database connection successful', undefined, {
+        logger.success('Database connection successful', undefined, {
             show: true,
             description: `Connected in ${response.time}ms`,
         });
