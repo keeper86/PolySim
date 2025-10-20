@@ -1,0 +1,35 @@
+ifndef::imagesdir[:imagesdir: ../images]
+image::logo.png[PolySim Logo,200,align="center"]
+
+[[section-introduction-and-goals]]
+== Introduction and Goals
+
+As a researcher running numerical simulations, I want to link simulation source code, results, analysis scripts, and outputs such as plots and tables, so that anyone can easily trace back how the artifact was created and modified.
+
+PolySim aims to make scientific simulations traceable by design. The system automatically connects simulation code, input parameters, and generated outputs, ensuring that every result can be traced back to its origin. This improves transparency, reliability, and collaboration in computational research.
+
+=== Requirements Overview
+
+- Automatically record metadata (input parameters, environment, code version) for each simulation run
+- Link modifying scripts and outputs to simulation results and source code via a CLI tool
+- Associate each output dataset or figure with the simulation run that generated it
+- Make provenance information accessible and human-readable
+- Provide Python and C/C++ adapters for easy integration and automatic reporting to a central server
+- Organize and store provenance data for powerful search.
+
+=== Quality Goals
+
+- Completeness of traceability between simulation code, parameters, and outputs
+- Minimal friction for researchers: adapters require only minimal code changes
+- Agnostic to build systems, execution models, and output formats
+- Sensible, overridable defaults for versioning and environment capture
+- Governance by design: convenience drives adoption, not enforcement
+
+=== Stakeholders
+
+[options="header",cols="1,2,2"]
+|===
+|Role/Name|Contact|Expectations
+| Test user | (hopefully various) | Easily organize and trace simulation code, data, and results
+| Developer | (TBD) | Extend and adapt the platform for new workflows
+|===

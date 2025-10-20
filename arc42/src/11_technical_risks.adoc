@@ -1,0 +1,10 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-technical-risks]]
+== Risks and Technical Debts
+
+- Adapters may not cover all edge cases in diverse research workflows
+- Server scalability and reliability under heavy use
+- Security and privacy for sensitive research data
+- Integration with legacy codebases may require additional effort
+- Maintenance of adapters and server as technology evolves

@@ -15,7 +15,7 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { PAGE_ROUTES } from '@/lib/pageRoutes';
+import { APP_ROUTES } from '@/app/appRoutes';
 
 export function NavUser() {
     const { isMobile } = useSidebar();
@@ -111,7 +111,7 @@ export function NavUser() {
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
                             <DropdownMenuItem asChild>
-                                <Link href={PAGE_ROUTES.account.root.path} className='flex items-center gap-2'>
+                                <Link href={APP_ROUTES.account.root.path} className='flex items-center gap-2'>
                                     <BadgeCheck />
                                     Account
                                 </Link>
@@ -123,7 +123,7 @@ export function NavUser() {
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
-                            onClick={() => signOut({ callbackUrl: PAGE_ROUTES.root.path })}
+                            onClick={() => signOut({ callbackUrl: APP_ROUTES.root.path })}
                             className='text-destructive'
                         >
                             <LogOut />

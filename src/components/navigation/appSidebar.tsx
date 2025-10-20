@@ -14,7 +14,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { PAGE_ROUTES } from '@/lib/pageRoutes';
+import { APP_ROUTES } from '@/app/appRoutes';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -28,7 +28,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size='lg' className='' asChild>
-                            <Link href={PAGE_ROUTES.root.path} className='flex items-center gap-2'>
+                            <Link href={APP_ROUTES.root.path} className='flex items-center gap-2'>
                                 <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
                                     <Image
                                         src={logo}

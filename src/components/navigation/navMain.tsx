@@ -1,6 +1,6 @@
 'use client';
-import type { RouteMetadata } from '@/lib/pageRoutes';
-import { PAGE_ROUTES, isRoute, isRouteManifest } from '@/lib/pageRoutes';
+import type { RouteMetadata } from '@/app/appRoutes';
+import { APP_ROUTES, isRoute, isRouteManifest } from '@/app/appRoutes';
 import Link from 'next/link';
 import React from 'react';
 import type { JSX } from 'react/jsx-runtime';
@@ -33,7 +33,7 @@ export function NavMain() {
     return (
         <nav className='py-4 px-4'>
             <ul className='flex flex-col gap-2'>
-                {Object.values(PAGE_ROUTES).map((route) => {
+                {Object.values(APP_ROUTES).map((route) => {
                     if (isRoute(route) && route.isMainNav) {
                         return renderNavEntry(route);
                     }

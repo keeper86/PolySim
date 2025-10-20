@@ -1,0 +1,22 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-runtime-view]]
+== Runtime View
+
+=== Simulation Run Scenario
+
+* Researcher runs simulation code with adapter integrated
+* Adapter automatically captures metadata and sends to server
+* Output files are logged and linked to the run
+* Provenance server organizes and stores the run information
+
+=== Analysis Script Scenario
+
+* Researcher runs analysis script via CLI tool
+* CLI tool links modifying script to simulation results and source code
+* Server updates provenance chain
+
+=== Provenance Query Scenario
+
+* User queries server for provenance of a result
+* Server returns chain of metadata, code version, and environment

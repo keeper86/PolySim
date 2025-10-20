@@ -1,0 +1,36 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-building-block-view]]
+== Building Block View
+
+=== Whitebox Overall System
+
+_**Overview Diagram**_
+----
+[ Researcher ]
+   |
+[ Simulation Code (Python/C++) ]
+   |
+[ Adapter (Python Decorator / C++ Header) ]
+   |
+[ CLI Tool ]
+   |
+[ Provenance Server ]
+   |
+[ Database / Search UI ]
+----
+
+Motivation::
+Enable traceable, reproducible research with minimal workflow disruption.
+
+Contained Building Blocks::
+- Adapters: Python decorator, C++ header
+- CLI tool: links scripts, outputs, and code
+- Server: receives, organizes, and serves provenance data
+- Database: stores metadata, results, and links
+- Search UI: enables provenance queries
+
+Important Interfaces::
+- Adapter <-> Server: API for metadata reporting
+- CLI Tool <-> Server: API for linking and querying
+- Server <-> Database: storage and retrieval

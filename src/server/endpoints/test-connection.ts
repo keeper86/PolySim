@@ -3,18 +3,8 @@ import { db } from '../db';
 import type { ProcedureBuilderType } from '../router';
 import { TRPCError } from '@trpc/server';
 
-export const testDbConnection = (procedure: ProcedureBuilderType, path: `/${string}`) => {
+export const testDbConnection = (procedure: ProcedureBuilderType, _: `/${string}`) => {
     return procedure
-        .meta({
-            openapi: {
-                method: 'GET',
-                path,
-                tags: ['Technical'],
-                summary: 'Test Database Connection',
-                description: 'Tests the connection to the PostgreSQL database and returns the status.',
-                protect: true,
-            },
-        })
         .input(z.void())
         .output(
             z.object({

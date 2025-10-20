@@ -1,0 +1,14 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-architecture-constraints]]
+== Architecture Constraints
+
+- Must support provenance tracking for scientific simulations (Python, C/C++)
+- Adapters must be easy to integrate, with minimal dependencies
+- No prescribed build system or execution model
+- Server must be able to organize, store, and serve provenance metadata
+- Data privacy and security must be considered for sensitive research data
+- System should be extensible to new languages and workflows
+
+
+
