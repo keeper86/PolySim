@@ -3,7 +3,6 @@
 import { TRPCProvider } from '@/lib/trpc';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import z from 'zod';
 import { useLogger } from '../hooks/useLogger';
 import { trpcClient } from '../lib/clientTrpc';
 
@@ -27,14 +26,6 @@ function getQueryClient() {
         browserQueryClient = makeQueryClient();
     }
     return browserQueryClient;
-}
-
-const apiUrl =
-    process.env.NODE_ENV !== 'test'
-        ? z.url().parse(process.env.NEXT_PUBLIC_API_BASE_URL)
-        : 'some-url-that-should-not-be-used-in-tests';
-if (!apiUrl) {
-    throw new Error('NEXT_PUBLIC_API_BASE_URL is not defined');
 }
 
 function AttachLogger({ queryClient }: { queryClient: QueryClient }) {
