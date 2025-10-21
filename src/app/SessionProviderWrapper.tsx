@@ -8,7 +8,7 @@ export default function SessionProviderWrapper({
     session,
 }: {
     children: React.ReactNode;
-    session?: Session;
+    session: Session | null;
 }) {
     return <SessionProvider session={session}>{children}</SessionProvider>;
 }

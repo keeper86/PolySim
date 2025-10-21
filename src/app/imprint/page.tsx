@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { APP_ROUTES } from '@/app/appRoutes';
+import { APP_ROUTES } from '@/lib/appRoutes';
 
 export default function ImprintPage() {
     return (

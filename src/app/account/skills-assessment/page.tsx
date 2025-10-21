@@ -2,43 +2,29 @@
 
 import { CategorySection } from '@/app/account/skills-assessment/components/CategorySection';
 import { ConfirmResetDialog } from '@/app/account/skills-assessment/components/ConfirmResetDialog';
-import { useSkillsAssessment } from '@/app/account/skills-assessment/hooks/useSkillsAssessment';
 import { useSkillsAssessmentActions } from '@/app/account/skills-assessment/hooks/useSkillsAssessmentActions';
 import { getLevelText } from '@/app/account/skills-assessment/utils/getLevelText';
-import { trpcClient } from '@/app/clientTrpc';
 import { StarRating } from '@/components/shared/StarRating';
 import { SyncStatusIndicator } from '@/components/shared/SyncStatusIndicator';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import type { SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
 import { Loader } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { useState } from 'react';
+import { usePublishSkillsAssessment } from './hooks/usePublishSkillsAssessment';
+import { useSkillsAssessment } from './hooks/useSkillsAssessment';
+import { Label } from '@/components/ui/label';
 
 export default function SkillsAssessmentPage() {
-    const [data, setData] = useState<SkillsAssessmentSchema>([]);
+    const { skillsQuery, saveMutation } = useSkillsAssessment();
+    const { data: assessment = [], isLoading } = skillsQuery;
+    const skillAssessmentActions = useSkillsAssessmentActions(assessment, saveMutation);
+    const { publishStatus, isPublishStatusLoading, mutateAssessmentPublishStatus } = usePublishSkillsAssessment();
+
     const [confirmDelete, setConfirmDelete] = useState<{ categoryIdx: number; itemIndex: number } | null>(null);
 
-    const { data: queryData, isInitializing, isLoadError, loadError, saveMutation } = useSkillsAssessment();
-
-    const skillAssessmentActions = useSkillsAssessmentActions(data, setData, saveMutation);
-
-    useEffect(() => {
-        if (queryData) {
-            setData(queryData);
-        }
-    }, [queryData]);
-
-    useEffect(() => {
-        if (isLoadError) {
-            toast.error('Failed to load skills assessment', {
-                description: loadError instanceof Error ? loadError.message : 'Unknown error',
-            });
-        }
-    }, [isLoadError, loadError]);
-
-    if (isInitializing) {
+    if (isLoading || isPublishStatusLoading) {
         return (
             <div className='flex items-center justify-center min-h-[400px]'>
                 <Loader className='w-8 h-8 text-muted-foreground animate-spin' style={{ animationDuration: '2s' }} />
@@ -67,7 +53,7 @@ export default function SkillsAssessmentPage() {
                 onConfirm={() => {
                     if (confirmDelete) {
                         const { categoryIdx, itemIndex } = confirmDelete;
-                        const category = data[categoryIdx].category;
+                        const category = assessment[categoryIdx].category;
                         skillAssessmentActions.resetSkillRatings(category, itemIndex);
                         setConfirmDelete(null);
                     }
@@ -75,6 +61,14 @@ export default function SkillsAssessmentPage() {
             />
             <div className='flex items-center justify-between'>
                 <h1 className='text-3xl font-bold'>Skills Assessment</h1>
+                <div className='flex items-center space-x-2'>
+                    <Switch
+                        id='publish-assessment'
+                        checked={publishStatus}
+                        onCheckedChange={() => mutateAssessmentPublishStatus.mutate(!publishStatus)}
+                    />
+                    <Label htmlFor='publish-assessment'>Publish </Label>
+                </div>
             </div>
             <div className='space-y-2'>
                 <p className='text-muted-foreground'>
@@ -105,7 +99,7 @@ export default function SkillsAssessmentPage() {
                     ))}
                 </div>
             </div>
-            {data.map((categoryObj) => (
+            {assessment.map((categoryObj) => (
                 <CategorySection
                     key={categoryObj.category}
                     categoryObj={categoryObj}
@@ -116,7 +110,7 @@ export default function SkillsAssessmentPage() {
             <div className='h-16 mt-auto'>
                 <Button
                     onClick={async () => {
-                        const json = JSON.stringify(await trpcClient['skills-assessment-get'].query(), null, 2);
+                        const json = JSON.stringify(assessment, null, 2);
                         const blob = new Blob([json], { type: 'application/json' });
                         const url = URL.createObjectURL(blob);
                         const a = document.createElement('a');

@@ -2,7 +2,8 @@
 
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from 'lucide-react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { APP_ROUTES } from '@/lib/appRoutes';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,7 +16,7 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { APP_ROUTES } from '@/app/appRoutes';
+import type { JSX } from 'react';
 
 export function NavUser() {
     const { isMobile } = useSidebar();
@@ -44,7 +45,21 @@ export function NavUser() {
         );
     }
 
-    const user = session?.user || { name: 'User', email: '', image: '' };
+    const user = session?.user;
+    const userAvatar: JSX.Element = (
+        <Avatar className='h-8 w-8 rounded-lg'>
+            <AvatarFallback className='rounded-lg p-1 bg-muted'>
+                {user?.displayName
+                    ? user.displayName
+                          .split(' ')
+                          .map((n) => n[0])
+                          .join('')
+                          .toUpperCase()
+                          .slice(0, 2)
+                    : ''}
+            </AvatarFallback>
+        </Avatar>
+    );
 
     return (
         <SidebarMenu>
@@ -55,25 +70,10 @@ export function NavUser() {
                             size='lg'
                             className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
                         >
-                            <Avatar className='h-8 w-8 rounded-lg'>
-                                {user.image ? (
-                                    <AvatarImage src={user.image} alt={user.name || 'User'} />
-                                ) : (
-                                    <AvatarFallback className='rounded-lg p-1 bg-muted'>
-                                        {user.name
-                                            ? user.name
-                                                  .split(' ')
-                                                  .map((n) => n[0])
-                                                  .join('')
-                                                  .toUpperCase()
-                                                  .slice(0, 2)
-                                            : ''}
-                                    </AvatarFallback>
-                                )}
-                            </Avatar>
+                            {userAvatar}
                             <div className='grid flex-1 text-left text-sm leading-tight'>
-                                <span className='truncate font-semibold'>{user.name}</span>
-                                {user.email && <span className='truncate text-xs'>{user.email}</span>}
+                                <span className='truncate font-semibold'>{user?.displayName}</span>
+                                {user?.email && <span className='truncate text-xs'>{user?.email}</span>}
                             </div>
                             <ChevronsUpDown className='ml-auto size-4' />
                         </SidebarMenuButton>
@@ -86,25 +86,10 @@ export function NavUser() {
                     >
                         <DropdownMenuLabel className='p-0 font-normal'>
                             <div className='flex items-center gap-2 py-1.5 text-left text-sm'>
-                                <Avatar className='h-8 w-8 rounded-lg'>
-                                    {user.image ? (
-                                        <AvatarImage src={user.image} alt={user.name || 'User'} />
-                                    ) : (
-                                        <AvatarFallback className='rounded-lg bg-muted'>
-                                            {user.name
-                                                ? user.name
-                                                      .split(' ')
-                                                      .map((n) => n[0])
-                                                      .join('')
-                                                      .toUpperCase()
-                                                      .slice(0, 2)
-                                                : ''}
-                                        </AvatarFallback>
-                                    )}
-                                </Avatar>
+                                {userAvatar}
                                 <div className='grid flex-1 text-left text-sm leading-tight'>
-                                    <span className='truncate font-semibold'>{user.name}</span>
-                                    {user.email && <span className='truncate text-xs'>{user.email}</span>}
+                                    <span className='truncate font-semibold'>{user?.displayName}</span>
+                                    {user?.email && <span className='truncate text-xs'>{user?.email}</span>}
                                 </div>
                             </div>
                         </DropdownMenuLabel>

@@ -86,6 +86,15 @@ export const APP_ROUTES = {
         description: 'Classic pong game',
         isSecondaryNav: true,
     },
+    skills: {
+        root: {
+            path: '/skills',
+            label: 'Skillradar',
+            icon: Brain,
+            description: 'Manage and assess your skills',
+            isSecondaryNav: true,
+        },
+    },
     account: {
         root: {
             path: '/account',

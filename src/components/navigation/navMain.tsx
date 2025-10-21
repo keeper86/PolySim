@@ -1,6 +1,6 @@
 'use client';
-import type { RouteMetadata } from '@/app/appRoutes';
-import { APP_ROUTES, isRoute, isRouteManifest } from '@/app/appRoutes';
+import type { RouteMetadata } from '@/lib/appRoutes';
+import { APP_ROUTES, isRoute, isRouteManifest } from '@/lib/appRoutes';
 import Link from 'next/link';
 import React from 'react';
 import type { JSX } from 'react/jsx-runtime';

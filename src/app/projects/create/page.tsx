@@ -1,5 +1,5 @@
 'use client';
-import { trpcClient } from '@/app/clientTrpc';
+import { trpcClient } from '@/lib/clientTrpc';
 import { useState } from 'react';
 
 export default function ProjectsCreatePage() {

@@ -1,13 +1,15 @@
 import type { SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
 import type { UseMutationResult } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { cleanEmptyDefaultSkillsAssessment } from '../utils/getDefaultAssessmentList';
 
 export function useSkillsAssessmentActions(
     data: SkillsAssessmentSchema,
-    setData: (data: SkillsAssessmentSchema) => void,
-    saveMutation: UseMutationResult<void, unknown, SkillsAssessmentSchema>,
+    saveMutation: UseMutationResult<unknown, unknown, SkillsAssessmentSchema>,
 ) {
     const getCategoryIdx = (category: string) => data.findIndex((c) => c.category === category);
+
+    const update = (schema: SkillsAssessmentSchema) => saveMutation.mutate(cleanEmptyDefaultSkillsAssessment(schema));
 
     const addItemToCategory = (category: string, value: string) => {
         const trimmedValue = value.trim();
@@ -27,8 +29,8 @@ export function useSkillsAssessmentActions(
             ...updated[idx],
             skills: [...updated[idx].skills, { name: trimmedValue, level: 0, subSkills: [] }],
         };
-        setData(updated);
-        saveMutation.mutate(updated);
+
+        update(updated);
     };
 
     const updateItemLevel = (category: string, index: number, level: number) => {
@@ -40,8 +42,8 @@ export function useSkillsAssessmentActions(
         const skills = [...updated[idx].skills];
         skills[index] = { ...skills[index], level };
         updated[idx] = { ...updated[idx], skills };
-        setData(updated);
-        saveMutation.mutate(updated);
+
+        update(updated);
     };
 
     const deleteCustomSkill = (category: string, itemIndex: number) => {
@@ -57,8 +59,8 @@ export function useSkillsAssessmentActions(
             return;
         }
         updated[idx] = { ...updated[idx], skills: skills.filter((_, i) => i !== itemIndex) };
-        setData(updated);
-        saveMutation.mutate(updated);
+
+        update(updated);
     };
 
     const resetSkillRatings = (category: string, itemIndex: number) => {
@@ -74,8 +76,8 @@ export function useSkillsAssessmentActions(
         }
         skills[itemIndex] = skill;
         updated[idx] = { ...updated[idx], skills };
-        setData(updated);
-        saveMutation.mutate(updated);
+
+        update(updated);
     };
 
     const addSubSkillToItem = (category: string, itemIndex: number, subSkillName: string) => {
@@ -97,8 +99,8 @@ export function useSkillsAssessmentActions(
         item.subSkills.push({ name: subSkillName, level: 0 });
         skills[itemIndex] = item;
         updated[idx] = { ...updated[idx], skills };
-        setData(updated);
-        saveMutation.mutate(updated);
+
+        update(updated);
     };
 
     const updateSubSkillLevel = (category: string, itemIndex: number, subSkillIndex: number, level: number) => {
@@ -116,8 +118,8 @@ export function useSkillsAssessmentActions(
         item.subSkills[subSkillIndex] = { ...item.subSkills[subSkillIndex], level };
         skills[itemIndex] = item;
         updated[idx] = { ...updated[idx], skills };
-        setData(updated);
-        saveMutation.mutate(updated);
+
+        update(updated);
     };
 
     const deleteCustomSubSkill = (category: string, itemIndex: number, subIndex: number) => {
@@ -134,8 +136,8 @@ export function useSkillsAssessmentActions(
         item.subSkills = item.subSkills.filter((_, i) => i !== subIndex);
         skills[itemIndex] = item;
         updated[idx] = { ...updated[idx], skills };
-        setData(updated);
-        saveMutation.mutate(updated);
+
+        update(updated);
     };
 
     return {

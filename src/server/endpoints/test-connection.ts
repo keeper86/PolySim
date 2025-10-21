@@ -16,11 +16,10 @@ export const testDbConnection = (procedure: ProcedureBuilderType, _: `/${string}
         .query(async () => {
             const start = Date.now();
             try {
-                const result = await db.raw('SELECT version()');
+                await db('knex_migrations');
                 const end = Date.now();
                 const time = end - start;
-                const version = result.rows[0].version;
-                return { time, version, message: 'Database connection successful' };
+                return { time, message: 'Database connection successful' };
             } catch (error) {
                 throw new TRPCError({
                     code: 'INTERNAL_SERVER_ERROR',

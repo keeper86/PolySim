@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { db } from '../db';
 import { logger } from '../logger';
-import type { ProcedureBuilderType } from '../router';
+import { type ProcedureBuilderType } from '../router';
 
 const skillDefinition = z.object({
     name: z.string(),
@@ -34,24 +34,38 @@ export const getSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${s
                 protect: true,
             },
         })
-        .input(z.void())
+        .input(
+            z.object({
+                userId: z.string().optional(),
+            }),
+        )
         .output(skillsAssessmentSchema)
-        .query(async ({ ctx }) => {
-            const userId = ctx.session?.user?.email || ctx.session?.user?.name;
-            if (!userId) {
+        .query(async ({ ctx, input }) => {
+            const userIdFromSession = ctx.session?.user?.id;
+            if (!userIdFromSession && !input) {
                 throw new Error('User ID not found');
             }
 
-            logger.debug({ component: 'skills-assessment-get' }, `Fetching skills assessment for user: ${userId}`);
+            if (input && input.userId !== userIdFromSession) {
+                const published = await db('user_data').where({ user_id: input.userId });
+                if (published.length === 1 && !published[0].has_assessment_published) {
+                    throw new Error('Published assessment not found or not public.');
+                }
+            }
+
+            logger.debug(
+                { component: 'skills-assessment-get' },
+                `Fetching skills assessment for user: ${input.userId ?? userIdFromSession}`,
+            );
 
             const result = await db('skills_assessment_history')
-                .where({ user_id: userId })
+                .where({ user_id: input.userId ?? userIdFromSession })
                 .orderBy('assessment_date', 'desc')
                 .first();
 
             logger.debug({ component: 'skills-assessment-get' }, `Skills assessment data: ${JSON.stringify(result)}`);
 
-            return result?.assessment_data ?? [];
+            return (result?.assessment_data as SkillsAssessmentSchema) ?? [];
         });
 };
 
@@ -74,36 +88,35 @@ export const saveSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${
             }),
         )
         .mutation(async ({ input, ctx }) => {
-            const userId = ctx.session?.user?.id || ctx.session?.user?.email;
+            const userId = ctx.session?.user?.id;
             if (!userId) {
                 throw new Error('User ID not found');
             }
 
-            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+            const today = new Date(new Date().toISOString().split('T')[0]); // YYYY-MM-DD -> Date at local midnight
 
+            const serializedInput = JSON.stringify(input);
             const existing = await db('skills_assessment_history')
                 .where({ user_id: userId, assessment_date: today })
                 .first();
 
-            const serialized = JSON.stringify(input);
-
             if (existing) {
                 logger.debug(
                     { component: 'skills-assessment-upsert' },
-                    `Updating skills assessment for user: ${userId} with data: ${serialized}`,
+                    `Updating skills assessment for user: ${userId} with data: ${serializedInput}`,
                 );
                 await db('skills_assessment_history')
                     .where({ user_id: userId, assessment_date: today })
-                    .update({ assessment_data: serialized });
+                    .update({ assessment_data: serializedInput });
             } else {
                 logger.debug(
                     { component: 'skills-assessment-upsert' },
-                    `Inserting new skills assessment for user: ${userId} with data: ${serialized}`,
+                    `Inserting new skills assessment for user: ${userId} with data: ${serializedInput}`,
                 );
                 await db('skills_assessment_history').insert({
                     user_id: userId,
                     assessment_date: today,
-                    assessment_data: serialized,
+                    assessment_data: serializedInput,
                 });
             }
 

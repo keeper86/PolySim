@@ -1,53 +1,62 @@
-import { trpcClient } from '@/app/clientTrpc';
-import { clientLogger } from '@/app/clientLogger';
+import { useLogger } from '@/hooks/useLogger';
+import { useTRPCClient } from '@/lib/trpc';
 import type { SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { cleanEmptyDefaultSkillsAssessment, getDefaultSkillsAssessment } from '../utils/getDefaultAssessmentList';
-
-const childLogger = clientLogger.child('useSkillsAssessment');
+import { useSession } from 'next-auth/react';
 
 export function useSkillsAssessment() {
-    const {
-        data: queryData,
-        isLoading: isInitializing,
-        isError: isLoadError,
-        error: loadError,
-    } = useQuery({
+    const logger = useLogger('useSkillsAssessment');
+    const userId = useSession().data?.user?.id;
+    const trpcClient = useTRPCClient();
+    const queryClient = useQueryClient();
+
+    const skillsQuery = useQuery({
         queryKey: ['skills-assessment'],
         queryFn: async () => {
-            childLogger.debug('Fetching skills assessment');
-            const result = await trpcClient['skills-assessment-get'].query();
+            logger.debug('Fetching skills assessment');
+            const result = await trpcClient['skills-assessment-get'].query({
+                userId,
+            });
             if (!result || result.length === 0) {
-                childLogger.debug('No existing skills assessment found, loading default');
+                logger.debug('No existing skills assessment found, loading default');
                 return getDefaultSkillsAssessment();
             } else {
-                childLogger.debug('Loaded existing skills assessment');
+                logger.debug('Loaded existing skills assessment');
                 return getDefaultSkillsAssessment(result);
             }
         },
-        staleTime: 5 * 60 * 1000, // 5 minutes
     });
 
     const saveMutation = useMutation({
         mutationFn: async (dataToSave: SkillsAssessmentSchema) => {
             const cleanedData = cleanEmptyDefaultSkillsAssessment(dataToSave);
-            childLogger.debug('Saving skills assessment', { data: cleanedData });
+            logger.debug('Saving skills assessment', { data: cleanedData });
             await trpcClient['skills-assessment-save'].mutate(cleanedData);
+            return dataToSave;
         },
-        onError: (error: unknown) => {
-            toast.error('Failed to save skills assessment', {
-                description: error instanceof Error ? error.message : 'Unknown error',
-            });
-            childLogger.error('Failed to save skills assessment', { error });
+
+        onMutate: async (newData) => {
+            await queryClient.cancelQueries({ queryKey: ['skills-assessment'] });
+
+            const previousData = queryClient.getQueryData<SkillsAssessmentSchema>(['skills-assessment']);
+
+            queryClient.setQueryData(['skills-assessment'], getDefaultSkillsAssessment(newData));
+
+            return { previousData };
+        },
+
+        onError: (error, _newData, context) => {
+            logger.error('Failed to save skills assessment', { error });
+
+            if (context?.previousData) {
+                queryClient.setQueryData(['skills-assessment'], getDefaultSkillsAssessment(context.previousData));
+            }
         },
     });
 
     return {
-        data: queryData,
-        isInitializing,
-        isLoadError,
-        loadError,
+        skillsQuery,
         saveMutation,
     };
 }

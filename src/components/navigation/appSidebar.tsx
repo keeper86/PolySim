@@ -14,7 +14,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { APP_ROUTES } from '@/app/appRoutes';
+import { APP_ROUTES } from '@/lib/appRoutes';
 import Image from 'next/image';
 import Link from 'next/link';
 
