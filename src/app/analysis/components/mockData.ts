@@ -1,4 +1,4 @@
-import type { TimeSeriesData } from '../src/types/timeSeriesData';
+import type { TimeSeriesData } from './timeSeriesData';
 
 export const mockHistoricData: TimeSeriesData[] = [
     { date: '2020-01-01T00:00', value: 6206.8125 },
@@ -18,3 +18,8 @@ export const mockForecastData: TimeSeriesData[] = [
     { date: '2020-01-11T00:00', value: 6220.8125 },
     { date: '2020-01-12T00:00', value: 6229.8125 },
 ];
+
+export const mockData = {
+    mockHistoricData,
+    mockForecastData,
+};

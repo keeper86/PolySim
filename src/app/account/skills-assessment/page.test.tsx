@@ -54,7 +54,7 @@ vi.mock('./components/ConfirmResetDialog', () => ({
     ),
 }));
 
-vi.mock('@/components/shared/SyncStatusIndicator', () => ({
+vi.mock('@/components/client/SyncStatusIndicator', () => ({
     SyncStatusIndicator: ({ status }: { status: 'pending' | 'success' | 'error' }) => (
         <div data-testid='sync-status'>{status}</div>
     ),

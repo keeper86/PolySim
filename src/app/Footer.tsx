@@ -17,8 +17,8 @@ export default function Footer() {
                     <Image
                         src='https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'
                         alt='GitHub'
-                        width={20}
-                        height={20}
+                        width={24}
+                        height={24}
                         className='inline-block align-middle'
                     />
                 </a>

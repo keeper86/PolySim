@@ -17,9 +17,12 @@ import {
 
 import 'chartjs-adapter-date-fns';
 
-import type { TimeSeriesData } from '../../types/timeSeriesData';
+import type { TimeSeriesData } from './timeSeriesData';
+import { mockData } from './mockData';
 
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, TimeScale, Filler);
+
+const { mockHistoricData, mockForecastData } = mockData;
 
 // Example for chartJS usage
 export const EnergyForecast: FC = () => {
@@ -40,24 +43,8 @@ export const EnergyForecast: FC = () => {
         }
 
         const fetchData = async () => {
-            // fetch data from the server endpoint /api/user
-            const historicalDataResult = await fetch('/api/v1/energy/historical');
-            if (!historicalDataResult.ok) {
-                console.log('Failed to fetch historical data not ok');
-            } else {
-                const test = await historicalDataResult.json();
-                if (test.data) {
-                    setHistoricalData(test.data);
-                } else {
-                    console.log('Failed to fetch historical data');
-                }
-            }
-            const forecastDataResult = await fetch('/api/v1/energy/forecast');
-            if (!forecastDataResult.ok) {
-                console.log('Failed to fetch forecast data');
-            } else {
-                setForecastData((await forecastDataResult.json()).data);
-            }
+            setHistoricalData(mockHistoricData);
+            setForecastData(mockForecastData);
             setIsLoading(false);
         };
         fetchData().catch((error) => {

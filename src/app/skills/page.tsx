@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import PublishedAssessmentDialog from '@/components/client/PublishedAssessmentDialog';
+import PublishedAssessmentDialog from '@/app/skills/components/PublishedAssessmentDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader } from 'lucide-react';

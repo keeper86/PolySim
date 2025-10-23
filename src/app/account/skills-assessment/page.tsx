@@ -4,8 +4,8 @@ import { CategorySection } from '@/app/account/skills-assessment/components/Cate
 import { ConfirmResetDialog } from '@/app/account/skills-assessment/components/ConfirmResetDialog';
 import { useSkillsAssessmentActions } from '@/app/account/skills-assessment/hooks/useSkillsAssessmentActions';
 import { getLevelText } from '@/app/account/skills-assessment/utils/getLevelText';
-import { StarRating } from '@/components/shared/StarRating';
-import { SyncStatusIndicator } from '@/components/shared/SyncStatusIndicator';
+import { StarRating } from '@/components/client/StarRating';
+import { SyncStatusIndicator } from '@/components/client/SyncStatusIndicator';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';

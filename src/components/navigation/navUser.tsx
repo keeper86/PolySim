@@ -1,8 +1,7 @@
 'use client';
 
-import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from 'lucide-react';
+import { ChevronsUpDown, LogOut } from 'lucide-react';
 
-import { APP_ROUTES } from '@/lib/appRoutes';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
     DropdownMenu,
@@ -14,6 +13,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
+import { APP_ROUTES } from '@/lib/appRoutes';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import type { JSX } from 'react';
@@ -97,13 +97,15 @@ export function NavUser() {
                         <DropdownMenuGroup>
                             <DropdownMenuItem asChild>
                                 <Link href={APP_ROUTES.account.root.path} className='flex items-center gap-2'>
-                                    <BadgeCheck />
+                                    {APP_ROUTES.account.root.icon && <APP_ROUTES.account.root.icon />}
                                     Account
                                 </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Bell />
-                                Notifications
+                            <DropdownMenuItem asChild>
+                                <Link href={APP_ROUTES.pong.path} className='flex items-center gap-2'>
+                                    {APP_ROUTES.pong.icon && <APP_ROUTES.pong.icon />}
+                                    Paddle War
+                                </Link>
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />

@@ -36,7 +36,7 @@ export const authOptions: AuthOptions = {
                             hasAssessmentPublished: row.has_assessment_published,
                         };
                     } else {
-                        const displayName = session.user?.displayName ?? 'No name set';
+                        const displayName = session.user?.displayName ?? session.user?.name ?? 'No name set';
                         const email = session.user?.email;
                         if (!email) {
                             throw new Error('Email is required for user_data insertion');

@@ -49,6 +49,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <NavMain />
                 <NavSecondary className='mt-auto' />
             </SidebarContent>
+            <Separator />
             <SidebarFooter>
                 <NavUser />
             </SidebarFooter>
