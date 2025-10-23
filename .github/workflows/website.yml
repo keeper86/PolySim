@@ -59,7 +59,7 @@ jobs:
             - name: Install dependencies
               run: npm ci
             - name: Install Playwright browsers
-              run: npx playwright install
+              run: npx playwright install --with-deps
             - name: Cache Playwright browsers
               uses: actions/cache@v4
               with:
@@ -67,8 +67,6 @@ jobs:
                   key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
                       ${{ runner.os }}-playwright-
-            - name: Install Playwright system dependencies
-              run: npx playwright install-deps
             - name: Start Keycloak and DB with Docker Compose
               run: |
                   docker compose -f docker-compose.development.yaml up -d
