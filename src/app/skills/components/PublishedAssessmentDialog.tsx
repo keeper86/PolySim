@@ -1,6 +1,6 @@
 'use client';
 
-import { StarRating } from '@/components/shared/StarRating';
+import { StarRating } from '@/components/client/StarRating';
 import { Button } from '@/components/ui/button';
 import { useTRPC } from '@/lib/trpc';
 import { useQuery } from '@tanstack/react-query';

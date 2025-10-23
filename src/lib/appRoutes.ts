@@ -1,4 +1,16 @@
-import { type LucideIcon, BookOpen, Frame, Gamepad, Map, PieChart, User, Home, FileText, Brain } from 'lucide-react';
+import {
+    type LucideIcon,
+    BookOpen,
+    Frame,
+    Gamepad,
+    Map,
+    PieChart,
+    User,
+    Home,
+    FileText,
+    Brain,
+    BadgeCheck,
+} from 'lucide-react';
 
 import type { Route } from 'nextjs-routes';
 
@@ -74,7 +86,6 @@ export const APP_ROUTES = {
         path: '/api-doc',
         label: 'API Docs',
         icon: BookOpen,
-        isPublic: true,
         description: 'Interactive API documentation',
         isSecondaryNav: true,
     },
@@ -84,7 +95,6 @@ export const APP_ROUTES = {
         icon: Gamepad,
         isPublic: true,
         description: 'Classic pong game',
-        isSecondaryNav: true,
     },
     skills: {
         root: {
@@ -105,7 +115,7 @@ export const APP_ROUTES = {
         skillsAssessment: {
             path: '/account/skills-assessment',
             label: 'Skills Assessment',
-            icon: Brain,
+            icon: BadgeCheck,
             description: 'Assess and track your technical skills',
         },
     },
@@ -114,6 +124,7 @@ export const APP_ROUTES = {
         label: 'Imprint',
         icon: FileText,
         isPublic: true,
+        isSecondaryNav: true,
         description: 'Legal information and imprint',
     },
 } as const satisfies RouteManifest;

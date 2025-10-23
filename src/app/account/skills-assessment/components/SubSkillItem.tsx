@@ -1,6 +1,6 @@
 'use client';
 
-import { StarRating } from '@/components/shared/StarRating';
+import { StarRating } from '@/components/client/StarRating';
 import { Trash2 } from 'lucide-react';
 import { isDefaultSkill } from '../utils/getDefaultAssessmentList';
 import { getIconToSkill } from '../utils/getIconToSkill';

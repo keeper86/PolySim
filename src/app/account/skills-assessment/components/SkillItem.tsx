@@ -1,7 +1,7 @@
 'use client';
 
-import { StarRating } from '@/components/shared/StarRating';
-import { TextInputWithButton } from '@/components/shared/TextInputWithButton';
+import { StarRating } from '@/components/client/StarRating';
+import { TextInputWithButton } from '@/components/client/TextInputWithButton';
 import { ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { ConfirmResetDialog } from './ConfirmResetDialog';

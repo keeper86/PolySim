@@ -105,7 +105,7 @@ export const updateUser = (procedure: ProcedureBuilderType, path: `/${string}`) 
     return procedure
         .meta({
             openapi: {
-                method: 'PUT',
+                method: 'POST',
                 path,
                 tags: ['User'],
                 summary: 'Update User Info',

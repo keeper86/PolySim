@@ -1,6 +1,7 @@
 'use client';
 import type { RouteMetadata } from '@/lib/appRoutes';
 import { APP_ROUTES, isRoute, isRouteManifest } from '@/lib/appRoutes';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React from 'react';
 import type { JSX } from 'react/jsx-runtime';
@@ -30,21 +31,28 @@ function renderNavEntry(route: RouteMetadata, opts?: { isSub?: boolean }): JSX.E
 }
 
 export function NavMain() {
+    const loggedIn = useSession().status === 'authenticated';
+
+    const showRoute = (route: RouteMetadata): boolean =>
+        route.isMainNav === true && (route.isPublic === true || loggedIn);
     return (
         <nav className='py-4 px-4'>
             <ul className='flex flex-col gap-2'>
                 {Object.values(APP_ROUTES).map((route) => {
-                    if (isRoute(route) && route.isMainNav) {
+                    if (isRoute(route)) {
+                        if (!showRoute(route)) {
+                            return null;
+                        }
                         return renderNavEntry(route);
                     }
                     if (isRouteManifest(route)) {
                         const { root, ...rest } = route;
-                        if (!isRoute(root) || !root.isMainNav) {
+                        if (!isRoute(root) || !showRoute(root)) {
                             return null;
                         }
                         const subItems: JSX.Element[] = [];
                         Object.values(rest).forEach((subRoute) => {
-                            if (isRoute(subRoute) && subRoute.isMainNav) {
+                            if (isRoute(subRoute) && showRoute(subRoute)) {
                                 subItems.push(renderNavEntry(subRoute, { isSub: true }));
                             }
                         });

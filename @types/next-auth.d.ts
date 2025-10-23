@@ -6,6 +6,7 @@ declare module 'next-auth' {
         accessToken?: string;
         user?: {
             id: string;
+            name?: string | null;
             displayName?: string | null;
             hasAssessmentPublished?: boolean;
             email?: string | null;
