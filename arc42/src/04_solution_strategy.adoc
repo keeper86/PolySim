@@ -3,10 +3,21 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-solution-strategy]]
 == Solution Strategy
 
-- Adapters for Python (decorator) and C/C++ (header-only, RAII) for minimal integration
-- CLI tool for linking modifying scripts and outputs
-- Central server for automated organization and search
-- Automatic metadata capture (code version, environment, parameters)
-- Output agnosticism: support for various file types and formats
-- Sensible defaults, overridable by user
-- Security and privacy by design
+This section describes the high-level architectural choices and strategies used to meet the system goals. It outlines key decisions regarding frameworks, technologies, and design patterns employed in the implementation.
+
+=== Key decisions
+
+- Framework: Next.js (App Router) as the primary web framework for server and client components. This keeps UI and server-rendered pages consolidated in `app/`.
+- API: tRPC for type-safe API surface between frontend and backend; procedures and endpoints live under `src/server/` and the client is wired via `src/lib/clientTrpc.ts`.
+- Persistence: PostgreSQL with Knex.js for migrations and queries. Schema and migration scripts live under `migrations/` and `src/server/db.ts` implements DB access patterns.
+- Authentication: Keycloak for identity provider and NextAuth integration for session handling; Keycloak config and realm data live in `keycloak/`.
+- Deployment / Development: Containerized via `Dockerfile`, `docker-compose*.yaml` and Caddy as reverse proxy (Caddyfile). A separate migrator image is available (`Dockerfile.migrator`) for DB maintenance tasks.
+- Testing & Quality: Vitest for unit tests, Playwright for E2E; ESLint/Prettier and strict TypeScript settings enforced.
+
+=== Strategy rationale
+
+- Prefer server components by default and use client components only when browser APIs or interactivity are required. This improves performance and SEO.
+- Keep API surface small and type-safe with tRPC + Zod to avoid duplication of schemas and to ensure compile-time checks between client and server.
+- Use Knex migrations for incremental, versioned DB changes and a dedicated migrator image to isolate migration runs from the app runtime.
+- Leverage Keycloak for robust, enterprise-ready authentication and SSO capabilities, integrated seamlessly with NextAuth.
+- Containerization ensures consistent environments across development, testing, and production, simplifying deployment and scaling.

@@ -17,6 +17,7 @@
 /test-results/
 /playwright-report/
 /playwright/.cache/
+playwright/.auth
 
 # next.js
 /.next/
@@ -39,9 +40,6 @@ yarn-error.log*
 .env*
 !.env.example*
 
-# vercel
-.vercel
-
 # Intellij
 /.idea
 *.iml
@@ -50,7 +48,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# certs
-/certs/
+# plantuml
+plantuml*.jar
 
-playwright/.auth

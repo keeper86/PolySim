@@ -1,12 +1,12 @@
 ifndef::imagesdir[:imagesdir: ../images]
-image::logo.png[PolySim Logo,200,align="center"]
+image::logo.png[alt="PolySim Logo",200,align="center"]
 
 [[section-introduction-and-goals]]
 == Introduction and Goals
 
 As a researcher running numerical simulations, I want to link simulation source code, results, analysis scripts, and outputs such as plots and tables, so that anyone can easily trace back how the artifact was created and modified.
 
-PolySim aims to make scientific simulations traceable by design. The system automatically connects simulation code, input parameters, and generated outputs, ensuring that every result can be traced back to its origin. This improves transparency, reliability, and collaboration in computational research.
+PolySim aims to make scientific simulations traceable by design. The system will automatically connect simulation code, input parameters, and generated outputs, ensuring that every result can be traced back to its origin. This is going to improve transparency, reliability, and collaboration in computational research.
 
 === Requirements Overview
 
@@ -16,6 +16,8 @@ PolySim aims to make scientific simulations traceable by design. The system auto
 - Make provenance information accessible and human-readable
 - Provide Python and C/C++ adapters for easy integration and automatic reporting to a central server
 - Organize and store provenance data for powerful search.
+
+image::provenance-poc.png[alt="PolySim — Provenance PoC",caption="PolySim — Provenance PoC"]
 
 === Quality Goals
 
@@ -33,3 +35,7 @@ PolySim aims to make scientific simulations traceable by design. The system auto
 | Test user | (hopefully various) | Easily organize and trace simulation code, data, and results
 | Developer | (TBD) | Extend and adapt the platform for new workflows
 |===
+
+=== Technical Notes
+
+https://en.wikipedia.org/wiki/Strace

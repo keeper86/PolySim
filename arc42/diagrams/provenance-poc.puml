@@ -1,0 +1,50 @@
+@startuml
+title PolySim — Provenance PoC (aspirational)
+
+actor "Researcher" as R
+rectangle "Simulation Code\n(Python / C/C++)" as Sim
+rectangle "Strace-based wrapper\n(modes: run | modify)" as Wrapper
+rectangle "Metadata ZIP archive\n(inputs? + params + env + output hashes)" as ZIP
+rectangle "Uploader CLI" as CLI
+rectangle "Provenance Server\n(Next.js + tRPC)" as Server
+database "PostgreSQL (provenance tables)" as DB
+rectangle "Web UI (Next.js)" as Web
+rectangle "Keycloak (IdP)" as Keycloak
+
+actor "Researcher" as R
+
+R --> Wrapper : runs simulation or modifying script via wrapper
+Wrapper --> Sim : executes process (strace)
+Wrapper --> ZIP : collect (mode-dependent): inputs? params, env, output hashes
+
+ZIP --> CLI : package and invoke upload
+CLI --> Server : POST /provenance/upload (zip + metadata)
+
+' Server behaviour
+Server --> DB : store runs, artifacts, script links
+Server -> DB : match output hashes to known artifacts
+Server --> Web : serve provenance queries
+Server --> Keycloak : auth
+Web --> Server : query provenance
+
+note left of Wrapper
+Wrapper uses Linux `strace` (or equivalent) to observe
+file reads/writes. After the process ends, it computes
+file-hashes to identify outputs in order to trace provenance.
+end note
+
+note right of Wrapper
+Wrapper operates in two modes:
+- run mode: copies relevant input files (small inputs or linked artifacts), 
+  captures params+env and output hashes.
+- modify mode: does NOT copy large simulation data; captures script contents, 
+  params+env, and computes file-hash diffs to infer which outputs changed.
+end note
+
+note left of Server
+Server matches uploaded output hashes to simulation
+runs, enabling linking between analysis scripts and
+the simulation that produced the original output.
+end note
+
+@enduml
