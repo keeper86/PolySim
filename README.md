@@ -178,7 +178,3 @@ This project uses strict TypeScript for all application and API code. Key type c
 
 - All routes and navigation are type-safe, validated at compile time using the `nextjs-routes` package; See `src/lib/pageRoutes.ts` for details.
 - API endpoints use Zod schemas for input/output validation and tRPC for end-to-end type safety.
-
-### About `nextjs-routes`
-
-[`nextjs-routes`](https://github.com/blitz-js/nextjs-routes) is a codegen tool that provides type-safe route autocompletion and validation for Next.js App Router projects. It scans your app directory and generates TypeScript types for all valid routes, ensuring that route paths used in your code are always correct and up-to-date. This eliminates hardcoded strings and prevents navigation errors at compile time.

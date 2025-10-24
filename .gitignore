@@ -54,3 +54,5 @@ next-env.d.ts
 /certs/
 
 playwright/.auth
+
+plantuml*.jar
