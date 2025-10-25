@@ -3,11 +3,14 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-runtime-view]]
 == Runtime View
 
+The repository contains the web application, API, and DB migration tooling. The following runtime scenarios illustrate how provenance-related workflows would behave; note that parts of these scenarios (CLI adapters, provenance server) are design-level examples and are not yet implemented .
+
+
 === Simulation Run Scenario
 
-* Researcher runs simulation code with adapter integrated
-* Adapter automatically captures metadata and sends to server
-* Output files are logged and linked to the run
+* Researcher runs simulation code via CLI tool which automatically captures metadata 
+* Output file hashes are logged and input files are cloned and linked to the run
+* CLI tool reports run information to provenance server
 * Provenance server organizes and stores the run information
 
 === Analysis Script Scenario

@@ -3,30 +3,3 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-concepts]]
 == Cross-cutting Concepts
 
-=== Provenance Tracking
-
-Automatic capture of code, parameters, environment, and outputs for every run.
-
-=== Minimal Friction
-
-Adapters require minimal changes to existing codebases.
-
-=== Output Agnosticism
-
-Support for various output formats and types.
-
-=== Sensible Defaults
-
-Automatic versioning and environment capture, overridable by user.
-
-=== Governance by Design
-
-Convenience drives adoption; provenance is built-in, not enforced.
-
-=== Security and Privacy
-
-Sensitive data is protected; metadata is stored securely.
-
-=== Pragmatic Layering
-
-Layers are introduced only when complexity demands, keeping the system maintainable and extensible.

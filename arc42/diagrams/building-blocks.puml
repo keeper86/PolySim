@@ -1,0 +1,31 @@
+@startuml
+title PolySim — Component Diagram (provenance server)
+
+package "Frontend" {
+  component "App Layout (layout.tsx)" as Layout
+  component "Pages (app/*)" as Pages
+  component "UI Components (components/ui)" as UI
+  component "clientTrpc" as ClientTrpc
+}
+
+package "Server" {
+  component "tRPC Router (server/router.ts)" as Router
+  component "Endpoints (server/endpoints/*)" as Endpoints
+  component "DB Client (server/db.ts)" as DB
+  component "Auth (NextAuth / Keycloak)" as Auth
+}
+
+Pages --> UI : compose
+Pages --> ClientTrpc : call procedures
+ClientTrpc --> Router : remote calls (tRPC)
+Router --> Endpoints : dispatch
+Endpoints --> DB : queries
+Router --> Auth : session checks
+
+note bottom
+  Routes and navigation are centralized in `src/lib/appRoutes.ts`.
+  Zod schemas are used for validation and typing of inputs/outputs.
+end note
+
+@enduml
+

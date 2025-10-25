@@ -2,24 +2,3 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-deployment-view]]
 == Deployment View
-
-=== Infrastructure Level 1
-
-_**Overview Diagram**_
-----
-[ Researcher Workstation ]
-   |
-[ Provenance Adapters / CLI Tool ]
-   |
-[ Central Provenance Server ]
-   |
-[ Database ]
-----
-
-Motivation::
-Enable distributed use by researchers, with a central server for organization.
-
-Quality and/or Performance Features::
-- Scalable server and database
-- Secure data transmission
-- High availability for collaborative research

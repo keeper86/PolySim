@@ -3,34 +3,29 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-building-block-view]]
 == Building Block View
 
-=== Whitebox Overall System
+=== Overview
 
-_**Overview Diagram**_
-----
-[ Researcher ]
-   |
-[ Simulation Code (Python/C++) ]
-   |
-[ Adapter (Python Decorator / C++ Header) ]
-   |
-[ CLI Tool ]
-   |
-[ Provenance Server ]
-   |
-[ Database / Search UI ]
-----
+The PolySim system is structured into several key building blocks, each responsible for specific functionality. The main components include the frontend application, backend API, database layer, authentication system, CLI/migration tooling, and infrastructure configuration.
 
-Motivation::
-Enable traceable, reproducible research with minimal workflow disruption.
+=== Contained building blocks (repo-mapped)
 
-Contained Building Blocks::
-- Adapters: Python decorator, C++ header
-- CLI tool: links scripts, outputs, and code
-- Server: receives, organizes, and serves provenance data
-- Database: stores metadata, results, and links
-- Search UI: enables provenance queries
+- Next.js application (app/): UI, pages, and client/server components used by the web frontend.
+- Server-side API (src/server/): tRPC router, endpoints and server utilities providing backend logic.
+- Database layer (migrations/, src/server/db.ts): PostgreSQL schema and Knex migrations used for persistence.
+- Authentication (keycloak/ and next-auth integration): Keycloak configuration and NextAuth hooks used for SSO.
+- CLI / migrator (migrator package / Dockerfile.migrator): migration tooling and helper scripts.
+- Infrastructure (Dockerfile, docker-compose*.yaml, Caddyfile): container and reverse-proxy configuration for local/dev deployment.
 
-Important Interfaces::
-- Adapter <-> Server: API for metadata reporting
-- CLI Tool <-> Server: API for linking and querying
-- Server <-> Database: storage and retrieval
+=== Important interfaces
+
+- Frontend <-> API: Next.js client calls and tRPC client in `src/lib/clientTrpc.ts`.
+- API <-> Database: Knex-based queries via `src/server/db.ts` and migration scripts under `migrations/`.
+- Auth integration: Keycloak realm/config under `keycloak/` and NextAuth provider usage in the app.
+
+=== Component diagram
+
+See the PlantUML diagram for the core components and relationships:
+
+plantuml::../diagrams/building-blocks.puml[alt="PolySim component diagram",caption="PolySim — Component Diagram (core)"]
+
+image::building-blocks.png[PolySim — Component Diagram (core) (fallback image for previewers),200%]
