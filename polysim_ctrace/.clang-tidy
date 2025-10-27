@@ -1,0 +1,21 @@
+Checks: >
+    clang-analyzer-*,
+    bugprone-*,
+    performance-*,
+    readability-*,
+    modernize-*,
+    portability-*,
+    -modernize-use-trailing-return-type,
+    -modernize-raw-string-literal,
+    -bugprone-easily-swappable-parameters
+WarningsAsErrors: ''
+# Only lint our implementation files; exclude vendored/miniz.h
+HeaderFilterRegex: '^(?!.*miniz.h).*'
+
+CheckOptions:
+    - key: readability-identifier-length.VariableMin
+      value: '2'
+    - key: readability-function-cognitive-complexity.Threshold
+      value: '60'
+    - key: bugprone-easily-swappable-parameters.WarnRange
+      value: '0'
