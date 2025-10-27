@@ -4,7 +4,7 @@
 
 **Note:** The following setup has only been tested on **Ubuntu Linux**. Other distributions may require adjustments.
 
-Before running PolySim, ensure the following tools are installed and configured on your system:
+Before running PolySim, ensure the following tools are installed and configured on your system
 
 ### Node.js and npm
 
