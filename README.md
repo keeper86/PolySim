@@ -112,7 +112,7 @@ The app will be available at [http://localhost:3000](http://localhost:3000), Key
 
 **Note:** Database migrations are run automatically every time you start the dev server with `npm run dev`. This ensures your local database schema is always up to date such that a restart of the dev server will execute any pending migrations.
 
-### 4. Stopping services
+4. Stopping services
 
 When finished, stop Docker services with:
 
