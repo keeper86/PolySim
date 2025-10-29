@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-**Note:** The following setup has only been tested on **Ubuntu Linux**. Other distributions may require adjustments.
+**Note:** The following setup has been tested on **Ubuntu Linux** and for **Windows Subsystem For Linux (WSL)**. Other distributions may require adjustments.
 
 Before running PolySim, ensure the following tools are installed and configured on your system
 
@@ -45,7 +45,7 @@ Troubleshooting tips:
 
 ### Initial Setup
 
-Copy .env.example.production over to .env, adapt the variables.
+Copy .env.example.production over to .env, adapt the variables. (See Below, do this before "Start" and "Local Developmet")
 
 A first-time deployment will import a default keycloak realm and client configuration. In order to set `rootUrl, adminUrl, baseUrl, redirectUris, and webOrigins` correctly, use the script to generate a valid initial realm config:
 
