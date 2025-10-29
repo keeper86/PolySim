@@ -18,7 +18,7 @@ Install [nvm](https://github.com/nvm-sh/nvm) and use it to install the node vers
 
 ### Docker Setup
 
-Install [docker](https://docs.docker.com/engine/install/).
+Install [docker](https://docs.docker.com/engine/install/)
 
 Troubleshooting tips:
 
