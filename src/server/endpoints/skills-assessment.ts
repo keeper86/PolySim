@@ -52,7 +52,7 @@ export const getSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${s
                     { component: 'skills-assessment-get' },
                     `Checking published status for user: ${input.userId}, result: ${JSON.stringify(published)}`,
                 );
-                if (published.length === 0 || !published[0].has_assessment_published) {
+                if (published.length === 0 || !published[0]?.has_assessment_published) {
                     throw new Error('Published assessment not found or not public.');
                 }
             }

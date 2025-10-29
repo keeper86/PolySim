@@ -34,12 +34,14 @@ export const authOptions: AuthOptions = {
                 await db('user_data')
                     .insert({ user_id: userId, display_name: displayName, email, has_assessment_published: false })
                     .onConflict('user_id')
-                    .ignore();
+                    .merge();
 
                 logger.debug({ component: 'auth-signin' }, `Provisioned user_data for ${userId}`);
             } catch (err) {
-                logger.error({ component: 'auth-signin', err }, 'Failed to provision user on signIn');
-                // Do not block sign-in if provisioning fails; session enrichment can still proceed.
+                logger.error(
+                    { component: 'auth-signin', err },
+                    'Failed to provision user on signIn. Continuing signIn.',
+                );
             }
 
             return true;

@@ -1,3 +1,4 @@
+import type { UserData } from '@/types/db_schemas';
 import type { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { PostgreSqlContainer } from '@testcontainers/postgresql';
 
@@ -7,6 +8,27 @@ import knex from 'knex';
 import { afterAll, beforeAll } from 'vitest';
 
 dotenvExpand.expand(dotenv.config());
+
+export const testUsers: Record<string, UserData> = {
+    testUser: {
+        user_id: 'test-user',
+        email: 'test-user@example.com',
+        display_name: 'Test User',
+        has_assessment_published: false,
+    },
+    otherUserUnpublished: {
+        user_id: 'other-user-unpublished',
+        email: 'other-user@example.com',
+        display_name: 'Other User',
+        has_assessment_published: false,
+    },
+    otherUserPublished: {
+        user_id: 'other-user-published',
+        email: 'other-user@example.com',
+        display_name: 'Other User',
+        has_assessment_published: true,
+    },
+};
 
 let knexInstance: ReturnType<typeof knex> | undefined;
 let container: StartedPostgreSqlContainer | undefined;
@@ -24,6 +46,12 @@ export const getAppRouter = () => {
         throw new Error('App router not initialized yet. Call getAppRouter after beforeAll hook.');
     }
     return appRouter;
+};
+
+export const getCaller = (id: string) => {
+    return getAppRouter().createCaller({
+        session: { user: { id }, expires: new Date(Date.now() + 3600_000).toISOString() },
+    });
 };
 
 if (!process.env.POSTGRES_DB || !process.env.POSTGRES_USER || !process.env.POSTGRES_PASSWORD) {
@@ -87,8 +115,19 @@ async function getRouter() {
     return appRouter;
 }
 
+async function seedDatabase(db: ReturnType<typeof knex>) {
+    await db('user_data')
+        .insert(Object.values(testUsers))
+        .catch((err) => {
+            console.error(`Error seeding test users: ${JSON.stringify(Object.values(testUsers))}`, err);
+            throw err;
+        });
+}
+
 beforeAll(async () => {
     await getRouter();
+    const db = await getKnexInstance();
+    await seedDatabase(db);
 });
 
 afterAll(async () => {

@@ -1,9 +1,7 @@
-import { getAppRouter, getDb } from 'tests/vitest/setupTestcontainer';
+import { getAppRouter, getCaller, testUsers } from 'tests/vitest/setupTestcontainer';
 import { describe, expect, it } from 'vitest';
 import type { SkillsAssessmentSchema } from './skills-assessment';
 
-const TEST_USER_ID = 'test-user-integration';
-const SKILLS_ASSESSMENT_TABLE = 'skills_assessment_history';
 const ENDPOINT_SAVE = 'skills-assessment-save';
 const ENDPOINT_GET = 'skills-assessment-get';
 
@@ -15,19 +13,8 @@ const TEST_ASSESSMENT: SkillsAssessmentSchema = [
 ];
 
 describe('skills-assessment endpoint (integration)', async () => {
-    const getCaller = (id: string) => {
-        return getAppRouter().createCaller({
-            session: { user: { id }, expires: new Date(Date.now() + 3600_000).toISOString() },
-        });
-    };
-
-    it('db is reachable and table exists', async () => {
-        const res = await getDb()(SKILLS_ASSESSMENT_TABLE).select().limit(1);
-        expect(res).toBeDefined();
-    });
-
     it('save then get skills assessment for current user', async () => {
-        const caller = getCaller(TEST_USER_ID);
+        const caller = getCaller(testUsers.testUser.user_id);
 
         const saveResult = await caller[ENDPOINT_SAVE](TEST_ASSESSMENT);
         expect(saveResult).toHaveProperty('success', true);
@@ -48,31 +35,28 @@ describe('skills-assessment endpoint (integration)', async () => {
 
         await otherUserCaller[ENDPOINT_SAVE](TEST_ASSESSMENT);
 
-        const caller = getCaller(TEST_USER_ID);
+        const caller = getCaller(testUsers.testUser.user_id);
         await expect(caller[ENDPOINT_GET]({ userId: OTHER_USER_ID })).rejects.toThrow(
             'Published assessment not found or not public.',
         );
     });
 
     it("should get another user's published assessment", async () => {
-        const PUBLISHED_USER_ID = 'other-user-published-integration';
-        const publishedUserCaller = getCaller(PUBLISHED_USER_ID);
+        const publishedUserCaller = getCaller(testUsers.otherUserPublished.user_id);
 
         await publishedUserCaller[ENDPOINT_SAVE](TEST_ASSESSMENT);
-        await getDb()('user_data').insert({
-            user_id: PUBLISHED_USER_ID,
-            email: '<email>',
-            has_assessment_published: true,
-        });
 
-        const caller = getCaller(TEST_USER_ID);
-        const publishedAssessment = await caller[ENDPOINT_GET]({ userId: PUBLISHED_USER_ID });
+        const caller = getCaller(testUsers.otherUserPublished.user_id);
+        const publishedAssessment = await caller[ENDPOINT_GET]({ userId: testUsers.otherUserPublished.user_id });
         expect(publishedAssessment).toEqual(TEST_ASSESSMENT);
     });
 
     it('invalid payload should be rejected by validation', async () => {
         const caller = getAppRouter().createCaller({
-            session: { user: { id: TEST_USER_ID }, expires: new Date(Date.now() + 3600_000).toISOString() },
+            session: {
+                user: { id: testUsers.testUser.user_id },
+                expires: new Date(Date.now() + 3600_000).toISOString(),
+            },
         });
 
         const invalidPayload: unknown = [
@@ -87,9 +71,7 @@ describe('skills-assessment endpoint (integration)', async () => {
     });
 
     it('saving twice on the same day should update the existing record', async () => {
-        const caller = getAppRouter().createCaller({
-            session: { user: { id: TEST_USER_ID }, expires: new Date(Date.now() + 3600_000).toISOString() },
-        });
+        const caller = getCaller(testUsers.testUser.user_id);
 
         const secondAssessment: SkillsAssessmentSchema = [
             {

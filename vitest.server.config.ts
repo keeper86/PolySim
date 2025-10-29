@@ -20,7 +20,12 @@ export default defineConfig({
             '**/dist/**',
             '**/cypress/**',
             '**/.{idea,git,cache,output,temp}/**',
-            '**/tests/e2e/**', // Exclude Playwright e2e tests
+            '**/tests/e2e/**',
         ],
+        hookTimeout: 30000,
+        sequence: {
+            shuffle: false, // Ensure tests run in a predictable order
+            concurrent: false, // Run test files sequentially
+        },
     },
 });

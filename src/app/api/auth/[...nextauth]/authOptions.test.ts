@@ -10,13 +10,13 @@ describe('authOptions callbacks', () => {
         const user = {
             user_id: 'u1',
             display_name: 'Nice Name',
-            email: 'a@b.com',
+            email: 'abc@example.com',
             has_assessment_published: false,
         };
         let insertArgs: Record<string, unknown> | null = null;
 
-        const ignore = vi.fn(() => Promise.resolve());
-        const onConflict = vi.fn(() => ({ ignore }));
+        const merge = vi.fn(() => Promise.resolve());
+        const onConflict = vi.fn(() => ({ merge }));
         const insert = vi.fn((args: Record<string, unknown>) => {
             insertArgs = args;
             return { onConflict };
@@ -40,7 +40,7 @@ describe('authOptions callbacks', () => {
         expect(dbFn).toHaveBeenCalledWith('user_data');
         expect(insert).toHaveBeenCalled();
         expect(onConflict).toHaveBeenCalledWith('user_id');
-        expect(ignore).toHaveBeenCalled();
+        expect(merge).toHaveBeenCalled();
         expect(insertArgs).toEqual(user);
     });
 });

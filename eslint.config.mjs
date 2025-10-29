@@ -26,6 +26,7 @@ export default defineConfig([
             'postcss.config.js',
             'tailwind.config.cjs',
             'playwright**',
+            'tools/**',
         ],
     },
     {
