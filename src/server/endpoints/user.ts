@@ -122,6 +122,9 @@ export const updateUser = (procedure: ProcedureBuilderType, path: `/${string}`) 
             if (input.hasAssessmentPublished !== undefined) {
                 updateData.has_assessment_published = input.hasAssessmentPublished;
             }
+            if (input.displayName !== undefined) {
+                updateData.display_name = input.displayName;
+            }
 
             const result = await db('user_data').where({ user_id: input.id }).update(updateData);
 
