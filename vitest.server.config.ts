@@ -5,22 +5,17 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
     plugins: [react(), tsconfigPaths()],
     test: {
-        environment: 'jsdom',
-        setupFiles: ['./tests/vitest/setup.ts'],
+        include: ['src/server/**/*.test.ts'],
+        environment: 'node',
+        env: {
+            NODE_ENV: 'test',
+        },
+        setupFiles: ['./tests/vitest/setupTestcontainer.ts'],
         globals: true,
         typecheck: {
             tsconfig: './tsconfig.json',
         },
-        env: {
-            NODE_ENV: 'test',
-        },
-        environmentOptions: {
-            jsdom: {
-                resources: 'usable',
-            },
-        },
         exclude: [
-            'src/server/**',
             '**/node_modules/**',
             '**/dist/**',
             '**/cypress/**',

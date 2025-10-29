@@ -12,6 +12,38 @@ export const authOptions: AuthOptions = {
         }),
     ],
     callbacks: {
+        async signIn({ account, profile, user }) {
+            try {
+                const userId = account?.providerAccountId ?? profile?.sub;
+                if (!userId) {
+                    logger.debug({ component: 'auth-signin' }, 'No userId present on signIn; skipping provisioning');
+                    return true;
+                }
+
+                const email = profile?.email ?? user?.email;
+                if (!email) {
+                    logger.warn(
+                        { component: 'auth-signin' },
+                        `No email available for ${userId}; skipping provisioning`,
+                    );
+                    return true;
+                }
+
+                const displayName = profile?.name ?? user?.name ?? 'No name set';
+
+                await db('user_data')
+                    .insert({ user_id: userId, display_name: displayName, email, has_assessment_published: false })
+                    .onConflict('user_id')
+                    .ignore();
+
+                logger.debug({ component: 'auth-signin' }, `Provisioned user_data for ${userId}`);
+            } catch (err) {
+                logger.error({ component: 'auth-signin', err }, 'Failed to provision user on signIn');
+                // Do not block sign-in if provisioning fails; session enrichment can still proceed.
+            }
+
+            return true;
+        },
         async jwt(thing) {
             const { token, account, profile } = thing;
             if (account) {
@@ -36,28 +68,10 @@ export const authOptions: AuthOptions = {
                             hasAssessmentPublished: row.has_assessment_published,
                         };
                     } else {
-                        const displayName = session.user?.displayName ?? session.user?.name ?? 'No name set';
-                        const email = session.user?.email;
-                        if (!email) {
-                            throw new Error('Email is required for user_data insertion');
-                        }
                         logger.debug(
                             { component: 'auth-session' },
-                            `No user_data found for ${userId}, inserting new row`,
+                            `No user_data found for ${userId} during session enrichment;`,
                         );
-
-                        await db('user_data').insert({
-                            user_id: userId,
-                            display_name: displayName,
-                            email,
-                        });
-                        session.user = {
-                            id: userId,
-                            email,
-                            displayName,
-                            hasAssessmentPublished: false,
-                        };
-                        logger.debug({ component: 'auth-session' }, `Inserted and attached user_data for ${userId}`);
                     }
                 } else {
                     logger.debug({ component: 'auth-session' }, 'No userId present on token; skipping user_data load');

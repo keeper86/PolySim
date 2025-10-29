@@ -46,9 +46,13 @@ export const getSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${s
                 throw new Error('User ID not found');
             }
 
-            if (input && input.userId !== userIdFromSession) {
+            if (input?.userId && input.userId !== userIdFromSession) {
                 const published = await db('user_data').where({ user_id: input.userId });
-                if (published.length === 1 && !published[0].has_assessment_published) {
+                logger.debug(
+                    { component: 'skills-assessment-get' },
+                    `Checking published status for user: ${input.userId}, result: ${JSON.stringify(published)}`,
+                );
+                if (published.length === 0 || !published[0].has_assessment_published) {
                     throw new Error('Published assessment not found or not public.');
                 }
             }

@@ -20,7 +20,8 @@ const defaultConfig = (overrideUrl) => ({
 
 const config = {
     development: defaultConfig(
-        `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost:5432/${process.env.POSTGRES_DB}`,
+        process.env.DATABASE_URL ||
+            `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost:5432/${process.env.POSTGRES_DB}`,
     ),
     production: defaultConfig(process.env.DATABASE_URL),
 };
