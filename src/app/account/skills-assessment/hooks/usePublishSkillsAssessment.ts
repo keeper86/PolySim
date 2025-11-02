@@ -1,6 +1,6 @@
 import { useLogger } from '@/hooks/useLogger';
 import { useTRPCClient } from '@/lib/trpc';
-import type { SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
+import type { SkillsAssessmentSchema } from '@/server/controller/skillsAssessment';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 
@@ -16,7 +16,7 @@ export function usePublishSkillsAssessment() {
         queryKey: [publishSkillsAssessmentKey],
         queryFn: async () => {
             logger.debug('Fetching publish skills assessment status');
-            const result = await trpcClient['user'].query({
+            const result = await trpcClient.getUser.query({
                 userId,
             });
             return result?.hasAssessmentPublished ?? false;
@@ -26,7 +26,7 @@ export function usePublishSkillsAssessment() {
     const mutateAssessmentPublishStatus = useMutation({
         mutationFn: async (newPublishStatus: boolean) => {
             logger.debug('Saving skills assessment publish status', { newPublishStatus });
-            await trpcClient['user-update'].mutate({ id: userId!, hasAssessmentPublished: newPublishStatus });
+            await trpcClient.updateUser.mutate({ hasAssessmentPublished: newPublishStatus });
             return newPublishStatus;
         },
 

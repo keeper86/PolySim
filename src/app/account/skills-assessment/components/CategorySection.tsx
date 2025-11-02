@@ -1,7 +1,7 @@
 'use client';
 
 import { TextInputWithButton } from '@/components/client/TextInputWithButton';
-import type { SkillsAssessmentCategory } from '@/server/endpoints/skills-assessment';
+import type { SkillsAssessmentCategory } from '@/server/controller/skillsAssessment';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 import type { SkillsAssessmentActions } from '../hooks/useSkillsAssessmentActions';

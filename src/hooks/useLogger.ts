@@ -1,6 +1,6 @@
 // A simple client-side logger that sends them to the server and shows toasts
 import { toast } from 'sonner';
-import type { LogEntry } from '../server/endpoints/logs';
+import type { LogEntry } from '../server/controller/logs';
 
 import { useTRPC } from '@/lib/trpc';
 import { useMutation } from '@tanstack/react-query';

@@ -5,7 +5,7 @@ import { Trash2 } from 'lucide-react';
 import { isDefaultSkill } from '../utils/getDefaultAssessmentList';
 import { getIconToSkill } from '../utils/getIconToSkill';
 import { GoDot } from 'react-icons/go';
-import type { SkillDefinition } from '@/server/endpoints/skills-assessment';
+import type { SkillDefinition } from '@/server/controller/skillsAssessment';
 
 interface SubSkillItemProps {
     item: SkillDefinition;

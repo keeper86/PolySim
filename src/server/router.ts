@@ -1,48 +1,30 @@
-import { initTRPC, TRPCError } from '@trpc/server';
-import { getServerSession } from 'next-auth';
-import { type OpenApiMeta } from 'trpc-to-openapi';
-import { authOptions } from '../app/api/auth/[...nextauth]/authOptions';
-import { health } from './endpoints/health';
-import { logs } from './endpoints/logs';
-import { createProject } from './endpoints/projects';
-import { getSkillsAssessment, saveSkillsAssessment } from './endpoints/skills-assessment';
-import { testDbConnection } from './endpoints/test-connection';
-import { getUser, getUsers, updateUser } from './endpoints/user';
+import { activityUpload } from './controller/uploadActivity';
+import { health } from './controller/health';
+import { logs } from './controller/logs';
+import { createPAT, listPATs, revokePAT } from './controller/pAccessToken';
+import { createProject } from './controller/projects';
+import { getSkillsAssessment, updateSkillsAssessment } from './controller/skillsAssessment';
+import { getUser, getUserIdFromSession as getUserIdFromPAT, getUsers, updateUser } from './controller/user';
+import { trpcRoot } from './trpcRoot';
 
-export async function createContext() {
-    const session = await getServerSession(authOptions);
-    return { session };
-}
-type Context = Awaited<ReturnType<typeof createContext>>;
-
-const t = initTRPC.meta<OpenApiMeta>().context<Context>().create();
-const procedure = t.procedure;
-
-const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
-    if (!ctx.session?.user?.id) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You must be logged in to access this resource' });
-    }
-
-    return next();
+const protectedAppRouter = trpcRoot.router({
+    createProject: createProject(),
+    getSkillsAssessment: getSkillsAssessment(),
+    updateSkillsAssessment: updateSkillsAssessment(),
+    getUsers: getUsers(),
+    getUser: getUser(),
+    updateUser: updateUser(),
+    createPAT: createPAT(),
+    listPATs: listPATs(),
+    revokePAT: revokePAT(),
 });
 
-export type ProcedureBuilderType = typeof procedure | typeof protectedProcedure;
-
-export const protectedAppRouter = t.router({
-    'test-connection': testDbConnection(protectedProcedure, '/test-connection'),
-    'projects-create': createProject(protectedProcedure, '/projects-create'),
-    'skills-assessment-get': getSkillsAssessment(protectedProcedure, '/skills-assessment-get'),
-    'skills-assessment-save': saveSkillsAssessment(protectedProcedure, '/skills-assessment-save'),
-    'users': getUsers(protectedProcedure, '/users'),
-    'user': getUser(protectedProcedure, '/user'),
-    'user-update': updateUser(protectedProcedure, '/user-update'),
+export const publicAccessibleRouter = trpcRoot.router({
+    logs: logs(),
+    health: health(),
+    getUserIdFromPAT: getUserIdFromPAT(),
+    uploadActivity: activityUpload(),
 });
 
-export const publicAppRouter = t.router({
-    logs: logs(procedure, '/logs'),
-    health: health(procedure, '/health'),
-});
-
-export const appRouter = t.mergeRouters(publicAppRouter, protectedAppRouter);
-
+export const appRouter = trpcRoot.mergeRouters(publicAccessibleRouter, protectedAppRouter);
 export type AppRouter = typeof appRouter;

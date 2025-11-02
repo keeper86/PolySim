@@ -4,17 +4,7 @@ import { getPublicRoutes } from './lib/appRoutes';
 
 export async function middleware(request: NextRequest) {
     const token = await getToken({ req: request });
-
-    // Define paths that are always accessible (e.g., login, health check, API auth, public assets)
-    const publicPaths = [
-        '/api/auth',
-        '/api/health',
-        '/_next',
-        '/favicon.ico',
-        '/api/trpc',
-        '/api-doc',
-        '/api/openapi.json',
-    ];
+    const publicPaths = ['/api/', '/_next', '/favicon.ico'];
 
     const isPublicPath =
         getPublicRoutes().includes(request.nextUrl.pathname) ||
@@ -22,6 +12,14 @@ export async function middleware(request: NextRequest) {
 
     if (isPublicPath) {
         return NextResponse.next();
+    }
+
+    const authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        const isApiRequest = request.nextUrl.pathname.startsWith('/api/public');
+        if (isApiRequest) {
+            return NextResponse.next();
+        }
     }
 
     if (!token) {

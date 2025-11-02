@@ -5,7 +5,7 @@ import { getDefaultSkillsAssessment } from '../../src/app/account/skills-assessm
 test.use({ storageState: authPath });
 
 const defaultSkillsAssessment = getDefaultSkillsAssessment();
-const firstCategory = defaultSkillsAssessment[0];
+const firstCategory = defaultSkillsAssessment.data[0];
 const firstSkill = firstCategory.skills[0];
 const firstSubSkill = firstSkill.subSkills?.[0];
 

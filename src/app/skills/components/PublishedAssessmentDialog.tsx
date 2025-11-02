@@ -16,7 +16,7 @@ export default function PublishedAssessmentDialog({
     onClose?: () => void;
 }) {
     const trpc = useTRPC();
-    const { data: assessment, isLoading } = useQuery(trpc['skills-assessment-get'].queryOptions({ userId }));
+    const { data: assessment, isLoading } = useQuery(trpc.getSkillsAssessment.queryOptions({ userId }));
     return (
         <div className='p-4 border rounded'>
             <div className='flex items-center justify-between mb-3'>
@@ -36,7 +36,7 @@ export default function PublishedAssessmentDialog({
                     <Loader className='w-6 h-6 animate-spin' />
                 </div>
             ) : assessment ? (
-                assessment.map((cat) => (
+                assessment.data.map((cat) => (
                     <div key={cat.category} className='mb-4'>
                         <h3 className='font-semibold'>{cat.category}</h3>
                         <div className='mt-2 space-y-2'>

@@ -1,9 +1,16 @@
+'use client';
 import Link from 'next/link';
 import { Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { APP_ROUTES } from '@/lib/appRoutes';
+import { useSession } from 'next-auth/react';
 
 export default function AccountPage() {
+    const session = useSession();
+
+    if (session.status !== 'authenticated') {
+        return <div>Loading...</div>;
+    }
     return (
         <div className='flex flex-col items-center gap-4'>
             <h1 className='text-2xl font-bold'>Account Management</h1>
@@ -15,6 +22,7 @@ export default function AccountPage() {
                     </Button>
                 </Link>
             </div>
+            <div className='w-full max-w-md space-y-4'>{JSON.stringify(session.data)}</div>
         </div>
     );
 }

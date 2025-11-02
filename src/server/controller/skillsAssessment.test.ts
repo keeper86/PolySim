@@ -1,16 +1,18 @@
-import { getAppRouter, getCaller, testUsers } from 'tests/vitest/setupTestcontainer';
+import { getCaller, getUnauthenticatedCaller, testUsers } from 'tests/vitest/setupTestcontainer';
 import { describe, expect, it } from 'vitest';
-import type { SkillsAssessmentSchema } from './skills-assessment';
+import type { SkillsAssessmentSchema } from './skillsAssessment';
 
-const ENDPOINT_SAVE = 'skills-assessment-save';
-const ENDPOINT_GET = 'skills-assessment-get';
+const ENDPOINT_GET = 'getSkillsAssessment';
+const ENDPOINT_SAVE = 'updateSkillsAssessment';
 
-const TEST_ASSESSMENT: SkillsAssessmentSchema = [
-    {
-        category: 'Languages',
-        skills: [{ name: 'TypeScript', level: 2, subSkills: [{ name: 'Generics', level: 1 }] }],
-    },
-];
+const TEST_ASSESSMENT: SkillsAssessmentSchema = {
+    data: [
+        {
+            category: 'Languages',
+            skills: [{ name: 'TypeScript', level: 2, subSkills: [{ name: 'Generics', level: 1 }] }],
+        },
+    ],
+};
 
 describe('skills-assessment endpoint (integration)', async () => {
     it('save then get skills assessment for current user', async () => {
@@ -24,7 +26,7 @@ describe('skills-assessment endpoint (integration)', async () => {
     });
 
     it('saving without a session should fail', async () => {
-        const anonCaller = getAppRouter().createCaller({ session: null }); // no session
+        const anonCaller = getUnauthenticatedCaller();
 
         await expect(anonCaller[ENDPOINT_SAVE](TEST_ASSESSMENT)).rejects.toThrow();
     });
@@ -52,19 +54,16 @@ describe('skills-assessment endpoint (integration)', async () => {
     });
 
     it('invalid payload should be rejected by validation', async () => {
-        const caller = getAppRouter().createCaller({
-            session: {
-                user: { id: testUsers.testUser.user_id },
-                expires: new Date(Date.now() + 3600_000).toISOString(),
-            },
-        });
+        const caller = getCaller();
 
-        const invalidPayload: unknown = [
-            {
-                category: 'Languages',
-                skills: [{ name: 'TypeScript', level: 5 }],
-            },
-        ];
+        const invalidPayload: unknown = {
+            data: [
+                {
+                    category: 'Languages',
+                    skills: [{ name: 'TypeScript', level: 5 }],
+                },
+            ],
+        };
 
         // @ts-expect-error we're intentionally passing invalid shape
         await expect(caller[ENDPOINT_SAVE](invalidPayload)).rejects.toThrow();
@@ -73,12 +72,14 @@ describe('skills-assessment endpoint (integration)', async () => {
     it('saving twice on the same day should update the existing record', async () => {
         const caller = getCaller(testUsers.testUser.user_id);
 
-        const secondAssessment: SkillsAssessmentSchema = [
-            {
-                category: 'Frameworks',
-                skills: [{ name: 'React', level: 3 }],
-            },
-        ];
+        const secondAssessment: SkillsAssessmentSchema = {
+            data: [
+                {
+                    category: 'Frameworks',
+                    skills: [{ name: 'React', level: 3 }],
+                },
+            ],
+        };
 
         const result1 = await caller[ENDPOINT_SAVE](TEST_ASSESSMENT);
         expect(result1).toHaveProperty('success', true);

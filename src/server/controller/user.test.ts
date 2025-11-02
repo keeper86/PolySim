@@ -1,16 +1,12 @@
-import { getAppRouter, getCaller, testUsers } from 'tests/vitest/setupTestcontainer';
+import { getCaller, getUnauthenticatedCaller, testUsers } from 'tests/vitest/setupTestcontainer';
 import { describe, expect, it } from 'vitest';
 import type { UserSummary } from './user';
-
-const ENDPOINT_GET_USERS = 'users';
-const ENDPOINT_GET_USER = 'user';
-const ENDPOINT_UPDATE_USER = 'user-update';
 
 describe('user endpoint (integration)', async () => {
     it('get users with pagination', async () => {
         const caller = getCaller(testUsers.testUser.user_id);
 
-        const result = await caller[ENDPOINT_GET_USERS]({ limit: 10, offset: 0 });
+        const result = await caller.getUsers({ limit: 10, offset: 0 });
         expect(result).toHaveProperty('users');
         expect(result).toHaveProperty('total');
         expect(Array.isArray(result.users)).toBe(true);
@@ -22,7 +18,7 @@ describe('user endpoint (integration)', async () => {
             expect.arrayContaining(
                 users.map((u) =>
                     expect.objectContaining({
-                        id: u.user_id,
+                        userId: u.user_id,
                     }),
                 ),
             ),
@@ -30,38 +26,38 @@ describe('user endpoint (integration)', async () => {
     });
 
     it('get user by ID', async () => {
-        const caller = getCaller(testUsers.testUser.user_id);
+        const caller = getCaller('somebody-else-id');
 
-        const user = await caller[ENDPOINT_GET_USER]({ userId: testUsers.testUser.user_id });
-        expect(user).toHaveProperty('id', testUsers.testUser.user_id);
+        const user = await caller.getUser({ userId: testUsers.testUser.user_id });
+        expect(user.userId).toBe(testUsers.testUser.user_id);
     });
 
     it('update user information', async () => {
         const caller = getCaller(testUsers.testUser.user_id);
 
         const updateData: UserSummary = {
-            id: testUsers.testUser.user_id,
+            userId: testUsers.testUser.user_id,
             displayName: 'Updated User',
             hasAssessmentPublished: true,
         };
 
-        await caller[ENDPOINT_UPDATE_USER](updateData);
+        await caller.updateUser(updateData);
 
-        const updatedUser = await caller[ENDPOINT_GET_USER]({ userId: testUsers.testUser.user_id });
+        const updatedUser = await caller.getUser({ userId: testUsers.testUser.user_id });
         expect(updatedUser).toHaveProperty('displayName', 'Updated User');
         expect(updatedUser).toHaveProperty('hasAssessmentPublished', true);
     });
 
     it('getting user without a session should fail', async () => {
-        const anonCaller = getAppRouter().createCaller({ session: null }); // no session
+        const anonCaller = getUnauthenticatedCaller(); // no session
 
-        await expect(anonCaller[ENDPOINT_GET_USER]({ userId: testUsers.testUser.user_id })).rejects.toThrow();
+        await expect(anonCaller.getUser({ userId: testUsers.testUser.user_id })).rejects.toThrow();
     });
 
     it('pagination with only published assessments', async () => {
         const caller = getCaller(testUsers.testUser.user_id);
 
-        const result = await caller[ENDPOINT_GET_USERS]({
+        const result = await caller.getUsers({
             limit: 10,
             offset: 0,
             onlyWithPublishedAssessments: true,

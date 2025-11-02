@@ -1,9 +1,10 @@
 'use client';
-import { trpcClient } from '@/lib/clientTrpc';
+import { useTRPCClient } from '@/lib/trpc';
 import { useState } from 'react';
 
 export default function ProjectsCreatePage() {
     const [projectName, setProjectName] = useState('');
+    const trpcClient = useTRPCClient();
     return (
         <div>
             <h1>Create a New Project</h1>
@@ -15,7 +16,7 @@ export default function ProjectsCreatePage() {
             />
             <button
                 onClick={() =>
-                    trpcClient['projects-create'] //
+                    trpcClient.createProject //
                         .mutate({ name: projectName })
                 }
             >

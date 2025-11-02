@@ -18,7 +18,7 @@ import { Label } from '@/components/ui/label';
 
 export default function SkillsAssessmentPage() {
     const { skillsQuery, saveMutation } = useSkillsAssessment();
-    const { data: assessment = [], isLoading } = skillsQuery;
+    const { data: assessment = { data: [] }, isLoading } = skillsQuery;
     const skillAssessmentActions = useSkillsAssessmentActions(assessment, saveMutation);
     const { publishStatus, isPublishStatusLoading, mutateAssessmentPublishStatus } = usePublishSkillsAssessment();
 
@@ -53,7 +53,7 @@ export default function SkillsAssessmentPage() {
                 onConfirm={() => {
                     if (confirmDelete) {
                         const { categoryIdx, itemIndex } = confirmDelete;
-                        const category = assessment[categoryIdx].category;
+                        const category = assessment.data[categoryIdx].category;
                         skillAssessmentActions.resetSkillRatings(category, itemIndex);
                         setConfirmDelete(null);
                     }
@@ -99,7 +99,7 @@ export default function SkillsAssessmentPage() {
                     ))}
                 </div>
             </div>
-            {assessment.map((categoryObj) => (
+            {assessment.data.map((categoryObj) => (
                 <CategorySection
                     key={categoryObj.category}
                     categoryObj={categoryObj}

@@ -56,23 +56,25 @@ export const authOptions: AuthOptions = {
             return token;
         },
         async session({ session, token }) {
-            session.accessToken = token.accessToken;
+            session.type = 'next-auth';
+            if (token.accessToken) {
+                session.accessToken = token.accessToken;
+            }
 
             try {
-                const userId = token.userId as string | undefined;
-                if (userId) {
-                    const row = await db('user_data').where({ user_id: userId }).first();
+                if (token.userId) {
+                    const row = await db('user_data').where({ user_id: token.userId }).first();
                     if (row) {
                         session.user = {
                             id: row.user_id,
                             email: row.email,
-                            displayName: row.display_name,
+                            displayName: row.display_name || undefined,
                             hasAssessmentPublished: row.has_assessment_published,
                         };
                     } else {
                         logger.debug(
                             { component: 'auth-session' },
-                            `No user_data found for ${userId} during session enrichment;`,
+                            `No user_data found for ${token.userId} during session enrichment;`,
                         );
                     }
                 } else {

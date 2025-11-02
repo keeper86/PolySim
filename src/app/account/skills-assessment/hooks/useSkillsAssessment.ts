@@ -1,6 +1,6 @@
 import { useLogger } from '@/hooks/useLogger';
 import { useTRPCClient } from '@/lib/trpc';
-import type { SkillsAssessmentSchema } from '@/server/endpoints/skills-assessment';
+import type { SkillsAssessmentSchema } from '@/server/controller/skillsAssessment';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { cleanEmptyDefaultSkillsAssessment, getDefaultSkillsAssessment } from '../utils/getDefaultAssessmentList';
 import { useSession } from 'next-auth/react';
@@ -15,10 +15,10 @@ export function useSkillsAssessment() {
         queryKey: ['skills-assessment'],
         queryFn: async () => {
             logger.debug('Fetching skills assessment');
-            const result = await trpcClient['skills-assessment-get'].query({
+            const result = await trpcClient.getSkillsAssessment.query({
                 userId,
             });
-            if (!result || result.length === 0) {
+            if (!result || result.data.length === 0) {
                 logger.debug('No existing skills assessment found, loading default');
                 return getDefaultSkillsAssessment();
             } else {
@@ -32,7 +32,7 @@ export function useSkillsAssessment() {
         mutationFn: async (dataToSave: SkillsAssessmentSchema) => {
             const cleanedData = cleanEmptyDefaultSkillsAssessment(dataToSave);
             logger.debug('Saving skills assessment', { data: cleanedData });
-            await trpcClient['skills-assessment-save'].mutate(cleanedData);
+            await trpcClient.updateSkillsAssessment.mutate(cleanedData);
             return dataToSave;
         },
 

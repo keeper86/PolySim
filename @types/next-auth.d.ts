@@ -2,15 +2,31 @@ import 'next-auth';
 import 'next-auth/jwt';
 
 declare module 'next-auth' {
+    interface NoAuthSession {
+        type: 'no-auth';
+        user: null;
+    }
+
     interface Session {
-        accessToken?: string;
-        user?: {
+        type: 'next-auth';
+        accessToken: string;
+        user: {
             id: string;
-            name?: string | null;
-            displayName?: string | null;
+            name?: string;
+            displayName?: string;
             hasAssessmentPublished?: boolean;
-            email?: string | null;
-        } | null;
+            email: string;
+        };
+    }
+
+    interface PATSession {
+        type: 'pat-auth';
+        patId: string;
+        patToken: string;
+        user: {
+            id: string;
+        };
+        expires: string;
     }
 }
 
