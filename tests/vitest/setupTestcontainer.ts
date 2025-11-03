@@ -12,18 +12,21 @@ dotenvExpand.expand(dotenv.config());
 export const testUsers: Record<string, UserData> = {
     testUser: {
         user_id: 'test-user',
+        avatar: null,
         email: 'test-user@example.com',
         display_name: 'Test User',
         has_assessment_published: false,
     },
     otherUserUnpublished: {
         user_id: 'other-user-unpublished',
+        avatar: null,
         email: 'other-user@example.com',
         display_name: 'Other User',
         has_assessment_published: false,
     },
     otherUserPublished: {
         user_id: 'other-user-published',
+        avatar: null,
         email: 'other-user@example.com',
         display_name: 'Other User',
         has_assessment_published: true,

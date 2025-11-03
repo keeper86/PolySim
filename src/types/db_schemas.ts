@@ -105,6 +105,7 @@ export type UserData = {
     email: string;
     has_assessment_published: boolean;
     display_name: string | null;
+    avatar: Buffer | null;
 };
 
 export type WasAssociatedWith = {

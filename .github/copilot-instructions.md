@@ -198,7 +198,7 @@ newFeature: {
 
 - Use Knex.js for database operations and migrations
 - Migration files in `migrations/` directory
-- Commands: `npm run migrate:make`, `npm run migrate:latest`
+- Commands: `npm run db:migrate:make`, `npm run db:migrate:latest`
 - PostgreSQL as primary database
 
 ### Development Workflow
