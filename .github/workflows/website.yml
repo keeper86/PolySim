@@ -45,6 +45,9 @@ jobs:
                       ${{ runner.os }}-nextjs-cache-
             - name: Build
               run: npm run build
+            - name: Start Keycloak and DB with Docker Compose
+              run: |
+                  docker compose -f docker-compose.development.yaml up -d
             - name: Cache Playwright browsers
               uses: actions/cache@v4
               with:
@@ -54,24 +57,22 @@ jobs:
                       ${{ runner.os }}-playwright-
             - name: Install Playwright browsers
               run: npx playwright install --with-deps
-            - name: Start Keycloak and DB with Docker Compose
-              run: |
-                  docker compose -f docker-compose.development.yaml up -d
             - name: Wait for DB to be ready
               run: npx wait-on --timeout=60000 tcp:localhost:5432
             - name: Wait for keycloak to be ready
               run: npx wait-on --timeout=60000 http://localhost:8080/realms/polysim/.well-known/openid-configuration
-            - name: Start app locally
+            - name: Migrate db and start app locally
               run: |
-                  npm run dev &
+                  npm run db:migrate:latest && npm run dev:only &
             - name: Wait for app to be ready
               run: |
                   npx wait-on --timeout=60000 http://localhost:3000/api/public/health
             - name: Print container logs on failure
               if: failure()
               run: docker compose -f docker-compose.development.yaml logs && printenv
-            - name: Wait for Keycloak to be ready
-              run: npx wait-on --timeout=60000 http://localhost:8080/realms/polysim/.well-known/openid-configuration
+            - name: Check if database types are up to date
+              run: |
+                  npm run db:types:check
             - name: Run Playwright tests
               run: |
                   npm run test:e2e
