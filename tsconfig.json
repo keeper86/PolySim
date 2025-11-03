@@ -16,6 +16,7 @@
         "jsx": "preserve",
         "jsxImportSource": "react",
         "baseUrl": ".",
+        "typeRoots": ["./@types"],
         "paths": {
             "@/*": ["./src/*"]
         }

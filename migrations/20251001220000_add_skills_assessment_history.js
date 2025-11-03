@@ -6,7 +6,7 @@ exports.up = async function (knex) {
     await knex.schema.createTable('skills_assessment_history', (table) => {
         table.increments('id').primary();
         table.string('user_id').notNullable().index();
-        table.jsonb('assessment_data').notNullable().defaultTo('[]');
+        table.jsonb('assessment_data').notNullable().defaultTo(knex.raw('\'{"data": []}\'::jsonb'));
         table.date('assessment_date').notNullable().defaultTo(knex.fn.now());
         table.timestamp('created_at').defaultTo(knex.fn.now()).notNullable();
     });

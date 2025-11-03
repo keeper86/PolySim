@@ -1,29 +1,21 @@
+import type { UserData } from '@/types/db_schemas';
 import z from 'zod';
 import { db } from '../db';
 import { logger } from '../logger';
-import { type ProcedureBuilderType } from '../router';
-import type { UserData } from '@/types/db_schemas';
+import { getUserIdFromContext, patAccessibleProcedure, protectedProcedure } from '../trpcRoot';
 
-const userSummary = z.object({
-    id: z.string(),
+const userId = z.object({
+    userId: z.string(),
+});
+const userData = z.object({
     displayName: z.string().optional(),
     hasAssessmentPublished: z.boolean().optional(),
 });
+export const userSummary = userId.merge(userData);
 export type UserSummary = z.infer<typeof userSummary>;
 
-export const getUsers = (procedure: ProcedureBuilderType, path: `/${string}`) => {
-    return procedure
-        .meta({
-            openapi: {
-                method: 'GET',
-                path,
-                tags: ['User'],
-                summary: 'List users (paginated)',
-                description:
-                    'Return a paginated list of users using offset-based pagination. By default email is not returned.',
-                protect: true,
-            },
-        })
+export const getUsers = () => {
+    return protectedProcedure
         .input(
             z.object({
                 limit: z.number().int().min(1).max(100).optional().default(25),
@@ -47,13 +39,14 @@ export const getUsers = (procedure: ProcedureBuilderType, path: `/${string}`) =>
 
             const totalResult = await query.clone().count<{ count: string }>('* as count').first();
             const total = totalResult ? Number(totalResult.count) : 0;
+            // Execute paginated query
             const users: UserData[] = await query.orderBy('user_id').offset(offset).limit(limit);
 
             logger.debug({ component: 'user-list' }, `Fetched users: ${JSON.stringify(users)}`);
 
             return {
                 users: users.map((r) => ({
-                    id: r.user_id,
+                    userId: r.user_id,
                     displayName: r.display_name || undefined,
                     hasAssessmentPublished: r.has_assessment_published,
                 })),
@@ -62,35 +55,28 @@ export const getUsers = (procedure: ProcedureBuilderType, path: `/${string}`) =>
         });
 };
 
-export const getUser = (procedure: ProcedureBuilderType, path: `/${string}`) => {
-    return procedure
-        .meta({
-            openapi: {
-                method: 'GET',
-                path,
-                tags: ['User'],
-                summary: 'Get User Info',
-                description: 'Retrieve user information by user ID',
-                protect: true,
-            },
-        })
+export const getUser = () => {
+    return protectedProcedure
         .input(
             z.object({
                 userId: z.string().optional(),
             }),
         )
         .output(userSummary)
-        .query(async ({ input }) => {
+        .query(async ({ input, ctx }) => {
             logger.debug({ component: 'user-get' }, `Fetching user info for user ID: ${input.userId}`);
 
-            const row = await db('user_data').where({ user_id: input.userId }).first();
+            const userId = getUserIdFromContext(ctx);
+            const row = await db('user_data')
+                .where({ user_id: input.userId || userId })
+                .first();
 
             if (!row) {
                 throw new Error('User not found');
             }
 
             const user: UserSummary = {
-                id: row.user_id,
+                userId: row.user_id,
                 displayName: row.display_name || undefined,
                 hasAssessmentPublished: row.has_assessment_published,
             };
@@ -101,24 +87,17 @@ export const getUser = (procedure: ProcedureBuilderType, path: `/${string}`) => 
         });
 };
 
-export const updateUser = (procedure: ProcedureBuilderType, path: `/${string}`) => {
-    return procedure
-        .meta({
-            openapi: {
-                method: 'POST',
-                path,
-                tags: ['User'],
-                summary: 'Update User Info',
-                description: 'Update user information',
-                protect: true,
-            },
-        })
-        .input(userSummary)
+export const updateUser = () => {
+    return protectedProcedure
+        .input(userData)
         .output(z.void())
-        .mutation(async ({ input }) => {
-            logger.debug({ component: 'user-update' }, `Updating user info for user ID: ${input.id}`);
+        .mutation(async ({ input, ctx }) => {
+            const userId = getUserIdFromContext(ctx);
+            console.log(`Updating user info for user ID: ${userId}`);
 
-            const updateData = {} as Partial<UserData>;
+            logger.debug({ component: 'user-update' }, `Updating user info for user ID: ${userId}`);
+
+            const updateData: Partial<UserData> = { user_id: userId };
             if (input.hasAssessmentPublished !== undefined) {
                 updateData.has_assessment_published = input.hasAssessmentPublished;
             }
@@ -126,12 +105,20 @@ export const updateUser = (procedure: ProcedureBuilderType, path: `/${string}`) 
                 updateData.display_name = input.displayName;
             }
 
-            const result = await db('user_data').where({ user_id: input.id }).update(updateData);
+            await db('user_data').where({ user_id: userId }).update(updateData);
+        });
+};
 
-            if (!result) {
-                throw new Error('User not found');
-            }
-
-            logger.debug({ component: 'user-update' }, `User updated successfully: ${JSON.stringify(input)}`);
+export const getUserIdFromSession = () => {
+    return patAccessibleProcedure
+        .meta({
+            openapi: { method: 'GET', path: '/user-id', tags: ['PolySim'], summary: 'Get User ID', protect: true },
+        })
+        .input(z.void())
+        .output(z.object({ userId: z.string() }))
+        .query(async ({ ctx }) => {
+            const userId = getUserIdFromContext(ctx);
+            logger.debug({ component: 'getUserIdFromPat' }, `Retrieved user ID from PAT: ${userId}`);
+            return { userId };
         });
 };

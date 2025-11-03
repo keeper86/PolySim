@@ -1,13 +1,13 @@
 import { z } from 'zod';
-import type { ProcedureBuilderType } from '../router';
+import { procedure } from '../trpcRoot';
 
-export const health = (procedure: ProcedureBuilderType, path: `/${string}`) => {
+export const health = () => {
     return procedure
         .meta({
             openapi: {
                 method: 'GET',
-                path,
-                tags: ['Technical'],
+                path: '/health',
+                tags: ['PolySim'],
                 summary: 'Health Check',
                 description: 'Simple health check endpoint to verify the server is running',
             },

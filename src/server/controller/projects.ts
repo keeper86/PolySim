@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { logger } from '../logger';
-import type { ProcedureBuilderType } from '../router';
+import { protectedProcedure } from '../trpcRoot';
 
-export const createProject = (procedure: ProcedureBuilderType, _: `/${string}`) => {
-    return procedure
+export const createProject = () => {
+    return protectedProcedure
         .input(
             z.object({
                 name: z.string().min(1, 'Project name is required'),

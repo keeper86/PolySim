@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { db } from '../db';
 import { logger } from '../logger';
-import { type ProcedureBuilderType } from '../router';
+import { getUserIdFromContext, protectedProcedure } from '../trpcRoot';
 
 const skillDefinition = z.object({
     name: z.string(),
@@ -19,15 +19,15 @@ const skillsAssessmentCategory = z.object({
 });
 export type SkillsAssessmentCategory = z.infer<typeof skillsAssessmentCategory>;
 
-const skillsAssessmentSchema = z.array(skillsAssessmentCategory);
+const skillsAssessmentSchema = z.object({ data: z.array(skillsAssessmentCategory) });
 export type SkillsAssessmentSchema = z.infer<typeof skillsAssessmentSchema>;
 
-export const getSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${string}`) => {
-    return procedure
+export const getSkillsAssessment = () => {
+    return protectedProcedure
         .meta({
             openapi: {
                 method: 'GET',
-                path,
+                path: '/skills-assessment',
                 tags: ['Skills'],
                 summary: 'Get Skills Assessment',
                 description: 'Retrieve the current user skills assessment',
@@ -69,16 +69,16 @@ export const getSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${s
 
             logger.debug({ component: 'skills-assessment-get' }, `Skills assessment data: ${JSON.stringify(result)}`);
 
-            return (result?.assessment_data as SkillsAssessmentSchema) ?? [];
+            return (result?.assessment_data as SkillsAssessmentSchema) || { data: [] };
         });
 };
 
-export const saveSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${string}`) => {
-    return procedure
+export const updateSkillsAssessment = () => {
+    return protectedProcedure
         .meta({
             openapi: {
                 method: 'POST',
-                path,
+                path: '/skills-assessment',
                 tags: ['Skills'],
                 summary: 'Save Skills Assessment',
                 description: 'Save or update the current user skills assessment',
@@ -92,14 +92,11 @@ export const saveSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${
             }),
         )
         .mutation(async ({ input, ctx }) => {
-            const userId = ctx.session?.user?.id;
-            if (!userId) {
-                throw new Error('User ID not found');
-            }
+            const userId = getUserIdFromContext(ctx);
 
             const today = new Date(new Date().toISOString().split('T')[0]); // YYYY-MM-DD -> Date at local midnight
 
-            const serializedInput = JSON.stringify(input);
+            const serializedInput = JSON.stringify(input.data);
             const existing = await db('skills_assessment_history')
                 .where({ user_id: userId, assessment_date: today })
                 .first();
@@ -111,7 +108,7 @@ export const saveSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${
                 );
                 await db('skills_assessment_history')
                     .where({ user_id: userId, assessment_date: today })
-                    .update({ assessment_data: serializedInput });
+                    .update({ assessment_data: input });
             } else {
                 logger.debug(
                     { component: 'skills-assessment-upsert' },
@@ -120,7 +117,7 @@ export const saveSkillsAssessment = (procedure: ProcedureBuilderType, path: `/${
                 await db('skills_assessment_history').insert({
                     user_id: userId,
                     assessment_date: today,
-                    assessment_data: serializedInput,
+                    assessment_data: input,
                 });
             }
 

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader } from 'lucide-react';
 import { useTRPC } from '@/lib/trpc';
-import type { UserSummary } from '@/server/endpoints/user';
+import type { UserSummary } from '@/server/controller/user';
 
 export default function SkillsListingPage() {
     const trpc = useTRPC();
@@ -19,7 +19,7 @@ export default function SkillsListingPage() {
         data = { users: [], total: 0 },
         isLoading,
         refetch,
-    } = useQuery(trpc['users'].queryOptions({ onlyWithPublishedAssessments: true }));
+    } = useQuery(trpc.getUsers.queryOptions({ onlyWithPublishedAssessments: true }));
 
     return (
         <div className='max-w-4xl mx-auto px-4 py-6'>
@@ -46,11 +46,11 @@ export default function SkillsListingPage() {
                     ) : (
                         <div className='space-y-3'>
                             {data.users.map((user) => (
-                                <div key={user.id} className='p-3 border rounded'>
+                                <div key={user.userId} className='p-3 border rounded'>
                                     <div className='flex items-center justify-between'>
                                         <div>
-                                            <div className='font-semibold'>{user.displayName || user.id}</div>
-                                            <div className='text-sm text-muted-foreground'>{user.id}</div>
+                                            <div className='font-semibold'>{user.displayName || user.userId}</div>
+                                            <div className='text-sm text-muted-foreground'>{user.userId}</div>
                                         </div>
                                         <div>
                                             <Button onClick={() => setSelected(user)}>View</Button>
@@ -65,7 +65,7 @@ export default function SkillsListingPage() {
                 <div className='w-full md:w-1/2 mt-4 md:mt-0'>
                     {selected ? (
                         <PublishedAssessmentDialog
-                            userId={selected.id}
+                            userId={selected.userId}
                             displayName={selected.displayName}
                             onClose={() => setSelected(null)}
                         />

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { logger } from '../logger';
-import type { ProcedureBuilderType } from '../router';
+import { procedure } from '../trpcRoot';
 
 const logEntry = z.object({
     level: z.literal('debug').or(z.literal('info')).or(z.literal('warn')).or(z.literal('error')),
@@ -11,7 +11,7 @@ const logEntry = z.object({
 });
 export type LogEntry = z.infer<typeof logEntry>;
 
-export const logs = (procedure: ProcedureBuilderType, _: `/${string}`) => {
+export const logs = () => {
     return procedure
         .input(
             z.object({
@@ -23,6 +23,7 @@ export const logs = (procedure: ProcedureBuilderType, _: `/${string}`) => {
                 success: z.boolean(),
             }),
         )
+
         .mutation(({ input }) => {
             for (const entry of input.logs) {
                 const { level, message, data, component, timestamp } = entry;

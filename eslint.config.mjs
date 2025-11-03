@@ -48,6 +48,8 @@ export default defineConfig([
             'no-unused-vars': ['error'],
             'no-undef': ['warn'],
             'semi': ['warn', 'always'],
+            'dot-notation': 'off',
+            '@typescript-eslint/dot-notation': ['error', { allowKeywords: true }],
             'class-methods-use-this': 'warn',
             'eol-last': ['warn', 'always'],
             'no-unused-expressions': ['error'],

@@ -3,11 +3,14 @@ import { render, screen, waitFor, fireEvent, within } from '@testing-library/rea
 import React from 'react';
 
 import SkillsAssessmentPage from './page';
+import type { SkillsAssessmentSchema } from '@/server/controller/skillsAssessment';
 
-let assessment = [
-    { category: 'Languages', skills: [{ name: 'TypeScript', level: 2 }] },
-    { category: 'Tools', skills: [{ name: 'Git', level: 3 }] },
-];
+let assessment: SkillsAssessmentSchema = {
+    data: [
+        { category: 'Languages', skills: [{ name: 'TypeScript', level: 2 }] },
+        { category: 'Tools', skills: [{ name: 'Git', level: 3 }] },
+    ],
+};
 
 let isLoading = false;
 let saveMutation = { isPending: false, isError: false };
@@ -62,10 +65,12 @@ vi.mock('@/components/client/SyncStatusIndicator', () => ({
 
 describe('SkillsAssessmentPage', () => {
     beforeEach(() => {
-        assessment = [
-            { category: 'Languages', skills: [{ name: 'TypeScript', level: 2 }] },
-            { category: 'Tools', skills: [{ name: 'Git', level: 3 }] },
-        ];
+        assessment = {
+            data: [
+                { category: 'Languages', skills: [{ name: 'TypeScript', level: 2 }] },
+                { category: 'Tools', skills: [{ name: 'Git', level: 3 }] },
+            ],
+        };
         isLoading = false;
         saveMutation = { isPending: false, isError: false };
         publishStatus = false;
@@ -133,5 +138,33 @@ describe('SkillsAssessmentPage', () => {
         fireEvent.click(starButton);
 
         expect(updateItemLevelMock).toHaveBeenCalledWith('Languages', 0, 3);
+    });
+
+    it('shows error state in sync status when save mutation has error', () => {
+        saveMutation = { isPending: false, isError: true };
+        render(<SkillsAssessmentPage />);
+
+        expect(screen.getByTestId('sync-status').textContent).toBe('error');
+    });
+
+    it('publishes assessment when toggling publish switch', async () => {
+        render(<SkillsAssessmentPage />);
+
+        const publishSwitch = screen.getByRole('switch');
+        fireEvent.click(publishSwitch);
+
+        await waitFor(() => expect(mockMutate).toHaveBeenCalledWith(true));
+    });
+
+    it('unpublishes assessment when toggling publish switch off', async () => {
+        publishStatus = true;
+        render(<SkillsAssessmentPage />);
+
+        const publishSwitch = screen.getByRole('switch');
+        expect(publishSwitch).toHaveAttribute('aria-checked', 'true');
+
+        fireEvent.click(publishSwitch);
+
+        await waitFor(() => expect(mockMutate).toHaveBeenCalledWith(false));
     });
 });

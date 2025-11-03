@@ -16,7 +16,7 @@ jobs:
             - name: Copy development env file
               run: cp .env.example.development .env
             - name: Set up Node.js
-              uses: actions/setup-node@v5
+              uses: actions/setup-node@v6
               with:
                   node-version: '24'
             - name: Cache npm
@@ -59,12 +59,14 @@ jobs:
                   docker compose -f docker-compose.development.yaml up -d
             - name: Wait for DB to be ready
               run: npx wait-on --timeout=60000 tcp:localhost:5432
+            - name: Wait for keycloak to be ready
+              run: npx wait-on --timeout=60000 http://localhost:8080/realms/polysim/.well-known/openid-configuration
             - name: Start app locally
               run: |
                   npm run dev &
             - name: Wait for app to be ready
               run: |
-                  npx wait-on --timeout=60000 http://localhost:3000/api/health
+                  npx wait-on --timeout=60000 http://localhost:3000/api/public/health
             - name: Print container logs on failure
               if: failure()
               run: docker compose -f docker-compose.development.yaml logs && printenv
@@ -75,14 +77,14 @@ jobs:
                   npm run test:e2e
             - name: Upload Playwright report on failure
               if: failure()
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v5
               with:
                   name: playwright-report
                   path: playwright-report/
                   retention-days: 7
             - name: Upload Playwright test results on failure
               if: failure()
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v5
               with:
                   name: playwright-test-results
                   path: test-results/

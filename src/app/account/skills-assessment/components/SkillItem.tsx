@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { ConfirmResetDialog } from './ConfirmResetDialog';
 import { SubSkillItem } from './SubSkillItem';
 
-import type { SkillAssessment } from '@/server/endpoints/skills-assessment';
+import type { SkillAssessment } from '@/server/controller/skillsAssessment';
 import { GoDot } from 'react-icons/go';
 import type { SkillsAssessmentActions } from '../hooks/useSkillsAssessmentActions';
 import { isDefaultSkill } from '../utils/getDefaultAssessmentList';
