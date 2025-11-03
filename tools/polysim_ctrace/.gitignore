@@ -7,6 +7,8 @@ polysim_ctrace
 generate_report
 *.zip
 run_*.zip
+*.tar.gz
+release/
 capture.pcap
 *.pid
 *.log

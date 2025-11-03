@@ -4,6 +4,8 @@ A small proof-of-concept command wrapper that records file accesses of a target 
 
 This PoC is intended for experimentation and developer workflows (reproducible run snapshots, lightweight provenance). It is not production-grade; see Known issues below.
 
+**Version:** See `VERSION` file for current version. This tool follows semantic versioning and can be released independently of the main PolySim platform.
+
 !!! Fully vibe-coded prototype. !!!
 Will be refactored and hardened in follow-up work.
 
@@ -118,12 +120,25 @@ If you add or refresh `miniz.c/miniz.h`, keep them in `polysim_ctrace/` or updat
 - Race conditions: files can be modified concurrently; the PoC hashes files after process exit which reduces but does not eliminate TOCTOU issues.
 - Permissions: tracing privileged binaries or containers can require capabilities; tests are written to skip when privileges or tracer availability are insufficient.
 
+## CI/CD and Releases
+
+This tool has its own CI/CD pipeline configured in `.github/workflows/tracer-ci.yml`:
+- Automated builds and tests on every push and pull request
+- CMake artifact caching for faster builds
+- Release builds with checksums when tags matching `polysim-ctrace/v*` are pushed
+- Reproducible, signed binaries and Docker images
+
+To create a release:
+```bash
+git tag polysim-ctrace/v0.1.0
+git push origin polysim-ctrace/v0.1.0
+```
+
 ## Next steps (recommended)
 
 1. Harden the path extractor/parser to correctly handle quoted/escaped filenames found in strace output.
 2. Refactor the CLI `main()` into smaller, testable library functions to enable unit tests that don't require running an external tracer.
-3. Add a CI workflow that runs build + unit tests; run integration tests conditionally or in a privileged runner.
-4. Add an optional flag to include/exclude heuristics for archiving large shared libraries.
+3. Add an optional flag to include/exclude heuristics for archiving large shared libraries.
 
 ## Where to get help / contribute
 
