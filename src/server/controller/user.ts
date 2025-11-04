@@ -83,7 +83,10 @@ export const getUser = () => {
                 avatar: row.avatar ? row.avatar.toString('base64') : undefined,
             };
 
-            logger.debug({ component: 'user-get' }, `Fetched user info: ${JSON.stringify({ ...user, avatar: user.avatar ? '[base64 omitted]' : undefined })}`);
+            logger.debug(
+                { component: 'user-get' },
+                `Fetched user info: ${JSON.stringify({ ...user, avatar: user.avatar ? '[base64 omitted]' : undefined })}`,
+            );
 
             return user;
         });
@@ -122,7 +125,7 @@ export const updateUser = () => {
                     let buffer: Buffer;
                     try {
                         buffer = Buffer.from(base64, 'base64');
-                    } catch (e) {
+                    } catch {
                         throw new Error('Invalid base64 image data');
                     }
 
