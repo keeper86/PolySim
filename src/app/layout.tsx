@@ -6,12 +6,24 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/s
 import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import type { ReactNode } from 'react';
+import { Geist, Geist_Mono } from 'next/font/google';
 import { Toaster } from '../components/ui/sonner';
 import { authOptions } from './api/auth/[...nextauth]/authOptions';
 import AppProviders from './AppProviders';
 import './globals.css';
 import BackToTopButton from '@/components/ui/BackToTopButton';
 
+const geistSans = Geist({
+    variable: '--font-geist-sans',
+    subsets: ['latin'],
+    display: 'swap',
+});
+
+const geistMono = Geist_Mono({
+    variable: '--font-geist-mono',
+    subsets: ['latin'],
+    display: 'swap',
+});
 
 export const metadata: Metadata = {
     title: 'PolySim',
@@ -27,7 +39,7 @@ export default async function RootLayout({
 
     return (
         <html lang='en'>
-            <body>
+            <body className={`${geistSans.variable} ${geistMono.variable}`}>
                 <AppProviders session={session}>
                     <SidebarProvider>
                         <AppSidebar />
