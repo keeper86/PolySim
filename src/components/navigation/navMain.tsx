@@ -12,7 +12,7 @@ const ICON_WIDTH = 18;
 function renderNavEntry(route: RouteMetadata, opts?: { isSub?: boolean }): JSX.Element {
     const { isSub } = opts || {};
     const { isMobile, setOpenMobile } = useSidebar();
-    
+
     const handleClick = () => {
         if (isMobile) {
             setOpenMobile(false);

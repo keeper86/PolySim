@@ -30,8 +30,8 @@ export function NavSecondary({ ...props }: React.ComponentPropsWithoutRef<typeof
                         (item) =>
                             showRoute(item) && (
                                 <SidebarMenuItem key={item.label}>
-                                    <SidebarMenuButton 
-                                        asChild 
+                                    <SidebarMenuButton
+                                        asChild
                                         size='sm'
                                         onClick={() => isMobile && setOpenMobile(false)}
                                     >
