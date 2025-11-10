@@ -7,9 +7,9 @@ import Link from 'next/link';
 import React from 'react';
 import type { JSX } from 'react/jsx-runtime';
 
-const ICON_WIDTH = 18;
+// const ICON_WIDTH = 18;
 
-function renderNavEntry(route: RouteMetadata, opts?: { isSub?: boolean }): JSX.Element {
+function RenderNavEntry(route: RouteMetadata, opts?: { isSub?: boolean }): JSX.Element {
     const { isSub } = opts || {};
     const { isMobile, setOpenMobile } = useSidebar();
 
@@ -49,7 +49,7 @@ export function NavMain() {
                         if (!showRoute(route)) {
                             return null;
                         }
-                        return renderNavEntry(route);
+                        return RenderNavEntry(route);
                     }
                     if (isRouteManifest(route)) {
                         const { root, ...rest } = route;
@@ -59,12 +59,12 @@ export function NavMain() {
                         const subItems: JSX.Element[] = [];
                         Object.values(rest).forEach((subRoute) => {
                             if (isRoute(subRoute) && showRoute(subRoute)) {
-                                subItems.push(renderNavEntry(subRoute, { isSub: true }));
+                                subItems.push(RenderNavEntry(subRoute, { isSub: true }));
                             }
                         });
                         return (
                             <React.Fragment key={root.path + '.block'}>
-                                {renderNavEntry(root)}
+                                {RenderNavEntry(root)}
                                 {subItems.length > 0 && <ul>{subItems}</ul>}
                             </React.Fragment>
                         );
