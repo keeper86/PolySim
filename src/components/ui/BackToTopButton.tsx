@@ -6,7 +6,7 @@ import { useSidebar } from '@/components/ui/sidebar';
 
 export default function BackToTopButton() {
     const [isVisible, setIsVisible] = useState(false);
-    const { state } = useSidebar();
+     const { state, isMobile } = useSidebar();
 
     const toggleVisibility = () => {
         if (window.scrollY > 300) {
@@ -32,7 +32,7 @@ export default function BackToTopButton() {
 
     const edgeMargin = '1.25rem';
 
-    const leftPosition = state === 'expanded' ? `calc(var(--sidebar-width) + ${edgeMargin})` : edgeMargin;
+    const leftPosition = state === 'expanded' && !isMobile ? `calc(var(--sidebar-width) + ${edgeMargin})` : edgeMargin;
 
     return (
         <div className='fixed bottom-5 z-50 transition-all duration-200 ease-linear' style={{ left: leftPosition }}>
