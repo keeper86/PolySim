@@ -1,3 +1,4 @@
+import { TRPCError } from '@trpc/server';
 import type { UserData } from '@/types/db_schemas';
 import z from 'zod';
 import { db } from '../db';
@@ -7,10 +8,15 @@ import { getUserIdFromContext, patAccessibleProcedure, protectedProcedure } from
 const userId = z.object({
     userId: z.string(),
 });
+
+// Base64 encodes each 3 bytes into 4 characters
+const bytesToBase64Chars = (bytes: number) => 4 * Math.ceil(bytes / 3);
+const MAX_SIZE_BYTES_AVATAR = 1 * 1024 * 1024;
+
 const userData = z.object({
     displayName: z.string().optional(),
     hasAssessmentPublished: z.boolean().optional(),
-    avatar: z.string().optional(),
+    avatar: z.string().max(bytesToBase64Chars(MAX_SIZE_BYTES_AVATAR), 'Avatar image (base64) is too large').optional(),
 });
 export const userSummary = userId.merge(userData);
 export type UserSummary = z.infer<typeof userSummary>;
@@ -110,30 +116,25 @@ export const updateUser = () => {
                 updateData.display_name = input.displayName;
             }
             if (input.avatar !== undefined) {
-                const base64 = (() => {
-                    const trimmed = input.avatar.trim();
-                    if (trimmed === '') {
-                        return null;
-                    }
-                    const dataUrlPrefix = 'data:image/png;base64,';
-                    return trimmed.startsWith(dataUrlPrefix) ? trimmed.slice(dataUrlPrefix.length) : trimmed;
-                })();
-
-                if (base64 === null) {
+                const trimmed = input.avatar.trim();
+                if (trimmed === '') {
                     updateData.avatar = null;
                 } else {
+                    const dataUrlPrefix = 'data:image/png;base64,';
+                    const base64 = trimmed.startsWith(dataUrlPrefix) ? trimmed.slice(dataUrlPrefix.length) : trimmed;
+
                     let buffer: Buffer;
                     try {
                         buffer = Buffer.from(base64, 'base64');
                     } catch {
-                        throw new Error('Invalid base64 image data');
+                        throw new TRPCError({
+                            code: 'UNSUPPORTED_MEDIA_TYPE',
+                            message: 'Invalid base64 image data',
+                        });
                     }
 
-                    const MAX_SIZE_BYTES = 2 * 1024 * 1024;
-                    if (buffer.length === 0 || buffer.length > MAX_SIZE_BYTES) {
-                        throw new Error('Avatar image must be between 1 byte and 2MB');
-                    }
-
+                    // PNG files must start with the following fixed 8 bytes. Ref: https://www.w3.org/TR/PNG-Rationale.html#R.PNG-file-signature
+                    // By checking these first 8 bytes, we ensure the uploaded avatar is a real PNG before storing it.
                     const pngSignature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
                     if (buffer.length < 8 || !buffer.subarray(0, 8).equals(pngSignature)) {
                         throw new Error('Only PNG images are supported for avatar');
