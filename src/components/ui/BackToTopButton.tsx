@@ -6,7 +6,7 @@ import { useSidebar } from '@/components/ui/sidebar';
 
 export default function BackToTopButton() {
     const [isVisible, setIsVisible] = useState(false);
-     const { state, isMobile } = useSidebar();
+    const { state, isMobile } = useSidebar();
 
     const toggleVisibility = () => {
         if (window.scrollY > 300) {
@@ -41,9 +41,9 @@ export default function BackToTopButton() {
                     onClick={scrollToTop}
                     variant='outline'
                     size='icon'
-                    className='shadow-lg 
-                     bg-green-700 
-                     text-white 
+                    className='shadow-lg
+                     bg-green-700
+                     text-white
                      hover:bg-green-500'
                     aria-label='Back to top'
                 >
