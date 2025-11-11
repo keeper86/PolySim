@@ -9,4 +9,4 @@ RUN npm install --omit=dev
 COPY knexfile.js ./
 COPY migrations/ ./migrations/
 
-CMD ["npx", "knex", "db:migrate:latest"]
+CMD ["npx", "knex", "migrate:latest"]
