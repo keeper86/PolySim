@@ -16,7 +16,7 @@ export default function PageContent() {
     const swaggerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        fetch('/api/openapi.json')
+        fetch('/api/public/openapi.json')
             .then((response) => response.json())
             .then((spec) => {
                 SwaggerUIBundle({

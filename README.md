@@ -102,7 +102,7 @@ docker compose -f docker-compose.development.yaml up
 3. Run the app locally
 
 ```sh
-npx wait-on-port 5432 --  # wait for the database to be ready; dev will try to connect immediately
+npm run db:waitFor
 npm run dev
 ```
 
