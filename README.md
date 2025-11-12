@@ -157,12 +157,13 @@ npm run test:e2e:debug     # Run tests in debug mode
 
 The CI pipeline is configured in `.github/workflows/website.yaml` and runs on every push and pull request. It’s preferable to run the required tests **locally** before pushing or creating a pull request. There are several methods/tools that make this easier:
 
-***
+---
 
 #### _act_ : CI pipeline with a single command
+
 [act](https://github.com/nektos/act) is an open-source tool that runs all tests and builds defined in `.github/workflows` locally by automatically pulling and building required Docker containers. Documentation can be reached by [here](https://nektosact.com).
 
-If CI pipeline uses any Docker container, Docker Deamon needs to be running before using act. 
+If CI pipeline uses any Docker container, Docker Deamon needs to be running before using act.
 
 act can be run from the projects directory by running:
 
@@ -171,22 +172,27 @@ act
 ```
 
 #### Install for Linux
+
 ```sh
 sudo apt install act
 ```
 
 #### Install for MacOS
+
 ```sh
 brew install act
 ```
 
 #### Install for Windows
+
 ```sh
 winget install nektos.act
 ```
 
-***
+---
+
 #### Multi Line Testing
+
 To run just part of the pipeline, you can run the required tests individually as shown below:
 
 ```sh
