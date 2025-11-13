@@ -99,14 +99,14 @@ function SidebarProvider({
     // Added a change to automatically collapse the sidebar on window resize.
     // Helps with the "content clipping" issue
     React.useEffect(() => {
-    const onResize = () => {
-        const shouldCollapse = window.innerWidth < 1000;
-        setOpen(!shouldCollapse);
-    };
+        const onResize = () => {
+            const shouldCollapse = window.innerWidth < 1000;
+            setOpen(!shouldCollapse);
+        };
 
-    window.addEventListener('resize', onResize);
-    onResize();
-    return () => window.removeEventListener('resize', onResize);
+        window.addEventListener('resize', onResize);
+        onResize();
+        return () => window.removeEventListener('resize', onResize);
     }, [setOpen]);
 
     //NEW END
