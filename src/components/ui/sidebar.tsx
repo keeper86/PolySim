@@ -96,6 +96,21 @@ function SidebarProvider({
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [toggleSidebar]);
 
+    // Added a change to automatically collapse the sidebar on window resize.
+    // Helps with the "content clipping" issue
+    React.useEffect(() => {
+    const onResize = () => {
+        const shouldCollapse = window.innerWidth < 1000;
+        setOpen(!shouldCollapse);
+    };
+
+    window.addEventListener('resize', onResize);
+    onResize();
+    return () => window.removeEventListener('resize', onResize);
+    }, [setOpen]);
+
+    //NEW END
+
     // We add a state so that we can do data-state="expanded" or "collapsed".
     // This makes it easier to style the sidebar with Tailwind classes.
     const state = open ? 'expanded' : 'collapsed';
