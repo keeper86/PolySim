@@ -17,13 +17,14 @@ import {
     type FileUploadProps,
     FileUploadTrigger,
 } from '@/components/ui/file-upload';
+import { useCallback } from 'react';
 
 export default function FileUploadDirectUploadPage() {
     const [files, setFiles] = React.useState<File[]>([]);
     const trpc = useTRPCClient();
 
     // Helper: konvertiert beliebige Bild-Datei zu PNG Data-URL (base64).
-    const fileToPngDataUrl = React.useCallback(async (file: File): Promise<string> => {
+    const fileToPngDataUrl = useCallback(async (file: File): Promise<string> => {
         // Wenn bereits PNG und Browser liefert DataURL, nutzen wir direkten FileReader-Output
         const readAsDataURL = (f: File) =>
             new Promise<string>((resolve, reject) => {
@@ -33,36 +34,10 @@ export default function FileUploadDirectUploadPage() {
                 r.readAsDataURL(f);
             });
 
-        const dataUrl = await readAsDataURL(file);
-
-        // Wenn PNG, direkt zurückgeben (inkl. data:image/png;base64,... prefix)
-        if (file.type === 'image/png' || dataUrl.startsWith('data:image/png')) {
-            return dataUrl;
-        }
-
-        // Sonst Bild in <img> laden und auf Canvas als PNG exportieren (konvertiert)
-        return await new Promise<string>((resolve, reject) => {
-            const img = new Image();
-            img.onload = () => {
-                try {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    if (!ctx) return reject(new Error('Canvas context unavailable'));
-                    ctx.drawImage(img, 0, 0);
-                    const pngDataUrl = canvas.toDataURL('image/png');
-                    resolve(pngDataUrl);
-                } catch (e) {
-                    reject(e);
-                }
-            };
-            img.onerror = () => reject(new Error('Invalid image or cross-origin issue'));
-            img.src = dataUrl;
-        });
+        return readAsDataURL(file);
     }, []);
 
-    const onUpload: NonNullable<FileUploadProps['onUpload']> = React.useCallback(
+    const onUpload: NonNullable<FileUploadProps['onUpload']> = useCallback(
         async (files, { onProgress, onSuccess, onError }) => {
             try {
                 // Process each file individually
@@ -101,7 +76,7 @@ export default function FileUploadDirectUploadPage() {
         [],
     );
 
-    const onFileReject = React.useCallback((file: File, message: string) => {
+    const onFileReject = useCallback((file: File, message: string) => {
         toast(message, {
             description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
         });
@@ -143,6 +118,7 @@ export default function FileUploadDirectUploadPage() {
             onUpload={onUpload}
             onFileReject={onFileReject}
             maxFiles={1}
+            accept='image/png'
             className='w-full max-w-md'
         >
             <FileUploadDropzone>
