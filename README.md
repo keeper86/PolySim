@@ -174,7 +174,7 @@ act
 #### Install for Linux
 
 ```sh
-sudo apt install act
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
 ```
 
 #### Install for MacOS
