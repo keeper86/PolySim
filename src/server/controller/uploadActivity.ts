@@ -38,6 +38,14 @@ const countsSchema = z.object({
     wasInformedBy: z.number(),
 });
 type Counts = z.infer<typeof countsSchema>;
+const zeroCounts: Counts = {
+    entities: 0,
+    activities: 0,
+    wasAssociatedWith: 0,
+    wasGeneratedBy: 0,
+    used: 0,
+    wasInformedBy: 0,
+};
 
 export const activityUpload = () => {
     return patAccessibleProcedure
@@ -58,27 +66,26 @@ export const activityUpload = () => {
             }),
         )
         .mutation(async ({ input, ctx }) => {
-            const counts: Counts = {
-                entities: 0,
-                activities: 1,
-                wasAssociatedWith: 1,
-                wasGeneratedBy: 0,
-                used: 0,
-                wasInformedBy: 0,
-            };
+            const counts = { ...zeroCounts };
             try {
-                logger.debug({ component: 'uploadActivity' }, `Uploading activity data: ${JSON.stringify(input)}`);
                 const userId = getUserIdFromContext(ctx);
+                logger.debug(
+                    { component: 'uploadActivity' },
+                    `Uploading (${userId}) activity data: ${JSON.stringify(input)}`,
+                );
+
                 const outputs = input.entities.filter((e) => e.role === 'output');
                 if (outputs.length === 0) {
-                    throw new Error('At least one output entity is required');
+                    throw new TRPCError({ message: 'At least one output entity is required', code: 'BAD_REQUEST' });
                 }
-                const inputs = input.entities.filter((e) => e.role === 'input');
+
                 const processes = input.entities.filter((e) => e.role === 'process');
                 if (processes.length === 0 || processes.length > 1) {
-                    throw new Error('Exactly one process entity is required');
+                    throw new TRPCError({ message: 'Exactly one process entity is required', code: 'BAD_REQUEST' });
                 }
                 const [process] = processes;
+
+                const inputs = input.entities.filter((e) => e.role === 'input');
 
                 await db.transaction(async (trx) => {
                     const activity = {
@@ -88,6 +95,7 @@ export const activityUpload = () => {
                         ended_at: new Date(input.activity.endedAt),
                         metadata: input.activity.metadata,
                     };
+                    logger.debug({ component: 'uploadActivity' }, `Inserting activity: ${JSON.stringify(activity)}`);
                     const result = (await trx('activities').insert(activity).onConflict('id').ignore()) as unknown as {
                         rowCount: number;
                     };
@@ -99,32 +107,22 @@ export const activityUpload = () => {
                         });
                     }
 
+                    logger.debug({ component: 'uploadActivity' }, `Upserting agent association for user ${userId}`);
                     await trx('agents')
                         .insert({ id: userId, metadata: { autoCreated: true } })
                         .onConflict('id')
                         .ignore();
-
                     await trx('was_associated_with').insert({
                         activity_id: input.activity.id,
                         agent_id: userId,
                     });
 
-                    logger.debug(
-                        { component: 'uploadActivity' },
-                        `Processing entities: ${JSON.stringify(input.entities)}`,
-                    );
-
-                    const existingEntities = await db('entities').whereIn(
-                        'id',
-                        input.entities.map((e) => e.id),
-                    );
-
-                    const existingEntityIds = existingEntities.map((e) => e.id);
-
-                    logger.debug(
-                        { component: 'uploadActivity' },
-                        `Ignored existing entities(${existingEntityIds.length}): ${existingEntityIds.join(', ')}`,
-                    );
+                    const existingEntityIds = (
+                        await db('entities').whereIn(
+                            'id',
+                            input.entities.map((e) => e.id),
+                        )
+                    ).map((e) => e.id);
 
                     const rows = input.entities
                         .filter((e) => !existingEntityIds.includes(e.id))
@@ -135,9 +133,11 @@ export const activityUpload = () => {
                             created_at: e.createdAt ? new Date(e.createdAt) : undefined,
                         }));
 
-                    logger.debug({ component: 'uploadActivity' }, `Inserting new entities: ${JSON.stringify(rows)}`);
-
                     await trx('entities').insert(rows);
+                    logger.debug(
+                        { component: 'uploadActivity' },
+                        `Inserting ${rows.length} new entities. Found ${existingEntityIds.length} existing entities.`,
+                    );
                     counts.entities = rows.length;
 
                     const mapEntity = (inputEntity: Entity) => ({
@@ -171,10 +171,9 @@ export const activityUpload = () => {
 
                     counts.used = usedRows.length;
                     counts.wasGeneratedBy = wasGeneratedByRows.length;
-                    logger.debug({ component: 'uploadActivity' }, `Counts after insertion: ${JSON.stringify(counts)}`);
 
-                    if (existingEntities.length > 0) {
-                        logger.warn(
+                    if (existingEntityIds.length > 0) {
+                        logger.debug(
                             { expected: input.entities.length, inserted: counts.entities },
                             `Some entities were not inserted because they already exist.
                             we need to find if some of these entities are used in wasInformedBy relations
