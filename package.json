@@ -27,7 +27,8 @@
         "db:types:check": "node ./tools/db_types.cjs check",
         "db:types:update": "node ./tools/db_types.cjs update",
         "generate-keycloak-realm": "set -a && . ./.env && set +a && envsubst < ./keycloak/data/template.json > ./keycloak/data/import/initialRealm.json",
-        "svg:icons": "node ./tools/svg-to-react-icons.cjs"
+        "svg:icons": "node ./tools/svg-to-react-icons.cjs",
+        "lf_all": "npm run lint && npm run format && npm run test"
     },
     "dependencies": {
         "@radix-ui/react-avatar": "^1.1.10",

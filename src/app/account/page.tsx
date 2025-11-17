@@ -4,7 +4,6 @@ import { Brain, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { APP_ROUTES } from '@/lib/appRoutes';
 import { useSession } from 'next-auth/react';
-import * as FileUpload from '@/components/ui/file-upload';
 
 export default function AccountPage() {
     const session = useSession();
