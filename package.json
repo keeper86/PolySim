@@ -29,7 +29,8 @@
         "db:types:update": "node ./tools/db_types.cjs update",
         "db:waitFor": "npx wait-on --timeout=60000 tcp:localhost:5432",
         "generate-keycloak-realm": "set -a && . ./.env && set +a && envsubst < ./keycloak/data/template.json > ./keycloak/data/import/initialRealm.json",
-        "svg:icons": "node ./tools/svg-to-react-icons.cjs"
+        "svg:icons": "node ./tools/svg-to-react-icons.cjs",
+        "lf_all": "npm run lint && npm run lint:check && npm run format && npm run format:check"
     },
     "dependencies": {
         "@radix-ui/react-avatar": "^1.1.10",
