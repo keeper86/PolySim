@@ -37,84 +37,55 @@ export default function FileUploadDirectUploadPage() {
         return readAsDataURL(file);
     }, []);
 
-    const onUpload: NonNullable<FileUploadProps['onUpload']> = useCallback(
-        async (files, { onProgress, onSuccess, onError }) => {
-            try {
-                // Process each file individually
-                const uploadPromises = files.map(async (file) => {
-                    try {
-                        // Simulate file upload with progress
-                        const totalChunks = 10;
-                        let uploadedChunks = 0;
-
-                        // Simulate chunk upload with delays
-                        for (let i = 0; i < totalChunks; i++) {
-                            // Simulate network delay (100-300ms per chunk)
-                            await new Promise((resolve) => setTimeout(resolve, Math.random() * 200 + 100));
-
-                            // Update progress for this specific file
-                            uploadedChunks++;
-                            const progress = (uploadedChunks / totalChunks) * 100;
-                            onProgress(file, progress);
-                        }
-
-                        // Simulate server processing delay
-                        await new Promise((resolve) => setTimeout(resolve, 500));
-                        onSuccess(file);
-                    } catch (error) {
-                        onError(file, error instanceof Error ? error : new Error('Upload failed'));
-                    }
-                });
-
-                // Wait for all uploads to complete
-                await Promise.all(uploadPromises);
-            } catch (error) {
-                // This handles any error that might occur outside the individual upload processes
-                console.error('Unexpected error during upload:', error);
-            }
-        },
-        [],
-    );
-
     const onFileReject = useCallback((file: File, message: string) => {
         toast(message, {
             description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
         });
     }, []);
 
+    const onValueChange = async (files: File[]) => {
+        setFiles(files);
+
+        // Handle avatar removal
+        if (!files || files.length === 0) {
+            trpc.updateUser
+                .mutate({ avatar: '' })
+                .then(() => toast.success('Avatar removed successfully'))
+                .catch((err) => {
+                    toast.error('Failed to remove avatar');
+                    console.error(err);
+                });
+        }
+    };
+
+    const onUpload: NonNullable<FileUploadProps['onUpload']> = useCallback(
+        async (files, { onProgress, onSuccess, onError }) => {
+            const file = files[0];
+            if (!file) {
+                return;
+            }
+
+            try {
+                onProgress(file, 30);
+                const pngDataUrl = await fileToPngDataUrl(file);
+                onProgress(file, 60);
+                await trpc.updateUser.mutate({ avatar: pngDataUrl });
+                onProgress(file, 100);
+                onSuccess(file);
+                toast.success('Avatar uploaded successfully');
+            } catch (err) {
+                console.error(err);
+                onError(file, err instanceof Error ? err : new Error('Upload failed'));
+                toast.error('Failed to process image. Only images are supported.');
+            }
+        },
+        [trpc, fileToPngDataUrl],
+    );
+
     return (
         <FileUpload
             value={files}
-            onValueChange={async (files: File[]) => {
-                // Wenn keine Dateien, leere Avatar im Backend setzen
-                if (!files || files.length === 0) {
-                    try {
-                        await trpc.updateUser.mutate({ avatar: '' });
-                        setFiles(files);
-                        toast.success('Avatar entfernt');
-                    } catch (err) {
-                        toast.error('Fehler beim Entfernen des Avatars');
-                        console.error(err);
-                    }
-                    return;
-                }
-
-                const first = files[0];
-                try {
-                    // Konvertiere zu PNG Data-URL (inkl. 'data:image/png;base64,...')
-                    const pngDataUrl = await fileToPngDataUrl(first);
-
-                    // Optional: Prüfen auf maximale Größe (serverseitig wird ebenfalls geprüft)
-                    // Entferne Prefix nur falls gewünscht; backend akzeptiert beides
-                    await trpc.updateUser.mutate({ avatar: pngDataUrl });
-
-                    setFiles(files);
-                    toast.success('Avatar hochgeladen');
-                } catch (err) {
-                    console.error(err);
-                    toast.error('Fehler beim Verarbeiten des Bildes. Nur Bilder werden unterstützt.');
-                }
-            }}
+            onValueChange={onValueChange}
             onUpload={onUpload}
             onFileReject={onFileReject}
             maxFiles={1}
