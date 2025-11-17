@@ -21,6 +21,7 @@
         "test:e2e": "playwright test",
         "test:e2e:headed": "playwright test --headed",
         "test:e2e:debug": "playwright test --debug",
+        "test:all": "npm run format && npm run lint && npm run build && npm run test",
         "db:migrate:make": "npx knex migrate:make",
         "db:migrate:latest": "npx knex migrate:latest",
         "db:migrate:rollback": "npx knex migrate:rollback",
