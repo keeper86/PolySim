@@ -12,7 +12,6 @@ import {
     FileUploadItemDelete,
     FileUploadItemMetadata,
     FileUploadItemPreview,
-    FileUploadItemProgress,
     FileUploadList,
     type FileUploadProps,
     FileUploadTrigger,
@@ -23,9 +22,7 @@ export default function FileUploadDirectUploadPage() {
     const [files, setFiles] = React.useState<File[]>([]);
     const trpc = useTRPCClient();
 
-    // Helper: konvertiert beliebige Bild-Datei zu PNG Data-URL (base64).
     const fileToPngDataUrl = useCallback(async (file: File): Promise<string> => {
-        // Wenn bereits PNG und Browser liefert DataURL, nutzen wir direkten FileReader-Output
         const readAsDataURL = (f: File) =>
             new Promise<string>((resolve, reject) => {
                 const r = new FileReader();
@@ -59,18 +56,15 @@ export default function FileUploadDirectUploadPage() {
     };
 
     const onUpload: NonNullable<FileUploadProps['onUpload']> = useCallback(
-        async (files, { onProgress, onSuccess, onError }) => {
+        async (files, { onSuccess, onError }) => {
             const file = files[0];
             if (!file) {
                 return;
             }
 
             try {
-                onProgress(file, 30);
                 const pngDataUrl = await fileToPngDataUrl(file);
-                onProgress(file, 60);
                 await trpc.updateUser.mutate({ avatar: pngDataUrl });
-                onProgress(file, 100);
                 onSuccess(file);
                 toast.success('Avatar uploaded successfully');
             } catch (err) {
@@ -118,7 +112,6 @@ export default function FileUploadDirectUploadPage() {
                                 </Button>
                             </FileUploadItemDelete>
                         </div>
-                        <FileUploadItemProgress />
                     </FileUploadItem>
                 ))}
             </FileUploadList>
