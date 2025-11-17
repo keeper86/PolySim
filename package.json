@@ -26,6 +26,7 @@
         "db:migrate:rollback": "npx knex migrate:rollback",
         "db:types:check": "node ./tools/db_types.cjs check",
         "db:types:update": "node ./tools/db_types.cjs update",
+        "db:waitFor": "npx wait-on --timeout=60000 tcp:localhost:5432",
         "generate-keycloak-realm": "set -a && . ./.env && set +a && envsubst < ./keycloak/data/template.json > ./keycloak/data/import/initialRealm.json",
         "svg:icons": "node ./tools/svg-to-react-icons.cjs"
     },

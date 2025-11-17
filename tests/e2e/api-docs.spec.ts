@@ -48,7 +48,7 @@ test.describe('API Documentation', () => {
     });
 
     test('should serve OpenAPI specification at /api/openapi.json', async ({ page }) => {
-        const response = await page.request.get('/api/openapi.json');
+        const response = await page.request.get('/api/public/openapi.json');
         expect(response.ok()).toBe(true);
         expect(response.headers()['content-type']).toContain('application/json');
 

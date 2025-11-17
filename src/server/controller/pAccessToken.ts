@@ -2,8 +2,9 @@ import crypto from 'crypto';
 import { z } from 'zod';
 import { db } from '../db';
 import { getUserIdFromContext, protectedProcedure } from '../trpcRoot';
+import { logger } from '../logger';
 
-const MAX_ACTIVE_TOKENS = parseInt(process.env.MAX_ACTIVE_PERSONAL_TOKENS_PER_USER ?? '5', 10);
+const MAX_ACTIVE_TOKENS = parseInt(process.env.MAX_ACTIVE_PERSONAL_TOKENS_PER_USER ?? '10', 10);
 
 const createPatInput = z.object({
     name: z.string().optional().default('token'),
@@ -13,9 +14,14 @@ const createPatInput = z.object({
 export const createPAT = () => {
     return protectedProcedure
         .input(createPatInput)
-        .output(z.object({ token: z.hash('sha256') }))
+        .output(z.object({ token: z.hex() }))
         .mutation(async ({ ctx, input }) => {
             const userId = getUserIdFromContext(ctx);
+
+            logger.debug(
+                { component: 'createPAT' },
+                `Creating PAT for user ${userId} with name "${input.name}" and expiration in ${input.expiresInDays} days`,
+            );
 
             const activeCountRow = await db('personal_access_tokens')
                 .where({ user_id: userId })
@@ -55,7 +61,7 @@ export const listPATs = () => {
         .output(
             z.array(
                 z.object({
-                    id: z.hash('sha256'),
+                    id: z.uuid(),
                     name: z.string().nullable(),
                     created_at: z.date(),
                     expires_at: z.date().nullable(),
@@ -73,7 +79,7 @@ export const listPATs = () => {
 
 export const revokePAT = () => {
     return protectedProcedure
-        .input(z.object({ id: z.hash('sha256') }))
+        .input(z.object({ id: z.uuid() }))
         .output(z.object({ success: z.boolean() }))
         .mutation(async ({ ctx, input }) => {
             const userId = getUserIdFromContext(ctx);
