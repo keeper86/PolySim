@@ -1,0 +1,53 @@
+name: Tracer CI
+
+on:
+    push:
+        branches: [main]
+        paths:
+            - 'tools/polytrace/**'
+            - '.github/workflows/tracer-ci.yml'
+    pull_request:
+        branches: [main]
+        paths:
+            - 'tools/polytrace/**'
+            - '.github/workflows/tracer-ci.yml'
+
+jobs:
+    build-and-test:
+        name: Build and test polytrace
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v5
+
+            - name: Install dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y build-essential cmake libssl-dev unzip strace
+
+            - name: Cache CMake build artifacts
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      tools/polytrace/build
+                      ~/.cache/cmake
+                  key: ${{ runner.os }}-cmake-${{ hashFiles('tools/polytrace/CMakeLists.txt') }}
+                  restore-keys: |
+                      ${{ runner.os }}-cmake-
+
+            - name: Configure (Makefile)
+              run: make -C tools/polytrace configure
+
+            - name: Format check (Makefile)
+              run: make -C tools/polytrace format-check
+
+            - name: Build (Makefile)
+              run: make -C tools/polytrace build
+
+            - name: Lint check (Makefile)
+              run: make -C tools/polytrace lint-check
+
+            - name: Run tests (Makefile)
+              run: make -C tools/polytrace test
