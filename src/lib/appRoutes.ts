@@ -10,6 +10,7 @@ import {
     FileText,
     Brain,
     BadgeCheck,
+    Hamburger,
 } from 'lucide-react';
 
 import type { Route } from 'nextjs-routes';
@@ -117,6 +118,12 @@ export const APP_ROUTES = {
             label: 'Skills Assessment',
             icon: BadgeCheck,
             description: 'Assess and track your technical skills',
+        },
+        pat: {
+            path: '/account/pat',
+            label: 'PAT management',
+            icon: Hamburger,
+            description: 'Manage Personal Access Tokens',
         },
     },
     imprint: {
