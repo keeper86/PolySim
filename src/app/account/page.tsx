@@ -23,7 +23,7 @@ export default function AccountPage() {
                 </Link>
                 <Link href={APP_ROUTES.account.avatar.path}>
                     <Button className='w-full justify-start' variant='outline'>
-                        <Image className='w-4 h-4' />
+                        <Image className='w-4 h-4' aria-hidden='true' />
                         Avatar
                     </Button>
                 </Link>

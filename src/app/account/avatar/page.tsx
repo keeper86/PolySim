@@ -43,15 +43,9 @@ export default function FileUploadDirectUploadPage() {
     const onValueChange = async (files: File[]) => {
         setFiles(files);
 
-        // Handle avatar removal
         if (!files || files.length === 0) {
-            trpc.updateUser
-                .mutate({ avatar: '' })
-                .then(() => toast.success('Avatar removed successfully'))
-                .catch((err) => {
-                    toast.error('Failed to remove avatar');
-                    console.error(err);
-                });
+            await trpc.updateUser.mutate({ avatar: '' });
+            toast.success('Avatar removed successfully');
         }
     };
 
@@ -68,9 +62,7 @@ export default function FileUploadDirectUploadPage() {
                 onSuccess(file);
                 toast.success('Avatar uploaded successfully');
             } catch (err) {
-                console.error(err);
                 onError(file, err instanceof Error ? err : new Error('Upload failed'));
-                toast.error('Failed to process image. Only images are supported.');
             }
         },
         [trpc, fileToPngDataUrl],
