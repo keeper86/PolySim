@@ -44,8 +44,8 @@ export function SkillItem({
                 }}
             />
             <div className='flex flex-col border rounded px-3 py-2 text-secondary-foreground'>
-                <div className='flex flex-row justify-between items-center gap-4'>
-                    <span className='font-medium min-w-0 truncate break-words sm:min-w-[100px] md:min-w-[100px] flex items-center gap-2'>
+                <div className='flex flex-row justify-between items-center gap-4 min-w-0'>
+                    <span className='font-medium min-w-0 flex-1 truncate overflow-hidden whitespace-nowrap flex items-center gap-2'>
                         {!isDefault ? (
                             <>
                                 <button

@@ -74,13 +74,13 @@ export default function SkillsAssessmentPage() {
                 <p className='text-muted-foreground'>
                     Rate your proficiency with programming languages and tools. Changes are saved automatically.
                 </p>
-                <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 text-sm text-muted-foreground mt-4'>
-                    <span className='font-medium min-w-[100px]'>Rating Scale:</span>
+                <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 sm:flex-wrap flex-wrap text-sm text-muted-foreground mt-4'>
+                    <span className='font-medium min-w-0 w-[100px] sm:w-[100px]'>Rating Scale:</span>
                     {[0, 1, 2, 3].map((level) => (
                         <Tooltip key={level}>
                             <TooltipTrigger asChild>
                                 <div className='flex flex-col xs:flex-row xs:items-center gap-2 cursor-help'>
-                                    <span className='px-2 py-1 rounded bg-muted text-muted-foreground text-xs min-w-[90px] text-center'>
+                                    <span className='px-2 py-1 rounded bg-muted text-muted-foreground text-xs min-w-0 w-[90px] text-center'>
                                         {getLevelText(level).label}
                                     </span>
                                     <div className='sm:hidden flex flex-row items-center justify-start gap-2 w-full mt-1 text-xs text-muted-foreground'>
