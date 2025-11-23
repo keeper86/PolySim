@@ -5,6 +5,7 @@ import type { Session } from 'next-auth';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { NavMain } from './navMain';
+import { SidebarProvider } from '../ui/sidebar';
 
 vi.mock('next/link', () => ({
     __esModule: true,
@@ -14,13 +15,17 @@ vi.mock('next/link', () => ({
 describe('NavMain', () => {
     it('renders all main navigation routes from PAGE_ROUTES and their icons', () => {
         const mockSession: Session = {
+            type: 'next-auth',
+            accessToken: 'mock-access-token',
             user: { id: 'test-user', name: 'Test User', email: 'test@example.com' },
             expires: new Date(Date.now() + 1000 * 60 * 60).toISOString(),
         };
 
         render(
             <AppProviders session={mockSession}>
-                <NavMain />
+                <SidebarProvider>
+                    <NavMain />
+                </SidebarProvider>
             </AppProviders>,
         );
         const mainNavRoutes = getMainNavRoutes();

@@ -19,29 +19,34 @@ test.describe('Skills Assessment E2E', () => {
         const skillItem = page.getByText(firstSkill.name, { exact: true });
         await expect(skillItem).toBeVisible();
         const skillRow = skillItem.locator('..');
-        const increaseBtn = skillRow.getByRole('button', { name: /set level to 1/i }).first();
-        if (await increaseBtn.isVisible()) {
-            await increaseBtn.click();
-        }
 
-        if (firstSubSkill) {
-            const subSkillItem = page.getByText(firstSubSkill.name, { exact: true });
-            const subSkillRow = subSkillItem.locator('..');
-            const subSkillLevel2Btn = subSkillRow.getByRole('button', { name: /set level to 2/i }).first();
-            if (await subSkillLevel2Btn.isVisible()) {
-                await subSkillLevel2Btn.click();
-            }
-        }
+        const level2Btn = skillRow.getByRole('button', { name: /set level to 2/i }).first();
+        await expect(level2Btn).toBeVisible();
+        await expect(level2Btn).toBeEnabled();
+        await level2Btn.click();
+
+        expect(firstSubSkill).toBeDefined();
+
+        const subSkillItem = page.getByText(firstSubSkill!.name, { exact: true });
+        console.log(firstSubSkill);
+
+        const subSkillRow = subSkillItem.locator('../..');
+        await expect(subSkillRow).toBeVisible();
+
+        const subLevel2Btn = subSkillRow.getByRole('button', { name: /set level to 1/i }).first();
+        await expect(subLevel2Btn).toBeVisible();
+        await expect(subLevel2Btn).toBeEnabled();
+        await subLevel2Btn.click();
 
         const resetBtn = skillRow.getByRole('button', { name: /reset/i, exact: true }).first();
-        if (await resetBtn.isVisible()) {
-            await resetBtn.click();
-            await expect(page.getByRole('dialog')).toBeVisible();
-            const confirmBtn = page.getByRole('button', { name: /confirm|yes/i });
-            if (await confirmBtn.isVisible()) {
-                await confirmBtn.click();
-            }
-        }
+        await expect(resetBtn).toBeVisible();
+        await expect(resetBtn).toBeEnabled({ timeout: 3000 });
+        await resetBtn.click();
+        await expect(page.getByRole('dialog')).toBeVisible({ timeout: 5000 });
+        const confirmBtn = page.getByRole('dialog').getByRole('button', { name: /reset/i }).first();
+        await expect(confirmBtn).toBeVisible({ timeout: 5000 });
+        await expect(confirmBtn).toBeEnabled();
+        await confirmBtn.click();
     });
 
     test('should add and delete a custom skill, verifying delete/reset buttons', async ({ page }) => {
