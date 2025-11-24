@@ -18,7 +18,7 @@ docker run --name polytrace-dev-env -it polytrace-dev-env
 docker start polytrace-dev-env
 docker exec -it polytrace-dev-env bash
 ```
-This gives the user command-line (shell) access to build, test and use the `polytrace` as described below. Default working directors is set to `/PolySim/tools/polytrace`.
+This gives the user command-line (shell) access to build, test and use the `polytrace` as described below. Default working directory is set to `/PolySim/tools/polytrace`.
 
 ## Overview
 
