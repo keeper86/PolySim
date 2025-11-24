@@ -37,9 +37,9 @@ function getErrorMessage(err: unknown): string {
 
 const prettifyHTTPStatus = (code: string | undefined) => {
     if (!code) {
-        return '';
+        return 'Unknown Error';
     }
-    const codeStr = String(code);
+    const codeStr = code;
     return `${codeStr
         .split(/[_\s]+/)
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -55,7 +55,7 @@ export const trpcClient = createTRPCProxyClient<AppRouter>({
                         next: (value) => observer.next?.(value),
                         error: (err: TRPCClientError<AppRouter>) => {
                             const message = getErrorMessage(err);
-                            const status = err.data?.httpStatus;
+                            const status = err.data?.httpStatus ?? 'Unknown';
                             const title = `Network Error (${status}: ${prettifyHTTPStatus(err.data?.code)})`;
                             toast.error(title, {
                                 description: message,
