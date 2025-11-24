@@ -3,6 +3,17 @@
 
 CLI Tool for Tracing File Accesses via strace. Commands are assumed executed from the root of this README.md.
 
+## Important
+`polytrace` relies on `strace` which does not run natively on Windows and macOS devices. For development purposes, you can use a Docker container defined by the provided `Dockerfile`.
+The performance impact of using containers has not yet been measured or reported.
+
+### To Build and Run the Container
+```sh
+docker build -t polytrace-dev-env .
+docker run --name polytrace-dev-env -it polytrace-dev-env
+```
+This gives the user command-line (shell) access to build, test and use the `polytrace` as described below. Default working directors is set to `/PolySim/tools/polytrace`.
+
 ## Overview
 
 This tool uses make to configure, build, and run tests. We use clang-format for code formatting and clang-tidy for linting.
