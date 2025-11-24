@@ -118,6 +118,11 @@ export const APP_ROUTES = {
             icon: BadgeCheck,
             description: 'Assess and track your technical skills',
         },
+        avatar: {
+            path: '/account/avatar',
+            label: 'Avatar',
+            description: 'Manage your account avatar',
+        },
     },
     imprint: {
         path: '/imprint',
