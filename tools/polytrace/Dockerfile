@@ -16,7 +16,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     strace \
  && rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/keeper86/PolySim
-WORKDIR /PolySim/tools/polytrace
+WORKDIR /polytrace
+COPY . /polytrace
+RUN make build
 
 CMD ["/bin/bash"]
