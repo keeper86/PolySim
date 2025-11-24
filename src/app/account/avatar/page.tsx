@@ -84,7 +84,7 @@ export default function FileUploadDirectUploadPage() {
                         <Upload className='size-6 text-muted-foreground' />
                     </div>
                     <p className='font-medium text-sm'>Drag & drop files here</p>
-                    <p className='text-muted-foreground text-xs'>Or click to browse (max 1 files)</p>
+                    <p className='text-muted-foreground text-xs'>Or click to browse (max 1 file)</p>
                 </div>
                 <FileUploadTrigger asChild>
                     <Button variant='outline' size='sm' className='mt-2 w-fit'>
@@ -93,8 +93,8 @@ export default function FileUploadDirectUploadPage() {
                 </FileUploadTrigger>
             </FileUploadDropzone>
             <FileUploadList>
-                {files.map((file, index) => (
-                    <FileUploadItem key={index} value={file} className='flex-col'>
+                {files.map((file) => (
+                    <FileUploadItem key={`${file.name}-${file.size}`} value={file} className='flex-col'>
                         <div className='flex w-full items-center gap-2'>
                             <FileUploadItemPreview />
                             <FileUploadItemMetadata />
