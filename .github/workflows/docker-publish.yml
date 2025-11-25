@@ -1,4 +1,4 @@
-name: Build and Publish Docker image to GHCR
+name: Build and Publish Polysim to GHCR
 
 on:
     push:
