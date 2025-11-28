@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { Brain, Hamburger } from 'lucide-react';
+import { Brain, KeyRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { APP_ROUTES } from '@/lib/appRoutes';
 import { useSession } from 'next-auth/react';
@@ -23,7 +23,7 @@ export default function AccountPage() {
                 </Link>
                 <Link href={APP_ROUTES.account.pat.path}>
                     <Button className='w-full justify-start' variant='outline'>
-                        <Hamburger />
+                        <KeyRound />
                         PAT Management
                     </Button>
                 </Link>
