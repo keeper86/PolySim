@@ -10,7 +10,7 @@ import {
     FileText,
     Brain,
     BadgeCheck,
-    Hamburger,
+    KeyRound,
 } from 'lucide-react';
 
 import type { Route } from 'nextjs-routes';
@@ -122,7 +122,7 @@ export const APP_ROUTES = {
         pat: {
             path: '/account/pat',
             label: 'PAT management',
-            icon: Hamburger,
+            icon: KeyRound,
             description: 'Manage Personal Access Tokens',
         },
     },
