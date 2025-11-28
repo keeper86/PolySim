@@ -4,6 +4,7 @@ import { Brain, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { APP_ROUTES } from '@/lib/appRoutes';
 import { useSession } from 'next-auth/react';
+import { FileUploadDialog } from '@/components/client/FileUploadDialog';
 
 export default function AccountPage() {
     const session = useSession();
@@ -11,6 +12,7 @@ export default function AccountPage() {
     if (session.status !== 'authenticated') {
         return <div>Loading...</div>;
     }
+
     return (
         <div className='flex flex-col items-center gap-4'>
             <h1 className='text-2xl font-bold'>Account Management</h1>
@@ -27,6 +29,13 @@ export default function AccountPage() {
                         Avatar
                     </Button>
                 </Link>
+                <FileUploadDialog
+                    triggerLabel='Upload Avatar (Dialog)'
+                    title='Upload Avatar'
+                    description='Choose an image to use as your profile avatar.'
+                    accept='image/png'
+                    maxFiles={1}
+                />
             </div>
             <div className='w-full max-w-md space-y-4'>{JSON.stringify(session.data)}</div>
         </div>
