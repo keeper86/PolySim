@@ -67,13 +67,9 @@ export default function PatPage() {
         if (!ok) {
             return;
         }
-        try {
-            await trpcClient.revokePAT.mutate({ id });
-            void refetch();
-        } catch (err) {
-            console.error(err);
-            alert('Could not delete token');
-        }
+
+        await trpcClient.revokePAT.mutate({ id });
+        void refetch();
     }
 
     function copyToClipboard(value: string) {
