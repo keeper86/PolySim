@@ -1,10 +1,10 @@
 'use client';
 import Link from 'next/link';
-import { Brain, Image } from 'lucide-react';
+import { Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { APP_ROUTES } from '@/lib/appRoutes';
 import { useSession } from 'next-auth/react';
-import { FileUploadDialog } from '@/components/client/FileUploadDialog';
+import { AvatarUploadDialog } from '@/app/account/AvatarUploadDialog';
 
 export default function AccountPage() {
     const session = useSession();
@@ -23,21 +23,8 @@ export default function AccountPage() {
                         Skills Assessment
                     </Button>
                 </Link>
-                <Link href={APP_ROUTES.account.avatar.path}>
-                    <Button className='w-full justify-start' variant='outline'>
-                        <Image className='w-4 h-4' aria-label='Avatar' />
-                        Avatar
-                    </Button>
-                </Link>
-                <FileUploadDialog
-                    triggerLabel='Upload Avatar (Dialog)'
-                    title='Upload Avatar'
-                    description='Choose an image to use as your profile avatar.'
-                    accept='image/png'
-                    maxFiles={1}
-                />
+                <AvatarUploadDialog triggerLabel='Upload Avatar' />
             </div>
-            <div className='w-full max-w-md space-y-4'>{JSON.stringify(session.data)}</div>
         </div>
     );
 }
