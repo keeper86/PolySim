@@ -132,6 +132,7 @@ export const APP_ROUTES = {
             label: 'PAT management',
             icon: KeyRound,
             description: 'Manage Personal Access Tokens',
+        },
         avatar: {
             path: '/account/avatar',
             label: 'Avatar',
