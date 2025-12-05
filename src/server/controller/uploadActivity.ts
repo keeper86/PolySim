@@ -123,7 +123,10 @@ export const activityUpload = () => {
                             input.entities.map((e) => e.id),
                         )
                     ).map((e) => e.id);
-                    logger.debug({ component: 'uploadActivity' }, `Existing entity IDs: ${existingEntityIds.join(', ')}`);
+                    logger.debug(
+                        { component: 'uploadActivity' },
+                        `Existing entity IDs: ${existingEntityIds.join(', ')}`,
+                    );
 
                     const rows = input.entities
                         .filter((e) => !existingEntityIds.includes(e.id))
@@ -135,7 +138,7 @@ export const activityUpload = () => {
                         }));
                     logger.debug({ component: 'uploadActivity' }, `Inserting ${rows.length} new entities.`);
 
-                    if (rows.length > 0){
+                    if (rows.length > 0) {
                         await trx('entities').insert(rows);
                     }
 
@@ -166,10 +169,12 @@ export const activityUpload = () => {
                         await trx('was_generated_by').insert(wasGeneratedByRows);
                     }
 
-                    const wasAttributedRows = outputEntities.filter((outputEntity) => !existingEntityIds.includes(outputEntity.id)).map((outputEntity) => ({
-                        entity_id: outputEntity.id,
-                        agent_id: userId,
-                    }));
+                    const wasAttributedRows = outputEntities
+                        .filter((outputEntity) => !existingEntityIds.includes(outputEntity.id))
+                        .map((outputEntity) => ({
+                            entity_id: outputEntity.id,
+                            agent_id: userId,
+                        }));
                     if (wasAttributedRows.length > 0) {
                         await trx('was_attributed_to').insert(wasAttributedRows);
                     }
@@ -185,7 +190,10 @@ export const activityUpload = () => {
                             `,
                         );
                         const wasGeneratedBy = await db('was_generated_by').whereIn('entity_id', existingEntityIds);
-                        logger.debug({ component: 'uploadActivity' }, `wasGeneratedBy rows: ${JSON.stringify(wasGeneratedBy)}`);
+                        logger.debug(
+                            { component: 'uploadActivity' },
+                            `wasGeneratedBy rows: ${JSON.stringify(wasGeneratedBy)}`,
+                        );
                         const wasUsed = await db('used').whereIn('entity_id', existingEntityIds);
                         logger.debug({ component: 'uploadActivity' }, `wasUsed rows: ${JSON.stringify(wasUsed)}`);
 

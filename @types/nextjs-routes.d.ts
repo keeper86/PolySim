@@ -13,13 +13,13 @@ declare module "nextjs-routes" {
   export type Route =
     | StaticRoute<"/">
     | StaticRoute<"/account">
+    | StaticRoute<"/account/avatar">
     | StaticRoute<"/account/pat">
     | StaticRoute<"/account/skills-assessment">
     | StaticRoute<"/analysis">
     | StaticRoute<"/api-doc">
     | DynamicRoute<"/api/auth/[...nextauth]", { "nextauth": string[] }>
     | DynamicRoute<"/api/public/[...trpc]", { "trpc": string[] }>
-    | StaticRoute<"/api/public/openapi.json">
     | StaticRoute<"/api/public/openapi.json">
     | DynamicRoute<"/api/trpc/[trpc]", { "trpc": string }>
     | StaticRoute<"/files">

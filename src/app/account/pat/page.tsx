@@ -35,7 +35,9 @@ export default function PatPage() {
     const { data: tokens = [], isLoading, refetch } = useQuery(trpc.listPATs.queryOptions({}));
 
     async function createToken() {
-        if (creating) return;
+        if (creating) {
+            return;
+        }
         setCreating(true);
         setLatestTokenValue(null);
         try {
@@ -59,7 +61,9 @@ export default function PatPage() {
 
     async function deleteToken(id: string) {
         const ok = confirm('Delete this personal access token? This cannot be undone.');
-        if (!ok) return;
+        if (!ok) {
+            return;
+        }
         await trpcClient.revokePAT.mutate({ id });
         void refetch();
     }
