@@ -77,11 +77,19 @@ export const APP_ROUTES = {
         isMainNav: true,
     },
     files: {
-        path: '/files',
-        label: 'Files',
-        icon: Map,
-        description: 'File management and uploads',
-        isMainNav: true,
+        root: {
+            path: '/files',
+            label: 'Files',
+            icon: Map,
+            description: 'File management and uploads',
+            isMainNav: true,
+        },
+        visNetworkDemo: {
+            path: '/files/vis-network-demo',
+            label: 'vis-network Demo',
+            description: 'Demonstration of vis-network (network.js) integration',
+            isMainNav: true,
+        },
     },
     apiDoc: {
         path: '/api-doc',
@@ -124,6 +132,10 @@ export const APP_ROUTES = {
             label: 'PAT management',
             icon: KeyRound,
             description: 'Manage Personal Access Tokens',
+        avatar: {
+            path: '/account/avatar',
+            label: 'Avatar',
+            description: 'Manage your account avatar',
         },
     },
     imprint: {

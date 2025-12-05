@@ -6,6 +6,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from '@/components/ui/sidebar';
 import type { RouteMetadata } from '@/lib/appRoutes';
 import { getSecondaryNavRoutes } from '@/lib/appRoutes';
@@ -14,6 +15,7 @@ import { useSession } from 'next-auth/react';
 
 export function NavSecondary({ ...props }: React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
     const secondaryNavRoutes = getSecondaryNavRoutes();
+    const { isMobile, setOpenMobile } = useSidebar();
 
     const loggedIn = useSession().status === 'authenticated';
 
@@ -28,7 +30,11 @@ export function NavSecondary({ ...props }: React.ComponentPropsWithoutRef<typeof
                         (item) =>
                             showRoute(item) && (
                                 <SidebarMenuItem key={item.label}>
-                                    <SidebarMenuButton asChild size='sm'>
+                                    <SidebarMenuButton
+                                        asChild
+                                        size='sm'
+                                        onClick={() => isMobile && setOpenMobile(false)}
+                                    >
                                         <Link href={item.path}>
                                             {item.icon && <item.icon />}
                                             <span>{item.label}</span>

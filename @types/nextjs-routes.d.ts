@@ -14,6 +14,7 @@ declare module "nextjs-routes" {
     | StaticRoute<"/">
     | StaticRoute<"/account">
     | StaticRoute<"/account/pat">
+    | StaticRoute<"/account/avatar">
     | StaticRoute<"/account/skills-assessment">
     | StaticRoute<"/analysis">
     | StaticRoute<"/api-doc">
@@ -22,6 +23,7 @@ declare module "nextjs-routes" {
     | StaticRoute<"/api/public/openapi.json">
     | DynamicRoute<"/api/trpc/[trpc]", { "trpc": string }>
     | StaticRoute<"/files">
+    | StaticRoute<"/files/vis-network-demo">
     | StaticRoute<"/imprint">
     | StaticRoute<"/pong">
     | StaticRoute<"/projects">
