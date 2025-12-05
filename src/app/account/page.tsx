@@ -25,6 +25,8 @@ export default function AccountPage() {
                     <Button className='w-full justify-start' variant='outline'>
                         <KeyRound />
                         PAT Management
+                    </Button>
+                </Link>
                 <Link href={APP_ROUTES.account.avatar.path}>
                     <Button className='w-full justify-start' variant='outline'>
                         <Image className='w-4 h-4' aria-label='Avatar' />
