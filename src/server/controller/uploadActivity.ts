@@ -74,8 +74,8 @@ export const activityUpload = () => {
                     `Uploading (${userId}) activity data: ${JSON.stringify(input)}`,
                 );
 
-                const outputs = input.entities.filter((e) => e.role === 'output');
-                if (outputs.length === 0) {
+                const outputEntities = input.entities.filter((e) => e.role === 'output');
+                if (outputEntities.length === 0) {
                     throw new TRPCError({ message: 'At least one output entity is required', code: 'BAD_REQUEST' });
                 }
 
@@ -85,7 +85,7 @@ export const activityUpload = () => {
                 }
                 const [process] = processes;
 
-                const inputs = input.entities.filter((e) => e.role === 'input');
+                const inputEntities = input.entities.filter((e) => e.role === 'input');
 
                 await db.transaction(async (trx) => {
                     const activity = {
@@ -123,6 +123,7 @@ export const activityUpload = () => {
                             input.entities.map((e) => e.id),
                         )
                     ).map((e) => e.id);
+                    logger.debug({ component: 'uploadActivity' }, `Existing entity IDs: ${existingEntityIds.join(', ')}`);
 
                     const rows = input.entities
                         .filter((e) => !existingEntityIds.includes(e.id))
@@ -132,8 +133,12 @@ export const activityUpload = () => {
                             label: e.label,
                             created_at: e.createdAt ? new Date(e.createdAt) : undefined,
                         }));
+                    logger.debug({ component: 'uploadActivity' }, `Inserting ${rows.length} new entities.`);
 
-                    await trx('entities').insert(rows);
+                    if (rows.length > 0){
+                        await trx('entities').insert(rows);
+                    }
+
                     logger.debug(
                         { component: 'uploadActivity' },
                         `Inserting ${rows.length} new entities. Found ${existingEntityIds.length} existing entities.`,
@@ -146,7 +151,7 @@ export const activityUpload = () => {
                     });
 
                     const usedRows = [
-                        ...inputs.map((inputEntity) => ({
+                        ...inputEntities.map((inputEntity) => ({
                             ...mapEntity(inputEntity),
                             role: inputEntity.role,
                         })),
@@ -156,12 +161,12 @@ export const activityUpload = () => {
                         await trx('used').insert(usedRows);
                     }
 
-                    const wasGeneratedByRows = outputs.map((outputEntity) => mapEntity(outputEntity));
+                    const wasGeneratedByRows = outputEntities.map((outputEntity) => mapEntity(outputEntity));
                     if (wasGeneratedByRows.length > 0) {
                         await trx('was_generated_by').insert(wasGeneratedByRows);
                     }
 
-                    const wasAttributedRows = outputs.map((outputEntity) => ({
+                    const wasAttributedRows = outputEntities.filter((outputEntity) => !existingEntityIds.includes(outputEntity.id)).map((outputEntity) => ({
                         entity_id: outputEntity.id,
                         agent_id: userId,
                     }));
@@ -180,7 +185,9 @@ export const activityUpload = () => {
                             `,
                         );
                         const wasGeneratedBy = await db('was_generated_by').whereIn('entity_id', existingEntityIds);
+                        logger.debug({ component: 'uploadActivity' }, `wasGeneratedBy rows: ${JSON.stringify(wasGeneratedBy)}`);
                         const wasUsed = await db('used').whereIn('entity_id', existingEntityIds);
+                        logger.debug({ component: 'uploadActivity' }, `wasUsed rows: ${JSON.stringify(wasUsed)}`);
 
                         const informedByActivityIds = new Set<string>();
 

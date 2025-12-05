@@ -26,7 +26,7 @@ if [ -z "$PAT" ]; then
     exit 2
 fi
 
-URL="$API_BASE_URL/api/trpc/pats-get-user-id"
+URL="$API_BASE_URL/api/public/user-id"
 echo "[test] Verifying PAT via GET $URL"
 RESPONSE=$(curl -sS -H "Authorization: Bearer $PAT" -X GET "$URL") || (echo "[test] curl failed"; echo "$RESPONSE"; exit 2)
 echo "[test] Response: $RESPONSE"
@@ -38,15 +38,16 @@ HASH_ID=$(echo -n "shell-test-entity" | sha256sum | awk '{print $1}')
 HASH_ID2=$(echo -n "shell-test-entity2" | sha256sum | awk '{print $1}')
 HASH_ID_PROCESS=$(echo -n "shell-test-entity-process" | sha256sum | awk '{print $1}')
 
-ACTIVITY_HASH_ID=$(echo -n "shell-test-activity2" | sha256sum | awk '{print $1}')
+ACTIVITY_HASH_ID=$(echo -n "shell-test-activity3" | sha256sum | awk '{print $1}')
 
 INPUT_JSON=$(cat <<JSON
 {"entities":[{"id":"${HASH_ID}","label":"shell-test-entity","role":"input","metadata":{"shell_test":true},"createdAt":0},{"id":"${HASH_ID2}","label":"shell-test-entity","role":"output","metadata":{"shell_test":true},"createdAt":0},{"id":"${HASH_ID_PROCESS}","label":"shell-test-entity-process","role":"process","metadata":{"shell_test":true},"createdAt":0}],"activity":{"id":"${ACTIVITY_HASH_ID}","startedAt":0,"endedAt":0,"metadata":{"shell_test":true}}}
 JSON
 )
 
+echo $INPUT_JSON
 
-URL="$API_BASE_URL/api/trpc/prov-upload"
+URL="$API_BASE_URL/api/public/upload-activity"
 
 echo "[test] Calling prov-upload via POST $URL"
 
@@ -55,7 +56,7 @@ RESPONSE=$(curl -sS -H "Authorization: Bearer $PAT" -H "Content-Type: applicatio
 echo "[test] Response: $RESPONSE"
 
 
-OK=$(echo "$RESPONSE" | jq -e '((.result.data.success == true) or (.[0].result.data.ok.success == true))' ) || true
+OK=$(echo "$RESPONSE" | jq -e '.result.data.success == true' ) || true
 
 if [ "$OK" = "true" ]; then
     echo "[test] prov-upload accepted the PAT and inserted the entity — SUCCESS"

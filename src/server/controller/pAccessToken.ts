@@ -8,7 +8,7 @@ const MAX_ACTIVE_TOKENS = parseInt(process.env.MAX_ACTIVE_PERSONAL_TOKENS_PER_US
 
 const createPatInput = z.object({
     name: z.string().optional().default('token'),
-    expiresInDays: z.number().min(1).max(360).optional().default(1),
+    expiresInDays: z.number().min(0).max(360).optional().default(1),
 });
 
 export const createPAT = () => {
@@ -36,9 +36,10 @@ export const createPAT = () => {
                 throw new Error(`Maximum number of active tokens (${MAX_ACTIVE_TOKENS}) reached`);
             }
 
-            // TODO: Introduce server secret salt for hashing tokens in production
             const token = crypto.randomBytes(64).toString('hex');
-            const hash = crypto.createHash('sha256').update(token).digest('hex');
+            const createHmac = crypto.createHmac('sha256', process.env.SUPER_SECRET_SERVER_PASSWORD || 'default_salt');
+            const tokenWithSalt = createHmac.update(token).digest('hex');
+            const hash = crypto.createHash('sha256').update(tokenWithSalt).digest('hex');
 
             const expiresAt = input.expiresInDays
                 ? new Date(Date.now() + input.expiresInDays * 24 * 3600 * 1000)
