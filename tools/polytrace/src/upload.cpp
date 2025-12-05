@@ -1,3 +1,4 @@
+#include "config.hpp"
 #include "miniz.h"
 #include "prov_client.hpp"
 #include "sha256.hpp"
@@ -12,76 +13,93 @@ using namespace prov;
 
 static constexpr int DEFAULT_PROV_PORT = 3000;
 
-static int64_t now_ms() {
-    using namespace std::chrono;
-    return (int64_t)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-}
-
-static ProvUploadInput create_example_payload() {
-    // Build the same example payload as before and delegate to the reusable uploader.
-    ProvUploadInput payload;
-
-    // Example entities: input, process, output; !!use real sha256 for input validation!!
-    Entity inputEnt;
-    inputEnt.id = make_sha256("example-input-file-content");
-    inputEnt.label = "input-file";
-    inputEnt.role = "input";
-    inputEnt.metadata = {{"path", "./data/in.txt"}};
-    inputEnt.createdAt = now_ms();
-
-    Entity processEnt;
-    processEnt.id = make_sha256("process-sha256-example");
-    processEnt.label = "example-process";
-    processEnt.role = "process";
-    processEnt.metadata = {{"cmd", "simulate"}};
-
-    Entity outputEnt;
-    outputEnt.id = make_sha256("output-sha256-example");
-    outputEnt.label = "out-file";
-    outputEnt.role = "output";
-    outputEnt.metadata = {{"path", "./data/out.txt"}};
-
-    payload.entities = {inputEnt, processEnt, outputEnt};
-
-    Activity activity;
-    activity.id = make_sha256("activity-sha256-example");
-    activity.label = "Example run";
-    activity.startedAt = now_ms();
-    activity.endedAt = now_ms();
-    activity.metadata = {{"notes", "example upload"}};
-
-    payload.activity = activity;
-
-    return payload;
-}
-
 int main(int argc, char **argv) {
     try {
+        polytrace::ConfigManager configMgr;
+        auto configOpt = configMgr.loadConfig();
+
         std::string host = "127.0.0.1";
         int port = DEFAULT_PROV_PORT;
         std::string basePath = "/api/public";
-        std::string PAT = "9e8b2a1029a1c44d6d5a3bce65b67fbed1abffc6b0f9483e7f046e59d2ca4a1f05906248a4b46d5724e3c620608be01757e6e0b6d4ee050c597883733f2cfa72";
-        ProvUploadInput payload = create_example_payload();
+        std::string PAT;
 
-        std::cout << "Default upload parameters:\n";
+        bool setupMode = false;
+        for (int i = 1; i < argc; ++i) {
+            if (std::string(argv[i]) == "--setup") {
+                setupMode = true;
+                break;
+            }
+        }
+
+        if (setupMode) {
+            std::cout << "=== Configuring PolySim Upload ===\n";
+            auto config = polytrace::ConfigManager::interactiveSetup();
+            configMgr.saveConfig(config);
+            std::cout << "\nConfiguration saved to: " << configMgr.getConfigFilePath()
+                      << " (user read/write only)\n";
+            return 0;
+        }
+
+        // Load configuration from file
+        if (!configOpt.has_value()) {
+            std::cerr << "No configuration found. To create a configuration file please run:\n";
+            std::cerr << "  " << argv[0] << " --setup\n";
+            return 1;
+        }
+
+        const auto &config = configOpt.value();
+        PAT = config.personalAccessToken;
+
+        // Parse uploadUrl to extract host and port
+        try {
+            std::string url = config.uploadUrl;
+            size_t protocolEnd = url.find("://");
+            if (protocolEnd != std::string::npos) {
+                url = url.substr(protocolEnd + 3);
+            }
+
+            size_t portStart = url.find_last_of(':');
+            if (portStart != std::string::npos) {
+                host = url.substr(0, portStart);
+                try {
+                    port = std::stoi(url.substr(portStart + 1));
+                } catch (...) {
+                    std::cerr << "Warning: Could not parse port from URL, using default\n";
+                }
+            } else {
+                host = url;
+            }
+        } catch (const std::exception &e) {
+            std::cerr << "Error parsing uploadUrl: " << e.what() << '\n';
+            return 1;
+        }
+
+        std::cout << "Using configuration:\n";
         std::cout << "  host: " << host << '\n';
         std::cout << "  port: " << port << '\n';
         std::cout << "  basePath: " << basePath << '\n';
-        std::cout << "  argc: " << argc << '\n';
-        std::cout << "  argv[0]: " << argv[0] << '\n';
-        std::cout << "  argv[1]: " << argv[1] << '\n';
 
-        if (argc >= 2) {
-            std::string arg = argv[1];
+        ProvUploadInput payload;
+
+        // Process payload argument if provided (skip --setup flag)
+        int payloadArgIndex = -1;
+        for (int i = 1; i < argc; ++i) {
+            if (std::string(argv[i]) != "--setup") {
+                payloadArgIndex = i;
+                break;
+            }
+        }
+
+        if (payloadArgIndex != -1) {
+            std::string arg = argv[payloadArgIndex];
             std::cout << "Using payload argument: " << arg << '\n';
-            // If argument points to an existing file, try to load it.
+
             try {
                 namespace fs = std::filesystem;
                 if (fs::exists(arg) && fs::is_regular_file(arg)) {
                     auto ext = fs::path(arg).extension().string();
                     if (ext == ".zip") {
                         std::cout << "Loading payload from ZIP file: " << arg << '\n';
-                        // Use miniz helper to extract a single file to heap
                         size_t out_size = 0;
                         void *archive_heap_pointer = mz_zip_extract_archive_file_to_heap(
                             arg.c_str(), "prov_upload_input.json", &out_size, 0);
@@ -109,7 +127,7 @@ int main(int argc, char **argv) {
                             std::cerr << "Failed to open JSON file: " << arg << '\n';
                         }
                     } else {
-                        // Unknown extension but file exists: try to parse it as JSON text
+
                         std::ifstream input_stream(arg);
                         if (input_stream) {
                             std::ostringstream outputStream;
@@ -122,7 +140,7 @@ int main(int argc, char **argv) {
                         }
                     }
                 } else {
-                    // Not a file: try to parse argument as inline JSON (existing behavior)
+
                     std::cout << "Parsing payload argument as inline JSON\n";
                     payload = json::parse(arg);
                 }

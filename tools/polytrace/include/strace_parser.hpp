@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cerrno>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -65,7 +66,8 @@ void StraceParser::parse_line(const std::string &line, int file_pid) {
         }
 
         if (file_pid < 0) {
-            std::cerr << "StraceParser::parse_line: no file_pid provided." << "\n";
+            std::cerr << "StraceParser::parse_line: no file_pid provided."
+                      << "\n";
             return;
         }
 
@@ -111,7 +113,9 @@ bool StraceParser::run_and_parse(int argc, char **argv) {
     }
     close(fileDesc);
 
-    start_tp_ = std::chrono::system_clock::now().time_since_epoch().count();
+    start_tp_ = std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::system_clock::now().time_since_epoch())
+                    .count();
     pid_t pid = fork();
     if (pid < 0) {
         perror("fork");
@@ -165,7 +169,9 @@ bool StraceParser::run_and_parse(int argc, char **argv) {
         unlink(tmpfile.c_str());
         return false;
     }
-    end_tp_ = std::chrono::system_clock::now().time_since_epoch().count();
+    end_tp_ = std::chrono::duration_cast<std::chrono::milliseconds>(
+                  std::chrono::system_clock::now().time_since_epoch())
+                  .count();
 
     if (debug) {
         std::cerr << "Strace process exited with status " << status << "\n";
@@ -339,9 +345,13 @@ prov::ProvUploadInput StraceParser::get_provenance_data() {
                 std::chrono::time_point_cast<std::chrono::system_clock::duration>(
                     fs::last_write_time(path) - fs::file_time_type::clock::now() +
                     std::chrono::system_clock::now());
-            entity.createdAt = lastWriteTimePoint.time_since_epoch().count();
+            entity.createdAt = std::chrono::duration_cast<std::chrono::milliseconds>(
+                                   lastWriteTimePoint.time_since_epoch())
+                                   .count();
         } catch (...) {
-            entity.createdAt = std::chrono::system_clock::now().time_since_epoch().count();
+            entity.createdAt = std::chrono::duration_cast<std::chrono::milliseconds>(
+                                   std::chrono::system_clock::now().time_since_epoch())
+                                   .count();
         }
 
         prov_input.entities.push_back(std::move(entity));
