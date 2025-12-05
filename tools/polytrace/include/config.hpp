@@ -47,7 +47,9 @@ class ConfigManager {
         return configDir;
     }
 
-    [[nodiscard]] std::filesystem::path getConfigFilePath() const { return configPath / "config.json"; }
+    [[nodiscard]] std::filesystem::path getConfigFilePath() const {
+        return configPath / "config.json";
+    }
 
     [[nodiscard]] std::optional<Config> loadConfig() const {
         auto configFile = getConfigFilePath();
@@ -139,4 +141,4 @@ class ConfigManager {
     std::filesystem::path configPath;
 };
 
-}
+} // namespace polytrace
