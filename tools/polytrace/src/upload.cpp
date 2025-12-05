@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
         std::string host = "127.0.0.1";
         int port = DEFAULT_PROV_PORT;
         std::string basePath = "/api/public";
-        std::string PAT = "put-your-pat-here";
+        std::string PAT = "9e8b2a1029a1c44d6d5a3bce65b67fbed1abffc6b0f9483e7f046e59d2ca4a1f05906248a4b46d5724e3c620608be01757e6e0b6d4ee050c597883733f2cfa72";
         ProvUploadInput payload = create_example_payload();
 
         std::cout << "Default upload parameters:\n";
