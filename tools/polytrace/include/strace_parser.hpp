@@ -66,8 +66,7 @@ void StraceParser::parse_line(const std::string &line, int file_pid) {
         }
 
         if (file_pid < 0) {
-            std::cerr << "StraceParser::parse_line: no file_pid provided."
-                      << "\n";
+            std::cerr << "StraceParser::parse_line: no file_pid provided.\n";
             return;
         }
 
