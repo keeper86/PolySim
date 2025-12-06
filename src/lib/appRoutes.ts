@@ -10,6 +10,7 @@ import {
     FileText,
     Brain,
     BadgeCheck,
+    KeyRound,
 } from 'lucide-react';
 
 import type { Route } from 'nextjs-routes';
@@ -130,6 +131,12 @@ export const APP_ROUTES = {
             path: '/account/avatar',
             label: 'Avatar',
             description: 'Manage your account avatar',
+        },
+        pat: {
+            path: '/account/pat',
+            label: 'PAT management',
+            icon: KeyRound,
+            description: 'Manage Personal Access Tokens',
         },
     },
     imprint: {

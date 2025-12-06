@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { Brain, Image } from 'lucide-react';
+import { Brain, KeyRound, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { APP_ROUTES } from '@/lib/appRoutes';
 import { useSession } from 'next-auth/react';
@@ -23,8 +23,14 @@ export default function AccountPage() {
                 </Link>
                 <Link href={APP_ROUTES.account.avatar.path}>
                     <Button className='w-full justify-start' variant='outline'>
-                        <Image className='w-4 h-4' aria-label='Avatar' />
+                        <User className='w-4 h-4' />
                         Avatar
+                    </Button>
+                </Link>
+                <Link href={APP_ROUTES.account.pat.path}>
+                    <Button className='w-full justify-start' variant='outline'>
+                        <KeyRound />
+                        PAT Management
                     </Button>
                 </Link>
             </div>

@@ -5,18 +5,14 @@ import { getServerSession, type PATSession } from 'next-auth';
 import { db } from './db';
 import { recordPatUsage } from './patRateLimiter';
 
-/**
- * Validate a bearer token. Checks the local Personal Access Token table
- * (SHA256 hashed).
- *
- * Returns a pat-session object or null if the token is invalid/unrecognized.
- */
 async function validateBearerToken(token: string): Promise<PATSession | null> {
     if (!token) {
         return null;
     }
 
-    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    const createHmac = crypto.createHmac('sha256', process.env.SUPER_SECRET_SERVER_PASSWORD || 'default_salt');
+    const tokenWithSalt = createHmac.update(token).digest('hex');
+    const tokenHash = crypto.createHash('sha256').update(tokenWithSalt).digest('hex');
     const row = await db('personal_access_tokens')
         .where({ token_hash: tokenHash })
         .andWhere(function () {

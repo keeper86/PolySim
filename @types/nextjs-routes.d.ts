@@ -14,6 +14,7 @@ declare module "nextjs-routes" {
     | StaticRoute<"/">
     | StaticRoute<"/account">
     | StaticRoute<"/account/avatar">
+    | StaticRoute<"/account/pat">
     | StaticRoute<"/account/skills-assessment">
     | StaticRoute<"/analysis">
     | StaticRoute<"/api-doc">
