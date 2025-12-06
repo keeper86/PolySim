@@ -164,7 +164,9 @@ export const activityUpload = () => {
                         await trx('used').insert(usedRows);
                     }
 
-                    const wasGeneratedByRows = outputEntities.map((outputEntity) => mapEntity(outputEntity));
+                    const wasGeneratedByRows = outputEntities
+                        .filter((outputEntity) => !existingEntityIds.includes(outputEntity.id))
+                        .map((outputEntity) => mapEntity(outputEntity));
                     if (wasGeneratedByRows.length > 0) {
                         await trx('was_generated_by').insert(wasGeneratedByRows);
                     }
