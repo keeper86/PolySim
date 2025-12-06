@@ -1,0 +1,28 @@
+{
+  "id": "01_long_run",
+  "repeats": 1,
+  "bench_program": {
+    "mode": "write",
+    "path": "test/long_run_out",
+    "files": 8,
+    "file_size": 131072,
+    "write_size": 8192,
+    "iterations": 2,
+    "threads": 4,
+    "cpu_ms": 200
+  },
+
+  "plan": [
+    {
+
+    },
+    {
+      "bench_program": {
+        "mode": "cpu",
+        "iterations": 1,
+        "threads": 8,
+        "cpu_ms": 5000
+      }
+    }
+  ]
+}
