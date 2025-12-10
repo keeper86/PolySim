@@ -4,7 +4,7 @@ import Graph from 'react-graph-vis';
 import type { Network, Node, Edge, Options } from 'react-graph-vis';
 import { createDummyProvData } from './graphGenerator';
 import { Loader } from 'lucide-react';
-import { Menu, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 export default function VisNetworkDemoPage() {
     const defaultAgents = 2;
