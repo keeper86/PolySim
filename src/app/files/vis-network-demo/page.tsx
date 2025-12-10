@@ -4,6 +4,7 @@ import Graph from 'react-graph-vis';
 import type { Network, Node, Edge, Options } from 'react-graph-vis';
 import { createDummyProvData } from './graphGenerator';
 import { Loader } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 export default function VisNetworkDemoPage() {
     const defaultAgents = 2;
@@ -183,6 +184,8 @@ export default function VisNetworkDemoPage() {
             .filter(Boolean);
     }, [selectedIds, graphData]);
 
+    const [controlsOpen, setControlsOpen] = useState(false);
+
     return (
         <div style={{ display: 'flex', gap: 8, height: '85vh' }}>
             <div style={{ flex: 1, minHeight: 0 }}>
@@ -213,8 +216,55 @@ export default function VisNetworkDemoPage() {
                 </div>
             </div>
 
-            <div className='w-80 border-l border-gray-200 p-3 overflow-auto max-h-[85vh]'>
-                <h3 className='mt-0 text-lg font-semibold'>Controls</h3>
+            <div className='md:hidden absolute top-4 right-4 z-30'>
+                {!controlsOpen && (
+                    <button
+                        onClick={() => setControlsOpen(true)}
+                        className='
+        p-2    
+        text-sm
+        rounded-full
+        hover:bg-gray-300 
+        transition-colors  
+        cursor-pointer
+      '
+                        aria-label='Open Controls'
+                    >
+                        Controls
+                    </button>
+                )}
+            </div>
+
+            <div
+                className={`
+        fixed md:static
+        top-0 right-0
+        h-full md:h-auto
+        max-h-[85vh]
+        w-72 md:w-80
+        bg-white border-l border-gray-200
+        overflow-auto
+        p-4
+        transition-transform duration-300
+        z-10
+
+        ${controlsOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}
+    `}
+            >
+                <div className=' flex items-center justify-between mb-4'>
+                    <h3 className='mt-0 text-lg font-semibold'>Controls</h3>
+                    <button
+                        onClick={() => setControlsOpen(false)}
+                        className=' md:hidden
+      p-1 bg-gray-200 rounded-full hover:bg-gray-300 
+      transition-colors cursor-pointer
+    '
+                        aria-label='Close Controls'
+                    >
+                        <X size={16} className='text-red-500' />
+                    </button>
+                </div>
+
                 <div className='mb-3'>
                     <div className='flex gap-2 mb-2'>
                         <label className='flex items-center gap-2 text-sm'>
