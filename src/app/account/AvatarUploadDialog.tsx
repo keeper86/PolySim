@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTRPCClient } from '@/lib/trpc';
+import { cn } from '@/lib/utils';
 
 interface AvatarUploadDialogProps {
     triggerLabel?: string;
@@ -24,14 +25,6 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
     const trpc = useTRPCClient();
 
     const [open, setOpen] = useState(false);
-    const cleanupAndCloseDialog = (openState: boolean) => {
-        if (!openState) {
-            setOpen(false);
-            setError(null);
-        } else {
-            setOpen(true);
-        }
-    };
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -39,6 +32,15 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
     const [isUploading, setIsUploading] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const cleanupAndCloseDialog = (openState: boolean) => {
+        if (!openState) {
+            setOpen(false);
+            setToDefault();
+        } else {
+            setOpen(true);
+        }
+    };
 
     const currentAvatar = '/logo.png';
 
@@ -178,11 +180,12 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
 
                     {!previewUrl && (
                         <div
-                            className={`border-2 border-dashed rounded-lg p-8 w-full text-center transition-colors ${
+                            className={cn(
+                                'border-2 border-dashed rounded-lg p-8 w-full text-center transition-colors',
                                 isDragging
                                     ? 'border-primary bg-primary/5'
-                                    : 'border-muted-foreground/25 hover:border-muted-foreground/50'
-                            }`}
+                                    : 'border-muted-foreground/25 hover:border-muted-foreground/50',
+                            )}
                             onDragOver={handleDragOver}
                             onDragLeave={handleDragLeave}
                             onDrop={handleDrop}
@@ -244,7 +247,7 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
                         </div>
                     )}
 
-                    {!previewUrl && currentAvatar && (
+                    {!previewUrl && (
                         <div className='flex gap-3 w-full'>
                             <Button
                                 onClick={() => fileInputRef.current?.click()}
@@ -267,7 +270,7 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
                         </div>
                     )}
 
-                    {!previewUrl && !currentAvatar && (
+                    {!previewUrl && (
                         <Button onClick={() => fileInputRef.current?.click()} className='w-full' disabled={isUploading}>
                             <Upload className='h-4 w-4 mr-2' />
                             Choose File
