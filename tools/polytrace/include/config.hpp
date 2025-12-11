@@ -20,6 +20,7 @@ class ConfigManager {
         std::string personalAccessToken;
     };
 
+    static inline std::string DEFAULT_URL = "https://polysim.work";
     ConfigManager() : configPath(getConfigPath()) {}
 
     static std::filesystem::path getConfigPath() {
@@ -43,7 +44,6 @@ class ConfigManager {
             std::filesystem::permissions(configDir, std::filesystem::perms::owner_all,
                                          std::filesystem::perm_options::replace);
         }
-
         return configDir;
     }
 
@@ -84,8 +84,7 @@ class ConfigManager {
             }
             if (jsonObj.contains("personalAccessToken") &&
                 jsonObj["personalAccessToken"].is_string()) {
-                config.personalAccessToken =
-                    jsonObj["personalAccessToken"].get<std::string>();
+                config.personalAccessToken = jsonObj["personalAccessToken"].get<std::string>();
             }
 
             return config;
@@ -120,12 +119,13 @@ class ConfigManager {
 
         std::cout << "\n=== PolySim Upload Configuration Setup ===\n";
         std::cout << "This wizard will help you configure the upload settings.\n\n";
-
-        std::cout << "Enter upload URL (e.g., http://localhost:3000):\n";
+        std::cout
+            << "Enter upload URL. Skip it to set default URL. (default: https://polysim.work):\n";
         std::getline(std::cin, config.uploadUrl);
 
         if (config.uploadUrl.empty()) {
-            throw std::runtime_error("Upload URL cannot be empty");
+            std::cout << "Default URL has been set.\n";
+            config.uploadUrl = DEFAULT_URL;
         }
 
         std::cout << "\nEnter Personal Access Token (PAT):\n";

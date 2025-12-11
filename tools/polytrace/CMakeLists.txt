@@ -83,6 +83,13 @@ file(GLOB_RECURSE POLYTRACE_SOURCES
 add_executable(upload ${PROJECT_SRC_DIR}/upload.cpp )
 add_executable(trace ${PROJECT_SRC_DIR}/trace.cpp )
 
+option(POLYTRACE_ENABLE_SSL "Enable SSL for polytrace tools" ON)
+
+if(POLYTRACE_ENABLE_SSL)
+  target_compile_definitions(upload PRIVATE CPPHTTPLIB_OPENSSL_SUPPORT)
+  target_compile_definitions(trace PRIVATE CPPHTTPLIB_OPENSSL_SUPPORT)
+endif()
+
 # Place main runtime binaries (upload, trace) into a dedicated bin directory
 # so only those two end up in bin/ while tests are placed elsewhere.
 set(MAIN_RUNTIME_DIR ${CMAKE_BINARY_DIR}/bin CACHE PATH "Directory for main runtime binaries")

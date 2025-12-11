@@ -1,33 +1,94 @@
 #include "config.hpp"
 #include "miniz.h"
 #include "prov_client.hpp"
-#include "sha256.hpp"
 #include "upload_activity.hpp"
-#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
-using namespace prov;
+bool load_payload_from_path(const std::string &path, ProvUploadInput &payload) {
+    namespace fs = std::filesystem;
+    try {
+        if (!fs::exists(path) || !fs::is_regular_file(path)) {
+            std::cerr << "File not found: " << path << '\n';
+            return false;
+        }
+        auto ext = fs::path(path).extension().string();
+        if (ext == ".zip") {
+            std::cout << "Loading payload from ZIP file: " << path << '\n';
+            size_t out_size = 0;
+            void *archive_heap_pointer = mz_zip_extract_archive_file_to_heap(
+                path.c_str(), "prov_upload_input.json", &out_size, 0);
+            if ((archive_heap_pointer == nullptr) || out_size == 0) {
+                std::cerr << "prov_upload_input.json not found in ZIP or extraction failed\n";
+                return false;
+            }
+            std::string string_content(static_cast<char *>(archive_heap_pointer), out_size);
+            mz_free(archive_heap_pointer);
+            try {
+                payload = json::parse(string_content);
+                return true;
+            } catch (const std::exception &e) {
+                std::cerr << "Failed to parse JSON from prov_upload_input.json: " << e.what()
+                          << '\n';
+                return false;
+            }
+        } else if (ext == ".json") {
+            std::ifstream input_stream(path);
+            if (!input_stream) {
+                std::cerr << "Failed to open JSON file: " << path << '\n';
+                return false;
+            }
+            std::ostringstream outputStream;
+            outputStream << input_stream.rdbuf();
+            payload = json::parse(outputStream.str());
+            return true;
+        } else {
+            std::cerr << "Unsupported file type: " << ext << ". Expected .zip or .json\n";
+            return false;
+        }
+    } catch (const std::exception &e) {
+        std::cerr << "Failed to parse payload argument: " << e.what() << '\n';
+        return false;
+    } catch (...) {
+        std::cerr << "Unknown error while parsing payload argument\n";
+        return false;
+    }
+}
 
 static constexpr int DEFAULT_PROV_PORT = 3000;
+static constexpr int DEFAULT_HTTP_PORT = 80;
+static constexpr int DEFAULT_HTTPS_PORT = 443;
 
 int main(int argc, char **argv) {
     try {
         bool interactiveInput = false;
         std::string interactiveArg;
 
+        polytrace::ConfigManager configMgr;
+        auto configOpt = configMgr.loadConfig();
+        polytrace::ConfigManager::Config config;
+
+        std::cout << "PolySim Upload Tool\n\n";
+        if (!configOpt.has_value()) {
+            std::cout << "No valid config file found.\n";
+            config = polytrace::ConfigManager::interactiveSetup();
+            configMgr.saveConfig(config);
+            std::cout << "\nConfiguration saved to: " << configMgr.getConfigFilePath() << "\n\n";
+        } else {
+            config = configOpt.value();
+        }
+
         if (argc == 1) {
-            std::cout << "PolySim upload tool\n";
             std::cout << "No arguments provided.\n\n";
             std::cout << "Please either:\n";
-            std::cout << "  1) Run:   " << argv[0] << " --setup   (create/update config)\n";
-            std::cout << "  2) Provide: <path-to-file.zip|path-to-file.json>\n\n";
+            std::cout << "  1) Run:   " << argv[0] << " --setup  to update config file\n";
+            std::cout << "  2) Provide: <path-to-file.zip> or <path-to-file.json>\n\n";
             std::cout << "Examples:\n";
             std::cout << "  " << argv[0] << " --setup\n";
             std::cout << "  " << argv[0] << " activity.zip\n";
-            std::cout << "Waiting for input (type --setup or a path to a .zip or .json file). Press Ctrl+D to exit.\n> ";
+            std::cout << "Waiting for input. Press Ctrl+D to exit.\n> ";
             while (true) {
                 std::string line;
                 if (!std::getline(std::cin, line)) {
@@ -47,11 +108,9 @@ int main(int argc, char **argv) {
             }
         }
 
-        polytrace::ConfigManager configMgr;
-        auto configOpt = configMgr.loadConfig();
-
-        std::string host = "https://polysim.work";
+        std::string host;
         int port = DEFAULT_PROV_PORT;
+        bool use_ssl = false;
         std::string basePath = "/api/public";
         std::string PAT;
 
@@ -76,19 +135,20 @@ int main(int argc, char **argv) {
             return 0;
         }
 
-        if (!configOpt.has_value()) {
-            std::cerr << "No configuration found. To create a configuration file please run:\n";
-            std::cerr << "  " << argv[0] << " --setup\n";
-            return 1;
-        }
-
-        const auto &config = configOpt.value();
         PAT = config.personalAccessToken;
 
         try {
             std::string url = config.uploadUrl;
             size_t protocolEnd = url.find("://");
             if (protocolEnd != std::string::npos) {
+                std::string scheme = url.substr(0, protocolEnd);
+                if (scheme == "https") {
+                    use_ssl = true;
+                    port = DEFAULT_HTTPS_PORT;
+                } else if (scheme == "http") {
+                    use_ssl = false;
+                    port = DEFAULT_HTTP_PORT;
+                }
                 url = url.substr(protocolEnd + 3);
             }
 
@@ -112,9 +172,10 @@ int main(int argc, char **argv) {
         std::cout << "  host: " << host << '\n';
         std::cout << "  port: " << port << '\n';
         std::cout << "  basePath: " << basePath << '\n';
+        std::cout << "  use_ssl: " << (use_ssl ? "true" : "false") << '\n';
 
         ProvUploadInput payload;
-        bool payloadReady = false; // set to true only once we have a valid payload
+        bool payloadReady = false;
 
         int payloadArgIndex = -1;
         for (int i = 1; i < argc; ++i) {
@@ -125,117 +186,22 @@ int main(int argc, char **argv) {
         }
 
         if (interactiveInput && !setupMode) {
-            std::string arg = interactiveArg;
-            std::cout << "Using payload argument: " << arg << '\n';
-
-            try {
-                namespace fs = std::filesystem;
-                if (fs::exists(arg) && fs::is_regular_file(arg)) {
-                    auto ext = fs::path(arg).extension().string();
-                    if (ext == ".zip") {
-                        std::cout << "Loading payload from ZIP file: " << arg << '\n';
-                        size_t out_size = 0;
-                        void *archive_heap_pointer = mz_zip_extract_archive_file_to_heap(
-                            arg.c_str(), "prov_upload_input.json", &out_size, 0);
-                        if (archive_heap_pointer != nullptr && out_size > 0) {
-                            std::string string_content(static_cast<char *>(archive_heap_pointer),
-                                                       out_size);
-                            try {
-                                payload = json::parse(string_content);
-                                payloadReady = true;
-                            } catch (const std::exception &error) {
-                                std::cerr << "Failed to parse JSON from prov_upload_input.json: "
-                                          << error.what() << '\n';
-                            }
-                            mz_free(archive_heap_pointer);
-                        } else {
-                            std::cerr
-                                << "prov_upload_input.json not found in ZIP or extraction failed\n";
-                        }
-                    } else if (ext == ".json") {
-                        std::ifstream input_stream(arg);
-                        if (input_stream) {
-                            std::ostringstream outputStream;
-                            outputStream << input_stream.rdbuf();
-                            payload = json::parse(outputStream.str());
-                            payloadReady = true;
-                        } else {
-                            std::cerr << "Failed to open JSON file: " << arg << '\n';
-                        }
-                    } else {
-                        std::cerr << "Unsupported file type: " << ext
-                                  << ". Expected .zip or .json\n";
-                    }
-                } else {
-                    std::cerr << "File not found: " << arg << '\n';
-                }
-            } catch (const std::exception &error) {
-                std::cerr << "Failed to parse payload argument: " << error.what() << '\n';
-            } catch (...) {
-                std::cerr << "Unknown error while parsing payload argument\n";
-            }
+            std::cout << "Using payload argument: " << interactiveArg << '\n';
+            payloadReady = load_payload_from_path(interactiveArg, payload);
         } else if (payloadArgIndex != -1) {
             std::string arg = argv[payloadArgIndex];
             std::cout << "Using payload argument: " << arg << '\n';
-
-            try {
-                namespace fs = std::filesystem;
-                if (fs::exists(arg) && fs::is_regular_file(arg)) {
-                    auto ext = fs::path(arg).extension().string();
-                    if (ext == ".zip") {
-                        std::cout << "Loading payload from ZIP file: " << arg << '\n';
-                        size_t out_size = 0;
-                        void *archive_heap_pointer = mz_zip_extract_archive_file_to_heap(
-                            arg.c_str(), "prov_upload_input.json", &out_size, 0);
-                        if (archive_heap_pointer != nullptr && out_size > 0) {
-                            std::string string_content(static_cast<char *>(archive_heap_pointer),
-                                                       out_size);
-                            try {
-                                payload = json::parse(string_content);
-                                payloadReady = true;
-                            } catch (const std::exception &error) {
-                                std::cerr << "Failed to parse JSON from prov_upload_input.json: "
-                                          << error.what() << '\n';
-                            }
-                            mz_free(archive_heap_pointer);
-                        } else {
-                            std::cerr
-                                << "prov_upload_input.json not found in ZIP or extraction failed\n";
-                        }
-                    } else if (ext == ".json") {
-                        std::ifstream input_stream(arg);
-                        if (input_stream) {
-                            std::ostringstream outputStream;
-                            outputStream << input_stream.rdbuf();
-                            payload = json::parse(outputStream.str());
-                            payloadReady = true;
-                        } else {
-                            std::cerr << "Failed to open JSON file: " << arg << '\n';
-                        }
-                    } else {
-                        std::cerr << "Unsupported file type: " << ext
-                                  << ". Expected .zip or .json\n";
-                    }
-                } else {
-                    std::cerr << "File not found: " << arg << '\n';
-                }
-            } catch (const std::exception &error) {
-                std::cerr << "Failed to parse payload argument: " << error.what() << '\n';
-            } catch (...) {
-                std::cerr << "Unknown error while parsing payload argument\n";
-            }
+            payloadReady = load_payload_from_path(arg, payload);
         }
 
         if (!payloadReady) {
             std::cerr << "No valid payload to upload. Aborting before network call.\n";
-            // In interactive mode, exit gracefully with 0 to match previous no-input behavior.
-            // However, since a concrete invalid input was provided, return 1 to indicate error.
             return 1;
         }
 
         std::cout << "Uploading activity to server...\n";
 
-        upload_activity(host, port, basePath, PAT, payload);
+        upload_activity(host, port, basePath, PAT, payload, use_ssl);
         return 0;
     } catch (const std::exception &e) {
         std::cerr << "Unhandled exception: " << e.what() << "\n";
