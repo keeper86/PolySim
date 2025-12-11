@@ -60,7 +60,6 @@ class ConfigManager {
 
         // Check file permissions - must be 0600 (user read/write only)
         auto perms = std::filesystem::status(configFile).permissions();
-        auto permsValue = std::filesystem::perms::owner_read | std::filesystem::perms::owner_write;
         if ((perms & (std::filesystem::perms::group_read | std::filesystem::perms::group_write |
                       std::filesystem::perms::others_read |
                       std::filesystem::perms::others_write)) != std::filesystem::perms::none) {
@@ -76,15 +75,17 @@ class ConfigManager {
         }
 
         try {
-            json j;
-            file >> j;
+            json jsonObj;
+            file >> jsonObj;
 
             Config config;
-            if (j.contains("uploadUrl") && j["uploadUrl"].is_string()) {
-                config.uploadUrl = j["uploadUrl"].get<std::string>();
+            if (jsonObj.contains("uploadUrl") && jsonObj["uploadUrl"].is_string()) {
+                config.uploadUrl = jsonObj["uploadUrl"].get<std::string>();
             }
-            if (j.contains("personalAccessToken") && j["personalAccessToken"].is_string()) {
-                config.personalAccessToken = j["personalAccessToken"].get<std::string>();
+            if (jsonObj.contains("personalAccessToken") &&
+                jsonObj["personalAccessToken"].is_string()) {
+                config.personalAccessToken =
+                    jsonObj["personalAccessToken"].get<std::string>();
             }
 
             return config;
@@ -96,16 +97,16 @@ class ConfigManager {
     void saveConfig(const Config &config) const {
         auto configFile = getConfigFilePath();
 
-        json j;
-        j["uploadUrl"] = config.uploadUrl;
-        j["personalAccessToken"] = config.personalAccessToken;
+        json jsonObj;
+        jsonObj["uploadUrl"] = config.uploadUrl;
+        jsonObj["personalAccessToken"] = config.personalAccessToken;
 
         std::ofstream file(configFile);
         if (!file.is_open()) {
             throw std::runtime_error("Failed to create config file: " + configFile.string());
         }
 
-        file << j.dump(2);
+        file << jsonObj.dump(2);
         file.close();
 
         // Set secure permissions (0600: user read/write only)
