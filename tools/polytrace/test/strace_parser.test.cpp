@@ -162,10 +162,14 @@ TEST(StraceParser, E2E_RunAndParse) {
                         (char *)resolved_script.c_str(), nullptr};
         int argc = 4;
 
-        auto start_tp = std::chrono::system_clock::now().time_since_epoch().count();
+        auto start_tp = std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::system_clock::now().time_since_epoch())
+                    .count();
         bool ok = parser.run_and_parse(argc, argv);
         ASSERT_TRUE(ok);
-        auto end_tp = std::chrono::system_clock::now().time_since_epoch().count();
+        auto end_tp = std::chrono::duration_cast<std::chrono::milliseconds>(
+                  std::chrono::system_clock::now().time_since_epoch())
+                  .count();
 
         prov::json out = parser.get_provenance_data();
 
