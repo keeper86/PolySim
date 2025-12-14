@@ -15,6 +15,13 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC, useTRPCClient } from '@/lib/trpc';
 
+export type PatToken = {
+    id: string;
+    name?: string | null;
+    created_at: string;
+    expires_at?: string | null;
+};
+
 export default function PatPage() {
     const trpc = useTRPC();
     const trpcClient = useTRPCClient();
