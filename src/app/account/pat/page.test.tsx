@@ -37,8 +37,8 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
     };
 });
 
-const mockConfirm = vi.fn();
-global.confirm = mockConfirm;
+const mockConfirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
+// global.confirm = mockConfirm;
 
 // Mock the navigator.clipboard API
 const mockWriteText = vi.fn(() => Promise.resolve());
