@@ -1,3 +1,11 @@
 run_id,wall_ms_traced,traced_ms,postproc_ms,wall_ms_untraced
 run_01_long_run_step0_1,529.182,501.104,28.078,418.425
 run_01_long_run_step1_2,5087.348,5066.758,20.590,5025.451
+run_01_long_run_step0_1,539.435,495.269,44.166,415.048
+run_01_long_run_step1_2,5042.131,5035.337,6.794,5006.117
+run_03_many_small_files_step0_3,1620.670,1510.203,110.467,56.707
+run_04_write_then_read_step0_4,591.991,533.111,58.880,34.663
+run_04_write_then_read_step1_5,43.002,35.426,7.576,3.025
+run_05_mixed_phases_step0_6,2736.621,2678.164,58.457,564.945
+run_05_mixed_phases_step1_7,1034.123,1028.986,5.137,1005.920
+run_05_mixed_phases_step2_8,5032.629,5026.513,6.116,5003.220

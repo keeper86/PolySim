@@ -1,0 +1,34 @@
+{
+  "id": "08_mixed_phases",
+  "repeats": 1,
+  "bench_program": {
+    "mode": "write",
+    "path": "test/mixed",
+    "files": 8,
+    "file_size": 4194304,
+    "write_size": 4096,
+    "iterations": 2,
+    "threads": 2,
+    "sleep_ms": 50,
+    "cpu_ms": 200
+  },
+  "plan": [
+    {
+
+    },
+    { 
+      "bench_program": { 
+        "mode": "sleep", 
+        "iterations": 10, 
+        "sleep_ms": 100 
+        } 
+      },
+    { 
+      "bench_program": { 
+        "mode": "cpu", 
+        "iterations": 5, 
+        "cpu_ms": 1000 
+        } 
+      }
+  ]
+}
