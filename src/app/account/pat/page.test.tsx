@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import PatPage from './page';
-import { PatToken } from './page';
+import type { PatToken } from './page';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 const mockRefetch = vi.fn();
