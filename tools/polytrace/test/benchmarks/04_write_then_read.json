@@ -1,0 +1,25 @@
+{
+"id": "05_write_then_read",
+"repeats": 1,
+"bench_program": { 
+    "mode": "write", 
+    "path": "test/pipeline", 
+    "files": 16, 
+    "file_size": 2097152, 
+    "write_size": 8192, 
+    "iterations": 1, 
+    "threads": 2 
+    },
+    "plan": [
+    {
+
+    },
+    {   
+        "bench_program": { 
+            "mode": "read", 
+            "threads": 4, 
+            "iterations": 1 
+        } 
+    }
+]
+}
