@@ -83,6 +83,19 @@ export const revokePAT = () => {
         .output(z.object({ success: z.boolean() }))
         .mutation(async ({ ctx, input }) => {
             const userId = getUserIdFromContext(ctx);
+            await db('personal_access_tokens')
+                .where({ id: input.id, user_id: userId })
+                .update({ expires_at: new Date() });
+            return { success: true };
+        });
+};
+
+export const deletePAT = () => {
+    return protectedProcedure
+        .input(z.object({ id: z.uuid() }))
+        .output(z.object({ success: z.boolean() }))
+        .mutation(async ({ ctx, input }) => {
+            const userId = getUserIdFromContext(ctx);
 
             await db('personal_access_tokens').where({ id: input.id, user_id: userId }).delete();
             return { success: true };

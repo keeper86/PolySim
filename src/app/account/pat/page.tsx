@@ -138,7 +138,14 @@ export default function PatPage() {
                         {tokens.map((t) => (
                             <li key={t.id} className='flex items-center justify-between rounded border p-3'>
                                 <div>
-                                    <div className='font-medium'>{t.name || 'Unnamed token'}</div>
+                                    <div className='flex items-center gap-2'>
+                                        <div className='font-medium'>{t.name || 'Unnamed token'}</div>
+                                        {t.expires_at && new Date(t.expires_at) <= new Date() ? (
+                                            <span className='text-xs text-red-700 bg-red-100 px-2 py-0.5 rounded-full'>
+                                                Revoked
+                                            </span>
+                                        ) : null}
+                                    </div>
                                     <div className='text-xs text-muted-foreground'>
                                         Created {new Date(t.created_at).toLocaleString()}
                                         {t.expires_at ? (
@@ -151,7 +158,52 @@ export default function PatPage() {
                                     </div>
                                 </div>
                                 <div className='flex items-center gap-2'>
-                                    <Button variant='destructive' onClick={() => deleteToken(t.id)}>
+                                    <Button
+                                        variant={
+                                            t.expires_at && new Date(t.expires_at) <= new Date() ? 'ghost' : 'outline'
+                                        }
+                                        disabled={!!(t.expires_at && new Date(t.expires_at) <= new Date())}
+                                        title={
+                                            t.expires_at && new Date(t.expires_at) <= new Date()
+                                                ? 'Already revoked'
+                                                : 'Revoke token'
+                                        }
+                                        onClick={async () => {
+                                            const ok = confirm(
+                                                'Revoke this personal access token?\nIt will be immediately invalidated but remain listed.',
+                                            );
+                                            if (!ok) {
+                                                return;
+                                            }
+                                            try {
+                                                await trpcClient.revokePAT.mutate({ id: t.id });
+                                                void refetch();
+                                            } catch (err) {
+                                                console.error(err);
+                                                alert('Could not revoke token');
+                                            }
+                                        }}
+                                    >
+                                        Revoke
+                                    </Button>
+                                    <Button
+                                        variant='destructive'
+                                        onClick={async () => {
+                                            const ok = confirm(
+                                                'Delete this personal access token? This cannot be undone.',
+                                            );
+                                            if (!ok) {
+                                                return;
+                                            }
+                                            try {
+                                                await trpcClient.deletePAT.mutate({ id: t.id });
+                                                void refetch();
+                                            } catch (err) {
+                                                console.error(err);
+                                                alert('Could not delete token');
+                                            }
+                                        }}
+                                    >
                                         Delete
                                     </Button>
                                 </div>
