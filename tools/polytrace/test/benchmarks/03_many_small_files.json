@@ -1,12 +1,13 @@
 {
-"id": "03_many_small_files",
-"bench_program": { 
-    "mode": "write", 
-    "path": "test/many_small", 
-    "files": 1000, 
+  "id": "03_many_small_files",
+  "bench_program": {
+    "mode": "write",
+    "path": "test/many_small",
+    "files": 1000,
     "file_size": 4096,
-    "write_size": 512, 
-    "iterations": 1, 
-    "threads": 1 
-    }
+    "write_size": 512,
+    "iterations": 1,
+    "threads": 1,
+    "cpu_ms": 50
+  }
 }
