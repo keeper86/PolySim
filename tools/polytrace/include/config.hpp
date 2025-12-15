@@ -1,5 +1,6 @@
 #pragma once
 
+#include <config_helper.hpp>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
@@ -8,7 +9,6 @@
 #include <optional>
 #include <string>
 #include <sys/stat.h>
-#include <config_helper.hpp>
 
 namespace polytrace {
 
@@ -120,7 +120,8 @@ class ConfigManager {
 
         std::cout << "\n=== PolySim Upload Configuration Setup ===\n";
         std::cout << "This wizard will help you configure the upload settings.\n\n";
-        std::cout << "Enter upload URL. Skip it to set default URL. (default: https://polysim.work):\n";
+        std::cout
+            << "Enter upload URL. Skip it to set default URL. (default: https://polysim.work):\n";
         std::getline(std::cin, config.uploadUrl);
 
         if (config.uploadUrl.empty()) {
@@ -129,7 +130,7 @@ class ConfigManager {
         }
 
         std::cout << "\nEnter Personal Access Token (PAT):\n";
-        config.personalAccessToken = readHiddenInput(); 
+        config.personalAccessToken = readHiddenInput();
 
         if (config.personalAccessToken.empty()) {
             throw std::runtime_error("Personal Access Token cannot be empty");
