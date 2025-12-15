@@ -1,15 +1,13 @@
 #pragma once
 
 #include "prov_client.hpp"
-#include "sha256.hpp"
-#include <chrono>
 #include <iostream>
 
 using namespace prov;
 
 int upload_activity(const std::string &host, int port, const std::string &basePath,
-                    const std::string &PAT, const ProvUploadInput &payload) {
-    prov::ProvClient client(host, port, basePath, PAT);
+                    const std::string &PAT, const ProvUploadInput &payload, bool use_ssl = false) {
+    prov::ProvClient client(host, port, basePath, PAT, use_ssl);
 
     auto [ok, res] = client.uploadActivity(payload);
     if (ok) {
