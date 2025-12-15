@@ -46,10 +46,14 @@ To trace a program, use the `trace` binary followed by the command you want to t
 
 It produces a zipped trace file in the current directory.
 
-To upload a trace file, use the `upload` binary (just for local tests yet):
+To upload a trace file, use the `upload` binary (just for local tests yet). The uploader accepts either a `.zip` produced by `trace` (containing `prov_upload_input.json`) or a standalone `.json` file with the same payload shape. Inline JSON via command line arguments is not supported:
 
 ```sh
+# Upload a zip created by the trace tool
 ./build/bin/upload path/to/trace.zip
+
+# Or upload a JSON file directly
+./build/bin/upload path/to/prov_upload_input.json
 ```
 
 
