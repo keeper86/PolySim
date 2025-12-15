@@ -1,13 +1,14 @@
 {
-"id": "02_io_heavy",
-"repeats": 1,
-"bench_program": {
-    "mode": "write", 
-    "path": "test/io_heavy", 
-    "files": 4, 
-    "file_size": 104857600, 
-    "write_size": 65536, 
-    "iterations": 1, 
-    "threads": 4 
-    }
+  "id": "02_io_heavy",
+  "repeats": 1,
+  "bench_program": {
+    "mode": "write",
+    "path": "test/io_heavy",
+    "files": 4,
+    "file_size": 104857600,
+    "write_size": 65536,
+    "iterations": 1,
+    "threads": 4,
+    "cpu_ms": 100
+  }
 }
