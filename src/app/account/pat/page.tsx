@@ -15,13 +15,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC, useTRPCClient } from '@/lib/trpc';
 
-type PatToken = {
-    id: string;
-    name?: string | null;
-    created_at: string;
-    expires_at?: string | null;
-};
-
 export default function PatPage() {
     const trpc = useTRPC();
     const trpcClient = useTRPCClient();
@@ -137,7 +130,7 @@ export default function PatPage() {
                     <div className='text-sm text-muted-foreground'>No tokens yet.</div>
                 ) : (
                     <ul className='space-y-2'>
-                        {tokens.map((t: PatToken) => (
+                        {tokens.map((t) => (
                             <li key={t.id} className='flex items-center justify-between rounded border p-3'>
                                 <div>
                                     <div className='font-medium'>{t.name || 'Unnamed token'}</div>

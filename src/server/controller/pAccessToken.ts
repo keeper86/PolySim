@@ -11,6 +11,14 @@ const createPatInput = z.object({
     expiresInDays: z.number().min(0).max(360).optional().default(1),
 });
 
+const patToken = z.object({
+    id: z.uuid(),
+    name: z.string().nullable(),
+    created_at: z.date(),
+    expires_at: z.date().nullable(),
+});
+export type PatToken = z.infer<typeof patToken>;
+
 export const createPAT = () => {
     return protectedProcedure
         .input(createPatInput)
@@ -59,16 +67,7 @@ export const createPAT = () => {
 export const listPATs = () => {
     return protectedProcedure
         .input(z.object({}))
-        .output(
-            z.array(
-                z.object({
-                    id: z.uuid(),
-                    name: z.string().nullable(),
-                    created_at: z.date(),
-                    expires_at: z.date().nullable(),
-                }),
-            ),
-        )
+        .output(z.array(patToken))
         .query(async ({ ctx }) => {
             const userId = getUserIdFromContext(ctx);
             const rows = await db('personal_access_tokens')
