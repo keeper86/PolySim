@@ -53,15 +53,6 @@ export default function PatPage() {
         }
     }
 
-    // async function deleteToken(id: string) {
-    //     const ok = confirm('Delete this personal access token? This cannot be undone.');
-    //     if (!ok) {
-    //         return;
-    //     }
-    //     await trpcClient.deletePAT.mutate({ id });
-    //     void refetch();
-    // }
-
     function copyToClipboard(value: string) {
         void navigator.clipboard?.writeText(value).then(() => alert('Token copied to clipboard'));
     }
