@@ -86,8 +86,7 @@ add_executable(trace ${PROJECT_SRC_DIR}/trace.cpp )
 option(POLYTRACE_ENABLE_SSL "Enable SSL for polytrace tools" ON)
 
 if(POLYTRACE_ENABLE_SSL)
-  target_compile_definitions(upload PRIVATE CPPHTTPLIB_OPENSSL_SUPPORT)
-  target_compile_definitions(trace PRIVATE CPPHTTPLIB_OPENSSL_SUPPORT)
+  target_compile_definitions(upload PRIVATE CPPHTTPLIB_OPENSSL_SUPPORT) 
 endif()
 
 # Place main runtime binaries (upload, trace) into a dedicated bin directory
