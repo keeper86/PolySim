@@ -1,6 +1,6 @@
 import type { SkillsAssessmentSchema } from '@/server/controller/skillsAssessment';
 
-const defaultSkillsAssessment: SkillsAssessmentSchema = {
+const defaultSkillsAssessment: SkillsAssessmentSchema = Object.freeze({
     data: [
         {
             category: 'Programming Languages',
@@ -343,17 +343,18 @@ const defaultSkillsAssessment: SkillsAssessmentSchema = {
             ],
         },
     ],
-};
+});
 
 export const isDefaultSkill = (skillName: string) => {
+    const lowerCaseName = skillName.toLowerCase();
     for (const category of defaultSkillsAssessment.data) {
         for (const skill of category.skills) {
-            if (skill.name.toLowerCase() === skillName.toLowerCase()) {
+            if (skill.name.toLowerCase() === lowerCaseName) {
                 return true;
             }
             if (skill.subSkills) {
                 for (const subSkill of skill.subSkills) {
-                    if (subSkill.name.toLowerCase() === skillName.toLowerCase()) {
+                    if (subSkill.name.toLowerCase() === lowerCaseName) {
                         return true;
                     }
                 }

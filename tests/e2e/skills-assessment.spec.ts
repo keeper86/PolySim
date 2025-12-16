@@ -16,6 +16,10 @@ test.describe('Skills Assessment E2E', () => {
 
         await expect(page.getByRole('heading', { name: /skills assessment/i })).toBeVisible();
 
+        const categoryTrigger = page.getByRole('button', { name: firstCategory.category }).first();
+        await expect(categoryTrigger).toBeVisible();
+        await categoryTrigger.click();
+
         const skillItem = page.getByText(firstSkill.name, { exact: true });
         await expect(skillItem).toBeVisible();
         const skillRow = skillItem.locator('..');
@@ -52,6 +56,10 @@ test.describe('Skills Assessment E2E', () => {
     test('should add and delete a custom skill, verifying delete/reset buttons', async ({ page }) => {
         await page.goto('/account/skills-assessment');
         await page.waitForLoadState('networkidle');
+
+        const categoryTrigger = page.getByRole('button', { name: firstCategory.category }).first();
+        await expect(categoryTrigger).toBeVisible();
+        await categoryTrigger.click();
 
         const addSkillInput = page.getByPlaceholder(`Add to ${firstCategory.category}`);
         const uniqueSuffix = Date.now();

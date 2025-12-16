@@ -32,6 +32,7 @@
         "svg:icons": "node ./tools/svg-to-react-icons.cjs"
     },
     "dependencies": {
+        "@radix-ui/react-accordion": "^1.2.12",
         "@radix-ui/react-avatar": "^1.1.11",
         "@radix-ui/react-collapsible": "^1.1.12",
         "@radix-ui/react-dialog": "^1.1.15",
@@ -51,9 +52,6 @@
         "@trpc/tanstack-react-query": "^11.6.0",
         "@vitejs/plugin-react": "^4.4.1",
         "autoprefixer": "^10.4.21",
-        "chart.js": "^4.4.9",
-        "chartjs-adapter-date-fns": "^3.0.0",
-        "chartjs-plugin-zoom": "^2.2.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "daisyui": "^5.1.6",
@@ -68,7 +66,7 @@
         "knex": "^3.1.0",
         "knex-types": "^0.5.0",
         "lucide-react": "^0.544.0",
-        "next": "15.5.7",
+        "next": "^15.5.9",
         "next-auth": "^4.24.11",
         "next-themes": "^0.4.6",
         "pg": "^8.16.3",

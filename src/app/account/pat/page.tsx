@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Page } from '@/components/client/Page';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -66,9 +67,7 @@ export default function PatPage() {
     }
 
     return (
-        <div className='max-w-3xl mx-auto p-4'>
-            <h1 className='text-2xl font-bold mb-4'>Personal Access Tokens</h1>
-
+        <Page title='Personal Access Tokens'>
             <section className='mb-6'>
                 <label className='block mb-2 text-sm font-medium'>Token name (optional)</label>
                 <div className='flex gap-2 items-center'>
@@ -155,6 +154,6 @@ export default function PatPage() {
                     </ul>
                 )}
             </section>
-        </div>
+        </Page>
     );
 }
