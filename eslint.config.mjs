@@ -45,7 +45,8 @@ export default defineConfig([
         },
         rules: {
             '@typescript-eslint/no-floating-promises': 'error',
-            'no-unused-vars': ['error'],
+            // use the TypeScript-aware rule instead of the core rule
+            'no-unused-vars': 'off',
             'no-undef': ['warn'],
             'semi': ['warn', 'always'],
             'dot-notation': 'off',
@@ -68,7 +69,15 @@ export default defineConfig([
             ],
             'no-fallthrough': 0,
             'curly': ['error', 'all'],
-            '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    // ignore unused variables/args/caught errors that start with an underscore
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                    caughtErrorsIgnorePattern: '^_',
+                },
+            ],
         },
     },
     js.configs.recommended,
