@@ -4,7 +4,7 @@ import type { PatToken } from './page';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 const mockRefetch = vi.fn();
-const mockListPATs = vi.fn(() => []) as vi.Mock<[], PatToken[]>;
+const mockListPATs = vi.fn((): PatToken[] => []);
 const mockCreatePAT = vi.fn();
 const mockRevokePAT = vi.fn();
 
@@ -25,12 +25,11 @@ vi.mock('@/lib/trpc', () => ({
 }));
 
 vi.mock('@tanstack/react-query', async (importOriginal) => {
-    const original = await importOriginal();
+    const original = (await importOriginal()) as typeof import('@tanstack/react-query');
     return {
-        ...original, // Mimic the queryOptions structure used in the component
-
+        ...original,
         useQuery: vi.fn(() => ({
-            data: mockListPATs(), // Use the mocked function to supply initial data
+            data: mockListPATs(),
             isLoading: false,
             refetch: mockRefetch,
         })),
@@ -38,9 +37,7 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
 });
 
 const mockConfirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
-// global.confirm = mockConfirm;
 
-// Mock the navigator.clipboard API
 const mockWriteText = vi.fn(() => Promise.resolve());
 Object.defineProperty(navigator, 'clipboard', {
     value: {
@@ -49,7 +46,6 @@ Object.defineProperty(navigator, 'clipboard', {
     writable: true,
 });
 
-// Mock the global alert function
 const mockAlert = vi.fn();
 global.alert = mockAlert;
 
@@ -75,15 +71,6 @@ describe('PatPage', () => {
 
         expect(screen.getByRole('heading', { name: /Personal Access Tokens/i })).toBeInTheDocument();
         expect(screen.getByLabelText(/Token name \(optional\)/i)).toBeInTheDocument();
-        // This test expects the label to be associated with a form control!!
-        // <label htmlFor="patNameInput">
-        //   Token name (optional)
-        // </label>
-        // <input
-        //     id='patNameInput'
-        //     type='text'
-        //     // ... other props
-        // />;
         expect(screen.getByRole('combobox')).toBeInTheDocument(); // The expiry dropdown
         expect(screen.getByRole('button', { name: /Generate token/i })).toBeInTheDocument();
 
@@ -95,37 +82,36 @@ describe('PatPage', () => {
         mockListPATs.mockReturnValue(existingTokens);
         render(<PatPage />);
 
+        const createDate = new Date(existingTokens[0].created_at).toLocaleString();
+        const expireDate = new Date(existingTokens[0].expires_at ?? '').toLocaleString();
+
+        console.log(createDate);
+
         const token1 = screen.getByText('Test Token 1').closest('li');
-        expect(token1).toHaveTextContent(/Created 01\/01\/2025/i); // Date formatting depends on local
-        expect(token1).toHaveTextContent(/Expires 08\/01\/2025/i);
+        expect(token1).toHaveTextContent(new RegExp(`Created ${createDate}`, 'i'));
+        expect(token1).toHaveTextContent(new RegExp(`Expires ${expireDate}`, 'i'));
         expect(screen.getAllByRole('button', { name: /Delete/i }).length).toBe(2);
 
-        // Verify the second token that never expires
         const token2 = screen.getByText('API Key').closest('li');
-        expect(token2).toHaveTextContent(/Never expires/i); // not sure if this should be possible
+        expect(token2).toHaveTextContent(/Never expires/i);
     });
 
     it('presses the create pat button and listens for the copy Pat dialog and for the backend call createPat', async () => {
-        // 1. Setup mock for creation success
         const NEW_TOKEN_VALUE = 'pat_newly_generated_secret_value';
         mockCreatePAT.mockResolvedValue({ token: NEW_TOKEN_VALUE });
 
-        // Reset the dialog state before rendering
         mockListPATs.mockReturnValue([]);
         render(<PatPage />);
 
-        // 2. Fill in inputs
         const nameInput = screen.getByLabelText(/Token name \(optional\)/i);
         fireEvent.change(nameInput, { target: { value: 'My New PAT' } });
 
         const expiryDropdown = screen.getByRole('combobox');
-        fireEvent.change(expiryDropdown, { target: { value: '30' } }); // Select 1 month
+        fireEvent.change(expiryDropdown, { target: { value: '30' } });
 
-        // 3. Click the Generate button
         const generateButton = screen.getByRole('button', { name: /Generate token/i });
         fireEvent.click(generateButton);
 
-        // 4. Assert backend call
         await waitFor(() => {
             expect(mockCreatePAT).toHaveBeenCalledWith({
                 name: 'My New PAT',
@@ -133,17 +119,14 @@ describe('PatPage', () => {
             });
         });
 
-        // 5. Assert dialog is open and token is displayed
         const dialog = screen.getByRole('dialog', { name: /Personal Access Token/i });
         expect(dialog).toBeInTheDocument();
         expect(screen.getByLabelText('Generated personal access token')).toHaveValue(NEW_TOKEN_VALUE);
 
-        // 6. Assert refetch is called to update the list
         expect(mockRefetch).toHaveBeenCalledTimes(1);
     });
 
     it('presses the Copy button in the dialog and verifies the token is copied', async () => {
-        // Ensure the dialog is open and token is visible (reusing setup logic)
         const NEW_TOKEN_VALUE = 'pat_to_copy_123';
         mockCreatePAT.mockResolvedValue({ token: NEW_TOKEN_VALUE });
         mockListPATs.mockReturnValue([]);
@@ -151,14 +134,11 @@ describe('PatPage', () => {
         fireEvent.click(screen.getByRole('button', { name: /Generate token/i }));
         await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
 
-        // Click the copy button
         const copyButton = screen.getByRole('button', { name: /Copy/i });
         fireEvent.click(copyButton);
 
-        // Assert clipboard function was called
         expect(mockWriteText).toHaveBeenCalledWith(NEW_TOKEN_VALUE);
 
-        // Assert alert was called
         await waitFor(() => {
             expect(mockAlert).toHaveBeenCalledWith('Token copied to clipboard');
         });
@@ -176,35 +156,32 @@ describe('PatPage', () => {
 
     it('renders the delete pat confirmation popup and presses the OK button. It listens for the delete pat backend call. It expects the list to refetch', async () => {
         mockListPATs.mockReturnValue(existingTokens);
-        mockConfirm.mockReturnValue(true); // User clicks OK
+        mockConfirm.mockReturnValue(true);
 
         render(<PatPage />);
 
         const deleteButtons = screen.getAllByRole('button', { name: /Delete/i });
-        fireEvent.click(deleteButtons[1]); // Assuming index 1 corresponds to 'pat-2'
+        fireEvent.click(deleteButtons[1]);
 
         await waitFor(() => {
             expect(mockRevokePAT).toHaveBeenCalledWith({ id: 'pat-2' });
         });
 
-        expect(mockRefetch).toHaveBeenCalled(); // was toHaveBeenCalledTimes(1) was called twice
+        expect(mockRefetch).toHaveBeenCalled();
     });
 
     it('renders the delete pat confirmation popup and presses the cancel button. It expects the backend call to be skipped.', async () => {
-        // 1. Setup mock data and confirm response (Cancel)
         mockListPATs.mockReturnValue(existingTokens);
-        mockConfirm.mockReturnValue(false); // User clicks Cancel
+        mockConfirm.mockReturnValue(false);
 
         render(<PatPage />);
 
         mockRevokePAT.mockClear();
         mockRefetch.mockClear();
 
-        // 2. Click the Delete button for the first token
         const deleteButtons = screen.getAllByRole('button', { name: /Delete/i });
         fireEvent.click(deleteButtons[0]);
 
-        // 3. Assert backend call is NOT made
         await waitFor(() => {
             expect(mockRevokePAT).not.toHaveBeenCalled();
             expect(mockRefetch).not.toHaveBeenCalled();
