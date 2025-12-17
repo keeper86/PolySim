@@ -46,8 +46,7 @@ Object.defineProperty(navigator, 'clipboard', {
     writable: true,
 });
 
-const mockAlert = vi.fn();
-global.alert = mockAlert;
+const mockAlert = vi.spyOn(window, 'alert').mockImplementation(() => {});
 
 describe('PatPage', () => {
     const existingTokens: PatToken[] = [
