@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import PatPage from './page';
-import type { PatToken } from './page';
+import type { PatToken } from 'src/server/controller/pAccessToken.ts';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 const mockRefetch = vi.fn();
@@ -54,13 +54,13 @@ describe('PatPage', () => {
         {
             id: 'pat-1',
             name: 'Test Token 1',
-            created_at: new Date('2025-01-01T10:00:00Z').toISOString(),
-            expires_at: new Date('2025-01-08T10:00:00Z').toISOString(),
+            created_at: new Date('2025-01-01T10:00:00Z'),
+            expires_at: new Date('2025-01-08T10:00:00Z'),
         },
         {
             id: 'pat-2',
             name: 'API Key',
-            created_at: new Date('2025-02-15T12:00:00Z').toISOString(),
+            created_at: new Date('2025-02-15T12:00:00Z'),
             expires_at: null, // Never expires
         },
     ];
