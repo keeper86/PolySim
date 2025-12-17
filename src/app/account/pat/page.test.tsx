@@ -85,8 +85,6 @@ describe('PatPage', () => {
         const createDate = new Date(existingTokens[0].created_at).toLocaleString();
         const expireDate = new Date(existingTokens[0].expires_at ?? '').toLocaleString();
 
-        console.log(createDate);
-
         const token1 = screen.getByText('Test Token 1').closest('li');
         expect(token1).toHaveTextContent(new RegExp(`Created ${createDate}`, 'i'));
         expect(token1).toHaveTextContent(new RegExp(`Expires ${expireDate}`, 'i'));
@@ -160,8 +158,8 @@ describe('PatPage', () => {
 
         render(<PatPage />);
 
-        const deleteButtons = screen.getAllByRole('button', { name: /Delete/i });
-        fireEvent.click(deleteButtons[1]);
+        const [_, deleteButton] = screen.getAllByRole('button', { name: /Delete/i });
+        fireEvent.click(deleteButton);
 
         await waitFor(() => {
             expect(mockRevokePAT).toHaveBeenCalledWith({ id: 'pat-2' });
@@ -179,8 +177,8 @@ describe('PatPage', () => {
         mockRevokePAT.mockClear();
         mockRefetch.mockClear();
 
-        const deleteButtons = screen.getAllByRole('button', { name: /Delete/i });
-        fireEvent.click(deleteButtons[0]);
+        const [cancelButton] = screen.getAllByRole('button', { name: /Delete/i });
+        fireEvent.click(cancelButton);
 
         await waitFor(() => {
             expect(mockRevokePAT).not.toHaveBeenCalled();
