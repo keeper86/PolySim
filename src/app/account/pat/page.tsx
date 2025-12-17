@@ -70,9 +70,15 @@ export default function PatPage() {
             <h1 className='text-2xl font-bold mb-4'>Personal Access Tokens</h1>
 
             <section className='mb-6'>
-                <label className='block mb-2 text-sm font-medium'>Token name (optional)</label>
+                <label htmlFor='patNameInput' className='block mb-2 text-sm font-medium'>
+                    Token name (optional)
+                </label>
                 <div className='flex gap-2 items-center'>
-                    <Input value={newName} onChange={(e) => setNewName((e.target as HTMLInputElement).value)} />
+                    <Input
+                        id='patNameInput'
+                        value={newName}
+                        onChange={(e) => setNewName((e.target as HTMLInputElement).value)}
+                    />
                     <select
                         value={String(expiryDays)}
                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setExpiryDays(Number(e.target.value))}
