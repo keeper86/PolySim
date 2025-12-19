@@ -59,7 +59,6 @@ export default function PatPage() {
             setNewName('');
         } catch (err) {
             throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Could not create token', cause: err });
-            // toast.error('Could not create token');
         } finally {
             setCreating(false);
         }
@@ -181,7 +180,6 @@ export default function PatPage() {
                                                     message: 'Could not revoke token',
                                                     cause: err,
                                                 });
-                                                // toast.error('Could not revoke token');
                                             }
                                         }}
                                     >
@@ -205,7 +203,6 @@ export default function PatPage() {
                                                     message: 'Could not delete token',
                                                     cause: err,
                                                 });
-                                                // toast.error('Could not delete token');
                                             }
                                         }}
                                     >
