@@ -1,10 +1,8 @@
 name: Build and Publish Polysim to GHCR
 
 on:
-    push:
-        branches: [main]
     workflow_run:
-        workflows: ['Website CI']
+        workflows: ['Website CI', 'Tracer CI']
         types:
             - completed
         branches: [main]
