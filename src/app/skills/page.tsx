@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Loader } from 'lucide-react';
 import { useTRPC } from '@/lib/trpc';
 import type { UserSummary } from '@/server/controller/user';
+import { Page } from '@/components/client/Page';
 
 export default function SkillsListingPage() {
     const trpc = useTRPC();
@@ -22,8 +23,7 @@ export default function SkillsListingPage() {
     } = useQuery(trpc.getUsers.queryOptions({ onlyWithPublishedAssessments: true }));
 
     return (
-        <div className='max-w-4xl mx-auto px-4 py-6'>
-            <h1 className='text-2xl font-bold mb-4'>Published Skills Assessments</h1>
+        <Page title='Published Skills Assessments'>
             <div className='flex gap-2 mb-4'>
                 <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder='Search by name or skill' />
                 <Button onClick={() => void refetch()}>Search</Button>
@@ -76,6 +76,6 @@ export default function SkillsListingPage() {
                     )}
                 </div>
             </div>
-        </div>
+        </Page>
     );
 }
