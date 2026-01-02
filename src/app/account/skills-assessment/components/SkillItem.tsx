@@ -44,7 +44,7 @@ export function SkillItem({
                 }}
             />
             <Card className='p-2'>
-                <CardHeader>
+                <CardHeader className='p-0'>
                     <div className='flex flex-row justify-between items-center gap-4 min-w-0 px-1'>
                         <span className='font-medium min-w-0 flex-1 truncate overflow-hidden whitespace-nowrap flex items-center gap-2'>
                             {!isDefaultSkill(name) ? (
