@@ -1,16 +1,14 @@
 import {
     type LucideIcon,
-    BookOpen,
-    Frame,
-    Gamepad,
-    Map,
-    PieChart,
-    User,
-    Home,
-    FileText,
-    Brain,
     BadgeCheck,
+    BookOpen,
+    Brain,
+    FileText,
+    Gamepad,
+    Home,
     KeyRound,
+    Map,
+    User,
 } from 'lucide-react';
 
 import type { Route } from 'nextjs-routes';
@@ -47,34 +45,6 @@ export const APP_ROUTES = {
         icon: Home,
         isPublic: true,
         description: 'Dashboard and overview',
-    },
-    projects: {
-        root: {
-            path: '/projects',
-            label: 'Projects',
-            icon: Frame,
-            description: 'Manage and view projects',
-            isMainNav: true,
-        },
-        create: {
-            path: '/projects/create',
-            label: 'Create Project',
-            description: 'Create a new project',
-            isMainNav: true,
-        },
-        manage: {
-            path: '/projects/manage',
-            label: 'Manage Projects',
-            description: 'Manage existing projects',
-            isMainNav: true,
-        },
-    },
-    analysis: {
-        path: '/analysis',
-        label: 'Analysis',
-        icon: PieChart,
-        description: 'Data analysis and visualization',
-        isMainNav: true,
     },
     files: {
         root: {

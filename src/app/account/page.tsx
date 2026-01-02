@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { APP_ROUTES } from '@/lib/appRoutes';
 import { useSession } from 'next-auth/react';
 import { AvatarUploadDialog } from '@/app/account/AvatarUploadDialog';
+import { Page } from '@/components/client/Page';
 
 export default function AccountPage() {
     const session = useSession();
@@ -14,8 +15,7 @@ export default function AccountPage() {
     }
 
     return (
-        <div className='flex flex-col items-center gap-4'>
-            <h1 className='text-2xl font-bold'>Account Management</h1>
+        <Page title='Account Management'>
             <div className='w-full max-w-md space-y-4 flex flex-col flex-gap-2'>
                 <Link href={APP_ROUTES.account.skillsAssessment.path}>
                     <Button className='w-full justify-start' variant='outline'>
@@ -33,6 +33,6 @@ export default function AccountPage() {
 
                 <AvatarUploadDialog triggerLabel='Upload Avatar' />
             </div>
-        </div>
+        </Page>
     );
 }

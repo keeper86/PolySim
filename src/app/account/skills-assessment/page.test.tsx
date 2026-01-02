@@ -114,6 +114,12 @@ describe('SkillsAssessmentPage', () => {
     it('adds a custom skill when using the input and button', async () => {
         render(<SkillsAssessmentPage />);
 
+        const langTrigger = screen.getByText('Languages').closest('button');
+        expect(langTrigger).toBeTruthy();
+        if (langTrigger) {
+            fireEvent.click(langTrigger);
+        }
+
         const input = screen.getByPlaceholderText('Add to Languages');
         fireEvent.change(input, { target: { value: 'MyCustomSkill' } });
 
@@ -127,6 +133,12 @@ describe('SkillsAssessmentPage', () => {
 
     it('updates the item level when clicking a star inside a skill item', async () => {
         render(<SkillsAssessmentPage />);
+
+        const langTrigger = screen.getByText('Languages').closest('button');
+        expect(langTrigger).toBeTruthy();
+        if (langTrigger) {
+            fireEvent.click(langTrigger);
+        }
 
         const skillText = screen.getByText('TypeScript');
         const skillContainer = skillText.closest('div');

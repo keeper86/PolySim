@@ -6,6 +6,7 @@ import 'swagger-ui-dist/swagger-ui.css';
 
 import { useLogger } from '../../hooks/useLogger';
 import './swagger-ui-overrides.css';
+import { Page } from '@/components/client/Page';
 
 // Found in https://github.com/Kaylem20201/frame-game/commit/f8e71bbc26e177c76925b8a66906a5995a53b7ac#diff-dd2369c54f926242a712ec1afb690ae4b3db7d28bb84aacb484f7957a922bde9
 //NOTE: As of 5/30/25, next in strict mode will put up an error due to Swagger using a deprecated unsafe component
@@ -29,5 +30,9 @@ export default function PageContent() {
             });
     }, [logger]);
 
-    return <div className='swagger-ui-wrapper' ref={swaggerRef} />;
+    return (
+        <Page title='Public API Documentation'>
+            <div className='swagger-ui-wrapper' ref={swaggerRef} />
+        </Page>
+    );
 }

@@ -2,11 +2,11 @@ import { Button } from '@/components/ui/button';
 import { APP_ROUTES } from '@/lib/appRoutes';
 import { Brain } from 'lucide-react';
 import Link from 'next/link';
+import { Page } from '@/components/client/Page';
 
 export default function FilesPage() {
     return (
-        <div className='space-y-4'>
-            <h1 className='text-2xl font-bold'>Network visualization demo</h1>
+        <Page title='Files'>
             <div className='w-full max-w-md space-y-4'>
                 <Link href={APP_ROUTES.files.visNetworkDemo.path}>
                     <Button className='w-full justify-start' variant='outline'>
@@ -15,6 +15,6 @@ export default function FilesPage() {
                     </Button>
                 </Link>
             </div>
-        </div>
+        </Page>
     );
 }
