@@ -11,7 +11,7 @@ The CLI tool, `polytrace`, is a C++ application for tracing file accesses using 
 ## Tech Stack
 
 - **Framework**: Next.js 15 with TypeScript and App Router
-- **Styling**: shadcn/ui for UI primitives
+- **Styling**: shadcn/ui for UI primitives, Tailwind CSS with DaisyUI available but being phased out
 - **State Management**: React Query for server state
 - **Authentication**: NextAuth.js with Keycloak provider
 - **API**: tRPC for type-safe API routes with OpenAPI generation for public routes

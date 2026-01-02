@@ -346,15 +346,15 @@ const defaultSkillsAssessment: SkillsAssessmentSchema = Object.freeze({
 });
 
 export const isDefaultSkill = (skillName: string) => {
-    const lowerCaseName = skillName.toLowerCase();
+    const skillNameLower = skillName.toLowerCase();
     for (const category of defaultSkillsAssessment.data) {
         for (const skill of category.skills) {
-            if (skill.name.toLowerCase() === lowerCaseName) {
+            if (skill.name.toLowerCase() === skillNameLower) {
                 return true;
             }
             if (skill.subSkills) {
                 for (const subSkill of skill.subSkills) {
-                    if (subSkill.name.toLowerCase() === lowerCaseName) {
+                    if (subSkill.name.toLowerCase() === skillNameLower) {
                         return true;
                     }
                 }

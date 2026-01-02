@@ -6,8 +6,8 @@ import { RatingScale } from '@/app/account/skills-assessment/components/RatingSc
 import { useSkillsAssessmentActions } from '@/app/account/skills-assessment/hooks/useSkillsAssessmentActions';
 import { Page } from '@/components/client/Page';
 import { SyncStatusIndicator } from '@/components/client/SyncStatusIndicator';
-import LoadingState from '@/components/client/LoadingState';
-import ErrorState from '@/components/client/ErrorState';
+import { LoadingState } from '@/components/client/LoadingState';
+import { ErrorState } from '@/components/client/ErrorState';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -48,20 +48,21 @@ export default function SkillsAssessmentPage() {
         return 'success';
     };
 
-    const publishSwitch = (
-        <>
-            {isPublishStatusLoading ? <Spinner className='h-5 w-5 text-muted-foreground' /> : null}
-            <Switch
-                id='publish-assessment'
-                checked={publishStatus}
-                onCheckedChange={() => mutateAssessmentPublishStatus.mutate(!publishStatus)}
-            />
-            <Label htmlFor='publish-assessment'>Publish</Label>
-        </>
-    );
-
     return (
-        <Page title='Skills Assessment' headerComponent={publishSwitch}>
+        <Page
+            title='Skills Assessment'
+            headerComponent={
+                <>
+                    {isPublishStatusLoading ? <Spinner className='h-5 w-5 text-muted-foreground' /> : null}
+                    <Switch
+                        id='publish-assessment'
+                        checked={publishStatus}
+                        onCheckedChange={() => mutateAssessmentPublishStatus.mutate(!publishStatus)}
+                    />
+                    <Label htmlFor='publish-assessment'>Publish</Label>
+                </>
+            }
+        >
             <RatingScale />
             <Accordion type='multiple'>
                 {assessment.data.map((categoryObj) => (

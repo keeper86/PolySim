@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
+import { cn } from '@/lib/utils';
 
 type LoadingStateProps = {
     message?: string;
@@ -14,7 +15,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
     className = '',
 }) => {
     return (
-        <div className={`flex items-center justify-center ${minHeight} ${className}`}>
+        <div className={cn('flex items-center justify-center', minHeight, className)}>
             <Card className='w-full max-w-md'>
                 <CardContent className='flex items-center justify-center gap-4 p-6'>
                     <Spinner className='h-8 w-8 text-muted-foreground' />
@@ -24,5 +25,3 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
         </div>
     );
 };
-
-export default LoadingState;

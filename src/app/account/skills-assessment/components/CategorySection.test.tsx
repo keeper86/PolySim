@@ -16,7 +16,7 @@ describe('CategorySection', () => {
         Object.values(mockActions).forEach((fn) => fn.mockClear());
     });
 
-    it('renders category title', () => {
+    it('does not render category title (rendered by parent Accordion)', () => {
         render(<CategorySection categoryObj={sampleCategory} actions={mockActions} />);
         expect(screen.queryByText(DEFAULT_CATEGORY_NAME)).not.toBeInTheDocument();
     });
