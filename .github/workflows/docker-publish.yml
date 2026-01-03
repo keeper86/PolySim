@@ -1,21 +1,20 @@
 name: Build and Publish Polysim to GHCR
 
 on:
-    push:
-        branches: [main]
     workflow_run:
-        workflows: ['Website CI']
+        workflows: ['Website CI', 'Tracer CI']
         types:
             - completed
         branches: [main]
+
+permissions:
+    contents: read
+    packages: write
 
 jobs:
     build-and-push:
         if: ${{ github.event.workflow_run.conclusion == 'success' }}
         runs-on: ubuntu-latest
-        permissions:
-            contents: read
-            packages: write
         steps:
             - name: Checkout repository
               uses: actions/checkout@v6
