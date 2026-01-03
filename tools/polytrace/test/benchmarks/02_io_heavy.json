@@ -10,5 +10,18 @@
     "iterations": 1,
     "threads": 4,
     "cpu_ms": 100
-  }
+  },
+  "plan": [
+    {
+
+    },
+    {
+      "bench_program": {
+        "mode": "cpu",
+        "iterations": 1,
+        "threads": 8,
+        "cpu_ms": 5000
+      }
+    }
+  ]
 }

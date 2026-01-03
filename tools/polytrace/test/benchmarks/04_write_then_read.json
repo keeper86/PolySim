@@ -1,6 +1,6 @@
 {
   "id": "04_write_then_read",
-  "repeats": 1,
+  "repeats": 2,
   "bench_program": {
     "mode": "write",
     "path": "test/pipeline",
