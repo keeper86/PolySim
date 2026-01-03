@@ -1,6 +1,6 @@
 {
-  "id": "08_mixed_phases",
-  "repeats": 1,
+  "id": "05_mixed_phases",
+  "repeats": 2,
   "bench_program": {
     "mode": "write",
     "path": "test/mixed",

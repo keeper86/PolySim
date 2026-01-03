@@ -1,5 +1,6 @@
 {
   "id": "03_many_small_files",
+  "repeats": 2,
   "bench_program": {
     "mode": "write",
     "path": "test/many_small",
@@ -9,5 +10,15 @@
     "iterations": 1,
     "threads": 1,
     "cpu_ms": 50
-  }
+  },
+  "plan": [
+    {
+
+    },
+    { 
+        "bench_program": { 
+            "mode": "create", 
+            "files": 500, 
+            "iterations": 1 } }
+  ]
 }
