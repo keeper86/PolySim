@@ -1,6 +1,8 @@
+
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useMemo, useState } from 'react';
 import { Page } from '@/components/client/Page';
 
 interface BenchmarkData {
@@ -16,81 +18,42 @@ interface BenchmarkData {
     nSamples: number;
   };
 }
-
-const benchmarks: BenchmarkData[] = [
-  {
-    id: '01_long_run',
-    title: 'Long-Running Write Operations',
-    description:
-      'Baseline benchmark: Write 8 files (131KB each) with 4 threads over 2 iterations plus a 5-second CPU burn phase. Tests sustained I/O with moderate CPU overhead.',
-    imageFile: '/benchmarks/benchmark_01_long_run.png',
-    stats: {
-      postprocMean: 1.59,
-      postprocStdev: 1.97,
-      incrTracingMean: 7.64,
-      incrTracingStdev: 10.38,
-      nSamples: 4,
-    },
-  },
-  {
-    id: '02_io_heavy',
-    title: 'I/O Heavy: Large File Writes',
-    description:
-      'Stress test: Write 4 large files (100MB each) with 4 threads at 65KB chunk size. Tests throughput-heavy I/O scenarios with high post-processing overhead due to large payloads.',
-    imageFile: '/benchmarks/benchmark_02_io_heavy.png',
-    stats: {
-      postprocMean: 20.43,
-      postprocStdev: 28.34,
-      incrTracingMean: 62.61,
-      incrTracingStdev: 87.50,
-      nSamples: 4,
-    },
-  },
-  {
-    id: '03_many_small_files',
-    title: 'Metadata Intensive: Many Small Files',
-    description:
-      'Extreme stress: Create 1000 small files (4KB each) with a single thread, then 500 create+unlink operations. Tests metadata overhead and fs-heavy scenarios.',
-    imageFile: '/benchmarks/benchmark_03_many_small_files.png',
-    stats: {
-      postprocMean: 10.50,
-      postprocStdev: 3.87,
-      incrTracingMean: 1116.08,
-      incrTracingStdev: 751.97,
-      nSamples: 4,
-    },
-  },
-  {
-    id: '04_write_then_read',
-    title: 'Read-Write Pipeline',
-    description:
-      'Pipeline test: Write 16 medium files (2MB each) with 2 threads, then read them back with 4 threads. Measures cache effects and read path overhead.',
-    imageFile: '/benchmarks/benchmark_04_write_then_read.png',
-    stats: {
-      postprocMean: 7.17,
-      postprocStdev: 1.77,
-      incrTracingMean: 214.22,
-      incrTracingStdev: 217.41,
-      nSamples: 4,
-    },
-  },
-  {
-    id: '05_mixed_phases',
-    title: 'Mixed Workload: I/O + Sleep + CPU',
-    description:
-      'Realistic scenario: Write phase (8 files, 4MB each) + sleep phase (1s × 10 iterations) + CPU-intensive phase (1s burn × 5 iterations). Captures diverse system behaviors.',
-    imageFile: '/benchmarks/benchmark_05_mixed_phases.png',
-    stats: {
-      postprocMean: 1.17,
-      postprocStdev: 1.18,
-      incrTracingMean: 170.79,
-      incrTracingStdev: 262.47,
-      nSamples: 6,
-    },
-  },
-];
-
 export default function BenchmarksPage() {
+  const [benchmarks, setBenchmarks] = useState<BenchmarkData[]>([]);
+  const [generatedDate, setGeneratedDate] = useState('');
+  const [hasRuntimePlot, setHasRuntimePlot] = useState(false);
+
+  useEffect(() => {
+    // Load data from single source of truth
+    fetch('/benchmarks/benchmarks.json')
+      .then((r) => r.json())
+      .then((data: BenchmarkData[]) => setBenchmarks(data))
+      .catch(() => setBenchmarks([]));
+
+    // Client-only date to avoid hydration mismatch
+    setGeneratedDate(new Date().toLocaleDateString());
+    // Check optional PoC plot presence
+    fetch('/benchmarks/benchmark_runtime_overhead.png', { method: 'HEAD' })
+      .then((res) => setHasRuntimePlot(res.ok))
+      .catch(() => setHasRuntimePlot(false));
+  }, []);
+
+  const postprocMeanMin = useMemo(() =>
+    benchmarks.length ? Math.min(...benchmarks.map(b => b.stats.postprocMean)) : 0
+  , [benchmarks]);
+  const postprocMeanMax = useMemo(() =>
+    benchmarks.length ? Math.max(...benchmarks.map(b => b.stats.postprocMean)) : 0
+  , [benchmarks]);
+  const postprocStdevMax = useMemo(() =>
+    benchmarks.length ? Math.max(...benchmarks.map(b => b.stats.postprocStdev)) : 0
+  , [benchmarks]);
+  const tracingMeanMin = useMemo(() =>
+    benchmarks.length ? Math.min(...benchmarks.map(b => b.stats.incrTracingMean)) : 0
+  , [benchmarks]);
+  const tracingMeanMax = useMemo(() =>
+    benchmarks.length ? Math.max(...benchmarks.map(b => b.stats.incrTracingMean)) : 0
+  , [benchmarks]);
+
   return (
     <Page title="Performance Analysis: Provenance Tracer Impact">
       <div className="space-y-12">
@@ -100,14 +63,14 @@ export default function BenchmarksPage() {
           scales dramatically with metadata-heavy operations and small file access patterns.
         </div>
 
-        {/* Key Findings */}
+        {/* Key Findings (computed from dataset) */}
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
             <h2 className="text-xl font-bold text-green-900 mb-2">✓ Post-Processing Overhead</h2>
             <p className="text-slate-700">
               The cost of hashing, deduplication, and zipping traced data is consistently low across all scenarios:
               <span className="block font-mono text-sm mt-2">
-                Mean: 1–21% • Max: 28% (I/O heavy)
+                Mean: {postprocMeanMin.toFixed(0)}–{postprocMeanMax.toFixed(0)}% • Max: {postprocStdevMax.toFixed(0)}%
               </span>
             </p>
           </div>
@@ -117,11 +80,52 @@ export default function BenchmarksPage() {
             <p className="text-slate-700">
               Tracing adds runtime cost that scales with syscall volume. Small files trigger high overhead:
               <span className="block font-mono text-sm mt-2">
-                Min: 7% (sustained I/O) • Max: 1116% (1000 small files)
+                Min: {tracingMeanMin.toFixed(0)}% • Max: {tracingMeanMax.toFixed(0)}%
               </span>
             </p>
           </div>
         </div>
+
+        {/* Overview Plots */}
+        <div className="space-y-8">
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="p-6 bg-gradient-to-r from-slate-50 to-slate-50">
+              <h2 className="text-2xl font-bold text-slate-900 mb-2"> Side-by-Side Comparison</h2>
+              <p className="text-slate-600">Direct comparison: Post-Processing vs Tracing overhead</p>
+            </div>
+            <div className="p-4">
+              <Image
+                src="/benchmarks/benchmark_comparison.png"
+                alt="Benchmark Comparison"
+                width={1400}
+                height={700}
+                className="w-full h-auto"
+                priority
+                unoptimized
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* PoC-Style Comparison (optional) */}
+        {hasRuntimePlot && (
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="p-6 bg-gradient-to-r from-slate-50 to-slate-50">
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">📉 Overhead vs Runtime (PoC)</h2>
+              <p className="text-slate-600">Log–log scatter with trend lines for little/much writing</p>
+            </div>
+            <div className="p-4">
+              <Image
+                src="/benchmarks/benchmark_runtime_overhead.png"
+                alt="Overhead versus runtime"
+                width={1200}
+                height={600}
+                className="w-full h-auto"
+                unoptimized
+              />
+            </div>
+          </div>
+        )}
 
         {/* Benchmark Details */}
         <div className="space-y-12">
@@ -178,6 +182,7 @@ export default function BenchmarksPage() {
                     height={600}
                     className="w-full h-auto"
                     priority={false}
+                    unoptimized
                   />
                 </div>
               </div>
@@ -252,7 +257,7 @@ export default function BenchmarksPage() {
 
         {/* Metadata */}
         <div className="text-center text-xs text-slate-500">
-          <p>Generated: {new Date().toLocaleDateString()} | PolySim Benchmark Suite v1.0</p>
+          <p>Generated: {generatedDate || '—'} | PolySim Benchmark Suite v1.0</p>
           {/* <p>Plots: Python matplotlib + gnuplot | Data: polytrace CLI</p> */}
         </div>
       </div>
