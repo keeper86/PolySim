@@ -96,7 +96,7 @@ export default function BenchmarksPage() {
       <div className="space-y-12">
         <div className="text-lg text-slate-700 max-w-3xl">
           This report evaluates the performance overhead of PolySim's file access tracing mechanism across diverse workloads.
-          Key findings: <span className="font-semibold">post-processing overhead remains low (&lt;21%)</span>, but tracing overhead 
+          Key findings: <span className="font-semibold">post-processing overhead remains low (&lt;21%)</span>, but tracing overhead
           scales dramatically with metadata-heavy operations and small file access patterns.
         </div>
 
@@ -105,7 +105,7 @@ export default function BenchmarksPage() {
           <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
             <h2 className="text-xl font-bold text-green-900 mb-2">✓ Post-Processing Overhead</h2>
             <p className="text-slate-700">
-              The cost of hashing, deduplication, and zipping traced data is consistently low across all scenarios: 
+              The cost of hashing, deduplication, and zipping traced data is consistently low across all scenarios:
               <span className="block font-mono text-sm mt-2">
                 Mean: 1–21% • Max: 28% (I/O heavy)
               </span>
