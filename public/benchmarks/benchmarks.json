@@ -1,0 +1,67 @@
+[
+  {
+    "id": "01_long_run",
+    "title": "Long-Running Write Operations",
+    "description": "Baseline benchmark: Write 8 files (131KB each) with 4 threads over 2 iterations plus a 5-second CPU burn phase. Tests sustained I/O with moderate CPU overhead.",
+    "imageFile": "/benchmarks/benchmark_01_long_run.png",
+    "stats": {
+      "postprocMean": 1.59,
+      "postprocStdev": 1.97,
+      "incrTracingMean": 7.64,
+      "incrTracingStdev": 10.38,
+      "nSamples": 4
+    }
+  },
+  {
+    "id": "02_io_heavy",
+    "title": "I/O Heavy: Large File Writes",
+    "description": "Stress test: Write 4 large files (100MB each) with 4 threads at 65KB chunk size. Tests throughput-heavy I/O scenarios with high post-processing overhead due to large payloads.",
+    "imageFile": "/benchmarks/benchmark_02_io_heavy.png",
+    "stats": {
+      "postprocMean": 20.43,
+      "postprocStdev": 28.34,
+      "incrTracingMean": 62.61,
+      "incrTracingStdev": 87.50,
+      "nSamples": 4
+    }
+  },
+  {
+    "id": "03_many_small_files",
+    "title": "Metadata Intensive: Many Small Files",
+    "description": "Extreme stress: Create 1000 small files (4KB each) with a single thread, then 500 create+unlink operations. Tests metadata overhead and fs-heavy scenarios.",
+    "imageFile": "/benchmarks/benchmark_03_many_small_files.png",
+    "stats": {
+      "postprocMean": 10.50,
+      "postprocStdev": 3.87,
+      "incrTracingMean": 1116.08,
+      "incrTracingStdev": 751.97,
+      "nSamples": 4
+    }
+  },
+  {
+    "id": "04_write_then_read",
+    "title": "Read-Write Pipeline",
+    "description": "Pipeline test: Write 16 medium files (2MB each) with 2 threads, then read them back with 4 threads. Measures cache effects and read path overhead.",
+    "imageFile": "/benchmarks/benchmark_04_write_then_read.png",
+    "stats": {
+      "postprocMean": 7.17,
+      "postprocStdev": 1.77,
+      "incrTracingMean": 214.22,
+      "incrTracingStdev": 217.41,
+      "nSamples": 4
+    }
+  },
+  {
+    "id": "05_mixed_phases",
+    "title": "Mixed Workload: I/O + Sleep + CPU",
+    "description": "Realistic scenario: Write phase (8 files, 4MB each) + sleep phase (1s × 10 iterations) + CPU-intensive phase (1s burn × 5 iterations). Captures diverse system behaviors.",
+    "imageFile": "/benchmarks/benchmark_05_mixed_phases.png",
+    "stats": {
+      "postprocMean": 1.17,
+      "postprocStdev": 1.18,
+      "incrTracingMean": 170.79,
+      "incrTracingStdev": 262.47,
+      "nSamples": 6
+    }
+  }
+]
