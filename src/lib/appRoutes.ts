@@ -10,6 +10,7 @@ import {
     Search,
     Upload,
     User,
+    BarChart3,
 } from 'lucide-react';
 import { PiGraphDuotone } from 'react-icons/pi';
 
@@ -89,6 +90,13 @@ export const APP_ROUTES = {
         label: 'API Docs',
         icon: AiTwotoneApi,
         description: 'Interactive API documentation',
+        isSecondaryNav: true,
+    },
+    benchmarks: {
+        path: '/benchmarks',
+        label: 'Benchmarks',
+        icon: BarChart3,
+        description: 'Performance analysis and benchmarks',
         isSecondaryNav: true,
     },
     pong: {
