@@ -9,6 +9,7 @@ import {
     KeyRound,
     Map,
     User,
+    Search,
 } from 'lucide-react';
 
 import type { Route } from 'nextjs-routes';
@@ -83,6 +84,13 @@ export const APP_ROUTES = {
             description: 'Manage and assess your skills',
             isSecondaryNav: true,
         },
+    },
+    query: {
+        path: '/query',
+        label: 'Query Page',
+        icon: Search,
+        isPublic: true,
+        description: 'Find your Program',
     },
     account: {
         root: {
