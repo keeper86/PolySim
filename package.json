@@ -4,7 +4,10 @@
     "private": true,
     "scripts": {
         "dev:only": "next dev --turbopack",
-        "dev": "npm run db:migrate:latest && npm run db:types:update && next dev --turbopack",
+        "db:migrate:latest": "knex migrate:latest --env development",
+        "db:seed": "knex seed:run --env development",
+        "db:types:update": "npm run <your-existing-types-command>",
+        "dev": "npm run db:migrate:latest && npm run db:seed && npm run db:types:update && next dev --turbopack",
         "build": "next build",
         "start": "next start",
         "lint:check": "eslint .",
