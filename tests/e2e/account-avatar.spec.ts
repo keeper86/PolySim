@@ -4,10 +4,15 @@ import authPath from './auth.path';
 test.use({ storageState: authPath });
 
 test.describe('Account Avatar E2E', () => {
-    // TODO(#184): Enable avatar upload test when running in CI environment
-    test.skip('uploads an avatar and shows the preview', async ({ page }) => {
-        await page.goto('/account/avatar');
+    test('uploads an avatar and shows the preview', async ({ page }) => {
+        await page.goto('/account');
         await page.waitForLoadState('networkidle');
+
+        // Open the avatar upload dialog
+        await page.getByRole('button', { name: /upload avatar/i }).click();
+
+        // Wait for dialog to be visible
+        await expect(page.getByRole('dialog')).toBeVisible();
 
         const input = page.locator('input[type="file"]');
 
@@ -22,10 +27,15 @@ test.describe('Account Avatar E2E', () => {
 
         await input.setInputFiles(filePayload);
 
-        const img = page.locator('img[alt="e2e-avatar.png"]');
-        await expect(img).toBeVisible({ timeout: 5000 });
+        // Preview should be visible in the Avatar component
+        const avatarImg = page.locator('[role="dialog"] img');
+        await expect(avatarImg).toBeVisible({ timeout: 5000 });
 
-        const toast = page.locator('text=Avatar uploaded successfully');
-        await expect(toast).toBeVisible({ timeout: 5000 });
+        // Click upload button
+        await page.getByRole('button', { name: /upload photo/i }).click();
+
+        // Success message appears in Alert component
+        const successAlert = page.getByText('Avatar uploaded successfully');
+        await expect(successAlert).toBeVisible({ timeout: 5000 });
     });
 });
