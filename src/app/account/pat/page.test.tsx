@@ -7,6 +7,7 @@ const mockRefetch = vi.fn();
 const mockListPATs = vi.fn((): PatToken[] => []);
 const mockCreatePAT = vi.fn();
 const mockRevokePAT = vi.fn();
+const mockDeletePAT = vi.fn();
 
 vi.mock('@/lib/trpc', () => ({
     useTRPC: vi.fn(() => ({
@@ -20,6 +21,9 @@ vi.mock('@/lib/trpc', () => ({
         },
         revokePAT: {
             mutate: mockRevokePAT,
+        },
+        deletePAT: {
+            mutate: mockDeletePAT,
         },
     })),
 }));
@@ -36,6 +40,15 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
     };
 });
 
+vi.mock('sonner', () => ({
+    toast: {
+        success: vi.fn(),
+    },
+}));
+
+import { toast } from 'sonner';
+const mockToastSuccess = toast.success as ReturnType<typeof vi.fn>;
+
 const mockConfirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
 
 const mockWriteText = vi.fn(() => Promise.resolve());
@@ -45,8 +58,6 @@ Object.defineProperty(navigator, 'clipboard', {
     },
     writable: true,
 });
-
-const mockAlert = vi.spyOn(window, 'alert').mockImplementation(() => {});
 
 describe('PatPage', () => {
     const existingTokens: PatToken[] = [
@@ -87,6 +98,7 @@ describe('PatPage', () => {
         const token1 = screen.getByText('Test Token 1').closest('li');
         expect(token1).toHaveTextContent(new RegExp(`Created ${createDate}`, 'i'));
         expect(token1).toHaveTextContent(new RegExp(`Expires ${expireDate}`, 'i'));
+        expect(token1).toHaveTextContent(/Expired/);
         expect(screen.getAllByRole('button', { name: /Delete/i }).length).toBe(2);
 
         const token2 = screen.getByText('API Key').closest('li');
@@ -137,7 +149,7 @@ describe('PatPage', () => {
         expect(mockWriteText).toHaveBeenCalledWith(NEW_TOKEN_VALUE);
 
         await waitFor(() => {
-            expect(mockAlert).toHaveBeenCalledWith('Token copied to clipboard');
+            expect(mockToastSuccess).toHaveBeenCalledWith('Token copied to clipboard');
         });
     });
 
@@ -161,7 +173,7 @@ describe('PatPage', () => {
         fireEvent.click(deleteButton);
 
         await waitFor(() => {
-            expect(mockRevokePAT).toHaveBeenCalledWith({ id: 'pat-2' });
+            expect(mockDeletePAT).toHaveBeenCalledWith({ id: 'pat-2' });
         });
 
         expect(mockRefetch).toHaveBeenCalled();
@@ -173,14 +185,14 @@ describe('PatPage', () => {
 
         render(<PatPage />);
 
-        mockRevokePAT.mockClear();
+        mockDeletePAT.mockClear();
         mockRefetch.mockClear();
 
         const [cancelButton] = screen.getAllByRole('button', { name: /Delete/i });
         fireEvent.click(cancelButton);
 
         await waitFor(() => {
-            expect(mockRevokePAT).not.toHaveBeenCalled();
+            expect(mockDeletePAT).not.toHaveBeenCalled();
             expect(mockRefetch).not.toHaveBeenCalled();
         });
     });

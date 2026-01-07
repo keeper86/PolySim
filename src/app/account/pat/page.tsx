@@ -14,8 +14,21 @@ import {
     DialogClose,
 } from '@/components/ui/dialog';
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { useTRPC, useTRPCClient } from '@/lib/trpc';
+import { TRPCError } from '@trpc/server';
+import { Badge } from '@/components/ui/badge';
 
+type PatToken = {
+    id: string;
+    name?: string | null;
+    created_at: string;
+    expires_at?: string | null;
+};
+
+const isExpired = (token: PatToken): boolean => {
+    return !!(token.expires_at && new Date(token.expires_at) <= new Date());
+};
 export default function PatPage() {
     const trpc = useTRPC();
     const trpcClient = useTRPCClient();
@@ -46,24 +59,14 @@ export default function PatPage() {
             }
             setNewName('');
         } catch (err) {
-            console.error(err);
-            alert('Could not create token');
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Could not create token', cause: err });
         } finally {
             setCreating(false);
         }
     }
 
-    async function deleteToken(id: string) {
-        const ok = confirm('Delete this personal access token? This cannot be undone.');
-        if (!ok) {
-            return;
-        }
-        await trpcClient.revokePAT.mutate({ id });
-        void refetch();
-    }
-
     function copyToClipboard(value: string) {
-        void navigator.clipboard?.writeText(value).then(() => alert('Token copied to clipboard'));
+        void navigator.clipboard?.writeText(value).then(() => toast.success('Token copied to clipboard'));
     }
 
     return (
@@ -135,15 +138,18 @@ export default function PatPage() {
                     <div className='text-sm text-muted-foreground'>No tokens yet.</div>
                 ) : (
                     <ul className='space-y-2'>
-                        {tokens.map((t) => (
-                            <li key={t.id} className='flex items-center justify-between rounded border p-3'>
+                        {tokens.map((token: PatToken) => (
+                            <li key={token.id} className='flex items-center justify-between rounded border p-3'>
                                 <div>
-                                    <div className='font-medium'>{t.name || 'Unnamed token'}</div>
+                                    <div className='flex items-center gap-2'>
+                                        <div className='font-medium'>{token.name || 'Unnamed token'}</div>
+                                        {isExpired(token) ? <Badge variant='destructive'>Expired</Badge> : null}
+                                    </div>
                                     <div className='text-xs text-muted-foreground'>
-                                        Created {new Date(t.created_at).toLocaleString()}
-                                        {t.expires_at ? (
+                                        Created {new Date(token.created_at).toLocaleString()}
+                                        {token.expires_at ? (
                                             <span>
-                                                {' · '}Expires {new Date(t.expires_at).toLocaleString()}
+                                                {' · '}Expires {new Date(token.expires_at).toLocaleString()}
                                             </span>
                                         ) : (
                                             <span>{' · '}Never expires</span>
@@ -151,7 +157,52 @@ export default function PatPage() {
                                     </div>
                                 </div>
                                 <div className='flex items-center gap-2'>
-                                    <Button variant='destructive' onClick={() => deleteToken(t.id)}>
+                                    <Button
+                                        variant={isExpired(token) ? 'ghost' : 'outline'}
+                                        disabled={isExpired(token)}
+                                        title={isExpired(token) ? 'Already revoked' : 'Revoke token'}
+                                        onClick={async () => {
+                                            const ok = confirm(
+                                                'Revoke this personal access token?\nIt will be immediately invalidated but remain listed.',
+                                            );
+                                            if (!ok) {
+                                                return;
+                                            }
+                                            try {
+                                                await trpcClient.revokePAT.mutate({ id: token.id });
+                                                void refetch();
+                                            } catch (err) {
+                                                throw new TRPCError({
+                                                    code: 'INTERNAL_SERVER_ERROR',
+                                                    message: 'Could not revoke token',
+                                                    cause: err,
+                                                });
+                                            }
+                                        }}
+                                    >
+                                        Revoke
+                                    </Button>
+                                    <Button
+                                        variant='destructive'
+                                        onClick={async () => {
+                                            const ok = confirm(
+                                                'Delete this personal access token? This cannot be undone.',
+                                            );
+                                            if (!ok) {
+                                                return;
+                                            }
+                                            try {
+                                                await trpcClient.deletePAT.mutate({ id: token.id });
+                                                void refetch();
+                                            } catch (err) {
+                                                throw new TRPCError({
+                                                    code: 'INTERNAL_SERVER_ERROR',
+                                                    message: 'Could not delete token',
+                                                    cause: err,
+                                                });
+                                            }
+                                        }}
+                                    >
                                         Delete
                                     </Button>
                                 </div>
