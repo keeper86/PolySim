@@ -17,6 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useTRPC, useTRPCClient } from '@/lib/trpc';
 import { TRPCError } from '@trpc/server';
+import { Badge } from '@/components/ui/badge';
 
 type PatToken = {
     id: string;
@@ -142,11 +143,7 @@ export default function PatPage() {
                                 <div>
                                     <div className='flex items-center gap-2'>
                                         <div className='font-medium'>{token.name || 'Unnamed token'}</div>
-                                        {isExpired(token) ? (
-                                            <span className='text-xs text-red-700 bg-red-100 px-2 py-0.5 rounded-full'>
-                                                Expired
-                                            </span>
-                                        ) : null}
+                                        {isExpired(token) ? <Badge variant='destructive'>Expired</Badge> : null}
                                     </div>
                                     <div className='text-xs text-muted-foreground'>
                                         Created {new Date(token.created_at).toLocaleString()}
