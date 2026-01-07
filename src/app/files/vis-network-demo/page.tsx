@@ -221,11 +221,11 @@ export default function VisNetworkDemoPage() {
                     <button
                         onClick={() => setControlsOpen(true)}
                         className='
-        p-2    
+        p-2
         text-sm
         rounded-full
-        hover:bg-gray-300 
-        transition-colors  
+        hover:bg-gray-300
+        transition-colors
         cursor-pointer
       '
                         aria-label='Open Controls'
@@ -256,7 +256,7 @@ export default function VisNetworkDemoPage() {
                     <button
                         onClick={() => setControlsOpen(false)}
                         className=' md:hidden
-      p-1 bg-gray-200 rounded-full hover:bg-gray-300 
+      p-1 bg-gray-200 rounded-full hover:bg-gray-300
       transition-colors cursor-pointer
     '
                         aria-label='Close Controls'

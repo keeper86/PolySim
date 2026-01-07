@@ -27,6 +27,9 @@ export default defineConfig([
             'tailwind.config.cjs',
             'playwright**',
             'tools/**',
+            'scripts/**',
+            'seeds/**',
+            'migrations/**',
         ],
     },
     {
