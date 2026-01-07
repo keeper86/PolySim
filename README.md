@@ -218,3 +218,11 @@ This project uses strict TypeScript for all application and API code. Key type c
 ### About `nextjs-routes`
 
 [`nextjs-routes`](https://github.com/blitz-js/nextjs-routes) is a codegen tool that provides type-safe route autocompletion and validation for Next.js App Router projects. On build, it scans your app directory and generates TypeScript types for all valid routes, ensuring that route paths used in your code are always correct and up-to-date. This eliminates hardcoded strings and prevents navigation errors at compile time! If you add new pages or change existing routes, simply rebuild the project to regenerate the types.
+
+### FAQ
+
+#### Docker
+
+- Limiting Docker resources on Windows: Configure WSL2 limits in `%USERPROFILE%\.wslconfig` (e.g., `memory`, `processors`). Details: https://dev.to/sarahcssiqueira/limiting-docker-memory-usage-on-windows-5c45
+- Limiting Docker resources on Linux: Adjust resource limits in Docker settings (Docker Desktop or native daemon settings) as needed.
+- Compose limits: Per\-service memory limits are configured in `docker-compose.development.yaml` under `deploy.resources.limits.memory`.
