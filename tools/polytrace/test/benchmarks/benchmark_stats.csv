@@ -1,0 +1,6 @@
+benchmark,postproc_pct_mean,postproc_pct_stdev,postproc_pct_min,postproc_pct_max,incr_tracing_mean,incr_tracing_stdev,incr_tracing_min,incr_tracing_max,n_samples
+01_long_run,1.59,1.97,0.20,2.98,7.64,10.38,0.30,14.98,2
+02_io_heavy,20.43,28.34,0.39,40.47,62.61,87.50,0.73,124.48,2
+03_many_small_files,10.50,3.87,6.87,13.90,1116.08,751.97,464.77,1825.80,4
+04_write_then_read,7.17,1.77,5.20,8.95,214.22,217.41,27.17,445.16,4
+05_mixed_phases,1.17,1.18,0.14,3.09,170.79,262.47,0.43,548.45,6
