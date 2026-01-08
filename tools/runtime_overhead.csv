@@ -1,8 +1,0 @@
-# runtime_ms,postproc_pct,tracing_pct,writing_level
-# Example rows (remove leading # to use):
-# 300,2.0,15.0,little
-# 600,1.2,9.0,little
-# 1200,0.8,4.0,little
-# 800,18.0,65.0,much
-# 3000,6.0,22.0,much
-# 9000,2.2,7.5,much
