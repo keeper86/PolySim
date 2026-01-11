@@ -20,6 +20,22 @@
       "bench_program": {
         "mode": "cpu",
         "iterations": 1,
+        "threads": 2,
+        "cpu_ms": 100
+      }
+    },
+    {
+      "bench_program": {
+        "mode": "cpu",
+        "iterations": 1,
+        "threads": 2,
+        "cpu_ms": 200
+      }
+    },
+    {
+      "bench_program": {
+        "mode": "cpu",
+        "iterations": 1,
         "threads": 4,
         "cpu_ms": 2000
       }

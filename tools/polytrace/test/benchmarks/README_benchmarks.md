@@ -40,6 +40,8 @@ cd tools/polytrace/test/benchmarks
 ./run_bench.sh
 ```
 
+**Note: The benchmarks may take a while ("long" CPU times for better estimation)**
+
 2) Extract compact CSV and scaling check:
 
 ```bash
