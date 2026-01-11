@@ -7,7 +7,7 @@ It generates log-log scatter plots of overhead (%) versus untraced runtime (ms)
 and overlays 1/x reference lines and category trend lines.
 
 Inputs:
-- tools/runtime_overhead.csv with rows:
+- tools/polytrace/test/benchmarks/runtime_overhead.csv with rows:
         runtime_ms,postproc_pct,tracing_pct,writing_level
     where writing_level is a categorical indicator like 'little' or 'much'.
 
@@ -69,7 +69,7 @@ def _plot_reference_inv_x(ax, x: np.ndarray, anchor_y: float, label: str, color:
     k = anchor_y * xm
     x_line = np.linspace(x.min(), x.max(), 200)
     y_line = k / x_line
-    ax.plot(x_line, y_line, color=color, linestyle='--', linewidth=linewidth, label=label)
+    ax.plot(x_line, y_line, color='black', linestyle='--', linewidth=linewidth, label=label)
 
 
 def _read_runtime_csv(csv_path: Path):
@@ -113,6 +113,7 @@ def create_scaling_plots_from_csv(output_dir: Path):
     Requires tools/runtime_overhead.csv. Produces two PNGs.
     """
     script_dir = Path(__file__).parent
+    project_root = script_dir.parent.parent.parent.parent
     csv_path = script_dir / 'runtime_overhead.csv'
     if not csv_path.exists():
         print(f"\nℹ runtime_overhead.csv not found at {csv_path}. Add data to enable scaling plots.")
@@ -146,7 +147,7 @@ def create_scaling_plots_from_csv(output_dir: Path):
 
     ax.set_xscale('log')
     ax.set_yscale('log')
-    ax.set_xlabel('untraced runtime (ms)')
+    ax.set_xlabel('CPU_ms')
     ax.set_ylabel('overhead (%)')
     ax.grid(True, which='both', axis='both', alpha=0.3)
     ax.legend(loc='upper right', framealpha=0.9)
@@ -191,7 +192,7 @@ def create_scaling_plots_from_csv(output_dir: Path):
 
     ax.set_xscale('log')
     ax.set_yscale('log')
-    ax.set_xlabel('untraced runtime (ms)')
+    ax.set_xlabel('CPU_ms')
     ax.set_ylabel('overhead (%)')
     ax.grid(True, which='both', axis='both', alpha=0.3)
     ax.legend(loc='upper right', framealpha=0.9)
@@ -211,11 +212,11 @@ def main():
     """Generate scaling plots only (discard legacy bar charts)."""
     # Determine output directory (public/benchmarks/)
     script_dir = Path(__file__).parent
-    project_root = script_dir.parent
+    project_root = script_dir.parent.parent.parent.parent
     output_dir = project_root / 'public' / 'benchmarks'
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"\n📊 Generating scaling plots (overhead vs wall-time)...")
+    print(f"\n Generating scaling plots (overhead vs wall-time)...")
     print(f"Output directory: {output_dir}\n")
 
     total_created = 0
@@ -233,10 +234,10 @@ def main():
         print(f"\nℹ Skipped legacy runtime-overhead scatter: {e}")
 
     if total_created == 0:
-        print("\n⚠ No plots were generated. Ensure tools/runtime_overhead.csv has data.")
+        print("\n No plots were generated. Ensure tools/runtime_overhead.csv has data.")
     else:
-        print(f"\n✨ Done! Generated {total_created} plot(s)")
-        print(f"\n💡 Plots are optimized for web display (1200x600px @ 100dpi)")
+        print(f"\n Done! Generated {total_created} plot(s)")
+        print(f"\n Plots are optimized for web display (1200x600px @ 100dpi)")
 
 
 def create_runtime_overhead_scatter(output_dir: Path):
@@ -255,7 +256,8 @@ def create_runtime_overhead_scatter(output_dir: Path):
     """
 
     script_dir = Path(__file__).parent
-    csv_path = script_dir / 'runtime_overhead.csv'
+    project_root = script_dir.parent.parent.parent.parent
+    csv_path = project_root / 'tools' / 'runtime_overhead.csv'
     if not csv_path.exists():
         print(f"\nℹ runtime_overhead.csv not found at {csv_path}. Create it to enable the PoC-style plot.")
         return 0
@@ -316,7 +318,7 @@ def create_runtime_overhead_scatter(output_dir: Path):
     output_path = output_dir / 'benchmark_runtime_overhead.png'
     plt.savefig(output_path, dpi=100, bbox_inches='tight', facecolor='white', edgecolor='none',
                 format='png', pil_kwargs={'optimize': True})
-    print(f"✓ Created: {output_path}")
+    print(f"Created: {output_path}")
     plt.close()
     return 1
 

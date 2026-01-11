@@ -3,7 +3,7 @@
 Extract runtime overhead data from benchmark results for scaling analysis.
 
 Reads tools/polytrace/test/benchmarks/results.csv and generates:
-1. tools/runtime_overhead.csv - formatted for plot_benchmarks.py
+1. tools/polytrace/test/benchmarks/runtime_overhead.csv - formatted for plot_benchmarks.py
 2. Console output with analysis of 1/x scaling behavior
 """
 
@@ -47,14 +47,14 @@ def main():
     script_dir = Path(__file__).parent
     
     # Input: benchmark results
-    results_csv = script_dir / 'polytrace' / 'test' / 'benchmarks' / 'results.csv'
+    results_csv = script_dir / 'results.csv'
     
     if not results_csv.exists():
-        print(f"❌ Results file not found: {results_csv}")
+        print(f"Results file not found: {results_csv}")
         print("   Run benchmarks first: cd tools/polytrace/test/benchmarks && ./run_bench.sh")
         return 1
     
-    # Output: runtime overhead CSV
+    # Output: runtime overhead CSV (kept alongside results for clarity)
     output_csv = script_dir / 'runtime_overhead.csv'
     
     # Parse results
@@ -89,14 +89,14 @@ def main():
                     'io_level': io_level
                 })
             except (ValueError, KeyError) as e:
-                print(f"⚠️  Skipping invalid row: {row} ({e})")
+                print(f"Skipping invalid row: {row} ({e})")
                 continue
     
     if not runs:
-        print("❌ No valid runs found in results.csv")
+        print("No valid runs found in results.csv")
         return 1
     
-    print(f"\n📊 Extracted {len(runs)} benchmark runs")
+    print(f"\n Extracted {len(runs)} benchmark runs")
     
     by_io_level = defaultdict(list)
     for run in runs:
@@ -115,7 +115,7 @@ def main():
                 run['benchmark_id']
             ])
     
-    print(f"✅ Created: {output_csv}")
+    print(f"Created: {output_csv}")
     
     print("\n" + "="*60)
     print("SCALING ANALYSIS: Overhead vs Runtime")
@@ -136,7 +136,7 @@ def main():
         print("\nPost-processing overhead:")
         for run in level_runs:
             product = run['runtime_ms'] * run['postproc_pct']
-            print(f"  Runtime: {run['runtime_ms']:>8.0f}ms | Overhead: {run['postproc_pct']:>6.2f}% | Product: {product:>10.0f}")
+            print(f"Runtime: {run['runtime_ms']:>8.0f}ms | Overhead: {run['postproc_pct']:>6.2f}% | Product: {product:>10.0f}")
         
         if len(postproc_products) >= 2:
             mean_product = statistics.mean(postproc_products)
@@ -147,7 +147,7 @@ def main():
         print("\nTracing overhead:")
         for run in level_runs:
             product = run['runtime_ms'] * run['tracing_pct']
-            print(f"  Runtime: {run['runtime_ms']:>8.0f}ms | Overhead: {run['tracing_pct']:>6.2f}% | Product: {product:>10.0f}")
+            print(f"Runtime: {run['runtime_ms']:>8.0f}ms | Overhead: {run['tracing_pct']:>6.2f}% | Product: {product:>10.0f}")
         
         if len(tracing_products) >= 2:
             mean_product = statistics.mean(tracing_products)

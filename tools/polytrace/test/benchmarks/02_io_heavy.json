@@ -9,7 +9,7 @@
     "write_size": 65536,
     "iterations": 1,
     "threads": 4,
-    "cpu_ms": 100
+    "cpu_ms": 500
   },
   "plan": [
     {
@@ -19,8 +19,24 @@
       "bench_program": {
         "mode": "cpu",
         "iterations": 1,
+        "threads": 4,
+        "cpu_ms": 2000
+      }
+    },
+    {
+      "bench_program": {
+        "mode": "cpu",
+        "iterations": 1,
         "threads": 8,
-        "cpu_ms": 5000
+        "cpu_ms": 10000
+      }
+    },
+    {
+      "bench_program": {
+        "mode": "cpu",
+        "iterations": 1,
+        "threads": 8,
+        "cpu_ms": 30000
       }
     }
   ]
