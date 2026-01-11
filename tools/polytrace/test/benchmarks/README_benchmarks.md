@@ -18,7 +18,7 @@ python3 -m pip install matplotlib numpy
 
 ## File Paths
 - Input (Benchmark results): tools/polytrace/test/benchmarks/results.csv
-- Derived input for plots: tools/runtime_overhead.csv
+- Derived input for plots: tools/polytrace/test/benchmarks/runtime_overhead.csv
 - Output (Plots for web): public/benchmarks/*.png
 
 ## CSV Formats
@@ -32,19 +32,26 @@ python3 -m pip install matplotlib numpy
     - `tracing_pct`: ((wall_ms_traced - wall_ms_untraced) / wall_ms_untraced) * 100
     - `writing_level`: heuristic for I/O intensity: "little" or "much"
 
-## Steps: Extraction and Plotting
-1) Extract CSV from benchmark results:
+## Steps: Run, Extract, Plot
+1) Run benchmarks (creates results.csv):
 
 ```bash
-python3 tools/extract_runtime_overhead.py
+cd tools/polytrace/test/benchmarks
+./run_bench.sh
 ```
 
-Result: tools/runtime_overhead.csv is generated and a brief 1/x analysis (product check) is printed to the console.
-
-2) Generate plots:
+2) Extract compact CSV and scaling check:
 
 ```bash
-python3 tools/plot_benchmarks.py
+python3 tools/polytrace/test/benchmarks/extract_runtime_overhead.py
+```
+
+Result: tools/polytrace/test/benchmarks/runtime_overhead.csv is generated and a brief 1/x analysis (product check) is printed to the console.
+
+3) Generate plots:
+
+```bash
+python3 tools/polytrace/test/benchmarks/plot_benchmarks.py
 ```
 
 Result (in public/benchmarks/):

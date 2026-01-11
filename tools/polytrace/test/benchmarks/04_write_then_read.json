@@ -1,6 +1,6 @@
 {
   "id": "04_write_then_read",
-  "repeats": 2,
+  "repeats": 1,
   "bench_program": {
     "mode": "write",
     "path": "test/pipeline",
@@ -9,7 +9,7 @@
     "write_size": 8192,
     "iterations": 1,
     "threads": 2,
-    "cpu_ms": 150
+    "cpu_ms": 500
   },
     "plan": [
     {
@@ -17,8 +17,25 @@
     },
     {   
         "bench_program": { 
-            "mode": "read", 
+            "mode": "read",
+            "cpu_ms": 200,
             "threads": 4, 
+            "iterations": 1 
+        } 
+    },
+    {   
+        "bench_program": { 
+            "mode": "cpu",
+            "cpu_ms": 2000,
+            "threads": 4, 
+            "iterations": 1 
+        } 
+    },
+    {   
+        "bench_program": { 
+            "mode": "cpu",
+            "cpu_ms": 10000,
+            "threads": 8, 
             "iterations": 1 
         } 
     }

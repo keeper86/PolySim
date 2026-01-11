@@ -1,6 +1,6 @@
 {
   "id": "05_mixed_phases",
-  "repeats": 2,
+  "repeats": 1,
   "bench_program": {
     "mode": "write",
     "path": "test/mixed",
@@ -10,7 +10,7 @@
     "iterations": 2,
     "threads": 2,
     "sleep_ms": 50,
-    "cpu_ms": 200
+    "cpu_ms": 1000
   },
   "plan": [
     {
@@ -25,9 +25,26 @@
       },
     { 
       "bench_program": { 
-        "mode": "cpu", 
-        "iterations": 5, 
-        "cpu_ms": 1000 
+        "mode": "cpu",
+        "threads": 4,
+        "iterations": 1, 
+        "cpu_ms": 2000 
+        } 
+      },
+    { 
+      "bench_program": { 
+        "mode": "cpu",
+        "threads": 8,
+        "iterations": 1, 
+        "cpu_ms": 10000 
+        } 
+      },
+    { 
+      "bench_program": { 
+        "mode": "cpu",
+        "threads": 8,
+        "iterations": 1, 
+        "cpu_ms": 30000 
         } 
       }
   ]
