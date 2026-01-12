@@ -22,7 +22,13 @@ static bool process_exists(pid_t pid) {
 static int run_fs_usage(pid_t target_pid,
                         const std::string& output_path,
                         int duration_seconds) {
-    // Open output file
+
+
+    if (!process_exists(target_pid)) {
+        std::cerr << "Target process does not exist.\n";
+        return 1;
+    }
+
     int fd = open(output_path.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0644);
     if (fd < 0) {
         std::cerr << "open failed: " << std::strerror(errno) << "\n";
@@ -39,16 +45,27 @@ static int run_fs_usage(pid_t target_pid,
     posix_spawn_file_actions_addclose(&actions, fd);
 
     std::string pid_str = std::to_string(target_pid);
-    std::string duration_str = std::to_string(duration_seconds);
-    std::vector<std::string> arg_strs = {
-        "fs_usage",
-        "-w",
-        "-f", "filesys",
-        "-t", duration_str,
-        pid_str
-    };
+    std::vector<std::string> arg_strs;
 
-    // Convert to char* argv
+    if (duration_seconds <= 0) {
+        arg_strs = {
+            "fs_usage",
+            "-w",
+            "-f", "filesys",
+            pid_str
+        };
+    }
+    else {
+        std::string duration_str = std::to_string(duration_seconds);
+        arg_strs = {
+            "fs_usage",
+            "-w",
+            "-f", "filesys",
+            "-t", duration_str,
+            pid_str
+        };
+    }
+
     std::vector<char*> argv;
     argv.reserve(arg_strs.size() + 1);
     for (auto& s : arg_strs) argv.push_back(const_cast<char*>(s.c_str()));
@@ -65,36 +82,36 @@ static int run_fs_usage(pid_t target_pid,
     }
 
     int status = 0;
-    if (waitpid(child_pid, &status, 0) < 0) {
-        std::cerr << "waitpid failed: " << std::strerror(errno) << "\n";
-        return 1;
+    if (duration_seconds <= 0) {
+        while (process_exists(target_pid)) {
+            usleep(100 * 1000); // 100ms polling
+        }
+        kill(child_pid, SIGTERM);
+        std::cout << "Target process exited; terminating fs_usage.\n";
     }
-    return 0;
-
-    // Otherwise, run until target process exits, then stop fs_usage cleanly.
-    while (process_exists(target_pid)) {
-        usleep(100 * 1000); // 100ms polling
-    }
-
-    // Ask fs_usage to stop (SIGINT behaves like Ctrl+C)
-    kill(child_pid, SIGINT);
 
     waitpid(child_pid, &status, 0);
     return 0;
 }
 
 int main(int argc, char** argv) {
-    if (argc != 4) {
+    if (argc == 3  || argc == 4){
+        
+        pid_t target_pid = static_cast<pid_t>(std::stoi(argv[1]));
+        std::string out = argv[2];
+        int seconds = (argc >= 4) ? std::stoi(argv[3]) : 0;
+
+        return run_fs_usage(target_pid, out, seconds);
+
+    }
+    else {
         std::cerr << "Usage:\n"
                   << "  " << argv[0] << " <target_pid> <output.txt> [seconds]\n"
                   << "Examples:\n"
+                  << "  " << argv[0] << " 12345 /tmp/fs.txt      # run until process exits\n"
                   << "  " << argv[0] << " 12345 /tmp/fs.txt 10   # run 10 seconds\n";
         return 1;
     }
 
-    pid_t target_pid = static_cast<pid_t>(std::stoi(argv[1]));
-    std::string out = argv[2];
-    int seconds = (argc >= 4) ? std::stoi(argv[3]) : 0;
 
-    return run_fs_usage(target_pid, out, seconds);
 }
