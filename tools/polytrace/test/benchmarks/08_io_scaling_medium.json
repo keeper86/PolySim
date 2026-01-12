@@ -1,0 +1,42 @@
+{
+  "id": "08_io_scaling_medium",
+  "repeats": 3,
+  "bench_program": {
+    "mode": "write",
+    "path": "test/io_scaling_medium",
+    "files": 5,
+    "file_size": 1048576,
+    "write_size": 8192,
+    "iterations": 1,
+    "threads": 2,
+    "cpu_ms": 0
+  },
+  "plan": [
+    {},
+    { 
+      "bench_program": { 
+        "files": 10
+      } 
+    },
+    { 
+      "bench_program": { 
+        "files": 25
+      } 
+    },
+    { 
+      "bench_program": { 
+        "files": 50
+      } 
+    },
+    { 
+      "bench_program": { 
+        "files": 100
+      } 
+    },
+    { 
+      "bench_program": { 
+        "files": 200
+      } 
+    }
+  ]
+}

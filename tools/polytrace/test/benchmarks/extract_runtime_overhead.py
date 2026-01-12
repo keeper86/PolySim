@@ -34,8 +34,18 @@ def classify_io_level(benchmark_id: str) -> str:
     # - 03_many_small_files: extreme metadata operations (1000+ files)
     # - 04_write_then_read: moderate I/O (16 files, 2MB each)
     # - 05_mixed_phases: mixed workload (8 files, 4MB each + CPU)
+    # - 06_pure_cpu: CPU only (no I/O)
+    # - 07_io_scaling_small: I/O scaling (small files, 4KB)
+    # - 08_io_scaling_medium: I/O scaling (medium files, 1MB)
+    # - 09_io_scaling_large: I/O scaling (large files, 10MB)
     
-    heavy_io = {'02_io_heavy', '03_many_small_files', '04_write_then_read'}
+    # Pure CPU benchmarks
+    if '06_pure_cpu' in benchmark_id:
+        return 'none'
+    
+    # Heavy I/O benchmarks
+    heavy_io = {'02_io_heavy', '03_many_small_files', '04_write_then_read',
+                '07_io_scaling_small', '08_io_scaling_medium', '09_io_scaling_large'}
     
     for bench_id in heavy_io:
         if bench_id in benchmark_id:

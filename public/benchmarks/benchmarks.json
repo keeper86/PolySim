@@ -63,5 +63,57 @@
             "incrTracingStdev": 262.47,
             "nSamples": 6
         }
+    },
+    {
+        "id": "06_pure_cpu",
+        "title": "Pure CPU: No I/O Overhead Baseline",
+        "description": "CPU-only benchmark: Varying CPU burn times (100ms to 30s) with different thread counts (1-8 threads). Validates that polytrace overhead is ~0% for pure computation without any I/O operations.",
+        "imageFile": "/benchmarks/cpu_only_overhead.png",
+        "stats": {
+            "postprocMean": 0,
+            "postprocStdev": 0,
+            "incrTracingMean": 0,
+            "incrTracingStdev": 0,
+            "nSamples": 0
+        }
+    },
+    {
+        "id": "07_io_scaling_small",
+        "title": "I/O Scaling: Small Files (4KB)",
+        "description": "I/O scaling benchmark: Write 10-2000 small files (4KB each) with single thread. Measures overhead growth as a function of file count for small metadata-intensive operations.",
+        "imageFile": "/benchmarks/io_scaling_by_filecount.png",
+        "stats": {
+            "postprocMean": 0,
+            "postprocStdev": 0,
+            "incrTracingMean": 0,
+            "incrTracingStdev": 0,
+            "nSamples": 0
+        }
+    },
+    {
+        "id": "08_io_scaling_medium",
+        "title": "I/O Scaling: Medium Files (1MB)",
+        "description": "I/O scaling benchmark: Write 5-200 medium files (1MB each) with 2 threads. Measures overhead scaling for typical application file sizes.",
+        "imageFile": "/benchmarks/io_scaling_by_filecount.png",
+        "stats": {
+            "postprocMean": 0,
+            "postprocStdev": 0,
+            "incrTracingMean": 0,
+            "incrTracingStdev": 0,
+            "nSamples": 0
+        }
+    },
+    {
+        "id": "09_io_scaling_large",
+        "title": "I/O Scaling: Large Files (10MB)",
+        "description": "I/O scaling benchmark: Write 2-50 large files (10MB each) with 4 threads. Measures overhead for throughput-heavy workloads.",
+        "imageFile": "/benchmarks/io_scaling_by_filecount.png",
+        "stats": {
+            "postprocMean": 0,
+            "postprocStdev": 0,
+            "incrTracingMean": 0,
+            "incrTracingStdev": 0,
+            "nSamples": 0
+        }
     }
 ]

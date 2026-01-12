@@ -1,0 +1,47 @@
+{
+  "id": "07_io_scaling_small",
+  "repeats": 3,
+  "bench_program": {
+    "mode": "write",
+    "path": "test/io_scaling_small",
+    "files": 10,
+    "file_size": 4096,
+    "write_size": 4096,
+    "iterations": 1,
+    "threads": 1,
+    "cpu_ms": 0
+  },
+  "plan": [
+    {},
+    { 
+      "bench_program": { 
+        "files": 50
+      } 
+    },
+    { 
+      "bench_program": { 
+        "files": 100
+      } 
+    },
+    { 
+      "bench_program": { 
+        "files": 250
+      } 
+    },
+    { 
+      "bench_program": { 
+        "files": 500
+      } 
+    },
+    { 
+      "bench_program": { 
+        "files": 1000
+      } 
+    },
+    { 
+      "bench_program": { 
+        "files": 2000
+      } 
+    }
+  ]
+}
