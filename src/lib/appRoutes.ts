@@ -9,6 +9,7 @@ import {
     KeyRound,
     Map,
     User,
+    BarChart3,
 } from 'lucide-react';
 
 import type { Route } from 'nextjs-routes';
@@ -66,6 +67,13 @@ export const APP_ROUTES = {
         label: 'API Docs',
         icon: BookOpen,
         description: 'Interactive API documentation',
+        isSecondaryNav: true,
+    },
+    benchmarks: {
+        path: '/benchmarks',
+        label: 'Benchmarks',
+        icon: BarChart3,
+        description: 'Performance analysis and benchmarks',
         isSecondaryNav: true,
     },
     pong: {

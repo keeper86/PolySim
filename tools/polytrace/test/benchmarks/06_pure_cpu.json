@@ -1,0 +1,61 @@
+{
+  "id": "06_pure_cpu",
+  "repeats": 3,
+  "bench_program": {
+    "mode": "cpu",
+    "threads": 1,
+    "iterations": 1,
+    "cpu_ms": 100
+  },
+  "plan": [
+    {},
+    { 
+      "bench_program": { 
+        "mode": "cpu",
+        "threads": 2,
+        "iterations": 1, 
+        "cpu_ms": 500
+      } 
+    },
+    { 
+      "bench_program": { 
+        "mode": "cpu",
+        "threads": 4,
+        "iterations": 1, 
+        "cpu_ms": 1000
+      } 
+    },
+    { 
+      "bench_program": { 
+        "mode": "cpu",
+        "threads": 4,
+        "iterations": 1, 
+        "cpu_ms": 2000
+      } 
+    },
+    { 
+      "bench_program": { 
+        "mode": "cpu",
+        "threads": 8,
+        "iterations": 1, 
+        "cpu_ms": 5000
+      } 
+    },
+    { 
+      "bench_program": { 
+        "mode": "cpu",
+        "threads": 8,
+        "iterations": 1, 
+        "cpu_ms": 10000
+      } 
+    },
+    { 
+      "bench_program": { 
+        "mode": "cpu",
+        "threads": 8,
+        "iterations": 1, 
+        "cpu_ms": 30000
+      } 
+    }
+  ]
+}
