@@ -4,9 +4,9 @@
     "private": true,
     "scripts": {
         "dev:only": "next dev --turbopack",
-        "db:migrate:latest": "knex migrate:latest --env development",
+        "db:migrate:latest": "npx knex migrate:latest",
         "db:seed": "knex seed:run --env development",
-        "db:types:update": "npm run <your-existing-types-command>",
+        "db:types:update": "node ./tools/db_types.cjs update",
         "dev": "npm run db:migrate:latest && npm run db:seed && npm run db:types:update && next dev --turbopack",
         "build": "next build",
         "start": "next start",
@@ -26,10 +26,8 @@
         "test:e2e:debug": "playwright test --debug",
         "test:all": "npm run format && npm run lint && npm run build && npm run test",
         "db:migrate:make": "npx knex migrate:make",
-        "db:migrate:latest": "npx knex migrate:latest",
         "db:migrate:rollback": "npx knex migrate:rollback",
         "db:types:check": "node ./tools/db_types.cjs check",
-        "db:types:update": "node ./tools/db_types.cjs update",
         "db:waitFor": "npx wait-on --timeout=60000 tcp:localhost:5432",
         "generate-keycloak-realm": "set -a && . ./.env && set +a && envsubst < ./keycloak/data/template.json > ./keycloak/data/import/initialRealm.json",
         "svg:icons": "node ./tools/svg-to-react-icons.cjs"

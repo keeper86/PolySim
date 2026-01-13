@@ -1,0 +1,64 @@
+{
+  "activity": {
+    "endedAt": 1767953774050,
+    "id": "7959bf505209182d7df0b07c13289db87c32dc2979e9ca466308798ab5dcb558",
+    "label": "Run /bin/sh",
+    "metadata": {
+      "command": [
+        "/bin/sh",
+        "-c",
+        "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/complex_sysread.sh"
+      ]
+    },
+    "startedAt": 1767953764893
+  },
+  "entities": [
+    {
+      "createdAt": 1738674881999,
+      "id": "a6f559e00b69a4aa4d8cb607be18d9386c5aee55c509e2c075549dcf00e00fc7",
+      "label": "sh",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {
+              "execve_argv": [
+                "/bin/sh",
+                "-c",
+                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/complex_sysread.sh"
+              ]
+            },
+            "pid": 8406,
+            "role": "process"
+          }
+        ],
+        "path": "/bin/sh"
+      },
+      "role": "process"
+    },
+    {
+      "createdAt": 1765224003738,
+      "id": "2348e46a42f90a023496da18160b69bb51c709ef341ec391f73f4c92cd0a8054",
+      "label": "complex_sysread.sh",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {
+              "execve_argv": [
+                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/complex_sysread.sh"
+              ]
+            },
+            "pid": 8407,
+            "role": "process"
+          },
+          {
+            "metadata": {},
+            "pid": 8407,
+            "role": "input"
+          }
+        ],
+        "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/complex_sysread.sh"
+      },
+      "role": "process"
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "activity": {
+    "endedAt": 1767953764609,
+    "id": "27a61b149a9d7a5d630b4c2563d7b4dcab6f0c79255ee55c7218d78ef492b172",
+    "label": "Run /bin/sh",
+    "metadata": {
+      "command": [
+        "/bin/sh",
+        "-c",
+        "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/fork_exec.sh"
+      ]
+    },
+    "startedAt": 1767953764548
+  },
+  "entities": [
+    {
+      "createdAt": 1765224003738,
+      "id": "cef18c302516dadd1017dcf647b6c3e8784cfc788cba85eb0a7cdc08d946d012",
+      "label": "fork_exec.sh",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {
+              "execve_argv": [
+                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/fork_exec.sh"
+              ]
+            },
+            "pid": 8356,
+            "role": "process"
+          },
+          {
+            "metadata": {},
+            "pid": 8356,
+            "role": "input"
+          }
+        ],
+        "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/fork_exec.sh"
+      },
+      "role": "process"
+    },
+    {
+      "createdAt": 1738674881999,
+      "id": "a6f559e00b69a4aa4d8cb607be18d9386c5aee55c509e2c075549dcf00e00fc7",
+      "label": "sh",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {
+              "execve_argv": [
+                "/bin/sh",
+                "-c",
+                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/fork_exec.sh"
+              ]
+            },
+            "pid": 8355,
+            "role": "process"
+          }
+        ],
+        "path": "/bin/sh"
+      },
+      "role": "process"
+    },
+    {
+      "createdAt": 1767953764590,
+      "id": "f6fdb10c436a3dd6285ff7ad71e906e311f701a3dec9a3a1e8de4a609a35751d",
+      "label": "fork_exec_out",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {},
+            "pid": 8361,
+            "role": "output"
+          }
+        ],
+        "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/tmp/fork_exec_out"
+      },
+      "role": "output"
+    }
+  ]
+}
