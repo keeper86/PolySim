@@ -1,23 +1,22 @@
 'use client';
 
-import React from 'react';
 import { Page } from '@/components/client/Page';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
     Dialog,
+    DialogClose,
     DialogContent,
-    DialogTitle,
     DialogDescription,
     DialogFooter,
     DialogHeader,
-    DialogClose,
+    DialogTitle,
 } from '@/components/ui/dialog';
-import { useQuery } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
 import { useTRPC, useTRPCClient } from '@/lib/trpc';
-import { TRPCError } from '@trpc/server';
-import { Badge } from '@/components/ui/badge';
+import { useQuery } from '@tanstack/react-query';
+import React from 'react';
+import { toast } from 'sonner';
 
 type PatToken = {
     id: string;
