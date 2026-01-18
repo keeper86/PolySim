@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "dev:only": "next dev --turbopack",
-        "dev": "npm run db:migrate:latest && npm run db:types:update && next dev --turbopack",
+        "dev": "npm run db:migrate:latest && npm run db:seed && npm run db:types:update && next dev --turbopack",
         "build": "next build",
         "start": "next start",
         "lint:check": "eslint .",
@@ -25,6 +25,7 @@
         "db:migrate:make": "npx knex migrate:make",
         "db:migrate:latest": "npx knex migrate:latest",
         "db:migrate:rollback": "npx knex migrate:rollback",
+        "db:seed": "knex seed:run --env development",
         "db:types:check": "node ./tools/db_types.cjs check",
         "db:types:update": "node ./tools/db_types.cjs update",
         "db:waitFor": "npx wait-on --timeout=60000 tcp:localhost:5432",
