@@ -74,18 +74,26 @@ export const activityUpload = () => {
                     `Uploading (${userId}) activity data: ${JSON.stringify(input)}`,
                 );
 
-                const outputEntities = input.entities.filter((e) => e.role === 'output');
+                const entitiesById: Record<string, Entity> = {} as Record<string, Entity>;
+                input.entities.forEach((e) => {
+                    if (!entitiesById[e.id]) {
+                        entitiesById[e.id] = e;
+                    }
+                });
+                const deduplicatedEntities = Object.values(entitiesById) as Entity[];
+
+                const outputEntities = deduplicatedEntities.filter((e) => e.role === 'output');
                 if (outputEntities.length === 0) {
                     throw new TRPCError({ message: 'At least one output entity is required', code: 'BAD_REQUEST' });
                 }
 
-                const processes = input.entities.filter((e) => e.role === 'process');
-                if (processes.length === 0 || processes.length > 1) {
-                    throw new TRPCError({ message: 'Exactly one process entity is required', code: 'BAD_REQUEST' });
+                const processes = deduplicatedEntities.filter((e) => e.role === 'process');
+                if (processes.length === 0) {
+                    throw new TRPCError({ message: 'At least one process entity is required', code: 'BAD_REQUEST' });
                 }
                 const [process] = processes;
 
-                const inputEntities = input.entities.filter((e) => e.role === 'input');
+                const inputEntities = deduplicatedEntities.filter((e) => e.role === 'input');
 
                 await db.transaction(async (trx) => {
                     const activity = {
