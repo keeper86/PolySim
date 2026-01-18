@@ -25,6 +25,17 @@ describe('personal access token controller (integration)', () => {
 
         const patsAfter = await caller.listPATs({});
         const stillThere = patsAfter.find((p) => String(p.id) === String(found!.id));
-        expect(stillThere).toBeUndefined();
+        expect(stillThere).toBeDefined();
+        expect(stillThere).toHaveProperty('expires_at');
+
+        const expiresAt = stillThere!.expires_at as Date | null;
+        expect(expiresAt).not.toBeNull();
+        expect(new Date(expiresAt as Date).getTime()).toBeLessThanOrEqual(Date.now());
+
+        const deleteResult = await caller.deletePAT({ id: String(found!.id) });
+        expect(deleteResult).toHaveProperty('success', true);
+        const patsFinal = await caller.listPATs({});
+        const gone = patsFinal.find((p) => String(p.id) === String(found!.id));
+        expect(gone).toBeUndefined();
     });
 });
