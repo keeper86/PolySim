@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 const path = require('path');
+const getDevAdminUserFromInitialDevRealm = require('./00_upsert_keycloak_user').getDevAdminUserFromInitialDevRealm;
 
 const fixtureDir = 'tools/polytrace/test/fixtures/tmp/prov_upload_input';
 let provInputs = [];
@@ -39,6 +40,10 @@ if (fs.existsSync(fixtureDir)) {
 }
 
 exports.seed = async function (knex) {
+    if (process.env.NODE_ENV === 'production') {
+        console.error('Skipping prov upload seed in production. Something went wrong!');
+        return;
+    }
     const counts = {
         entities: 0,
         activities: 0,
@@ -49,11 +54,11 @@ exports.seed = async function (knex) {
         wasAttributed: 0,
     };
     for (const provInput of provInputs) {
-        const entitiesById = new Map();
-        for (const e of provInput.entities) {
-            if (!entitiesById.has(e.id)) entitiesById.set(e.id, e);
+        const entitiesById = {};
+        for (const entity of provInput.entities) {
+            if (!entitiesById.hasOwnProperty(entity.id)) entitiesById[entity.id] = entity;
         }
-        const entities = Array.from(entitiesById.values());
+        const entities = Object.values(entitiesById);
 
         const outputEntities = entities.filter((e) => e.role === 'output');
         if (outputEntities.length === 0) {
@@ -66,7 +71,7 @@ exports.seed = async function (knex) {
         const [process] = processes;
         const inputEntities = entities.filter((e) => e.role === 'input');
 
-        const userId = uuidv4();
+        const userId = (await getDevAdminUserFromInitialDevRealm()).id;
 
         await knex.transaction(async (trx) => {
             const activityRow = {
@@ -180,5 +185,9 @@ exports.seed = async function (knex) {
         });
     }
 
-    console.log('Seeded prov upload. Counts:', counts);
+    const absoluteCount = Object.values(counts).reduce((a, b) => a + b, 0);
+    if (absoluteCount !== 0) {
+        console.log('Seeded prov upload. Counts:', counts);
+        return;
+    }
 };

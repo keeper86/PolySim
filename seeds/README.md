@@ -20,10 +20,9 @@ The dev database is seeded using polytrace-generated PROV fixtures, providing re
 ```
 
 This generates PROV fixture files under:
-      tools/polytrace/test/fixtures/tmp/prov_upload_input/
+tools/polytrace/test/fixtures/tmp/prov_upload_input/
 
 Only re-run when polytrace test data changes.
-
 
 ## Verification
 
@@ -36,6 +35,7 @@ How to verify auto-seeding works
 3. (optional) VS code -> Extension -> Install Database Client JDBC (seeded data will be visible immediately after running)
 
 ### Useful commands
+
 npm run dev # migrate + seed + start app
 npm run dev:only # start app without touching the DB
 npm run db:seed # re-seed dev database manually
