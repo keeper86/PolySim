@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
-import PatPage from './page';
-import type { PatToken } from 'src/server/controller/pAccessToken.ts';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import type { PatToken } from 'src/server/controller/pAccessToken.ts';
+import { describe, expect, it, vi } from 'vitest';
+import PatPage from './page';
 
 const mockRefetch = vi.fn();
 const mockListPATs = vi.fn((): PatToken[] => []);
@@ -19,6 +19,9 @@ vi.mock('@/lib/trpc', () => ({
             mutate: mockCreatePAT,
         },
         revokePAT: {
+            mutate: mockRevokePAT,
+        },
+        deletePAT: {
             mutate: mockRevokePAT,
         },
     })),
@@ -46,7 +49,16 @@ Object.defineProperty(navigator, 'clipboard', {
     writable: true,
 });
 
-const mockAlert = vi.spyOn(window, 'alert').mockImplementation(() => {});
+const mockToast = vi.fn();
+vi.mock('sonner', async (importOriginal) => {
+    const original = (await importOriginal()) as typeof import('sonner');
+    return {
+        ...original,
+        toast: {
+            success: (msg: unknown) => mockToast(msg),
+        },
+    };
+});
 
 describe('PatPage', () => {
     const existingTokens: PatToken[] = [
@@ -132,12 +144,13 @@ describe('PatPage', () => {
         await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
 
         const copyButton = screen.getByRole('button', { name: /Copy/i });
+        expect(copyButton).toBeVisible();
         fireEvent.click(copyButton);
 
         expect(mockWriteText).toHaveBeenCalledWith(NEW_TOKEN_VALUE);
 
         await waitFor(() => {
-            expect(mockAlert).toHaveBeenCalledWith('Token copied to clipboard');
+            expect(mockToast).toHaveBeenCalledWith('Token copied to clipboard');
         });
     });
 
