@@ -1,4 +1,3 @@
-const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 const path = require('path');
 const getDevAdminUserFromInitialDevRealm = require('./00_upsert_keycloak_user').getDevAdminUserFromInitialDevRealm;
@@ -123,15 +122,7 @@ exports.seed = async function (knex) {
                 { ...mapEntity(process), role: process.role },
             ];
             if (usedRows.length > 0) {
-                try {
-                    await trx('used').insert(usedRows);
-                } catch (err) {
-                    for (const row of usedRows) {
-                        try {
-                            await trx('used').insert(row).onConflict(['activity_id', 'entity_id', 'role']).ignore();
-                        } catch (e) {}
-                    }
-                }
+                await trx('used').insert(usedRows);
             }
             counts.used += usedRows.length;
 
@@ -158,29 +149,29 @@ exports.seed = async function (knex) {
                 const wasGeneratedBy = await trx('was_generated_by').whereIn('entity_id', existingEntityIds);
                 const wasUsed = await trx('used').whereIn('entity_id', existingEntityIds);
 
-                const informedByActivityIds = new Set();
-                wasGeneratedBy.forEach((wgb) => informedByActivityIds.add(wgb.activity_id));
+                const generatorActivityIds = new Set();
+                wasGeneratedBy.forEach((wgb) => generatorActivityIds.add(wgb.activity_id));
 
-                const informedByRows = Array.from(informedByActivityIds).map((informedId) => ({
-                    informed_id: informedId,
-                    informer_id: activityRow.id,
+                const informerRowsFromGenerators = Array.from(generatorActivityIds).map((generatorId) => ({
+                    informed_id: activityRow.id, // current activity is informed by generatorId
+                    informer_id: generatorId,
                 }));
 
-                const informerToActivityIds = new Set();
-                wasUsed.forEach((used) => informerToActivityIds.add(used.activity_id));
-                const usedInformedByRows = Array.from(informerToActivityIds).map((informedId) => ({
-                    informed_id: informedId,
-                    informer_id: activityRow.id,
+                const userActivityIds = new Set();
+                wasUsed.forEach((used) => userActivityIds.add(used.activity_id));
+                const informerRowsFromUsers = Array.from(userActivityIds).map((userId) => ({
+                    informed_id: activityRow.id, // current activity is informed by userId
+                    informer_id: userId,
                 }));
 
-                const totalInformedByRows = informedByRows.concat(usedInformedByRows);
-                if (totalInformedByRows.length > 0) {
+                const totalInformerRows = informerRowsFromGenerators.concat(informerRowsFromUsers);
+                if (totalInformerRows.length > 0) {
                     await trx('was_informed_by')
-                        .insert(totalInformedByRows)
+                        .insert(totalInformerRows)
                         .onConflict(['informed_id', 'informer_id'])
                         .ignore();
                 }
-                counts.wasInformedBy += totalInformedByRows.length;
+                counts.wasInformedBy += totalInformerRows.length;
             }
         });
     }

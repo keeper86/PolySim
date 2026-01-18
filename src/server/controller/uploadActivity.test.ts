@@ -155,4 +155,149 @@ describe('upload-activity endpoint (integration)', () => {
 
         await expect(caller.uploadActivity(activityUploadInput)).rejects.toThrow(/already exists/);
     });
+
+    it.each(['next-auth', 'pat'])(
+        'creates was_informed_by rows with correct direction when existing entities are present (%s)',
+        async (callerType) => {
+            const caller = callerType === 'next-auth' ? getCaller(testUserId) : getPatCaller(testUserId);
+            const db = getDb();
+
+            const now = Date.now();
+
+            const prevGeneratorActivityId = createHash('sha256')
+                .update('prevGenerator' + callerType + now)
+                .digest('hex');
+            const prevUserActivityId = createHash('sha256')
+                .update('prevUser' + callerType + now)
+                .digest('hex');
+
+            const existingEntityId = createHash('sha256')
+                .update('existingEntity' + callerType + now)
+                .digest('hex');
+
+            await caller.uploadActivity({
+                entities: [
+                    {
+                        id: existingEntityId,
+                        label: 'Existing',
+                        metadata: {},
+                        role: 'output',
+                        createdAt: now,
+                    },
+                    {
+                        id: createHash('sha256')
+                            .update('prevGenProcess' + callerType + now)
+                            .digest('hex'),
+                        label: 'PrevGen Process',
+                        metadata: {},
+                        role: 'process',
+                        createdAt: now,
+                    },
+                ],
+                activity: {
+                    id: prevGeneratorActivityId,
+                    label: 'Prev Generator',
+                    startedAt: now,
+                    endedAt: now,
+                    metadata: {},
+                },
+            });
+
+
+            const prevUserOutputId = createHash('sha256')
+                .update('prevUserOutput' + callerType + now)
+                .digest('hex');
+            const prevUserProcessId = createHash('sha256')
+                .update('prevUserProcess' + callerType + now)
+                .digest('hex');
+
+            await caller.uploadActivity({
+                entities: [
+                    {
+                        id: existingEntityId,
+                        label: 'Existing',
+                        metadata: {},
+                        role: 'input',
+                        createdAt: now,
+                    },
+                    {
+                        id: prevUserProcessId,
+                        label: 'Prev User Process',
+                        metadata: {},
+                        role: 'process',
+                        createdAt: now,
+                    },
+                    {
+                        id: prevUserOutputId,
+                        label: 'Prev User Output',
+                        metadata: {},
+                        role: 'output',
+                        createdAt: now,
+                    },
+                ],
+                activity: {
+                    id: prevUserActivityId,
+                    label: 'Prev User',
+                    startedAt: now,
+                    endedAt: now,
+                    metadata: {},
+                },
+            });
+
+            const newActivityId = createHash('sha256')
+                .update('newActivityInformed' + callerType + now)
+                .digest('hex');
+
+            const processEntityId = createHash('sha256')
+                .update('process' + now + callerType)
+                .digest('hex');
+            const outputEntityId = createHash('sha256')
+                .update('output' + now + callerType)
+                .digest('hex');
+
+            const activityUploadInput: ProvUploadInput = {
+                entities: [
+                    {
+                        id: existingEntityId,
+                        label: 'Existing',
+                        metadata: {},
+                        role: 'input',
+                        createdAt: now,
+                    },
+                    {
+                        id: processEntityId,
+                        label: 'Process',
+                        metadata: { process: true },
+                        role: 'process',
+                        createdAt: now,
+                    },
+                    {
+                        id: outputEntityId,
+                        label: 'Output',
+                        metadata: {},
+                        role: 'output',
+                        createdAt: now,
+                    },
+                ],
+                activity: {
+                    id: newActivityId,
+                    label: 'New Activity Informed',
+                    startedAt: now,
+                    endedAt: now,
+                    metadata: {},
+                },
+            };
+
+            const result = await caller.uploadActivity(activityUploadInput);
+            expect(result).toHaveProperty('success', true);
+
+            expect(result.counts).toMatchObject({ wasInformedBy: 2 });
+
+            const informedRows = await db('was_informed_by').where({ informed_id: newActivityId }).select();
+            expect(informedRows.length).toBeGreaterThanOrEqual(2);
+            const informerIds = informedRows.map((r) => r.informer_id).sort();
+            expect(informerIds).toContain(prevGeneratorActivityId);
+            expect(informerIds).toContain(prevUserActivityId);
+        },
+    );
 });

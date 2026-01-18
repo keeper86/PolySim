@@ -125,18 +125,14 @@ export const activityUpload = () => {
                         agent_id: userId,
                     });
 
-                    const existingEntityIds = (
-                        await db('entities').whereIn(
-                            'id',
-                            input.entities.map((e) => e.id),
-                        )
-                    ).map((e) => e.id);
+                    const allEntityIds = deduplicatedEntities.map((e) => e.id);
+                    const existingEntityIds = (await db('entities').whereIn('id', allEntityIds)).map((e) => e.id);
                     logger.debug(
                         { component: 'uploadActivity' },
                         `Existing entity IDs: ${existingEntityIds.join(', ')}`,
                     );
 
-                    const rows = input.entities
+                    const rows = deduplicatedEntities
                         .filter((e) => !existingEntityIds.includes(e.id))
                         .map((e) => ({
                             id: e.id,
@@ -144,6 +140,7 @@ export const activityUpload = () => {
                             label: e.label,
                             created_at: e.createdAt ? new Date(e.createdAt) : undefined,
                         }));
+
                     logger.debug({ component: 'uploadActivity' }, `Inserting ${rows.length} new entities.`);
 
                     if (rows.length > 0) {
@@ -152,7 +149,7 @@ export const activityUpload = () => {
 
                     logger.debug(
                         { component: 'uploadActivity' },
-                        `Inserting ${rows.length} new entities. Found ${existingEntityIds.length} existing entities.`,
+                        `Inserted ${rows.length} new entities. Found ${existingEntityIds.length} existing entities.`,
                     );
                     counts.entities = rows.length;
 
@@ -194,7 +191,7 @@ export const activityUpload = () => {
 
                     if (existingEntityIds.length > 0) {
                         logger.debug(
-                            { expected: input.entities.length, inserted: counts.entities },
+                            { expected: inputEntities.length, inserted: counts.entities },
                             `Some entities were not inserted because they already exist.
                             we need to find if some of these entities are used in wasInformedBy relations
                             `,
@@ -207,36 +204,38 @@ export const activityUpload = () => {
                         const wasUsed = await db('used').whereIn('entity_id', existingEntityIds);
                         logger.debug({ component: 'uploadActivity' }, `wasUsed rows: ${JSON.stringify(wasUsed)}`);
 
-                        const informedByActivityIds = new Set<string>();
+                        const generatorActivityIds = new Set<string>();
+                        wasGeneratedBy.forEach((wgb) => generatorActivityIds.add(wgb.activity_id));
 
-                        wasGeneratedBy.forEach((wgb) => informedByActivityIds.add(wgb.activity_id));
-
-                        const informedByRows = Array.from(informedByActivityIds).map((informedId) => ({
-                            informed_id: informedId,
-                            informer_id: activity.id,
+                        const informerRowsFromGenerators = Array.from(generatorActivityIds).map((generatorId) => ({
+                            informed_id: activity.id, // current activity is informed by generatorId
+                            informer_id: generatorId,
                         }));
 
-                        const informerToActivityIds = new Set<string>();
-                        wasUsed.forEach((used) => informerToActivityIds.add(used.activity_id));
-                        const usedInformedByRows = Array.from(informerToActivityIds).map((informedId) => ({
-                            informed_id: informedId,
-                            informer_id: activity.id,
+                        const userActivityIds = new Set<string>();
+                        wasUsed.forEach((used) => userActivityIds.add(used.activity_id));
+                        const informerRowsFromUsers = Array.from(userActivityIds).map((userId) => ({
+                            informed_id: activity.id, // current activity is informed by userId
+                            informer_id: userId,
                         }));
 
-                        const totalInformedByRows = informedByRows.concat(usedInformedByRows);
+                        const totalInformerRows = informerRowsFromGenerators.concat(informerRowsFromUsers);
 
                         await trx('was_informed_by')
-                            .insert(totalInformedByRows)
+                            .insert(totalInformerRows)
                             .onConflict(['informed_id', 'informer_id'])
                             .ignore();
-                        counts.wasInformedBy = totalInformedByRows.length;
+                        counts.wasInformedBy = totalInformerRows.length;
                     }
                 });
 
                 return { success: true, counts };
             } catch (err) {
                 logger.error({ err }, 'Error inserting provenance data');
-                throw err;
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: 'Error inserting provenance data',
+                });
             }
         });
 };

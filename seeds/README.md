@@ -1,6 +1,6 @@
 # Dev Database Auto-Seeding with PROV Test Data
 
-The local development workflow by ensuring that the development database is automatically created and populated with PROV test data when running the project. That means running
+This improves the local development workflowby ensuring that the development database is automatically created and populated with PROV test data when running the project. That means running
 
 ```
 npm run dev
@@ -10,7 +10,7 @@ will now create and seed the development database if it does not already exist.
 
 ## Data Source
 
-The dev database is seeded using polytrace-generated PROV fixtures, providing realistic and consistent and realistic provenance data.
+The dev database is seeded using polytrace-generated PROV fixtures, providing realistic and consistent provenance data.
 
 1. One-time polytrace setup (see `tools/polytrace/README.md`)
 
