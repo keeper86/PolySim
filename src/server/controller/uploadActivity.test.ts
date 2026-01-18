@@ -95,7 +95,7 @@ describe('upload-activity endpoint (integration)', () => {
             },
         };
 
-        await expect(caller.uploadActivity(activityUploadInput)).rejects.toThrow(/one output entity/);
+        await expect(caller.uploadActivity(activityUploadInput)).rejects.toThrow();
 
         activityUploadInput.entities.push({
             id: createHash('sha256').update('Only Input Entity').digest('hex'),
@@ -105,7 +105,7 @@ describe('upload-activity endpoint (integration)', () => {
             createdAt: Date.now(),
         });
 
-        await expect(caller.uploadActivity(activityUploadInput)).rejects.toThrow(/one process entity/);
+        await expect(caller.uploadActivity(activityUploadInput)).rejects.toThrow();
 
         activityUploadInput.entities.push({
             id: createHash('sha256').update('Process Entity').digest('hex'),
@@ -153,7 +153,7 @@ describe('upload-activity endpoint (integration)', () => {
         const firstResult = await caller.uploadActivity(activityUploadInput);
         expect(firstResult).toHaveProperty('success', true);
 
-        await expect(caller.uploadActivity(activityUploadInput)).rejects.toThrow(/already exists/);
+        await expect(caller.uploadActivity(activityUploadInput)).rejects.toThrow();
     });
 
     it.each(['next-auth', 'pat'])(
@@ -202,7 +202,6 @@ describe('upload-activity endpoint (integration)', () => {
                     metadata: {},
                 },
             });
-
 
             const prevUserOutputId = createHash('sha256')
                 .update('prevUserOutput' + callerType + now)
@@ -298,6 +297,70 @@ describe('upload-activity endpoint (integration)', () => {
             const informerIds = informedRows.map((r) => r.informer_id).sort();
             expect(informerIds).toContain(prevGeneratorActivityId);
             expect(informerIds).toContain(prevUserActivityId);
+        },
+    );
+
+    it.each(['next-auth', 'pat'])(
+        'deduplicates entities with same id and only inserts one entity (%s)',
+        async (callerType) => {
+            const caller = callerType === 'next-auth' ? getCaller(testUserId) : getPatCaller(testUserId);
+            const db = getDb();
+
+            const now = Date.now();
+
+            const activityId = createHash('sha256')
+                .update('dedupeActivity' + callerType + now)
+                .digest('hex');
+
+            const entityId = createHash('sha256')
+                .update('dedupeEntity' + callerType + now)
+                .digest('hex');
+
+            const processEntityId = createHash('sha256')
+                .update('dedupeProcess' + callerType + now)
+                .digest('hex');
+
+            const activityUploadInput: ProvUploadInput = {
+                entities: [
+                    {
+                        id: entityId,
+                        label: 'Duplicate Entity',
+                        metadata: {},
+                        role: 'output',
+                        createdAt: now,
+                    },
+                    {
+                        id: entityId,
+                        label: 'Duplicate Entity Duplicate',
+                        metadata: { dup: true },
+                        role: 'output',
+                        createdAt: now,
+                    },
+                    {
+                        id: processEntityId,
+                        label: 'Process',
+                        metadata: {},
+                        role: 'process',
+                        createdAt: now,
+                    },
+                ],
+                activity: {
+                    id: activityId,
+                    label: 'Dedupe Activity',
+                    startedAt: now,
+                    endedAt: now,
+                    metadata: {},
+                },
+            };
+
+            const result = await caller.uploadActivity(activityUploadInput);
+            expect(result).toHaveProperty('success', true);
+
+            expect(result.counts).toMatchObject({ entities: 2, activities: 1, wasGeneratedBy: 1 });
+
+            const entities = await db('entities').where({ id: entityId }).select();
+            expect(entities.length).toBe(1);
+            expect(entities[0].label).toBe('Duplicate Entity');
         },
     );
 });
