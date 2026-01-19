@@ -227,100 +227,11 @@ def main():
     except Exception as e:
         print(f"\n⚠ Skipped scaling plots: {e}")
 
-    # Legacy PoC plot retained but redundant with the new ones
-    try:
-        total_created += create_runtime_overhead_scatter(output_dir)
-    except Exception as e:
-        print(f"\nℹ Skipped legacy runtime-overhead scatter: {e}")
-
     if total_created == 0:
         print("\n No plots were generated. Ensure tools/runtime_overhead.csv has data.")
     else:
         print(f"\n Done! Generated {total_created} plot(s)")
         print(f"\n Plots are optimized for web display (1200x600px @ 100dpi)")
-
-
-def create_runtime_overhead_scatter(output_dir: Path):
-    """Create a log-log scatter plot of overhead vs runtime similar to the PoC example.
-
-    Input CSV (tools/runtime_overhead.csv) format (no header lines starting with '#'):
-
-    runtime_ms,postproc_pct,tracing_pct,writing_level
-    500,2.1,15.0,little
-    12000,0.8,3.5,much
-
-    - runtime_ms: Untraced runtime in milliseconds (x-axis)
-    - postproc_pct: (postproc / total - 1) * 100 (%)
-    - tracing_pct: (traced / untraced - 1) * 100 (%)
-    - writing_level: either 'little' or 'much' (used for trend lines)
-    """
-
-    script_dir = Path(__file__).parent
-    project_root = script_dir.parent.parent.parent.parent
-    csv_path = project_root / 'tools' / 'runtime_overhead.csv'
-    if not csv_path.exists():
-        print(f"\nℹ runtime_overhead.csv not found at {csv_path}. Create it to enable the PoC-style plot.")
-        return 0
-
-    runtimes, postproc, tracing, levels = _read_runtime_csv(csv_path)
-
-    if runtimes.size < 2:
-        print("\nℹ Not enough rows in runtime_overhead.csv to produce scatter plot (need >= 2).")
-        return 0
-
-    # Prepare figure
-    fig, ax = plt.subplots(figsize=(12, 6))
-    fig.suptitle('Overhead versus runtime', fontsize=14, fontweight='bold')
-
-    # Colors and markers (approximate to example)
-    COLOR_POST = '#a855f7'   # violet-500
-    COLOR_TRACE = '#10b981'  # emerald-500
-    COLOR_LINE_LITTLE = '#60a5fa'  # blue-400
-    COLOR_LINE_MUCH = '#f59e0b'    # amber-500
-
-    # Scatter points
-    runtimes_np = runtimes
-    postproc_np = postproc
-    tracing_np = tracing
-    levels_np = levels
-
-    ax.scatter(runtimes_np, postproc_np, c=COLOR_VIOLET, marker='o', label='postproc/total')
-    ax.scatter(runtimes_np, tracing_np, c=COLOR_EMERALD, marker='s', label='with tracing / untraced')
-
-    # Trend lines per writing level for tracing overhead (more indicative)
-    for lvl, color, label in [
-        ('little', COLOR_LINE_LITTLE, 'little writing'),
-        ('much', COLOR_LINE_MUCH, 'much writing'),
-    ]:
-        mask = levels_np == lvl
-        if mask.sum() >= 2:
-            x = runtimes_np[mask]
-            y = tracing_np[mask]
-            # Linear fit in log-log space: log10(y) = m*log10(x) + b
-            logx = np.log10(x)
-            logy = np.log10(y)
-            m, b = np.polyfit(logx, logy, 1)
-            # line across observed x-range
-            x_line = np.linspace(x.min(), x.max(), 100)
-            y_line = 10 ** (m * np.log10(x_line) + b)
-            ax.plot(x_line, y_line, color=color, linewidth=2, label=label)
-
-    # Axes settings (log-log)
-    ax.set_xscale('log')
-    ax.set_yscale('log')
-    ax.set_xlabel('CPU_ms')
-    ax.set_ylabel('per cent overhead (%)')
-    ax.grid(True, which='both', axis='both', alpha=0.3)
-
-    ax.legend(loc='upper right', framealpha=0.9)
-    plt.tight_layout()
-
-    output_path = output_dir / 'benchmark_runtime_overhead.png'
-    plt.savefig(output_path, dpi=100, bbox_inches='tight', facecolor='white', edgecolor='none',
-                format='png', pil_kwargs={'optimize': True})
-    print(f"Created: {output_path}")
-    plt.close()
-    return 1
 
 
 if __name__ == '__main__':
