@@ -1,0 +1,213 @@
+{
+  "activity": {
+    "endedAt": 1768846518080,
+    "id": "51a668698f52422fbbe6db913fe26f8aac36babb7222952ca57c362a40755860",
+    "label": "Run ./build/bin/fs_usage_target",
+    "metadata": {
+      "command": [
+        "./build/bin/fs_usage_target"
+      ]
+    },
+    "startedAt": 1768846517013
+  },
+  "entities": [
+    {
+      "createdAt": 1768846517599,
+      "id": "61a2b666d0376e57e8f12d6634a028712f05e310815e9f89a59b8aa00b1a3e92",
+      "label": "dummyFile5.txt",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {
+              "operation": "open"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "open"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "open"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "WrData[A]"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "open"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "open"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "WrData[A]"
+            },
+            "pid": 1572099,
+            "role": "input"
+          }
+        ],
+        "path": "dummyFile5.txt"
+      },
+      "role": "input"
+    },
+    {
+      "createdAt": 1768846517598,
+      "id": "b4fcaa3026dedbd0dffe0ec920363d3e6b6fef0069c93428fa3bf20ea79ded01",
+      "label": "dummyFile3.txt",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {
+              "operation": "open"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "open"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "open"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "WrData[A]"
+            },
+            "pid": 1572099,
+            "role": "input"
+          }
+        ],
+        "path": "dummyFile3.txt"
+      },
+      "role": "input"
+    },
+    {
+      "createdAt": 1768846517599,
+      "id": "e18d903390ab7394118593ab6d242307c15885f46aa4ff43efa34fc946f19eef",
+      "label": "dummyFile4.txt",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {
+              "operation": "open"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "open"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "open"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "WrData[A]"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "open"
+            },
+            "pid": 1572099,
+            "role": "input"
+          }
+        ],
+        "path": "dummyFile4.txt"
+      },
+      "role": "input"
+    },
+    {
+      "createdAt": 1768846512041,
+      "id": "a790e5ed94e0dc88c0a0e674bc1f77b2cf3fd44864ab09a3879046aacbec43b2",
+      "label": "fs_usage_target",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {
+              "operation": "fsgetpath"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "stat64"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "open"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "stat64"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "open"
+            },
+            "pid": 1572099,
+            "role": "input"
+          },
+          {
+            "metadata": {
+              "operation": "getattrlist"
+            },
+            "pid": 1572099,
+            "role": "input"
+          }
+        ],
+        "path": "/Users/efemyuksel/PolySim/tools/polytrace/build/bin/fs_usage_target"
+      },
+      "role": "input"
+    }
+  ]
+}
