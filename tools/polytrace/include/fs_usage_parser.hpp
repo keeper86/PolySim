@@ -54,9 +54,7 @@ class FsUsageParser {
   private:
     struct Options {
         bool prestart = true;
-        bool use_suspension = true;
-        bool stop_target = true;
-        int attach_delay_ms = 200;
+        int attach_delay_ms = 1000;
         int post_exit_delay_ms = 100;
     };
 
@@ -71,7 +69,6 @@ class FsUsageParser {
     static std::string wait_status_string(int status);
     pid_t spawn_target(const char *path, char *const argv[], bool start_suspended) const;
     pid_t spawn_fs_usage(int fd) const;
-    bool stop_target_for_attach(pid_t pid) const;
     bool wait_for_exit(pid_t pid, int timeout_ms, int &status_out) const;
 
     static int extract_pid_from_process_token(const std::string &token);
@@ -326,8 +323,6 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
     log_debug("Raw output file: " + raw_output_path);
     log_debug("Target command: " + target_cmd);
     log_debug("Options: prestart=" + std::string(opts.prestart ? "true" : "false") +
-              ", suspend=" + std::string(opts.use_suspension ? "true" : "false") +
-              ", stop=" + std::string(opts.stop_target ? "true" : "false") +
               ", attach_delay_ms=" + std::to_string(opts.attach_delay_ms) +
               ", post_exit_delay_ms=" + std::to_string(opts.post_exit_delay_ms));
 
@@ -366,7 +361,7 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
             usleep(opts.attach_delay_ms * 1000);
         }
 
-        target_pid = spawn_target(target_path, target_argv.data(), opts.use_suspension);
+        target_pid = spawn_target(target_path, target_argv.data(), false);
         if (target_pid <= 0) {
             std::cerr << "Failed to spawn target\n";
             kill(fsu_pid, SIGTERM);
@@ -377,14 +372,8 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
         log_debug("Spawned target PID: " + std::to_string(target_pid));
         target_pid_ = static_cast<int>(target_pid);
 
-        if (opts.stop_target) {
-            bool target_stopped = stop_target_for_attach(target_pid);
-            if (!target_stopped) {
-                log_debug("Target did not reach SIGSTOP; proceeding anyway");
-            }
-        }
     } else {
-        target_pid = spawn_target(target_path, target_argv.data(), opts.use_suspension);
+        target_pid = spawn_target(target_path, target_argv.data(), false);
         if (target_pid <= 0) {
             std::cerr << "Failed to spawn target\n";
             close(fd);
@@ -393,13 +382,6 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
         }
         log_debug("Spawned target PID: " + std::to_string(target_pid));
         target_pid_ = static_cast<int>(target_pid);
-
-        if (opts.stop_target) {
-            bool target_stopped = stop_target_for_attach(target_pid);
-            if (!target_stopped) {
-                log_debug("Target did not reach SIGSTOP; proceeding anyway");
-            }
-        }
 
         fsu_pid = spawn_fs_usage(fd);
         close(fd);
@@ -416,19 +398,6 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
                       "ms for fs_usage to attach");
             usleep(opts.attach_delay_ms * 1000);
         }
-    }
-
-    if (opts.use_suspension || opts.stop_target) {
-        if (kill(target_pid, SIGCONT) != 0) {
-            std::cerr << "SIGCONT failed: " << std::strerror(errno) << "\n";
-            kill(fsu_pid, SIGTERM);
-            (void)waitpid(fsu_pid, nullptr, 0);
-            kill(target_pid, SIGKILL);
-            (void)waitpid(target_pid, nullptr, 0);
-            unlink(output_path.c_str());
-            return false;
-        }
-        log_debug("Resumed target process");
     }
 
     int target_status = 0;
@@ -489,9 +458,19 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
     log_debug("Filtered fs_usage lines: kept " + std::to_string(kept_lines) + " of " +
               std::to_string(total_lines));
 
-    std::ifstream in(output_path);
+    std::string parse_path = output_path;
+    int parse_pid = -1;
+    if (kept_lines == 0) {
+        parse_path = raw_output_path;
+        if (target_pid_ > 0) {
+            parse_pid = target_pid_;
+        }
+        log_debug("No filtered lines; parsing raw output with pid filter");
+    }
+
+    std::ifstream in(parse_path);
     if (!in) {
-        std::cerr << "Failed to open fs_usage output: " << output_path << "\n";
+        std::cerr << "Failed to open fs_usage output: " << parse_path << "\n";
         if (!debug) {
             unlink(raw_output_path.c_str());
             unlink(output_path.c_str());
@@ -501,7 +480,7 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
 
     std::string line;
     while (std::getline(in, line)) {
-        parse_line(line, /*file_pid=*/-1);
+        parse_line(line, parse_pid);
     }
 
     if (debug) {
@@ -610,38 +589,6 @@ pid_t FsUsageParser::spawn_fs_usage(int fd) const {
     }
 
     return fsu_pid;
-}
-
-bool FsUsageParser::stop_target_for_attach(pid_t pid) const {
-    log_debug("Sending SIGSTOP to target");
-    if (kill(pid, SIGSTOP) != 0) {
-        std::cerr << "SIGSTOP failed: " << std::strerror(errno) << "\n";
-        return false;
-    }
-
-    for (int attempt = 0; attempt < 50; ++attempt) {
-        int status = 0;
-        pid_t rc = waitpid(pid, &status, WUNTRACED | WNOHANG);
-        if (rc == pid) {
-            if (WIFSTOPPED(status)) {
-                log_debug("Target confirmed stopped");
-                return true;
-            }
-            if (WIFEXITED(status) || WIFSIGNALED(status)) {
-                log_debug("Target exited before tracing could attach");
-                return false;
-            }
-        } else if (rc == 0) {
-            usleep(10 * 1000);
-            continue;
-        } else {
-            std::cerr << "waitpid(WUNTRACED) failed: " << std::strerror(errno) << "\n";
-            return false;
-        }
-    }
-
-    log_debug("Timed out waiting for SIGSTOP");
-    return false;
 }
 
 bool FsUsageParser::wait_for_exit(pid_t pid, int timeout_ms, int &status_out) const {
