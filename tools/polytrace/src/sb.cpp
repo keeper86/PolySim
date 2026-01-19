@@ -35,7 +35,7 @@ static int run_fs_usage(pid_t target_pid,
         return 1;
     }
 
-    // Set up redirection actions for the spawned child.
+    // Set up redirection actions for the spawned child (fs_usage).
     posix_spawn_file_actions_t actions;
     posix_spawn_file_actions_init(&actions);
 

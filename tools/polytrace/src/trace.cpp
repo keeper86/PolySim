@@ -23,7 +23,13 @@
 
 namespace fs = std::filesystem;
 
+#ifdef __APPLE__
+#include "fs_usage_parser.hpp"
+using TraceParser = FsUsageParser;
+#else
 #include "strace_parser.hpp"
+using TraceParser = StraceParser;
+#endif
 
 auto create_zip(const fs::path &zip_path, const fs::path &temp_root) -> bool {
     mz_zip_archive zip;
@@ -54,10 +60,11 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
-        StraceParser parser;
+        TraceParser parser;
+        parser.debug = true; // Enable debug output
 
         if (!parser.run_and_parse(argc, argv)) {
-            std::cerr << "Failed to run strace and parse output\n";
+            std::cerr << "Failed to run trace and parse output\n";
             return 1;
         }
 
