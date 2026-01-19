@@ -7,7 +7,7 @@
     "files": 5,
     "file_size": 10485760,
     "write_size": 8192,
-    "iterations": 1,
+    "iterations": 10,
     "threads": 1,
     "cpu_ms": 0
   },
