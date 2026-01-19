@@ -16,13 +16,16 @@
 #include <spawn.h>
 #include <sstream>
 #include <string>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <unordered_map>
+#include <unordered_set>
 #include <unistd.h>
 #include <vector>
 
 #include "prov_client.hpp"
 #include "sha256.hpp"
+#include "fs_usage_pegtl.hpp"
 
 #include "../../../local/color.hpp"
 using namespace color;
@@ -31,7 +34,7 @@ extern char **environ;
 
 class FsUsageParser {
   public:
-    bool debug = false;
+    bool debug = true;
     struct FileAccess {
         std::string path;
         std::string role;
@@ -49,11 +52,34 @@ class FsUsageParser {
     const std::unordered_map<std::string, FileRecord> &records() const { return records_; }
 
   private:
+    struct Options {
+        bool prestart = true;
+        bool use_suspension = true;
+        bool stop_target = true;
+        int attach_delay_ms = 200;
+        int post_exit_delay_ms = 100;
+    };
+
+    void log_debug(const std::string &msg) const;
     static std::string trim_whitespace_and_brackets(std::string input);
     static std::string classify_operation(const std::string &op, const std::string &line);
     static bool extract_fs_usage_fields(const std::string &line, std::string &op,
                                         std::string &path, int &pid);
+    static std::string wait_status_string(int status);
+    pid_t spawn_target(const char *path, char *const argv[], bool start_suspended) const;
+    pid_t spawn_fs_usage(int fd) const;
+    bool stop_target_for_attach(pid_t pid) const;
+    bool wait_for_exit(pid_t pid, int timeout_ms, int &status_out) const;
+
     static int extract_pid_from_process_token(const std::string &token);
+    static std::string extract_process_column(const std::string &line);
+    static std::string extract_process_name(const std::string &process_column);
+    static bool is_number_like(const std::string &text);
+    static std::string strip_wait_prefix(const std::string &process_column);
+    static bool process_name_matches(const std::string &name, const std::string &expected);
+    bool filter_output_by_process(const std::string &input_path, const std::string &output_path,
+                                  const std::string &expected_name, pid_t target_pid,
+                                  int &total_lines, int &kept_lines) const;
 
     std::unordered_map<std::string, FileRecord> records_;
     int argc_ = 0;
@@ -79,54 +105,17 @@ std::string FsUsageParser::trim_whitespace_and_brackets(std::string input) {
     return input;
 }
 
-int FsUsageParser::extract_pid_from_process_token(const std::string &token) {
-    size_t dot_pos = token.rfind('.');
-    if (dot_pos == std::string::npos || dot_pos + 1 >= token.size()) {
-        return -1;
-    }
-    const char *pid_str = token.c_str() + dot_pos + 1;
-    char *end_ptr = nullptr;
-    long pid = std::strtol(pid_str, &end_ptr, 10);
-    if (end_ptr == pid_str || *end_ptr != '\0' || pid <= 0) {
-        return -1;
-    }
-    return static_cast<int>(pid);
-}
-
 bool FsUsageParser::extract_fs_usage_fields(const std::string &line, std::string &op,
                                             std::string &path, int &pid) {
-    std::istringstream iss(line);
-    std::string timestamp;
-    std::string process_token;
-    if (!(iss >> timestamp >> process_token >> op)) {
+    fs_usage_pegtl::parsed_line parsed;
+    if (!fs_usage_pegtl::parse_line(line, parsed)) {
         return false;
     }
 
-    pid = extract_pid_from_process_token(process_token);
-
-    std::string token;
-    while (iss >> token) {
-        if (!token.empty() && token[0] == '/') {
-            path = token;
-        }
-    }
-
-    if (path.empty()) {
-        size_t last_slash = line.find_last_of('/');
-        if (last_slash == std::string::npos) {
-            return false;
-        }
-        size_t start = line.find_last_of(" \t", last_slash);
-        if (start == std::string::npos) {
-            start = 0;
-        } else {
-            start += 1;
-        }
-        path = line.substr(start);
-    }
-
-    path = trim_whitespace_and_brackets(path);
-    return !op.empty() && !path.empty() && path[0] == '/';
+    op = parsed.operation;
+    path = trim_whitespace_and_brackets(parsed.path);
+    pid = parsed.pid;
+    return !op.empty() && !path.empty();
 }
 
 std::string FsUsageParser::classify_operation(const std::string &op, const std::string &line) {
@@ -195,34 +184,10 @@ void FsUsageParser::parse_line(const std::string &line, int file_pid) {
     }
 }
 
-pid_t spawn_suspended(const char* path, char* const argv[]) {
-    posix_spawnattr_t attr;
-    if (posix_spawnattr_init(&attr) != 0)
-        std::cerr << RED << "posix_spawnattr_init failed" << RESET << "\n";
-
-    short flags = 0;
-    flags |= POSIX_SPAWN_START_SUSPENDED; // Apple extension: start task suspended
-    if (posix_spawnattr_setflags(&attr, flags) != 0) {
-        posix_spawnattr_destroy(&attr);
-        std::cerr << RED << "posix_spawnattr_setflags failed" << RESET << "\n";
+void FsUsageParser::log_debug(const std::string &msg) const {
+    if (debug) {
+        std::cerr << "[fs_usage] " << msg << "\n";
     }
-
-    pid_t pid = -1;
-    int rc = posix_spawn(&pid, path, /*file_actions*/nullptr, &attr, argv, environ);
-
-    posix_spawnattr_destroy(&attr);
-
-    if (rc != 0) {
-        // posix_spawn returns an error number (not -1)
-        std::cerr << RED << "posix_spawn failed: " << std::strerror(rc) << RESET << "\n";
-    }
-
-    return pid;
-}
-
-void resume_process(pid_t pid) {
-    if (kill(pid, SIGCONT) != 0)
-        std::cerr << RED << "SIGCONT failed: " << std::strerror(errno) << RESET << "\n";
 }
 
 bool FsUsageParser::run_and_parse(int argc, char **argv) {
@@ -236,143 +201,524 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
 
     argc_ = argc;
     argv_ = argv;
+    Options opts;
 
-    std::string tmpfile = "./fs_usage_output_XXXXXX.txt";
-    int file_desc = mkstemps(tmpfile.data(), 4);
+    std::string output_path = "./fs_usage_output_XXXXXX.txt";
+    int file_desc = mkstemps(output_path.data(), 4);
     if (file_desc < 0) {
         perror("mkstemp");
         return false;
     }
+    if (fchmod(file_desc, 0644) != 0) {
+        log_debug(std::string("fchmod output failed: ") + std::strerror(errno));
+    }
     close(file_desc);
+
+    std::string raw_output_path = output_path + ".raw";
+
+    const char *target_path = argv[1];
+    std::string target_name = std::filesystem::path(target_path).filename().string();
+    if (target_name.empty()) {
+        target_name = target_path;
+    }
+
+    std::string target_cmd;
+    for (int i = 1; i < argc; ++i) {
+        target_cmd += argv[i];
+        if (i + 1 < argc) {
+            target_cmd += " ";
+        }
+    }
 
     start_tp_ = std::chrono::duration_cast<std::chrono::milliseconds>(
                     std::chrono::system_clock::now().time_since_epoch())
                     .count();
 
-    // Create output file for fs_usage
-    int fd = open(tmpfile.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0644);
+    log_debug("Starting fs_usage parser");
+    log_debug("Output file: " + output_path);
+    log_debug("Raw output file: " + raw_output_path);
+    log_debug("Target command: " + target_cmd);
+    log_debug("Options: prestart=" + std::string(opts.prestart ? "true" : "false") +
+              ", suspend=" + std::string(opts.use_suspension ? "true" : "false") +
+              ", stop=" + std::string(opts.stop_target ? "true" : "false") +
+              ", attach_delay_ms=" + std::to_string(opts.attach_delay_ms) +
+              ", post_exit_delay_ms=" + std::to_string(opts.post_exit_delay_ms));
+
+    int fd = open(raw_output_path.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0644);
     if (fd < 0) {
         std::cerr << "open failed: " << std::strerror(errno) << "\n";
-        unlink(tmpfile.c_str());
+        unlink(output_path.c_str());
         return false;
     }
-
-    if (debug) {
-        std::cerr << "fs_usage output temp file: " << tmpfile << "\n";
+    if (fchmod(fd, 0644) != 0) {
+        log_debug(std::string("fchmod raw output failed: ") + std::strerror(errno));
     }
-// --------------- TARGET PROCESS -----------------
-    int t_argc = argc - 1;
-    char *t_path = argv[1];
-    std::vector<char*> t_argv;
-    t_argv.push_back(t_path);      // target argv[0]
-    for (int i = 2; i < argc; ++i) {
-        t_argv.push_back(argv[i]); // target args
-    }
-    t_argv.push_back(nullptr);
 
-    pid_t t_pid = spawn_suspended(t_path, t_argv.data());
-    if (debug) {
-        std::cerr << "Target called as: " << YELLOW << t_path << " [" ;
-        for (int i = 0; i < t_argc; ++i) {
-            std::cerr << t_argv[i];
-            if (i + 1 < t_argc) {
-                std::cerr << " ";
+    std::vector<char *> target_argv;
+    target_argv.reserve(static_cast<size_t>(argc));
+    for (int i = 1; i < argc; ++i) {
+        target_argv.push_back(argv[i]);
+    }
+    target_argv.push_back(nullptr);
+
+    pid_t target_pid = -1;
+    pid_t fsu_pid = -1;
+
+    if (opts.prestart) {
+        fsu_pid = spawn_fs_usage(fd);
+        close(fd);
+        if (fsu_pid <= 0) {
+            unlink(output_path.c_str());
+            return false;
+        }
+        log_debug("Spawned fs_usage PID: " + std::to_string(fsu_pid));
+
+        if (opts.attach_delay_ms > 0) {
+            log_debug("Waiting " + std::to_string(opts.attach_delay_ms) +
+                      "ms for fs_usage to attach");
+            usleep(opts.attach_delay_ms * 1000);
+        }
+
+        target_pid = spawn_target(target_path, target_argv.data(), opts.use_suspension);
+        if (target_pid <= 0) {
+            std::cerr << "Failed to spawn target\n";
+            kill(fsu_pid, SIGTERM);
+            (void)waitpid(fsu_pid, nullptr, 0);
+            unlink(output_path.c_str());
+            return false;
+        }
+        log_debug("Spawned target PID: " + std::to_string(target_pid));
+
+        if (opts.stop_target) {
+            bool target_stopped = stop_target_for_attach(target_pid);
+            if (!target_stopped) {
+                log_debug("Target did not reach SIGSTOP; proceeding anyway");
             }
         }
-        std::cerr << "]" << RESET << "\n";
-        std::cerr << YELLOW << "Spawned target process with PID " << t_pid << RESET << "\n";
-    }
+    } else {
+        target_pid = spawn_target(target_path, target_argv.data(), opts.use_suspension);
+        if (target_pid <= 0) {
+            std::cerr << "Failed to spawn target\n";
+            close(fd);
+            unlink(output_path.c_str());
+            return false;
+        }
+        log_debug("Spawned target PID: " + std::to_string(target_pid));
 
-// --------------- FS_USAGE -----------------    
-    posix_spawn_file_actions_t actions;
-    posix_spawn_file_actions_init(&actions);
+        if (opts.stop_target) {
+            bool target_stopped = stop_target_for_attach(target_pid);
+            if (!target_stopped) {
+                log_debug("Target did not reach SIGSTOP; proceeding anyway");
+            }
+        }
 
-    // Redirect stdout and stderr to the file
-    posix_spawn_file_actions_adddup2(&actions, fd, STDOUT_FILENO);
-    posix_spawn_file_actions_adddup2(&actions, fd, STDERR_FILENO);
-    posix_spawn_file_actions_addclose(&actions, fd);
+        fsu_pid = spawn_fs_usage(fd);
+        close(fd);
+        if (fsu_pid <= 0) {
+            kill(target_pid, SIGKILL);
+            (void)waitpid(target_pid, nullptr, 0);
+            unlink(output_path.c_str());
+            return false;
+        }
+        log_debug("Spawned fs_usage PID: " + std::to_string(fsu_pid));
 
-    std::string t_pid_str = std::to_string(t_pid);
-    std::vector<std::string> fsu_arg_strs = {
-                                        "fs_usage",
-                                        "-w",
-                                        "-f", "filesys",
-                                        t_pid_str
-                                    };
-    std::vector<char*> fsu_argv;
-    fsu_argv.reserve(fsu_arg_strs.size() + 1);
-    for (auto& s : fsu_arg_strs) fsu_argv.push_back(const_cast<char*>(s.c_str()));
-    fsu_argv.push_back(nullptr);
-
-    pid_t fsu_pid = -1;
-    int fs_rc = posix_spawnp(&fsu_pid, "fs_usage", &actions, nullptr, fsu_argv.data(), environ);
-    posix_spawn_file_actions_destroy(&actions);
-    close(fd);
-
-    if (fs_rc != 0) {
-        std::cerr << "posix_spawnp(fs_usage) failed: " << std::strerror(fs_rc) << RESET << "\n";
-        kill(t_pid, SIGKILL);
-        (void)waitpid(t_pid, nullptr, 0);
-        unlink(tmpfile.c_str()) ;
-        return false;
-    }
-    if (debug) {
-        std::cerr << GREEN << "Spawned fs_usage with PID " << fsu_pid << RESET << "\n";
-    }
-
-    try {
-        resume_process(t_pid);
-    } catch (const std::exception &e) {
-        std::cerr << "Failed to resume target: " << e.what() << "\n";
-        kill(fsu_pid, SIGTERM);
-        (void)waitpid(fsu_pid, nullptr, 0);
-        kill(t_pid, SIGKILL);
-        (void)waitpid(t_pid, nullptr, 0);
-        unlink(tmpfile.c_str());
-        return false;
-    }
-
-    int t_status = 0;
-    if (waitpid(t_pid, &t_status, 0) < 0) {
-        std::cerr << "waitpid(target) failed: " << std::strerror(errno) << "\n";
-    }
-
-    if (kill(fsu_pid, SIGTERM) != 0 && errno != ESRCH) {
-        if (debug) {
-            std::cerr << "SIGTERM fs_usage failed: " << std::strerror(errno) << "\n";
+        if (opts.attach_delay_ms > 0) {
+            log_debug("Waiting " + std::to_string(opts.attach_delay_ms) +
+                      "ms for fs_usage to attach");
+            usleep(opts.attach_delay_ms * 1000);
         }
     }
 
+    if (opts.use_suspension || opts.stop_target) {
+        if (kill(target_pid, SIGCONT) != 0) {
+            std::cerr << "SIGCONT failed: " << std::strerror(errno) << "\n";
+            kill(fsu_pid, SIGTERM);
+            (void)waitpid(fsu_pid, nullptr, 0);
+            kill(target_pid, SIGKILL);
+            (void)waitpid(target_pid, nullptr, 0);
+            unlink(output_path.c_str());
+            return false;
+        }
+        log_debug("Resumed target process");
+    }
+
+    int target_status = 0;
+    if (waitpid(target_pid, &target_status, 0) < 0) {
+        std::cerr << "waitpid(target) failed: " << std::strerror(errno) << "\n";
+    } else {
+        log_debug("Target exit status: " + wait_status_string(target_status));
+    }
+
+    if (opts.post_exit_delay_ms > 0) {
+        log_debug("Waiting " + std::to_string(opts.post_exit_delay_ms) +
+                  "ms before stopping fs_usage");
+        usleep(opts.post_exit_delay_ms * 1000);
+    }
+
+    bool fsu_exited = false;
     int fsu_status = 0;
-    (void)waitpid(fsu_pid, &fsu_status, 0);
+    if (kill(fsu_pid, SIGINT) != 0 && errno != ESRCH) {
+        std::cerr << "SIGINT fs_usage failed: " << std::strerror(errno) << "\n";
+    } else {
+        log_debug("Sent SIGINT to fs_usage");
+    }
+
+    fsu_exited = wait_for_exit(fsu_pid, 500, fsu_status);
+    if (!fsu_exited) {
+        if (kill(fsu_pid, SIGTERM) != 0 && errno != ESRCH) {
+            std::cerr << "SIGTERM fs_usage failed: " << std::strerror(errno) << "\n";
+        } else {
+            log_debug("Sent SIGTERM to fs_usage");
+        }
+    }
+
+    if (!fsu_exited) {
+        if (waitpid(fsu_pid, &fsu_status, 0) < 0) {
+            std::cerr << "waitpid(fs_usage) failed: " << std::strerror(errno) << "\n";
+        } else {
+            log_debug("fs_usage exit status: " + wait_status_string(fsu_status));
+        }
+    } else {
+        log_debug("fs_usage exit status: " + wait_status_string(fsu_status));
+    }
 
     end_tp_ = std::chrono::duration_cast<std::chrono::milliseconds>(
                   std::chrono::system_clock::now().time_since_epoch())
                   .count();
 
-    if (debug) {
-        std::cerr << "Target exited with status " << t_status
-                  << ", fs_usage status " << fsu_status << "\n";
+    int total_lines = 0;
+    int kept_lines = 0;
+    if (!filter_output_by_process(raw_output_path, output_path, target_name, target_pid,
+                                  total_lines, kept_lines)) {
+        std::cerr << "Failed to filter fs_usage output\n";
+        if (!debug) {
+            unlink(raw_output_path.c_str());
+            unlink(output_path.c_str());
+        }
+        return false;
+    }
+    log_debug("Filtered fs_usage lines: kept " + std::to_string(kept_lines) + " of " +
+              std::to_string(total_lines));
+
+    std::ifstream in(output_path);
+    if (!in) {
+        std::cerr << "Failed to open fs_usage output: " << output_path << "\n";
+        if (!debug) {
+            unlink(raw_output_path.c_str());
+            unlink(output_path.c_str());
+        }
+        return false;
     }
 
-    std::ifstream in(tmpfile);
-        if (!in) {
-            std::cerr << "Failed to open fs_usage output: " << tmpfile << "\n";
-            unlink(tmpfile.c_str());
+    std::string line;
+    while (std::getline(in, line)) {
+        parse_line(line, /*file_pid=*/-1);
+    }
+
+    if (debug) {
+        std::cerr << "Keeping fs_usage output at: " << output_path << "\n";
+        std::cerr << "Keeping raw fs_usage output at: " << raw_output_path << "\n";
+    } else {
+        unlink(raw_output_path.c_str());
+        unlink(output_path.c_str());
+    }
+
+    return true;
+}
+
+std::string FsUsageParser::wait_status_string(int status) {
+    if (WIFEXITED(status)) {
+        return "exited=" + std::to_string(WEXITSTATUS(status));
+    }
+    if (WIFSIGNALED(status)) {
+        return "signaled=" + std::to_string(WTERMSIG(status));
+    }
+    if (WIFSTOPPED(status)) {
+        return "stopped=" + std::to_string(WSTOPSIG(status));
+    }
+    return "status=" + std::to_string(status);
+}
+
+pid_t FsUsageParser::spawn_target(const char *path, char *const argv[],
+                                  bool start_suspended) const {
+    posix_spawnattr_t attr;
+    int rc = posix_spawnattr_init(&attr);
+    if (rc != 0) {
+        std::cerr << "posix_spawnattr_init failed: " << std::strerror(rc) << "\n";
+        return -1;
+    }
+
+    short flags = 0;
+    if (start_suspended) {
+#ifdef POSIX_SPAWN_START_SUSPENDED
+        flags |= POSIX_SPAWN_START_SUSPENDED;
+#else
+        log_debug("POSIX_SPAWN_START_SUSPENDED not supported; continuing unsuspended");
+#endif
+        rc = posix_spawnattr_setflags(&attr, flags);
+        if (rc != 0) {
+            std::cerr << "posix_spawnattr_setflags failed: " << std::strerror(rc) << "\n";
+        }
+    }
+
+    pid_t pid = -1;
+    rc = posix_spawnp(&pid, path, nullptr, &attr, argv, environ);
+    posix_spawnattr_destroy(&attr);
+
+    if (rc != 0) {
+        std::cerr << "posix_spawnp(target) failed: " << std::strerror(rc) << "\n";
+        return -1;
+    }
+
+    return pid;
+}
+
+pid_t FsUsageParser::spawn_fs_usage(int fd) const {
+    posix_spawn_file_actions_t actions;
+    posix_spawn_file_actions_init(&actions);
+    posix_spawn_file_actions_adddup2(&actions, fd, STDOUT_FILENO);
+    posix_spawn_file_actions_adddup2(&actions, fd, STDERR_FILENO);
+    posix_spawn_file_actions_addclose(&actions, fd);
+
+    std::vector<std::string> fsu_arg_strs = {"fs_usage", "-w", "-f", "filesys"};
+
+    std::vector<char *> fsu_argv;
+    fsu_argv.reserve(fsu_arg_strs.size() + 1);
+    for (auto &s : fsu_arg_strs) {
+        fsu_argv.push_back(const_cast<char *>(s.c_str()));
+    }
+    fsu_argv.push_back(nullptr);
+
+    std::string fsu_cmd;
+    for (size_t i = 0; i < fsu_arg_strs.size(); ++i) {
+        fsu_cmd += fsu_arg_strs[i];
+        if (i + 1 < fsu_arg_strs.size()) {
+            fsu_cmd += " ";
+        }
+    }
+    log_debug("Spawning fs_usage: " + fsu_cmd);
+
+    pid_t fsu_pid = -1;
+    int fs_rc = posix_spawnp(&fsu_pid, "fs_usage", &actions, nullptr, fsu_argv.data(),
+                             environ);
+    posix_spawn_file_actions_destroy(&actions);
+
+    if (fs_rc != 0) {
+        std::cerr << "posix_spawnp(fs_usage) failed: " << std::strerror(fs_rc) << "\n";
+        return -1;
+    }
+
+    return fsu_pid;
+}
+
+bool FsUsageParser::stop_target_for_attach(pid_t pid) const {
+    log_debug("Sending SIGSTOP to target");
+    if (kill(pid, SIGSTOP) != 0) {
+        std::cerr << "SIGSTOP failed: " << std::strerror(errno) << "\n";
+        return false;
+    }
+
+    for (int attempt = 0; attempt < 50; ++attempt) {
+        int status = 0;
+        pid_t rc = waitpid(pid, &status, WUNTRACED | WNOHANG);
+        if (rc == pid) {
+            if (WIFSTOPPED(status)) {
+                log_debug("Target confirmed stopped");
+                return true;
+            }
+            if (WIFEXITED(status) || WIFSIGNALED(status)) {
+                log_debug("Target exited before tracing could attach");
+                return false;
+            }
+        } else if (rc == 0) {
+            usleep(10 * 1000);
+            continue;
+        } else {
+            std::cerr << "waitpid(WUNTRACED) failed: " << std::strerror(errno) << "\n";
             return false;
         }
-
-        std::string line;
-        while (std::getline(in, line)) {
-            parse_line(line, /*file_pid=*/-1);
-        }
-
-    if (debug) {
-        std::cerr << "Keeping fs_usage output at: " << tmpfile << "\n";
-    } else {
-        unlink(tmpfile.c_str());
     }
 
+    log_debug("Timed out waiting for SIGSTOP");
+    return false;
+}
+
+bool FsUsageParser::wait_for_exit(pid_t pid, int timeout_ms, int &status_out) const {
+    int waited_ms = 0;
+    while (waited_ms < timeout_ms) {
+        int status = 0;
+        pid_t rc = waitpid(pid, &status, WNOHANG);
+        if (rc == pid) {
+            status_out = status;
+            return true;
+        }
+        if (rc == 0) {
+            usleep(10 * 1000);
+            waited_ms += 10;
+            continue;
+        }
+        if (rc < 0 && errno == EINTR) {
+            continue;
+        }
+        return false;
+    }
+    return false;
+}
+
+int FsUsageParser::extract_pid_from_process_token(const std::string &token) {
+    size_t dot_pos = token.rfind('.');
+    if (dot_pos == std::string::npos || dot_pos + 1 >= token.size()) {
+        return -1;
+    }
+    const char *pid_str = token.c_str() + dot_pos + 1;
+    char *end_ptr = nullptr;
+    long pid = std::strtol(pid_str, &end_ptr, 10);
+    if (end_ptr == pid_str || *end_ptr != '\0' || pid <= 0) {
+        return -1;
+    }
+    return static_cast<int>(pid);
+}
+
+std::string FsUsageParser::extract_process_column(const std::string &line) {
+    size_t end = line.find_last_not_of(" \t\r\n");
+    if (end == std::string::npos) {
+        return {};
+    }
+
+    for (size_t i = end; i > 0; --i) {
+        if (line[i] == ' ' || line[i] == '\t') {
+            size_t run_end = i;
+            while (i > 0 && (line[i] == ' ' || line[i] == '\t')) {
+                --i;
+            }
+            size_t run_len = run_end - i;
+            if (run_len >= 2) {
+                size_t col_start = run_end + 1;
+                if (col_start <= end) {
+                    return line.substr(col_start, end - col_start + 1);
+                }
+            }
+        }
+    }
+
+    size_t start = line.find_last_of(" \t", end);
+    if (start == std::string::npos) {
+        start = 0;
+    } else {
+        start += 1;
+    }
+    return line.substr(start, end - start + 1);
+}
+
+std::string FsUsageParser::extract_process_name(const std::string &process_column) {
+    size_t dot_pos = process_column.rfind('.');
+    if (dot_pos == std::string::npos || dot_pos == 0) {
+        return process_column;
+    }
+    return process_column.substr(0, dot_pos);
+}
+
+bool FsUsageParser::is_number_like(const std::string &text) {
+    if (text.empty()) {
+        return false;
+    }
+    for (char ch : text) {
+        if ((ch < '0' || ch > '9') && ch != '.') {
+            return false;
+        }
+    }
+    return true;
+}
+
+std::string FsUsageParser::strip_wait_prefix(const std::string &process_column) {
+    size_t w_pos = process_column.find(" W ");
+    if (w_pos == std::string::npos) {
+        return process_column;
+    }
+    std::string prefix = process_column.substr(0, w_pos);
+    if (is_number_like(prefix)) {
+        return process_column.substr(w_pos + 3);
+    }
+    return process_column;
+}
+
+bool FsUsageParser::process_name_matches(const std::string &name,
+                                         const std::string &expected) {
+    if (name.empty() || expected.empty()) {
+        return false;
+    }
+    if (name == expected) {
+        return true;
+    }
+    if (name.rfind(expected, 0) == 0) {
+        return true;
+    }
+    if (expected.rfind(name, 0) == 0) {
+        return true;
+    }
+    return false;
+}
+
+bool FsUsageParser::filter_output_by_process(const std::string &input_path,
+                                             const std::string &output_path,
+                                             const std::string &expected_name,
+                                             pid_t target_pid, int &total_lines,
+                                             int &kept_lines) const {
+    std::ifstream in(input_path);
+    if (!in) {
+        std::cerr << "Failed to open raw output: " << input_path << "\n";
+        return false;
+    }
+    std::ofstream out(output_path, std::ios::trunc);
+    if (!out) {
+        std::cerr << "Failed to open output: " << output_path << "\n";
+        return false;
+    }
+
+    std::string line;
+    total_lines = 0;
+    kept_lines = 0;
+    int name_matches = 0;
+    int id_matches = 0;
+    std::unordered_set<int> thread_ids;
+    while (std::getline(in, line)) {
+        ++total_lines;
+        std::string process_column = extract_process_column(line);
+        if (process_column.empty()) {
+            continue;
+        }
+
+        process_column = strip_wait_prefix(process_column);
+        int id = extract_pid_from_process_token(process_column);
+        bool id_match = (id > 0 && thread_ids.count(id) > 0);
+        if (!id_match && id > 0 && id == static_cast<int>(target_pid)) {
+            id_match = true;
+        }
+
+        if (id_match) {
+            out << line << '\n';
+            ++kept_lines;
+            ++id_matches;
+            continue;
+        }
+
+        std::string process_name = extract_process_name(process_column);
+        bool name_match = process_name_matches(process_name, expected_name);
+        if (name_match) {
+            out << line << '\n';
+            ++kept_lines;
+            ++name_matches;
+            if (id > 0) {
+                thread_ids.insert(id);
+            }
+        }
+    }
+
+    if (debug) {
+        log_debug("Filter matches: name=" + std::to_string(name_matches) +
+                  ", id=" + std::to_string(id_matches) +
+                  ", threads=" + std::to_string(thread_ids.size()));
+    }
     return true;
 }
 
