@@ -62,6 +62,9 @@ class FsUsageParser {
 
     void log_debug(const std::string &msg) const;
     static std::string trim_whitespace_and_brackets(std::string input);
+    static bool should_record_operation(const std::string &op);
+    static bool open_flags_indicate_output(const std::string &line);
+    static std::string normalize_path(const std::string &path);
     static std::string classify_operation(const std::string &op, const std::string &line);
     static bool extract_fs_usage_fields(const std::string &line, std::string &op,
                                         std::string &path, int &pid);
@@ -81,11 +84,18 @@ class FsUsageParser {
                                   const std::string &expected_name, pid_t target_pid,
                                   int &total_lines, int &kept_lines) const;
 
+    bool is_target_path(const std::string &raw_path, const std::string &normalized_path) const;
+    prov::json build_execve_argv() const;
+
     std::unordered_map<std::string, FileRecord> records_;
     int argc_ = 0;
     char **argv_ = nullptr;
     int64_t start_tp_ = 0;
     int64_t end_tp_ = 0;
+    std::string target_path_;
+    std::string target_path_abs_;
+    int target_pid_ = -1;
+    bool saw_process_access_ = false;
 };
 
 // --- Implementation -----------------------------------------------------------
@@ -103,6 +113,66 @@ std::string FsUsageParser::trim_whitespace_and_brackets(std::string input) {
                     .base(),
                 input.end());
     return input;
+}
+
+bool FsUsageParser::should_record_operation(const std::string &op) {
+    std::string lower = op;
+    std::transform(lower.begin(), lower.end(), lower.begin(),
+                   [](unsigned char ch_char) { return static_cast<char>(std::tolower(ch_char)); });
+
+    if (lower.empty()) {
+        return false;
+    }
+    if (lower.rfind("open", 0) == 0 || lower == "creat") {
+        return true;
+    }
+    if (lower == "execve" || lower == "posix_spawn") {
+        return true;
+    }
+    if (lower == "access" || lower == "unlink" || lower == "rename" || lower == "renameat" ||
+        lower == "renameat2") {
+        return true;
+    }
+    if (lower == "link" || lower == "linkat" || lower == "symlink" || lower == "readlink") {
+        return true;
+    }
+    if (lower == "mkdir" || lower == "rmdir") {
+        return true;
+    }
+    if (lower == "stat" || lower == "stat64" || lower == "lstat" || lower == "lstat64" ||
+        lower == "fstat" || lower == "fstat64" || lower == "fstatat" || lower == "fstatat64") {
+        return true;
+    }
+    return false;
+}
+
+bool FsUsageParser::open_flags_indicate_output(const std::string &line) {
+    size_t lparen = line.find('(');
+    if (lparen == std::string::npos) {
+        return false;
+    }
+    size_t rparen = line.find(')', lparen + 1);
+    if (rparen == std::string::npos || rparen <= lparen + 1) {
+        return false;
+    }
+    std::string flags = line.substr(lparen + 1, rparen - lparen - 1);
+    return flags.find('W') != std::string::npos || flags.find('A') != std::string::npos ||
+           flags.find('C') != std::string::npos || flags.find('T') != std::string::npos;
+}
+
+std::string FsUsageParser::normalize_path(const std::string &path) {
+    if (path.empty()) {
+        return {};
+    }
+    std::filesystem::path fs_path(path);
+    std::error_code ec;
+    if (!fs_path.is_absolute()) {
+        fs_path = std::filesystem::absolute(fs_path, ec);
+        if (ec) {
+            return path;
+        }
+    }
+    return fs_path.lexically_normal().string();
 }
 
 bool FsUsageParser::extract_fs_usage_fields(const std::string &line, std::string &op,
@@ -125,6 +195,12 @@ std::string FsUsageParser::classify_operation(const std::string &op, const std::
 
     if (lower == "execve" || lower == "posix_spawn") {
         return "process";
+    }
+
+    if (lower.rfind("open", 0) == 0 || lower == "creat") {
+        if (open_flags_indicate_output(line)) {
+            return "output";
+        }
     }
 
     if (line.find("O_WRONLY") != std::string::npos || line.find("O_RDWR") != std::string::npos ||
@@ -158,6 +234,10 @@ void FsUsageParser::parse_line(const std::string &line, int file_pid) {
         return;
     }
 
+    if (!should_record_operation(op)) {
+        return;
+    }
+
     if (file_pid > 0) {
         if (parsed_pid <= 0 || parsed_pid != file_pid) {
             return;
@@ -168,17 +248,21 @@ void FsUsageParser::parse_line(const std::string &line, int file_pid) {
         return;
     }
 
+    std::string normalized_path = normalize_path(path);
+    if (is_target_path(path, normalized_path)) {
+        return;
+    }
+
     FileAccess access = {};
-    access.path = path;
+    access.path = normalized_path.empty() ? path : normalized_path;
     access.role = classify_operation(op, line);
     access.pid = record_pid;
-    access.metadata["operation"] = op;
 
-    auto it = records_.find(path);
+    auto it = records_.find(access.path);
     if (it == records_.end()) {
         FileRecord rec = {};
         rec.accesses.push_back(access);
-        records_.emplace(path, std::move(rec));
+        records_.emplace(access.path, std::move(rec));
     } else {
         it->second.accesses.push_back(access);
     }
@@ -202,6 +286,9 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
     argc_ = argc;
     argv_ = argv;
     Options opts;
+    target_path_ = argv[1];
+    target_path_abs_ = normalize_path(target_path_);
+    saw_process_access_ = false;
 
     std::string output_path = "./fs_usage_output_XXXXXX.txt";
     int file_desc = mkstemps(output_path.data(), 4);
@@ -288,6 +375,7 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
             return false;
         }
         log_debug("Spawned target PID: " + std::to_string(target_pid));
+        target_pid_ = static_cast<int>(target_pid);
 
         if (opts.stop_target) {
             bool target_stopped = stop_target_for_attach(target_pid);
@@ -304,6 +392,7 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
             return false;
         }
         log_debug("Spawned target PID: " + std::to_string(target_pid));
+        target_pid_ = static_cast<int>(target_pid);
 
         if (opts.stop_target) {
             bool target_stopped = stop_target_for_attach(target_pid);
@@ -421,6 +510,18 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
     } else {
         unlink(raw_output_path.c_str());
         unlink(output_path.c_str());
+    }
+
+    if (!saw_process_access_ && !target_path_.empty() && target_pid_ > 0) {
+        FileAccess access = {};
+        access.path = target_path_;
+        access.role = "process";
+        access.pid = target_pid_;
+        access.metadata["execve_argv"] = build_execve_argv();
+
+        FileRecord &rec = records_[target_path_];
+        rec.accesses.push_back(access);
+        saw_process_access_ = true;
     }
 
     return true;
@@ -657,6 +758,28 @@ bool FsUsageParser::process_name_matches(const std::string &name,
         return true;
     }
     return false;
+}
+
+bool FsUsageParser::is_target_path(const std::string &raw_path,
+                                   const std::string &normalized_path) const {
+    if (!target_path_.empty() && raw_path == target_path_) {
+        return true;
+    }
+    if (!target_path_abs_.empty() && normalized_path == target_path_abs_) {
+        return true;
+    }
+    return false;
+}
+
+prov::json FsUsageParser::build_execve_argv() const {
+    prov::json argv = prov::json::array();
+    if (argc_ < 2 || argv_ == nullptr) {
+        return argv;
+    }
+    for (int i = 1; i < argc_; ++i) {
+        argv.push_back(std::string(argv_[i]));
+    }
+    return argv;
 }
 
 bool FsUsageParser::filter_output_by_process(const std::string &input_path,

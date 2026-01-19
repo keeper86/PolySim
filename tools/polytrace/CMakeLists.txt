@@ -135,7 +135,17 @@ target_link_libraries(trace PRIVATE
 
 # End-to-end test that uses real strace (skips at runtime if strace not available)
 add_executable(strace_parser_test ${CMAKE_CURRENT_SOURCE_DIR}/test/strace_parser.test.cpp)
+add_executable(fs_usage_parser_lite_test ${CMAKE_CURRENT_SOURCE_DIR}/test/fs_usage_parser_lite.test.cpp)
 target_include_directories(strace_parser_test PRIVATE 
+  ${PROJECT_INCLUDE_DIR}
+  ${NLOHMANN_INCLUDE_DIR}
+  ${HTTPLIB_INCLUDE_DIR}
+  ${MINIZ_SOURCE_DIR}
+  ${MINIZ_BINARY_DIR}
+  ${pegtl_SOURCE_DIR}/include
+)
+
+target_include_directories(fs_usage_parser_lite_test PRIVATE 
   ${PROJECT_INCLUDE_DIR}
   ${NLOHMANN_INCLUDE_DIR}
   ${HTTPLIB_INCLUDE_DIR}
@@ -151,15 +161,25 @@ target_link_libraries(strace_parser_test PRIVATE
   miniz
 )
 
+target_link_libraries(fs_usage_parser_lite_test PRIVATE
+  gtest_main
+  OpenSSL::SSL
+  OpenSSL::Crypto
+  Threads::Threads
+  miniz
+)
+
 add_test(NAME strace_parser_test COMMAND $<TARGET_FILE:strace_parser_test>)
+add_test(NAME fs_usage_parser_lite_test COMMAND $<TARGET_FILE:fs_usage_parser_lite_test>)
 
 set(TEST_FIXTURES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test/fixtures" CACHE PATH "Directory containing test fixture scripts")
 message(STATUS "Test fixtures dir: ${TEST_FIXTURES_DIR}")
 target_compile_definitions(strace_parser_test PRIVATE TEST_FIXTURES_DIR=\"${TEST_FIXTURES_DIR}\")
+# no extra defines needed for fs_usage_parser_lite_test
 
 if(NOT MSVC)
   target_compile_options(upload PRIVATE -Wall -Wextra -Wpedantic)
-    target_compile_options(trace PRIVATE -Wall -Wextra -Wpedantic)
+  target_compile_options(trace PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
 if(TARGET miniz)
