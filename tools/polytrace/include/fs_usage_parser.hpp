@@ -534,7 +534,7 @@ pid_t FsUsageParser::spawn_target(const char *path, char *const argv[], bool sta
 #ifdef POSIX_SPAWN_START_SUSPENDED
         flags |= POSIX_SPAWN_START_SUSPENDED;
 #else
-        log_debug("POSIX_SPAWN_START_SUSPENDED not supported; continuing unsuspended");
+        std::cerr << "[fs_usage] POSIX_SPAWN_START_SUSPENDED not supported; continuing unsuspended" << std::endl;
 #endif
         rc = posix_spawnattr_setflags(&attr, flags);
         if (rc != 0) {
