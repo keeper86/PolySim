@@ -4,7 +4,8 @@
 #include <unistd.h>
 
 std::string readHiddenInput() {
-    termios oldt, newt;
+    termios oldt;
+    termios newt;
     std::string input;
 
     tcgetattr(STDIN_FILENO, &oldt);
@@ -16,7 +17,7 @@ std::string readHiddenInput() {
     std::getline(std::cin, input);
 
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    std::cout << std::endl;
+    std::cout << '\n';
 
     return input;
 }

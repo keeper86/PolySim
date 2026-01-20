@@ -9,6 +9,8 @@
 namespace fs_usage_pegtl {
 using namespace tao::pegtl;
 
+static constexpr int DECIMAL_BASE = 10;
+
 struct fs_usage_state {
     std::string timestamp;
     std::string operation;
@@ -34,12 +36,14 @@ inline std::string trim_whitespace(const std::string &input) {
 
 inline std::string strip_wrappers(const std::string &input) {
     std::string trimmed = trim_whitespace(input);
-    if (trimmed.size() >= 2 && trimmed.front() == '"' && trimmed.back() == '"') {
-        trimmed = trimmed.substr(1, trimmed.size() - 2);
-    } else if (trimmed.size() >= 2 && trimmed.front() == '<' && trimmed.back() == '>') {
-        trimmed = trimmed.substr(1, trimmed.size() - 2);
-    } else if (trimmed.size() >= 2 && trimmed.front() == '(' && trimmed.back() == ')') {
-        trimmed = trimmed.substr(1, trimmed.size() - 2);
+    if (trimmed.size() >= 2) {
+        const char front = trimmed.front();
+        const char back = trimmed.back();
+        const bool is_wrapped = (front == '"' && back == '"') || (front == '<' && back == '>') ||
+                                (front == '(' && back == ')');
+        if (is_wrapped) {
+            trimmed = trimmed.substr(1, trimmed.size() - 2);
+        }
     }
     return trim_whitespace(trimmed);
 }
@@ -52,8 +56,7 @@ inline std::string normalize_path_token(const std::string &token) {
 
     if (trimmed.front() == '[') {
         size_t close = trimmed.find(']');
-        if (close != std::string::npos && close + 1 < trimmed.size() &&
-            trimmed[close + 1] == '/') {
+        if (close != std::string::npos && close + 1 < trimmed.size() && trimmed[close + 1] == '/') {
             trimmed = trimmed.substr(close + 1);
         } else {
             return {};
@@ -67,12 +70,8 @@ inline bool is_number_like(const std::string &text) {
     if (text.empty()) {
         return false;
     }
-    for (char ch : text) {
-        if ((ch < '0' || ch > '9') && ch != '.') {
-            return false;
-        }
-    }
-    return true;
+    return std::all_of(text.begin(), text.end(),
+                       [](char ch) { return ((ch >= '0' && ch <= '9') || ch == '.'); });
 }
 
 inline bool looks_like_path_token(const std::string &token) {
@@ -105,8 +104,7 @@ inline std::string to_lower_ascii(std::string input) {
 
 inline bool operation_expects_path(const std::string &operation) {
     std::string op = to_lower_ascii(operation);
-    if (op == "open" || op == "openat" || op == "creat" || op == "execve" ||
-        op == "posix_spawn") {
+    if (op == "open" || op == "openat" || op == "creat" || op == "execve" || op == "posix_spawn") {
         return true;
     }
     if (op == "access" || op == "unlink" || op == "rename" || op == "renameat" ||
@@ -184,7 +182,7 @@ inline int extract_pid_from_process_token(const std::string &token) {
     }
     const char *pid_str = trimmed.c_str() + dot_pos + 1;
     char *end_ptr = nullptr;
-    long pid = std::strtol(pid_str, &end_ptr, 10);
+    long pid = std::strtol(pid_str, &end_ptr, DECIMAL_BASE);
     if (end_ptr == pid_str || *end_ptr != '\0' || pid <= 0) {
         return -1;
     }

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <algorithm>
+#include <cctype>
 #include <cerrno>
 #include <chrono>
-#include <cctype>
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>
@@ -14,27 +14,23 @@
 #include <iostream>
 #include <set>
 #include <spawn.h>
-#include <sstream>
 #include <string>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <unistd.h>
 #include <unordered_map>
 #include <unordered_set>
-#include <unistd.h>
 #include <vector>
 
+#include "fs_usage_pegtl.hpp"
 #include "prov_client.hpp"
 #include "sha256.hpp"
-#include "fs_usage_pegtl.hpp"
-
-#include "../../../local/color.hpp"
-using namespace color;
 
 extern char **environ;
 
 class FsUsageParser {
   public:
-    bool debug = true;
+    bool debug = false;
     struct FileAccess {
         std::string path;
         std::string role;
@@ -49,9 +45,17 @@ class FsUsageParser {
     bool run_and_parse(int argc, char **argv);
     prov::ProvUploadInput get_provenance_data();
 
-    const std::unordered_map<std::string, FileRecord> &records() const { return records_; }
+    [[nodiscard]] const std::unordered_map<std::string, FileRecord> &records() const {
+        return records_;
+    }
 
   private:
+    static constexpr int MS_TO_MICROSECONDS = 1000;
+    static constexpr int DECIMAL_BASE = 10;
+    static constexpr int DEFAULT_FILE_MODE = 0644;
+    static constexpr int FS_USAGE_EXIT_WAIT_MS = 500;
+    static constexpr int WAIT_POLL_INTERVAL_MS = 10;
+
     struct Options {
         bool prestart = true;
         int attach_delay_ms = 1000;
@@ -64,12 +68,12 @@ class FsUsageParser {
     static bool open_flags_indicate_output(const std::string &line);
     static std::string normalize_path(const std::string &path);
     static std::string classify_operation(const std::string &op, const std::string &line);
-    static bool extract_fs_usage_fields(const std::string &line, std::string &op,
-                                        std::string &path, int &pid);
+    static bool extract_fs_usage_fields(const std::string &line, std::string &op, std::string &path,
+                                        int &pid);
     static std::string wait_status_string(int status);
-    pid_t spawn_target(const char *path, char *const argv[], bool start_suspended) const;
-    pid_t spawn_fs_usage(int fd) const;
-    bool wait_for_exit(pid_t pid, int timeout_ms, int &status_out) const;
+    static pid_t spawn_target(const char *path, char *const argv[], bool start_suspended);
+    [[nodiscard]] pid_t spawn_fs_usage(int fd) const;
+    static bool wait_for_exit(pid_t pid, int timeout_ms, int &status_out);
 
     static int extract_pid_from_process_token(const std::string &token);
     static std::string extract_process_column(const std::string &line);
@@ -81,8 +85,9 @@ class FsUsageParser {
                                   const std::string &expected_name, pid_t target_pid,
                                   int &total_lines, int &kept_lines) const;
 
-    bool is_target_path(const std::string &raw_path, const std::string &normalized_path) const;
-    prov::json build_execve_argv() const;
+    [[nodiscard]] bool is_target_path(const std::string &raw_path,
+                                      const std::string &normalized_path) const;
+    [[nodiscard]] prov::json build_execve_argv() const;
 
     std::unordered_map<std::string, FileRecord> records_;
     int argc_ = 0;
@@ -97,11 +102,10 @@ class FsUsageParser {
 
 // --- Implementation -----------------------------------------------------------
 std::string FsUsageParser::trim_whitespace_and_brackets(std::string input) {
-    input.erase(
-        input.begin(), std::find_if(input.begin(), input.end(), [](unsigned char ch_char) {
-            return (std::isspace(ch_char) == 0) && ch_char != '"' && ch_char != '<' &&
-                   ch_char != '(' && ch_char != '[';
-        }));
+    input.erase(input.begin(), std::find_if(input.begin(), input.end(), [](unsigned char ch_char) {
+                    return (std::isspace(ch_char) == 0) && ch_char != '"' && ch_char != '<' &&
+                           ch_char != '(' && ch_char != '[';
+                }));
     input.erase(std::find_if(input.rbegin(), input.rend(),
                              [](unsigned char ch_char) {
                                  return (std::isspace(ch_char) == 0) && ch_char != '"' &&
@@ -207,11 +211,9 @@ std::string FsUsageParser::classify_operation(const std::string &op, const std::
     }
 
     static const std::vector<std::string> output_ops = {
-        "write",    "pwrite",   "pwrite64", "pwritev",  "pwritev_nocancel",
-        "create",   "rename",   "link",     "unlink",   "mkdir",
-        "rmdir",    "truncate", "ftruncate","symlink",  "chmod",
-        "chown",    "fchmod",   "fchown",   "setattr",  "setxattr",
-        "removexattr",
+        "write", "pwrite", "pwrite64", "pwritev", "pwritev_nocancel", "create",    "rename",
+        "link",  "unlink", "mkdir",    "rmdir",   "truncate",         "ftruncate", "symlink",
+        "chmod", "chown",  "fchmod",   "fchown",  "setattr",          "setxattr",  "removexattr",
     };
 
     for (const auto &needle : output_ops) {
@@ -293,7 +295,7 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
         perror("mkstemp");
         return false;
     }
-    if (fchmod(file_desc, 0644) != 0) {
+    if (fchmod(file_desc, DEFAULT_FILE_MODE) != 0) {
         log_debug(std::string("fchmod output failed: ") + std::strerror(errno));
     }
     close(file_desc);
@@ -326,13 +328,13 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
               ", attach_delay_ms=" + std::to_string(opts.attach_delay_ms) +
               ", post_exit_delay_ms=" + std::to_string(opts.post_exit_delay_ms));
 
-    int fd = open(raw_output_path.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0644);
+    int fd = open(raw_output_path.c_str(), O_CREAT | O_TRUNC | O_WRONLY, DEFAULT_FILE_MODE);
     if (fd < 0) {
         std::cerr << "open failed: " << std::strerror(errno) << "\n";
         unlink(output_path.c_str());
         return false;
     }
-    if (fchmod(fd, 0644) != 0) {
+    if (fchmod(fd, DEFAULT_FILE_MODE) != 0) {
         log_debug(std::string("fchmod raw output failed: ") + std::strerror(errno));
     }
 
@@ -358,7 +360,7 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
         if (opts.attach_delay_ms > 0) {
             log_debug("Waiting " + std::to_string(opts.attach_delay_ms) +
                       "ms for fs_usage to attach");
-            usleep(opts.attach_delay_ms * 1000);
+            usleep(opts.attach_delay_ms * MS_TO_MICROSECONDS);
         }
 
         target_pid = spawn_target(target_path, target_argv.data(), false);
@@ -396,7 +398,7 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
         if (opts.attach_delay_ms > 0) {
             log_debug("Waiting " + std::to_string(opts.attach_delay_ms) +
                       "ms for fs_usage to attach");
-            usleep(opts.attach_delay_ms * 1000);
+            usleep(opts.attach_delay_ms * MS_TO_MICROSECONDS);
         }
     }
 
@@ -410,7 +412,7 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
     if (opts.post_exit_delay_ms > 0) {
         log_debug("Waiting " + std::to_string(opts.post_exit_delay_ms) +
                   "ms before stopping fs_usage");
-        usleep(opts.post_exit_delay_ms * 1000);
+        usleep(opts.post_exit_delay_ms * MS_TO_MICROSECONDS);
     }
 
     bool fsu_exited = false;
@@ -421,7 +423,7 @@ bool FsUsageParser::run_and_parse(int argc, char **argv) {
         log_debug("Sent SIGINT to fs_usage");
     }
 
-    fsu_exited = wait_for_exit(fsu_pid, 500, fsu_status);
+    fsu_exited = wait_for_exit(fsu_pid, FS_USAGE_EXIT_WAIT_MS, fsu_status);
     if (!fsu_exited) {
         if (kill(fsu_pid, SIGTERM) != 0 && errno != ESRCH) {
             std::cerr << "SIGTERM fs_usage failed: " << std::strerror(errno) << "\n";
@@ -519,8 +521,7 @@ std::string FsUsageParser::wait_status_string(int status) {
     return "status=" + std::to_string(status);
 }
 
-pid_t FsUsageParser::spawn_target(const char *path, char *const argv[],
-                                  bool start_suspended) const {
+pid_t FsUsageParser::spawn_target(const char *path, char *const argv[], bool start_suspended) {
     posix_spawnattr_t attr;
     int rc = posix_spawnattr_init(&attr);
     if (rc != 0) {
@@ -579,8 +580,7 @@ pid_t FsUsageParser::spawn_fs_usage(int fd) const {
     log_debug("Spawning fs_usage: " + fsu_cmd);
 
     pid_t fsu_pid = -1;
-    int fs_rc = posix_spawnp(&fsu_pid, "fs_usage", &actions, nullptr, fsu_argv.data(),
-                             environ);
+    int fs_rc = posix_spawnp(&fsu_pid, "fs_usage", &actions, nullptr, fsu_argv.data(), environ);
     posix_spawn_file_actions_destroy(&actions);
 
     if (fs_rc != 0) {
@@ -591,7 +591,7 @@ pid_t FsUsageParser::spawn_fs_usage(int fd) const {
     return fsu_pid;
 }
 
-bool FsUsageParser::wait_for_exit(pid_t pid, int timeout_ms, int &status_out) const {
+bool FsUsageParser::wait_for_exit(pid_t pid, int timeout_ms, int &status_out) {
     int waited_ms = 0;
     while (waited_ms < timeout_ms) {
         int status = 0;
@@ -601,8 +601,8 @@ bool FsUsageParser::wait_for_exit(pid_t pid, int timeout_ms, int &status_out) co
             return true;
         }
         if (rc == 0) {
-            usleep(10 * 1000);
-            waited_ms += 10;
+            usleep(WAIT_POLL_INTERVAL_MS * MS_TO_MICROSECONDS);
+            waited_ms += WAIT_POLL_INTERVAL_MS;
             continue;
         }
         if (rc < 0 && errno == EINTR) {
@@ -620,7 +620,7 @@ int FsUsageParser::extract_pid_from_process_token(const std::string &token) {
     }
     const char *pid_str = token.c_str() + dot_pos + 1;
     char *end_ptr = nullptr;
-    long pid = std::strtol(pid_str, &end_ptr, 10);
+    long pid = std::strtol(pid_str, &end_ptr, DECIMAL_BASE);
     if (end_ptr == pid_str || *end_ptr != '\0' || pid <= 0) {
         return -1;
     }
@@ -670,12 +670,9 @@ bool FsUsageParser::is_number_like(const std::string &text) {
     if (text.empty()) {
         return false;
     }
-    for (char ch : text) {
-        if ((ch < '0' || ch > '9') && ch != '.') {
-            return false;
-        }
-    }
-    return true;
+    return std::all_of(text.begin(), text.end(), [](char ch_char) {
+        return ((ch_char >= '0' && ch_char <= '9') || ch_char == '.');
+    });
 }
 
 std::string FsUsageParser::strip_wait_prefix(const std::string &process_column) {
@@ -690,8 +687,7 @@ std::string FsUsageParser::strip_wait_prefix(const std::string &process_column) 
     return process_column;
 }
 
-bool FsUsageParser::process_name_matches(const std::string &name,
-                                         const std::string &expected) {
+bool FsUsageParser::process_name_matches(const std::string &name, const std::string &expected) {
     if (name.empty() || expected.empty()) {
         return false;
     }
@@ -731,9 +727,8 @@ prov::json FsUsageParser::build_execve_argv() const {
 
 bool FsUsageParser::filter_output_by_process(const std::string &input_path,
                                              const std::string &output_path,
-                                             const std::string &expected_name,
-                                             pid_t target_pid, int &total_lines,
-                                             int &kept_lines) const {
+                                             const std::string &expected_name, pid_t target_pid,
+                                             int &total_lines, int &kept_lines) const {
     std::ifstream in(input_path);
     if (!in) {
         std::cerr << "Failed to open raw output: " << input_path << "\n";
@@ -785,9 +780,8 @@ bool FsUsageParser::filter_output_by_process(const std::string &input_path,
     }
 
     if (debug) {
-        log_debug("Filter matches: name=" + std::to_string(name_matches) +
-                  ", id=" + std::to_string(id_matches) +
-                  ", threads=" + std::to_string(thread_ids.size()));
+        log_debug("Filter matches: name=" + std::to_string(name_matches) + ", id=" +
+                  std::to_string(id_matches) + ", threads=" + std::to_string(thread_ids.size()));
     }
     return true;
 }
@@ -802,8 +796,8 @@ prov::ProvUploadInput FsUsageParser::get_provenance_data() {
 
     auto is_shared_object = [&](const std::string &path) -> bool {
         static const std::vector<std::string> excludedPrefixes = {
-            "/System/", "/Library/", "/usr/", "/bin/", "/sbin/", "/private/var/",
-            "/dev/",    "/etc/",     "/tmp/", "/var/",
+            "/System/",      "/Library/", "/usr/", "/bin/", "/sbin/",
+            "/private/var/", "/dev/",     "/etc/", "/tmp/", "/var/",
         };
 
         for (const auto &prefix : excludedPrefixes) {

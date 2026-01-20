@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
         }
 
         TraceParser parser;
-        parser.debug = true; // Enable debug output
+        parser.debug = false; // Enable debug output
 
         if (!parser.run_and_parse(argc, argv)) {
             std::cerr << "Failed to run trace and parse output\n";
