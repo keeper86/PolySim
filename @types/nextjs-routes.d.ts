@@ -24,7 +24,9 @@ declare module "nextjs-routes" {
     | StaticRoute<"/files/vis-network-demo">
     | StaticRoute<"/imprint">
     | StaticRoute<"/pong">
-    | StaticRoute<"/skills">;
+    | StaticRoute<"/skills">
+    | StaticRoute<"/whatabout">
+    | StaticRoute<"/whatabout/test">;
 
   interface StaticRoute<Pathname> {
     pathname: Pathname;

@@ -61,10 +61,13 @@ export function NavMain() {
                             }
                         });
                         return (
-                            <React.Fragment key={root.path + '.block'}>
-                                {RenderNavEntry(root)}
-                                {subItems.length > 0 && <ul>{subItems}</ul>}
-                            </React.Fragment>
+                            <details
+                                key={root.path + '.group'}
+                                className='group [&_summary::-webkit-details-marker]:hidden'
+                            >
+                                <summary className='list-none'>{RenderNavEntry(root)}</summary>
+                                {subItems.length > 0 && <ul className='ml-4 mt-2 space-y-1'>{subItems}</ul>}
+                            </details>
                         );
                     }
                     return null;

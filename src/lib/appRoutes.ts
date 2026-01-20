@@ -112,6 +112,20 @@ export const APP_ROUTES = {
         isSecondaryNav: true,
         description: 'Legal information and imprint',
     },
+    whatabout: {
+        root: {
+            path: '/whatabout',
+            label: 'Whatabout',
+            isMainNav: true,
+            isPublic: true,
+        },
+        test: {
+            path: '/whatabout/test',
+            label: 'Test',
+            isMainNav: true,
+            isPublic: true,
+        },
+    },
 } as const satisfies RouteManifest;
 
 const filterRoutes = (route: RouteManifestEntry, condition: (route: RouteMetadata) => boolean) => {
