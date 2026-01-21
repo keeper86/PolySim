@@ -12,6 +12,9 @@ import { authOptions } from './api/auth/[...nextauth]/authOptions';
 import AppProviders from './AppProviders';
 import './globals.css';
 import BackToTopButton from '@/components/ui/BackToTopButton';
+import ThemeWrapper from '@/components/theme-wrapper';
+import { ThemeProvider } from '@/components/theme-provider';
+import { ModeToggle } from '@/components/mode-toggle';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -38,26 +41,33 @@ export default async function RootLayout({
     const session = await getServerSession(authOptions);
 
     return (
-        <html lang='en'>
+        <html lang='en' suppressHydrationWarning>
             <body className={`${geistSans.variable} ${geistMono.variable}`}>
-                <AppProviders session={session}>
-                    <SidebarProvider>
-                        <AppSidebar />
-                        <SidebarInset>
-                            <header className='flex h-16 shrink-0 items-center gap-2'>
-                                <div className='flex items-center gap-2 px-4'>
-                                    <SidebarTrigger className='-ml-1' />
-                                    <Separator orientation='vertical' className='mr-2 h-4' />
-                                    <DynamicBreadcrumbs />
-                                </div>
-                            </header>
-                            <main className='flex-1 p-0 sm:p-4 overflow-x-auto break-words'>{children}</main>
-                            <Footer />
-                        </SidebarInset>
-                        <BackToTopButton />
-                    </SidebarProvider>
-                    <Toaster />
-                </AppProviders>
+                <ThemeWrapper>
+                    <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
+                        <AppProviders session={session}>
+                            <SidebarProvider>
+                                <AppSidebar />
+                                <SidebarInset>
+                                    <header className='flex h-16 shrink-0 items-center justify-between gap-2 px-4'>
+                                        <div className='flex items-center gap-2 '>
+                                            <SidebarTrigger className='-ml-1' />
+                                            <Separator orientation='vertical' className='mr-2 h-4' />
+                                            <DynamicBreadcrumbs />
+                                        </div>
+                                        <div className='flex items-center gap-2'>
+                                            <ModeToggle />
+                                        </div>
+                                    </header>
+                                    <main className='flex-1 p-0 sm:p-4 overflow-x-auto break-words'>{children}</main>
+                                    <Footer />
+                                </SidebarInset>
+                                <BackToTopButton />
+                            </SidebarProvider>
+                            <Toaster />
+                        </AppProviders>
+                    </ThemeProvider>
+                </ThemeWrapper>
             </body>
         </html>
     );

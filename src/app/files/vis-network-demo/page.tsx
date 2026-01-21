@@ -216,7 +216,7 @@ export default function VisNetworkDemoPage() {
                 </div>
             </div>
 
-            <div className='md:hidden absolute top-4 right-4 z-30'>
+            <div className='md:hidden absolute top-4 right-4 z-30 mr-5'>
                 {!controlsOpen && (
                     <button
                         onClick={() => setControlsOpen(true)}
@@ -227,6 +227,7 @@ export default function VisNetworkDemoPage() {
         hover:bg-gray-300
         transition-colors
         cursor-pointer
+        mr-5
       '
                         aria-label='Open Controls'
                     >
