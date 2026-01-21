@@ -42,7 +42,9 @@ class StraceParser {
     bool run_and_parse(int argc, char **argv);
     prov::ProvUploadInput get_provenance_data();
 
-    const std::unordered_map<std::string, FileRecord> &records() const { return records_; }
+    [[nodiscard]] const std::unordered_map<std::string, FileRecord> &records() const {
+        return records_;
+    }
 
   private:
     std::unordered_map<std::string, FileRecord> records_;

@@ -55,7 +55,7 @@ TEST(StracePegtl, ExecveRule) {
 
     EXPECT_EQ(st.syscall, "execve");
     EXPECT_EQ(st.path, "/usr/bin/head");
-    ASSERT_EQ(st.execve_argv.size(), 4u);
+    ASSERT_EQ(st.execve_argv.size(), 4U);
     EXPECT_EQ(st.execve_argv[0], "head");
     EXPECT_EQ(st.execve_argv[1], "-c");
     EXPECT_EQ(st.execve_argv[2], "8");
@@ -95,10 +95,10 @@ TEST(StraceParser, ParseLines) {
         parser.parse_line(test_case.line, 123456);
         const auto &records = parser.records();
         if (test_case.expected_type == "null") {
-            ASSERT_EQ(records.size(), 0u);
+            ASSERT_EQ(records.size(), 0U);
             continue;
         }
-        ASSERT_EQ(records.size(), 1u);
+        ASSERT_EQ(records.size(), 1U);
         auto it = records.find(test_case.expected_path);
         ASSERT_NE(it, records.end());
         ASSERT_FALSE(it->second.accesses.empty());
@@ -124,7 +124,7 @@ TEST(StraceParser, E2E_RunAndParse) {
         std::filesystem::create_directories(prov_dir);
     } catch (const std::filesystem::filesystem_error &e) {
         std::cerr << "Warning: failed to create directory " << prov_dir << ": " << e.what()
-                  << std::endl;
+                  << '\n';
     }
 
     std::vector<std::string> args = {
@@ -148,11 +148,11 @@ TEST(StraceParser, E2E_RunAndParse) {
           "/tmp/change_exec_dirs_out/tmp/test.txt"}},
     };
 
-    std::cout << "Using fixture directory: " << fixture_dir << std::endl;
+    std::cout << "Using fixture directory: " << fixture_dir << '\n';
 
     for (const auto &script : args) {
         std::cout << "\n----------------------------------------------------\nRunning " << script
-                  << " fixture via strace..." << std::endl;
+                  << " fixture via strace..." << '\n';
 
         StraceParser parser;
         parser.debug = true;

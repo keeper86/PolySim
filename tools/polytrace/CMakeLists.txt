@@ -143,6 +143,7 @@ target_include_directories(strace_parser_test PRIVATE
   ${MINIZ_BINARY_DIR}
   ${pegtl_SOURCE_DIR}/include
 )
+
 target_link_libraries(strace_parser_test PRIVATE
   gtest_main
   OpenSSL::SSL
@@ -150,6 +151,7 @@ target_link_libraries(strace_parser_test PRIVATE
   Threads::Threads
   miniz
 )
+
 
 add_test(NAME strace_parser_test COMMAND $<TARGET_FILE:strace_parser_test>)
 
@@ -159,7 +161,7 @@ target_compile_definitions(strace_parser_test PRIVATE TEST_FIXTURES_DIR=\"${TEST
 
 if(NOT MSVC)
   target_compile_options(upload PRIVATE -Wall -Wextra -Wpedantic)
-    target_compile_options(trace PRIVATE -Wall -Wextra -Wpedantic)
+  target_compile_options(trace PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
 if(TARGET miniz)
