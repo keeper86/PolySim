@@ -26,7 +26,9 @@ declare module "nextjs-routes" {
     | StaticRoute<"/pong">
     | StaticRoute<"/skills">
     | StaticRoute<"/whatabout">
-    | StaticRoute<"/whatabout/test">;
+    | StaticRoute<"/whatabout/clitool">
+    | StaticRoute<"/whatabout/fairprinciples">
+    | StaticRoute<"/whatabout/proandgov">;
 
   interface StaticRoute<Pathname> {
     pathname: Pathname;

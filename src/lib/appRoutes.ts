@@ -119,9 +119,21 @@ export const APP_ROUTES = {
             isMainNav: true,
             isPublic: true,
         },
-        test: {
-            path: '/whatabout/test',
-            label: 'Test',
+        clitool: {
+            path: '/whatabout/clitool',
+            label: 'CLI Tool',
+            isMainNav: true,
+            isPublic: true,
+        },
+        fairprinciples: {
+            path: '/whatabout/fairprinciples',
+            label: 'Fair Principles',
+            isMainNav: true,
+            isPublic: true,
+        },
+        proandgov: {
+            path: '/whatabout/proandgov',
+            label: 'Provenance and Governance',
             isMainNav: true,
             isPublic: true,
         },
