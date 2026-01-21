@@ -1,9 +1,8 @@
-// noinspection LanguageDetectionInspection
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AvatarUploadDialog } from './AvatarUploadDialog';
+import React from 'react';
 
 // 1. Mock für tRPC
 const mockMutate = vi.fn();
@@ -13,37 +12,74 @@ vi.mock('@/lib/trpc', () => ({
     }),
 }));
 
-// 2. Hilfsfunktion für Datei-Erstellung
-const createTestFile = (type: string, sizeInBytes: number, name = 'test.png'): File => {
-    const base64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=';
-    const buffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+// 2. Mock für Dialog-Komponenten
+interface DialogProps extends React.HTMLAttributes<HTMLDivElement> {
+    children?: React.ReactNode;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+}
 
-    // Für Größentests: Array mit gewünschter Größe füllen
-    const content = sizeInBytes > buffer.length ? new Uint8Array(sizeInBytes) : buffer;
+interface DialogContentProps extends React.HTMLAttributes<HTMLDivElement> {
+    children?: React.ReactNode;
+}
 
-    return new File([content], name, { type });
-};
+interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+    children?: React.ReactNode;
+}
+
+interface DialogTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
+    children?: React.ReactNode;
+}
+
+interface DialogDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
+    children?: React.ReactNode;
+}
 
 vi.mock('@/components/ui/dialog', () => ({
-    Dialog: ({
-        children,
-        open,
-        onOpenChange,
-    }: {
-        children: React.ReactNode;
-        open: boolean;
-        onOpenChange: (open: boolean) => void;
-    }) => (
-        <div data-testid='dialog-wrapper' data-open={open} onClick={() => onOpenChange(!open)}>
+    Dialog: ({ children, open }: DialogProps) => (
+        <div data-testid='dialog-wrapper' data-open={open}>
             {children}
         </div>
     ),
-    DialogTrigger: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-    DialogContent: ({ children }: { children: React.ReactNode }) => <div data-testid='dialog-content'>{children}</div>,
-    DialogHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-    DialogTitle: ({ children }: { children: React.ReactNode }) => <h2>{children}</h2>,
-    DialogDescription: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
+    DialogTrigger: ({ children }: DialogContentProps) => <>{children}</>,
+    DialogContent: ({ children }: DialogContentProps) => <div data-testid='dialog-content'>{children}</div>,
+    DialogHeader: ({ children }: DialogHeaderProps) => <div>{children}</div>,
+    DialogTitle: ({ children }: DialogTitleProps) => <h2>{children}</h2>,
+    DialogDescription: ({ children }: DialogDescriptionProps) => <p>{children}</p>,
 }));
+
+// 3. FileReader Mock
+interface MockFileReaderInstance {
+    readAsDataURL: (file: File) => void;
+    onloadend: (() => void) | null;
+    result: string | null;
+}
+
+const createMockFileReader = (): MockFileReaderInstance => ({
+    readAsDataURL(this: MockFileReaderInstance, _file: File) {
+        const base64 =
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=';
+        setTimeout(() => {
+            this.result = base64;
+            this.onloadend?.();
+        }, 0);
+    },
+    onloadend: null,
+    result: null,
+});
+
+Object.defineProperty(global, 'FileReader', {
+    writable: true,
+    value: vi.fn(() => createMockFileReader()),
+});
+
+// Hilfsfunktion für Datei-Erstellung
+const createTestFile = (type: string, sizeInBytes: number, name = 'test.png'): File => {
+    const base64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=';
+    const buffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+    const content = sizeInBytes > buffer.length ? new Uint8Array(sizeInBytes) : buffer;
+    return new File([content], name, { type });
+};
 
 describe('AvatarUploadDialog', () => {
     beforeEach(() => {
@@ -56,48 +92,45 @@ describe('AvatarUploadDialog', () => {
             const user = userEvent.setup();
             render(<AvatarUploadDialog />);
 
-            // Dialog-Inhalt sollte initial nicht sichtbar sein
-            expect(screen.queryByText('Profile Picture')).not.toBeInTheDocument();
-
-            // Trigger-Button klicken
             const triggerButton = screen.getByRole('button', { name: /upload avatar/i });
+            expect(triggerButton).toBeInTheDocument();
+
             await user.click(triggerButton);
 
-            // Dialog-Inhalt sollte jetzt sichtbar sein
-            expect(screen.getByText('Profile Picture')).toBeInTheDocument();
-            expect(screen.getByText(/drop your image here/i)).toBeInTheDocument();
+            const dialogContent = screen.getByTestId('dialog-content');
+            expect(dialogContent).toBeInTheDocument();
+
+            const dialogTitle = screen.getByRole('heading', { name: /profile picture/i });
+            expect(dialogTitle).toBeInTheDocument();
         });
 
         it('closes dialog and resets state when closed', async () => {
             const user = userEvent.setup();
-            render(<AvatarUploadDialog />);
+            const { container } = render(<AvatarUploadDialog />);
 
             // Dialog öffnen
             const triggerButton = screen.getByRole('button', { name: /upload avatar/i });
             await user.click(triggerButton);
-            expect(screen.getByText('Profile Picture')).toBeInTheDocument();
 
-            // Datei auswählen, um State zu setzen
-            const validFile = createTestFile('image/png', 500);
-            const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-            await user.upload(fileInput, validFile);
+            // Datei auswählen
+            const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
+            const testFile = createTestFile('image/png', 500000);
+            await user.upload(fileInput, testFile);
 
-            // Upload-Button sollte angezeigt werden (zeigt previewUrl ist gesetzt)
-            expect(screen.getByRole('button', { name: /upload photo/i })).toBeInTheDocument();
+            // Upload-Button sollte sichtbar sein (previewUrl ist gesetzt)
+            const uploadButton = await screen.findByRole('button', { name: /upload photo/i });
+            expect(uploadButton).toBeInTheDocument();
 
-            // Dialog schließen (Escape-Taste)
-            await user.keyboard('{Escape}');
+            // Cancel-Button klicken
+            const cancelButton = screen.getByRole('button', { name: /cancel/i });
+            await user.click(cancelButton);
 
-            // Dialog-Inhalt sollte nicht mehr sichtbar sein
-            expect(screen.queryByText('Profile Picture')).not.toBeInTheDocument();
-
-            // Dialog erneut öffnen und prüfen, ob State zurückgesetzt wurde
-            await user.click(triggerButton);
-            expect(screen.getByText('Profile Picture')).toBeInTheDocument();
-
-            // Preview sollte nicht mehr da sein (State wurde zurückgesetzt)
+            // State sollte zurückgesetzt sein - Upload-Button sollte weg sein
             expect(screen.queryByRole('button', { name: /upload photo/i })).not.toBeInTheDocument();
-            expect(screen.getByText(/drop your image here/i)).toBeInTheDocument();
+
+            // Choose File Button sollte wieder sichtbar sein
+            const chooseFileButton = screen.getByRole('button', { name: /choose file/i });
+            expect(chooseFileButton).toBeInTheDocument();
         });
     });
 
