@@ -72,7 +72,7 @@ describe('PatPage', () => {
             id: 'pat-2',
             name: 'API Key',
             created_at: new Date('2025-02-15T12:00:00Z'),
-            expires_at: null, // Never expires
+            expires_at: new Date('2025-03-15T12:00:00Z'),
         },
     ];
 
@@ -94,15 +94,18 @@ describe('PatPage', () => {
         render(<PatPage />);
 
         const createDate = new Date(existingTokens[0].created_at).toLocaleString();
-        const expireDate = new Date(existingTokens[0].expires_at ?? '').toLocaleString();
+        const expireDate = new Date(existingTokens[0].expires_at).toLocaleString();
 
         const token1 = screen.getByText('Test Token 1').closest('li');
         expect(token1).toHaveTextContent(new RegExp(`Created ${createDate}`, 'i'));
         expect(token1).toHaveTextContent(new RegExp(`Expires ${expireDate}`, 'i'));
         expect(screen.getAllByRole('button', { name: /Delete/i }).length).toBe(2);
 
-        const token2 = screen.getByText('API Key').closest('li');
-        expect(token2).toHaveTextContent(/Never expires/i);
+        // Find the second token by name
+        const token2Element = screen.getByText('API Key');
+        const token2Item = token2Element.closest('div')?.parentElement?.parentElement;
+        const token2Date = new Date(existingTokens[1].expires_at).toLocaleString();
+        expect(token2Item).toHaveTextContent(new RegExp(`Expires ${token2Date}`, 'i'));
     });
 
     it('presses the create pat button and listens for the copy Pat dialog and for the backend call createPat', async () => {

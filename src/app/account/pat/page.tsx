@@ -22,7 +22,7 @@ type PatToken = {
     id: string;
     name?: string | null;
     created_at: string;
-    expires_at?: string | null;
+    expires_at: string;
 };
 
 const isExpired = (token: PatToken): boolean => {
@@ -145,13 +145,7 @@ export default function PatPage() {
                                     </div>
                                     <div className='text-xs text-muted-foreground'>
                                         Created {new Date(token.created_at).toLocaleString()}
-                                        {token.expires_at ? (
-                                            <span>
-                                                {' · '}Expires {new Date(token.expires_at).toLocaleString()}
-                                            </span>
-                                        ) : (
-                                            <span>{' · '}Never expires</span>
-                                        )}
+                                        {' · '}Expires {new Date(token.expires_at).toLocaleString()}
                                     </div>
                                 </div>
                                 <div className='flex items-center gap-2'>

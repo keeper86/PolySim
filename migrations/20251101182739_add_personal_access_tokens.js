@@ -5,7 +5,7 @@ exports.up = function (knex) {
             table.string('user_id').notNullable().index();
             table.string('name').notNullable().defaultTo('');
             table.string('token_hash').notNullable().unique().index();
-            table.timestamp('expires_at').nullable();
+            table.timestamp('expires_at').notNullable();
             table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
         })
         .createTable('personal_access_tokens_logs', function (table) {
