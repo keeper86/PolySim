@@ -1,6 +1,10 @@
 services:
     db:
         image: postgres:15-alpine
+        deploy:
+            resources:
+                limits:
+                    memory: 1536m
         environment:
             POSTGRES_USER: ${POSTGRES_USER}
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -16,6 +20,10 @@ services:
 
     keycloak:
         image: quay.io/keycloak/keycloak:26.3.4
+        deploy:
+            resources:
+                limits:
+                    memory: 2560m
         environment:
             KC_DB: dev-mem
             KC_BOOTSTRAP_ADMIN_USERNAME: admin
