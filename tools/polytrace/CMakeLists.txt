@@ -17,7 +17,7 @@ set(PROJECT_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 include(FetchContent)
 
 # Default pinned versions (changeable via -D on the cmake command line)
-set(NLOHMANN_JSON_GIT_TAG "v3.11.2" CACHE STRING "Pinned git tag for nlohmann/json")
+set(NLOHMANN_JSON_GIT_TAG "v3.11.3" CACHE STRING "Pinned git tag for nlohmann/json")
 set(CPP_HTTPLIB_GIT_TAG "v0.10.8" CACHE STRING "Pinned git tag for yhirose/cpp-httplib")
 set(MINIZ_GIT_TAG "master" CACHE STRING "Pinned git tag or branch for richgel999/miniz (override to a release tag for reproducible builds)")
 set(GOOGLETEST_GIT_TAG "v1.15.0" CACHE STRING "Pinned git tag for google/googletest")
@@ -82,6 +82,12 @@ file(GLOB_RECURSE POLYTRACE_SOURCES
 
 add_executable(upload ${PROJECT_SRC_DIR}/upload.cpp )
 add_executable(trace ${PROJECT_SRC_DIR}/trace.cpp )
+
+option(POLYTRACE_ENABLE_SSL "Enable SSL for polytrace tools" ON)
+
+if(POLYTRACE_ENABLE_SSL)
+  target_compile_definitions(upload PRIVATE CPPHTTPLIB_OPENSSL_SUPPORT) 
+endif()
 
 # Place main runtime binaries (upload, trace) into a dedicated bin directory
 # so only those two end up in bin/ while tests are placed elsewhere.
@@ -182,16 +188,16 @@ find_program(CLANG_TIDY_EXE NAMES clang-tidy clang-tidy-16 clang-tidy-15)
 find_program(CLANG_FORMAT_EXE NAMES clang-format clang-format-16 clang-format-15)
 if(CLANG_FORMAT_EXE)
   add_custom_target(format
-    COMMAND ${CLANG_FORMAT_EXE} -n --Werror ${POLYTRACE_SOURCES}
+    COMMAND ${CLANG_FORMAT_EXE} -n --Werror src/*.cpp include/*.hpp
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Running clang-format over source files"
   )
-    add_custom_target(format-fix
-    COMMAND ${CLANG_FORMAT_EXE} -i ${POLYTRACE_SOURCES}
+  add_custom_target(format-fix
+    COMMAND ${CLANG_FORMAT_EXE} -i src/*.cpp include/*.hpp
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Running clang-format over source files"
   )
-elseif(ENABLE_CLANG_FORMAT_TARGET)
+else()
   message(WARNING "clang-format not found in PATH.")
 endif()
 

@@ -16,28 +16,15 @@ describe('CategorySection', () => {
         Object.values(mockActions).forEach((fn) => fn.mockClear());
     });
 
-    it('renders category title', () => {
+    it('does not render category title (rendered by parent Accordion)', () => {
         render(<CategorySection categoryObj={sampleCategory} actions={mockActions} />);
-        expect(screen.getByText(DEFAULT_CATEGORY_NAME)).toBeInTheDocument();
+        expect(screen.queryByText(DEFAULT_CATEGORY_NAME)).not.toBeInTheDocument();
     });
 
     it('renders all skills in the category', () => {
         render(<CategorySection categoryObj={sampleCategory} actions={mockActions} />);
         expect(screen.getByText(DEFAULT_SKILL_NAME)).toBeInTheDocument();
         expect(screen.getByText(DEFAULT_SECOND_SKILL_NAME)).toBeInTheDocument();
-    });
-
-    it('collapses and expands the section', () => {
-        render(<CategorySection categoryObj={sampleCategory} actions={mockActions} />);
-        const button = screen.getByRole('button', { name: /collapse category/i });
-        fireEvent.click(button);
-
-        const container = button.parentElement?.querySelector('div.transition-all');
-        expect(container).toHaveClass('max-h-0');
-        expect(container).toHaveClass('opacity-0');
-        fireEvent.click(button);
-        expect(container).not.toHaveClass('max-h-0');
-        expect(container).not.toHaveClass('opacity-0');
     });
 
     it('adds a new skill', () => {

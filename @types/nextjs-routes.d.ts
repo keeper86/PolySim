@@ -13,10 +13,8 @@ declare module "nextjs-routes" {
   export type Route =
     | StaticRoute<"/">
     | StaticRoute<"/account">
-    | StaticRoute<"/account/avatar">
     | StaticRoute<"/account/pat">
     | StaticRoute<"/account/skills-assessment">
-    | StaticRoute<"/analysis">
     | StaticRoute<"/api-doc">
     | DynamicRoute<"/api/auth/[...nextauth]", { "nextauth": string[] }>
     | DynamicRoute<"/api/public/[...trpc]", { "trpc": string[] }>
@@ -26,9 +24,6 @@ declare module "nextjs-routes" {
     | StaticRoute<"/files/vis-network-demo">
     | StaticRoute<"/imprint">
     | StaticRoute<"/pong">
-    | StaticRoute<"/projects">
-    | StaticRoute<"/projects/create">
-    | StaticRoute<"/projects/manage">
     | StaticRoute<"/skills">;
 
   interface StaticRoute<Pathname> {

@@ -1,19 +1,22 @@
 'use client';
 
-import React from 'react';
+import { Page } from '@/components/client/Page';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
     Dialog,
+    DialogClose,
     DialogContent,
-    DialogTitle,
     DialogDescription,
     DialogFooter,
     DialogHeader,
-    DialogClose,
+    DialogTitle,
 } from '@/components/ui/dialog';
-import { useQuery } from '@tanstack/react-query';
+import { Input } from '@/components/ui/input';
 import { useTRPC, useTRPCClient } from '@/lib/trpc';
+import { useQuery } from '@tanstack/react-query';
+import React from 'react';
+import { toast } from 'sonner';
 
 type PatToken = {
     id: string;
@@ -22,6 +25,9 @@ type PatToken = {
     expires_at?: string | null;
 };
 
+const isExpired = (token: PatToken): boolean => {
+    return !!(token.expires_at && new Date(token.expires_at) <= new Date());
+};
 export default function PatPage() {
     const trpc = useTRPC();
     const trpcClient = useTRPCClient();
@@ -40,6 +46,7 @@ export default function PatPage() {
         }
         setCreating(true);
         setLatestTokenValue(null);
+
         try {
             const result = await trpcClient.createPAT.mutate({
                 name: newName || undefined,
@@ -51,35 +58,27 @@ export default function PatPage() {
                 setOpenTokenDialog(true);
             }
             setNewName('');
-        } catch (err) {
-            console.error(err);
-            alert('Could not create token');
         } finally {
             setCreating(false);
         }
     }
 
-    async function deleteToken(id: string) {
-        const ok = confirm('Delete this personal access token? This cannot be undone.');
-        if (!ok) {
-            return;
-        }
-        await trpcClient.revokePAT.mutate({ id });
-        void refetch();
-    }
-
     function copyToClipboard(value: string) {
-        void navigator.clipboard?.writeText(value).then(() => alert('Token copied to clipboard'));
+        void navigator.clipboard?.writeText(value).then(() => toast.success('Token copied to clipboard'));
     }
 
     return (
-        <div className='max-w-3xl mx-auto p-4'>
-            <h1 className='text-2xl font-bold mb-4'>Personal Access Tokens</h1>
-
+        <Page title='Personal Access Tokens'>
             <section className='mb-6'>
-                <label className='block mb-2 text-sm font-medium'>Token name (optional)</label>
+                <label htmlFor='patNameInput' className='block mb-2 text-sm font-medium'>
+                    Token name (optional)
+                </label>
                 <div className='flex gap-2 items-center'>
-                    <Input value={newName} onChange={(e) => setNewName((e.target as HTMLInputElement).value)} />
+                    <Input
+                        id='patNameInput'
+                        value={newName}
+                        onChange={(e) => setNewName((e.target as HTMLInputElement).value)}
+                    />
                     <select
                         value={String(expiryDays)}
                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setExpiryDays(Number(e.target.value))}
@@ -137,15 +136,18 @@ export default function PatPage() {
                     <div className='text-sm text-muted-foreground'>No tokens yet.</div>
                 ) : (
                     <ul className='space-y-2'>
-                        {tokens.map((t: PatToken) => (
-                            <li key={t.id} className='flex items-center justify-between rounded border p-3'>
+                        {tokens.map((token: PatToken) => (
+                            <li key={token.id} className='flex items-center justify-between rounded border p-3'>
                                 <div>
-                                    <div className='font-medium'>{t.name || 'Unnamed token'}</div>
+                                    <div className='flex items-center gap-2'>
+                                        <div className='font-medium'>{token.name || 'Unnamed token'}</div>
+                                        {isExpired(token) ? <Badge variant='destructive'>Expired</Badge> : null}
+                                    </div>
                                     <div className='text-xs text-muted-foreground'>
-                                        Created {new Date(t.created_at).toLocaleString()}
-                                        {t.expires_at ? (
+                                        Created {new Date(token.created_at).toLocaleString()}
+                                        {token.expires_at ? (
                                             <span>
-                                                {' · '}Expires {new Date(t.expires_at).toLocaleString()}
+                                                {' · '}Expires {new Date(token.expires_at).toLocaleString()}
                                             </span>
                                         ) : (
                                             <span>{' · '}Never expires</span>
@@ -153,7 +155,36 @@ export default function PatPage() {
                                     </div>
                                 </div>
                                 <div className='flex items-center gap-2'>
-                                    <Button variant='destructive' onClick={() => deleteToken(t.id)}>
+                                    <Button
+                                        variant={isExpired(token) ? 'ghost' : 'outline'}
+                                        disabled={isExpired(token)}
+                                        title={isExpired(token) ? 'Already revoked' : 'Revoke token'}
+                                        onClick={async () => {
+                                            const ok = confirm(
+                                                'Revoke this personal access token?\nIt will be immediately invalidated but remain listed.',
+                                            );
+                                            if (!ok) {
+                                                return;
+                                            }
+                                            await trpcClient.revokePAT.mutate({ id: token.id });
+                                            void refetch();
+                                        }}
+                                    >
+                                        Revoke
+                                    </Button>
+                                    <Button
+                                        variant='destructive'
+                                        onClick={async () => {
+                                            const ok = confirm(
+                                                'Delete this personal access token? This cannot be undone.',
+                                            );
+                                            if (!ok) {
+                                                return;
+                                            }
+                                            await trpcClient.deletePAT.mutate({ id: token.id });
+                                            void refetch();
+                                        }}
+                                    >
                                         Delete
                                     </Button>
                                 </div>
@@ -162,6 +193,6 @@ export default function PatPage() {
                     </ul>
                 )}
             </section>
-        </div>
+        </Page>
     );
 }

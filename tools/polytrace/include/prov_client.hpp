@@ -93,17 +93,16 @@ struct ProvClient {
     int port;
     std::string basePath;
     std::optional<std::string> pat; // Personal Access Token
+    bool use_ssl;
 
     ProvClient(std::string host = "127.0.0.1", int port = DEFAULT_PORT, std::string basePath = "",
-               std::optional<std::string> pat_ = std::nullopt)
-        : host(std::move(host)), port(port), basePath(std::move(basePath)), pat(std::move(pat_)) {}
+               std::optional<std::string> pat_ = std::nullopt, bool use_ssl_ = false)
+        : host(std::move(host)), port(port), basePath(std::move(basePath)), pat(std::move(pat_)),
+          use_ssl(use_ssl_) {}
 
     [[nodiscard]] std::pair<bool, json>
     uploadActivity(const ProvUploadInput &input,
                    const std::string &path = "/upload-activity") const {
-        httplib::Client cli(host, port);
-        cli.set_connection_timeout(DEFAULT_TIMEOUT_SEC);
-
         json provUploadJson = input;
 
         httplib::Headers headers;
@@ -113,23 +112,39 @@ struct ProvClient {
             std::cerr << "Warning: No PAT provided, upload may be rejected by server\n";
         }
 
-        auto result =
-            cli.Post((basePath + path).c_str(), headers, provUploadJson.dump(), "application/json");
-        if (!result) {
-            return {false, json{{"error", "network failure"}}};
-        }
-        if (result->status < HTTP_STATUS_OK_MIN || result->status >= HTTP_STATUS_OK_MAX) {
-            try {
-                return {false, json::parse(result->body)};
-            } catch (...) {
-                return {false, json{{"status", result->status}, {"body", result->body}}};
+        auto post = [&](auto &cli) -> std::pair<bool, json> {
+            cli.set_connection_timeout(DEFAULT_TIMEOUT_SEC);
+            auto result = cli.Post((basePath + path).c_str(), headers, provUploadJson.dump(),
+                                   "application/json");
+            if (!result) {
+                return {false, json{{"error", "network failure"}}};
             }
+            if (result->status < HTTP_STATUS_OK_MIN || result->status >= HTTP_STATUS_OK_MAX) {
+                try {
+                    return {false, json::parse(result->body)};
+                } catch (...) {
+                    return {false, json{{"status", result->status}, {"body", result->body}}};
+                }
+            }
+            try {
+                return {true, json::parse(result->body)};
+            } catch (...) {
+                return {true, json{{"raw", result->body}}};
+            }
+        };
+#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
+        if (use_ssl) {
+            httplib::SSLClient cli(host, port);
+            return post(cli);
         }
-        try {
-            return {true, json::parse(result->body)};
-        } catch (...) {
-            return {true, json{{"raw", result->body}}};
+#else
+        if (use_ssl) {
+            return {false,
+                    json{{"error", "SSL requested but CPPHTTPLIB_OPENSSL_SUPPORT not enabled"}}};
         }
+#endif
+        httplib::Client cli(host, port);
+        return post(cli);
     }
 };
 

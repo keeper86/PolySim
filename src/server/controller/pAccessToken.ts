@@ -8,8 +8,16 @@ const MAX_ACTIVE_TOKENS = parseInt(process.env.MAX_ACTIVE_PERSONAL_TOKENS_PER_US
 
 const createPatInput = z.object({
     name: z.string().optional().default('token'),
-    expiresInDays: z.number().min(0).max(360).optional().default(1),
+    expiresInDays: z.number().min(0).max(366).optional().default(1),
 });
+
+const patToken = z.object({
+    id: z.uuid(),
+    name: z.string().nullable(),
+    created_at: z.date(),
+    expires_at: z.date().nullable(),
+});
+export type PatToken = z.infer<typeof patToken>;
 
 export const createPAT = () => {
     return protectedProcedure
@@ -59,16 +67,7 @@ export const createPAT = () => {
 export const listPATs = () => {
     return protectedProcedure
         .input(z.object({}))
-        .output(
-            z.array(
-                z.object({
-                    id: z.uuid(),
-                    name: z.string().nullable(),
-                    created_at: z.date(),
-                    expires_at: z.date().nullable(),
-                }),
-            ),
-        )
+        .output(z.array(patToken))
         .query(async ({ ctx }) => {
             const userId = getUserIdFromContext(ctx);
             const rows = await db('personal_access_tokens')
@@ -79,6 +78,19 @@ export const listPATs = () => {
 };
 
 export const revokePAT = () => {
+    return protectedProcedure
+        .input(z.object({ id: z.uuid() }))
+        .output(z.object({ success: z.boolean() }))
+        .mutation(async ({ ctx, input }) => {
+            const userId = getUserIdFromContext(ctx);
+            await db('personal_access_tokens')
+                .where({ id: input.id, user_id: userId })
+                .update({ expires_at: new Date() });
+            return { success: true };
+        });
+};
+
+export const deletePAT = () => {
     return protectedProcedure
         .input(z.object({ id: z.uuid() }))
         .output(z.object({ success: z.boolean() }))

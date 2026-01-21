@@ -16,7 +16,7 @@ describe('StarRating', () => {
         const { container } = render(<StarRating level={1} onChange={onChange} />);
 
         const buttons = container.querySelectorAll('button');
-        await user.click(buttons[1]); // Click second star
+        await user.click(buttons[1]);
 
         expect(onChange).toHaveBeenCalledWith(2);
     });

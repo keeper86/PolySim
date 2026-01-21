@@ -6,6 +6,7 @@ import { ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { ConfirmResetDialog } from './ConfirmResetDialog';
 import { SubSkillItem } from './SubSkillItem';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
 
 import type { SkillAssessment } from '@/server/controller/skillsAssessment';
 import { GoDot } from 'react-icons/go';
@@ -25,7 +26,6 @@ export function SkillItem({
     actions: SkillsAssessmentActions;
 }) {
     const { name, level = 0, subSkills } = skill;
-    const isDefault = isDefaultSkill(name);
     const Icon = getIconToSkill(name) || GoDot;
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
     const [newSubSkillValue, setNewSubSkillValue] = useState<string>('');
@@ -43,46 +43,46 @@ export function SkillItem({
                     setShowResetDialog(false);
                 }}
             />
-            <div className='flex flex-col border rounded px-3 py-2 text-secondary-foreground'>
-                <div className='flex flex-row justify-between items-center gap-4 min-w-0'>
-                    <span className='font-medium min-w-0 flex-1 truncate overflow-hidden whitespace-nowrap flex items-center gap-2'>
-                        {!isDefault ? (
-                            <>
+            <Card className='p-2'>
+                <CardHeader className='p-0'>
+                    <div className='flex flex-row justify-between items-center gap-4 min-w-0 px-1'>
+                        <span className='font-medium min-w-0 flex-1 truncate overflow-hidden whitespace-nowrap flex items-center gap-2'>
+                            {!isDefaultSkill(name) ? (
                                 <button
                                     aria-label='Delete skill'
                                     onClick={() => actions.deleteCustomSkill(category, skillIndex)}
                                 >
-                                    <Trash2 className='w-6 h-6 text-red-500 hover:text-red-600' />
+                                    <Trash2 className='w-5 h-5 text-red-500 hover:text-red-600' />
                                 </button>
-                            </>
-                        ) : (
-                            <Icon className='w-6 h-6 text-primary shrink-0' />
-                        )}
-                        {name}
-                    </span>
-                    <StarRating
-                        level={level}
-                        onChange={(level) => actions.updateItemLevel(category, skillIndex, level)}
-                        onDelete={() => {
-                            if (hasRatedSubSkills) {
-                                setShowResetDialog(true);
-                            } else {
-                                actions.updateItemLevel(category, skillIndex, 0);
-                            }
-                        }}
-                    />
-                </div>
+                            ) : (
+                                <Icon className='w-5 h-5 text-primary shrink-0' />
+                            )}
+                            {name}
+                        </span>
+                        <StarRating
+                            level={level}
+                            onChange={(level) => actions.updateItemLevel(category, skillIndex, level)}
+                            onDelete={() => {
+                                if (hasRatedSubSkills) {
+                                    setShowResetDialog(true);
+                                } else {
+                                    actions.updateItemLevel(category, skillIndex, 0);
+                                }
+                            }}
+                        />
+                    </div>
+                </CardHeader>
                 {level > 0 && (
-                    <div className='mt-3 space-y-2'>
-                        <div className='flex items-center gap-2 '>
+                    <CardContent className='p-0 mt-2'>
+                        <div className='flex items-center gap-2'>
                             <button
                                 type='button'
                                 onClick={() => setIsCollapsed((v) => !v)}
-                                className='text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors  cursor-pointer'
+                                className='text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors cursor-pointer'
                                 aria-label={isCollapsed ? 'Expand sub-skills' : 'Collapse sub-skills'}
                             >
                                 {isCollapsed ? <ChevronDown className='w-4 h-4' /> : <ChevronUp className='w-4 h-4' />}
-                                <label className='text-sm font-medium  cursor-pointer'>Sub-Skills</label>
+                                <label className='text-sm font-medium cursor-pointer'>Sub-Skills</label>
                             </button>
                         </div>
                         <div
@@ -116,9 +116,9 @@ export function SkillItem({
                                 buttonLabel=''
                             />
                         </div>
-                    </div>
+                    </CardContent>
                 )}
-            </div>
+            </Card>
         </>
     );
 }
