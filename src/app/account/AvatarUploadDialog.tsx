@@ -14,7 +14,8 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useTRPCClient } from '@/lib/trpc';
+import { useTRPC } from '@/lib/trpc';
+import { useMutation } from '@tanstack/react-query';
 import { cn } from '@/lib/utils';
 
 interface AvatarUploadDialogProps {
@@ -22,16 +23,17 @@ interface AvatarUploadDialogProps {
 }
 
 export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUploadDialogProps) {
-    const trpc = useTRPCClient();
+    const trpc = useTRPC();
 
     const [open, setOpen] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
-    const [isUploading, setIsUploading] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const updateUserMutation = useMutation(trpc.updateUser.mutationOptions());
 
     const cleanupAndCloseDialog = (openState: boolean) => {
         if (!openState) {
@@ -107,12 +109,11 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
             return;
         }
 
-        setIsUploading(true);
         setError(null);
         setSuccessMessage(null);
 
         try {
-            await trpc.updateUser.mutate({ avatar: previewUrl });
+            await updateUserMutation.mutateAsync({ avatar: previewUrl });
             setSuccessMessage('Avatar uploaded successfully');
             setPreviewUrl(null);
             if (fileInputRef.current) {
@@ -120,18 +121,15 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Upload failed');
-        } finally {
-            setIsUploading(false);
         }
     };
 
     const handleRemove = async () => {
-        setIsUploading(true);
         setError(null);
         setSuccessMessage(null);
 
         try {
-            await trpc.updateUser.mutate({ avatar: '' });
+            await updateUserMutation.mutateAsync({ avatar: '' });
             setSuccessMessage('Avatar removed successfully');
             setPreviewUrl(null);
             if (fileInputRef.current) {
@@ -139,8 +137,6 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Remove failed');
-        } finally {
-            setIsUploading(false);
         }
     };
 
@@ -237,11 +233,16 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
 
                     {previewUrl && (
                         <div className='flex gap-3 w-full'>
-                            <Button onClick={handleUpload} className='flex-1' disabled={isUploading}>
+                            <Button onClick={handleUpload} className='flex-1' disabled={updateUserMutation.isPending}>
                                 <Camera className='h-4 w-4 mr-2' />
-                                {isUploading ? 'Uploading...' : 'Upload Photo'}
+                                {updateUserMutation.isPending ? 'Uploading...' : 'Upload Photo'}
                             </Button>
-                            <Button onClick={setToDefault} variant='outline' className='flex-1' disabled={isUploading}>
+                            <Button
+                                onClick={setToDefault}
+                                variant='outline'
+                                className='flex-1'
+                                disabled={updateUserMutation.isPending}
+                            >
                                 Cancel
                             </Button>
                         </div>
@@ -253,7 +254,7 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
                                 onClick={() => fileInputRef.current?.click()}
                                 variant='outline'
                                 className='flex-1'
-                                disabled={isUploading}
+                                disabled={updateUserMutation.isPending}
                             >
                                 <Camera className='h-4 w-4 mr-2' />
                                 Change Photo
@@ -262,16 +263,20 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
                                 onClick={handleRemove}
                                 variant='outline'
                                 className='flex-1 text-destructive hover:text-destructive'
-                                disabled={isUploading}
+                                disabled={updateUserMutation.isPending}
                             >
                                 <X className='h-4 w-4 mr-2' />
-                                {isUploading ? 'Removing...' : 'Remove'}
+                                {updateUserMutation.isPending ? 'Removing...' : 'Remove'}
                             </Button>
                         </div>
                     )}
 
                     {!previewUrl && (
-                        <Button onClick={() => fileInputRef.current?.click()} className='w-full' disabled={isUploading}>
+                        <Button
+                            onClick={() => fileInputRef.current?.click()}
+                            className='w-full'
+                            disabled={updateUserMutation.isPending}
+                        >
                             <Upload className='h-4 w-4 mr-2' />
                             Choose File
                         </Button>

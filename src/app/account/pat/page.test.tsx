@@ -13,16 +13,14 @@ vi.mock('@/lib/trpc', () => ({
         listPATs: {
             queryOptions: vi.fn(() => ({ queryKey: ['pats'], queryFn: mockListPATs })),
         },
-    })),
-    useTRPCClient: vi.fn(() => ({
         createPAT: {
-            mutate: mockCreatePAT,
+            mutationOptions: vi.fn(() => ({ mutationFn: mockCreatePAT })),
         },
         revokePAT: {
-            mutate: mockRevokePAT,
+            mutationOptions: vi.fn(() => ({ mutationFn: mockRevokePAT })),
         },
         deletePAT: {
-            mutate: mockRevokePAT,
+            mutationOptions: vi.fn(() => ({ mutationFn: mockRevokePAT })),
         },
     })),
 }));
@@ -35,6 +33,10 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
             data: mockListPATs(),
             isLoading: false,
             refetch: mockRefetch,
+        })),
+        useMutation: vi.fn((options) => ({
+            mutateAsync: options?.mutationFn || vi.fn(),
+            isPending: false,
         })),
     };
 });

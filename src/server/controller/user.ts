@@ -79,7 +79,7 @@ export const getUser = () => {
                 .first();
 
             if (!row) {
-                throw new Error('User not found');
+                throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
             }
 
             const user: UserSummary = {
@@ -128,7 +128,7 @@ export const updateUser = () => {
                         buffer = Buffer.from(base64, 'base64');
                     } catch {
                         throw new TRPCError({
-                            code: 'UNSUPPORTED_MEDIA_TYPE',
+                            code: 'BAD_REQUEST',
                             message: 'Invalid base64 image data',
                         });
                     }
@@ -137,7 +137,10 @@ export const updateUser = () => {
                     // By checking these first 8 bytes, we ensure the uploaded avatar is a real PNG before storing it.
                     const pngSignature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
                     if (buffer.length < 8 || !buffer.subarray(0, 8).equals(pngSignature)) {
-                        throw new Error('Only PNG images are supported for avatar');
+                        throw new TRPCError({
+                            code: 'UNSUPPORTED_MEDIA_TYPE',
+                            message: 'Only PNG images are supported for avatar',
+                        });
                     }
 
                     updateData.avatar = buffer;
