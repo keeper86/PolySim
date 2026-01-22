@@ -128,7 +128,7 @@ export const updateUser = () => {
                         buffer = Buffer.from(base64, 'base64');
                     } catch {
                         throw new TRPCError({
-                            code: 'BAD_REQUEST',
+                            code: 'UNSUPPORTED_MEDIA_TYPE',
                             message: 'Invalid base64 image data',
                         });
                     }
