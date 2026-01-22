@@ -137,6 +137,18 @@ export const APP_ROUTES = {
             isMainNav: true,
             isPublic: true,
         },
+        polytrace: {
+            path: '/whatabout/polytrace',
+            label: 'Polytrace',
+            isMainNav: true,
+            isPublic: true,
+        },
+        wcthree: {
+            path: '/whatabout/wcthree',
+            label: 'WC3',
+            isMainNav: true,
+            isPublic: true,
+        },
     },
 } as const satisfies RouteManifest;
 

@@ -40,6 +40,25 @@ export default function WhatAboutPage() {
                         </Button>
                     </Link>
                 </div>
+
+                <div className='w-full max-w-md space-y-4'>
+                    <Link href={APP_ROUTES.whatabout.polytrace.path}>
+                        <Button className='w-full justify-start' variant='outline'>
+                            <Brain className='w-4 h-4' />
+                            PolyTrace
+                        </Button>
+                    </Link>
+                </div>
+
+                <div className='w-full max-w-md space-y-4'>
+                    <Link href={APP_ROUTES.whatabout.wcthree.path}>
+                        <Button className='w-full justify-start' variant='outline'>
+                            <Brain className='w-4 h-4' />
+                            WC3
+                        </Button>
+                    </Link>
+                </div>
+
                 <footer>
                     <p className='text-sm text-muted-foreground'></p>
                 </footer>
