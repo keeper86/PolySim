@@ -23,9 +23,11 @@
         "test:e2e:debug": "playwright test --debug",
         "test:all": "npm run format && npm run lint && npm run build && npm run test",
         "db:migrate:make": "npx knex migrate:make",
+        "db:migrate:latest": "npx knex migrate:latest",
         "db:migrate:rollback": "npx knex migrate:rollback",
         "db:seed": "knex seed:run --env development",
         "db:types:check": "node ./tools/db_types.cjs check",
+        "db:types:update": "node ./tools/db_types.cjs update",
         "db:waitFor": "npx wait-on --timeout=60000 tcp:localhost:5432",
         "generate-keycloak-realm": "set -a && . ./.env && set +a && envsubst < ./keycloak/data/template.json > ./keycloak/data/import/initialRealm.json",
         "svg:icons": "node ./tools/svg-to-react-icons.cjs"
