@@ -154,6 +154,24 @@ target_link_libraries(strace_parser_test PRIVATE
 
 
 add_test(NAME strace_parser_test COMMAND $<TARGET_FILE:strace_parser_test>)
+set_target_properties(strace_parser_test PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${MAIN_RUNTIME_DIR}
+)
+
+add_executable(bench_program ${CMAKE_CURRENT_SOURCE_DIR}/test/bench_program.cpp)
+target_include_directories(bench_program PRIVATE
+  ${PROJECT_INCLUDE_DIR}
+  ${NLOHMANN_INCLUDE_DIR}
+  ${HTTPLIB_INCLUDE_DIR}
+  ${MINIZ_SOURCE_DIR}
+  ${MINIZ_BINARY_DIR}
+)
+target_link_libraries(bench_program PRIVATE
+  Threads::Threads
+)
+set_target_properties(bench_program PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${MAIN_RUNTIME_DIR}
+)
 
 set(TEST_FIXTURES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test/fixtures" CACHE PATH "Directory containing test fixture scripts")
 message(STATUS "Test fixtures dir: ${TEST_FIXTURES_DIR}")
