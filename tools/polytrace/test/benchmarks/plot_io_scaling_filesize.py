@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Plot I/O scaling: overhead vs total data size (log-log)."""
+"""Plot I/O scaling: mean overhead vs total data size (log-log).
+
+Aggregates multiple iterations per configuration and computes mean and
+standard deviation (per total data size and file size category).
+Plots the mean values, optionally with error bars to visualize variability.
+"""
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -23,7 +28,8 @@ def main():
     output_dir = script_dir.parent.parent.parent.parent / 'public' / 'benchmarks'
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    # Parse: {(file_size_mb, total_mb): [overhead_pct]}
+    # Parse aggregated overheads per configuration:
+    # {(file_size_mb, total_mb): [overhead_pct, ...]}
     data_by_config = {}
     
     with results_csv.open('r') as f:
@@ -73,31 +79,48 @@ def main():
         print("No I/O scaling data found")
         return 1
     
-    # Average per config: {file_size_mb: [(total_mb, overhead_pct)]}
+    # Aggregate per config with mean and std:
+    # {file_size_mb: [(total_mb, mean_overhead, std_overhead, count)]}
     by_file_size = {}
     for (file_size_mb, total_mb), overheads in data_by_config.items():
         if file_size_mb not in by_file_size:
             by_file_size[file_size_mb] = []
-        by_file_size[file_size_mb].append((total_mb, np.mean(overheads)))
+        arr = np.array(overheads, dtype=float)
+        mean_ovh = float(np.mean(arr))
+        std_ovh = float(np.std(arr, ddof=1)) if arr.size > 1 else 0.0
+        by_file_size[file_size_mb].append((total_mb, mean_ovh, std_ovh, int(arr.size)))
     
     # Create log-log plot
     fig, ax = plt.subplots(figsize=(12, 6))
-    fig.suptitle('Tracing overhead vs total data size (log-log)', fontsize=16, fontweight='bold')
+    fig.suptitle('Mean tracing overhead vs total data size (log-log)', fontsize=16, fontweight='bold')
     
     colors = {1: COLOR_SMALL, 10: COLOR_MEDIUM, 50: COLOR_LARGE}
     
     for file_size_mb in sorted(by_file_size.keys()):
         points = sorted(by_file_size[file_size_mb])
         total_mbs = np.array([p[0] for p in points])
-        overheads = np.array([p[1] for p in points])
-        
+        means = np.array([p[1] for p in points])
+        stds = np.array([p[2] for p in points])
+
         color = colors.get(file_size_mb, '#999999')
-        ax.scatter(total_mbs, overheads, c=color, marker='o', s=80, 
-                   label=f'{file_size_mb}MB files', zorder=3)
-        
-        # Fit and plot line
+        # Plot mean values with error bars (std dev)
+        ax.errorbar(
+            total_mbs,
+            means,
+            yerr=stds,
+            fmt='o',
+            color=color,
+            ecolor=color,
+            elinewidth=1,
+            capsize=3,
+            markersize=6,
+            label=f'{file_size_mb}MB files (mean ± std)',
+            zorder=3,
+        )
+
+        # Fit and plot line on mean values
         if len(total_mbs) >= 2:
-            m, b = _fit_loglog(total_mbs, overheads)
+            m, b = _fit_loglog(total_mbs, means)
             x_line = np.linspace(total_mbs.min(), total_mbs.max(), 200)
             y_line = 10**(m * np.log10(x_line) + b)
             ax.plot(x_line, y_line, color=color, linewidth=2, alpha=0.7)
@@ -114,16 +137,23 @@ def main():
     plt.savefig(output_file, dpi=100, bbox_inches='tight', facecolor='white', format='png')
     print(f"✓ {output_file}")
     
-    # Print summary
+    # Print summary with mean ± std per file size
     for file_size_mb in sorted(by_file_size.keys()):
         points = by_file_size[file_size_mb]
         sizes = [p[0] for p in points]
-        ovhs = [p[1] for p in points]
+        means = [p[1] for p in points]
+        stds = [p[2] for p in points]
+        counts = [p[3] for p in points]
         sizes_arr = np.array(sizes)
-        ovhs_arr = np.array(ovhs)
-        m, b = _fit_loglog(sizes_arr, ovhs_arr)
+        means_arr = np.array(means)
+        stds_arr = np.array(stds)
+        m, b = _fit_loglog(sizes_arr, means_arr)
+        avg_std = float(np.mean(stds_arr)) if stds_arr.size else 0.0
         print(f"\n{file_size_mb}MB files: scaling exponent = {m:.3f} (y ~ x^{m:.3f})")
-        print(f"  Size range: {sizes[0]}-{sizes[-1]}MB, Overhead: {ovhs[0]:.2f}%-{ovhs[-1]:.2f}%")
+        print(f"  Size range: {sizes[0]}-{sizes[-1]}MB, Mean overhead: {means[0]:.2f}%-{means[-1]:.2f}%, Avg std: {avg_std:.2f}%")
+        # Optional: show counts per point for transparency
+        counts_str = ', '.join(str(c) for c in counts)
+        print(f"  Repeats per point: [{counts_str}]")
     
     return 0
 
