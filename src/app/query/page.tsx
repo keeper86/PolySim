@@ -10,15 +10,11 @@ export type ActivityInTable = {
     id: string;
     label: string;
     started_at: string;
-    ended_at: string;
+    ended_at: string    ;
     metadata: Record<string, unknown> | null;
 };
 
 const columns: ColumnDef<ActivityInTable>[] = [
-    {
-        accessorKey: 'id',
-        header: 'ID',
-    },
     {
         accessorKey: 'label',
         header: 'Label',
@@ -32,6 +28,10 @@ const columns: ColumnDef<ActivityInTable>[] = [
         accessorKey: 'ended_at',
         header: 'Ended At',
         cell: ({ getValue }) => new Date(getValue() as string).toLocaleString(),
+    },
+        {
+        accessorKey: 'id',
+        header: 'ID',
     },
 ];
 
