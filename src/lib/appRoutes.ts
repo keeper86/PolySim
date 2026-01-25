@@ -91,6 +91,7 @@ export const APP_ROUTES = {
         icon: Search,
         isPublic: true,
         description: 'Find your Program',
+        isMainNav: true,
     },
     account: {
         root: {
