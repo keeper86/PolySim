@@ -19,7 +19,7 @@ export const getActivities = () => {
                         label: z.string(),
                         started_at: z.string(),
                         ended_at: z.string(),
-                        metadata: z.record(z.any()).nullable(),
+                        metadata: z.record(z.string(), z.any()).nullable(),
                     }),
                 ),
                 total: z.number(),

@@ -3,7 +3,7 @@
 import { Page } from '@/components/client/Page';
 import { useTRPC } from '@/lib/trpc';
 import { useQuery } from '@tanstack/react-query';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from './data-table';
 
 export type ActivityInTable = {
