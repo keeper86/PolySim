@@ -2,14 +2,15 @@
 
 import { Page } from '@/components/client/Page';
 import { useTRPC } from '@/lib/trpc';
+import { useQuery } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from './data-table';
 
 export type ActivityInTable = {
     id: string;
     label: string;
-    started_at: Date;
-    ended_at: Date;
+    started_at: string;
+    ended_at: string;
     metadata: Record<string, unknown> | null;
 };
 
@@ -25,17 +26,18 @@ const columns: ColumnDef<ActivityInTable>[] = [
     {
         accessorKey: 'started_at',
         header: 'Started At',
-        cell: ({ getValue }) => new Date(getValue() as Date).toLocaleString(),
+        cell: ({ getValue }) => new Date(getValue() as string).toLocaleString(),
     },
     {
         accessorKey: 'ended_at',
         header: 'Ended At',
-        cell: ({ getValue }) => new Date(getValue() as Date).toLocaleString(),
+        cell: ({ getValue }) => new Date(getValue() as string).toLocaleString(),
     },
 ];
 
 export default function QueryPage() {
-    const { data } = useTRPC().getActivities.useQuery({ limit: 100, offset: 0 });
+    const trpc = useTRPC();
+    const { data } = useQuery(trpc.getActivities.queryOptions({ limit: 100, offset: 0 }));
     const activities = data?.activities || [];
 
     return (

@@ -17,8 +17,8 @@ export const getActivities = () => {
                     z.object({
                         id: z.string(),
                         label: z.string(),
-                        started_at: z.date(),
-                        ended_at: z.date(),
+                        started_at: z.string(),
+                        ended_at: z.string(),
                         metadata: z.record(z.any()).nullable(),
                     }),
                 ),
@@ -38,7 +38,11 @@ export const getActivities = () => {
             logger.debug({ component: 'activities' }, `Fetched activities: ${activities.length} items`);
 
             return {
-                activities,
+                activities: activities.map(activity => ({
+                    ...activity,
+                    started_at: activity.started_at.toISOString(),
+                    ended_at: activity.ended_at.toISOString(),
+                })),
                 total,
             };
         });
