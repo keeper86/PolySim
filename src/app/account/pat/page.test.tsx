@@ -121,8 +121,12 @@ describe('PatPage', () => {
         const nameInput = screen.getByLabelText(/Token name \(optional\)/i);
         fireEvent.change(nameInput, { target: { value: 'My New PAT' } });
 
+        // Open the Select dropdown and select the 1 month option (value: '30')
         const expiryDropdown = screen.getByRole('combobox');
-        fireEvent.change(expiryDropdown, { target: { value: '30' } });
+        fireEvent.click(expiryDropdown);
+
+        const oneMonthOption = screen.getByRole('option', { name: /1 month/i });
+        fireEvent.click(oneMonthOption);
 
         const generateButton = screen.getByRole('button', { name: /Generate token/i });
         fireEvent.click(generateButton);
