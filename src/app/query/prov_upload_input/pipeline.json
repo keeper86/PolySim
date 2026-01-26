@@ -1,80 +1,74 @@
 {
-  "activity": {
-    "endedAt": 1767953764450,
-    "id": "d8bc3098ddaa7f11d74d29d0ee0599dcc54dc7797a51c942cb4a67d057f6a99a",
-    "label": "Run /bin/sh",
-    "metadata": {
-      "command": [
-        "/bin/sh",
-        "-c",
-        "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/pipeline.sh"
-      ]
+    "activity": {
+        "endedAt": 1767953764450,
+        "id": "d8bc3098ddaa7f11d74d29d0ee0599dcc54dc7797a51c942cb4a67d057f6a99a",
+        "label": "Run /bin/sh",
+        "metadata": {
+            "command": ["/bin/sh", "-c", "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/pipeline.sh"]
+        },
+        "startedAt": 1767953764353
     },
-    "startedAt": 1767953764353
-  },
-  "entities": [
-    {
-      "createdAt": 1767953764418,
-      "id": "56c2442e5fa8752f5ecd2975a61ea097f83380304214f924fcc8aa52a147e08d",
-      "label": "2",
-      "metadata": {
-        "accesses": [
-          {
-            "metadata": {},
-            "pid": 8339,
+    "entities": [
+        {
+            "createdAt": 1767953764418,
+            "id": "56c2442e5fa8752f5ecd2975a61ea097f83380304214f924fcc8aa52a147e08d",
+            "label": "2",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {},
+                        "pid": 8339,
+                        "role": "output"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/tmp/pipeline_out/2"
+            },
             "role": "output"
-          }
-        ],
-        "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/tmp/pipeline_out/2"
-      },
-      "role": "output"
-    },
-    {
-      "createdAt": 1738674881999,
-      "id": "a6f559e00b69a4aa4d8cb607be18d9386c5aee55c509e2c075549dcf00e00fc7",
-      "label": "sh",
-      "metadata": {
-        "accesses": [
-          {
+        },
+        {
+            "createdAt": 1738674881999,
+            "id": "a6f559e00b69a4aa4d8cb607be18d9386c5aee55c509e2c075549dcf00e00fc7",
+            "label": "sh",
             "metadata": {
-              "execve_argv": [
-                "/bin/sh",
-                "-c",
-                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/pipeline.sh"
-              ]
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": [
+                                "/bin/sh",
+                                "-c",
+                                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/pipeline.sh"
+                            ]
+                        },
+                        "pid": 8330,
+                        "role": "process"
+                    }
+                ],
+                "path": "/bin/sh"
             },
-            "pid": 8330,
             "role": "process"
-          }
-        ],
-        "path": "/bin/sh"
-      },
-      "role": "process"
-    },
-    {
-      "createdAt": 1765224003738,
-      "id": "3bcb6e8969050df4774bc3ff5894c38324d7f8f83cfcbbbd91459ed82c47a256",
-      "label": "pipeline.sh",
-      "metadata": {
-        "accesses": [
-          {
+        },
+        {
+            "createdAt": 1765224003738,
+            "id": "3bcb6e8969050df4774bc3ff5894c38324d7f8f83cfcbbbd91459ed82c47a256",
+            "label": "pipeline.sh",
             "metadata": {
-              "execve_argv": [
-                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/pipeline.sh"
-              ]
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": ["/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/pipeline.sh"]
+                        },
+                        "pid": 8331,
+                        "role": "process"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 8331,
+                        "role": "input"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/pipeline.sh"
             },
-            "pid": 8331,
             "role": "process"
-          },
-          {
-            "metadata": {},
-            "pid": 8331,
-            "role": "input"
-          }
-        ],
-        "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/pipeline.sh"
-      },
-      "role": "process"
-    }
-  ]
+        }
+    ]
 }

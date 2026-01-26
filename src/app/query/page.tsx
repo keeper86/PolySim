@@ -22,7 +22,7 @@ const columns: ColumnDef<ActivitySchema>[] = [
         header: 'Ended At',
         cell: ({ getValue }) => new Date(getValue() as number).toLocaleString(),
     },
-        {
+    {
         accessorKey: 'id',
         header: 'ID',
     },

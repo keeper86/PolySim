@@ -1,116 +1,113 @@
 {
-  "activity": {
-    "endedAt": 1767953774446,
-    "id": "97790d999c5cd0f4133ebee9f49859a1e762bc2eab6f4da27790739a3620d417",
-    "label": "Run /bin/sh",
-    "metadata": {
-      "command": [
-        "/bin/sh",
-        "-c",
-        "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/change_exec_dirs.sh"
-      ]
-    },
-    "startedAt": 1767953774346
-  },
-  "entities": [
-    {
-      "createdAt": 1765224003738,
-      "id": "c1bce118b5f9b64506e9f9a3311f0e7d59515978b12508fcf806555ab283721d",
-      "label": "change_exec_dirs.sh",
-      "metadata": {
-        "accesses": [
-          {
-            "metadata": {
-              "execve_argv": [
-                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/change_exec_dirs.sh"
-              ]
-            },
-            "pid": 9164,
-            "role": "process"
-          },
-          {
-            "metadata": {},
-            "pid": 9164,
-            "role": "input"
-          }
-        ],
-        "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/change_exec_dirs.sh"
-      },
-      "role": "process"
-    },
-    {
-      "createdAt": 1738674881999,
-      "id": "a6f559e00b69a4aa4d8cb607be18d9386c5aee55c509e2c075549dcf00e00fc7",
-      "label": "sh",
-      "metadata": {
-        "accesses": [
-          {
-            "metadata": {
-              "execve_argv": [
-                "/bin/sh",
-                "./copied_script.sh"
-              ]
-            },
-            "pid": 9170,
-            "role": "process"
-          },
-          {
-            "metadata": {
-              "execve_argv": [
+    "activity": {
+        "endedAt": 1767953774446,
+        "id": "97790d999c5cd0f4133ebee9f49859a1e762bc2eab6f4da27790739a3620d417",
+        "label": "Run /bin/sh",
+        "metadata": {
+            "command": [
                 "/bin/sh",
                 "-c",
                 "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/change_exec_dirs.sh"
-              ]
+            ]
+        },
+        "startedAt": 1767953774346
+    },
+    "entities": [
+        {
+            "createdAt": 1765224003738,
+            "id": "c1bce118b5f9b64506e9f9a3311f0e7d59515978b12508fcf806555ab283721d",
+            "label": "change_exec_dirs.sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": [
+                                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/change_exec_dirs.sh"
+                            ]
+                        },
+                        "pid": 9164,
+                        "role": "process"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 9164,
+                        "role": "input"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/change_exec_dirs.sh"
             },
-            "pid": 9163,
             "role": "process"
-          }
-        ],
-        "path": "/bin/sh"
-      },
-      "role": "process"
-    },
-    {
-      "createdAt": 1767953774442,
-      "id": "622cb3371c1a08096eaac564fb59acccda1fcdbe13a9dd10b486e6463c8c2525",
-      "label": "test.txt",
-      "metadata": {
-        "accesses": [
-          {
-            "metadata": {},
-            "pid": 9170,
+        },
+        {
+            "createdAt": 1738674881999,
+            "id": "a6f559e00b69a4aa4d8cb607be18d9386c5aee55c509e2c075549dcf00e00fc7",
+            "label": "sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": ["/bin/sh", "./copied_script.sh"]
+                        },
+                        "pid": 9170,
+                        "role": "process"
+                    },
+                    {
+                        "metadata": {
+                            "execve_argv": [
+                                "/bin/sh",
+                                "-c",
+                                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/change_exec_dirs.sh"
+                            ]
+                        },
+                        "pid": 9163,
+                        "role": "process"
+                    }
+                ],
+                "path": "/bin/sh"
+            },
+            "role": "process"
+        },
+        {
+            "createdAt": 1767953774442,
+            "id": "622cb3371c1a08096eaac564fb59acccda1fcdbe13a9dd10b486e6463c8c2525",
+            "label": "test.txt",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {},
+                        "pid": 9170,
+                        "role": "output"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/tmp/change_exec_dirs_out/tmp/test.txt"
+            },
             "role": "output"
-          }
-        ],
-        "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/tmp/change_exec_dirs_out/tmp/test.txt"
-      },
-      "role": "output"
-    },
-    {
-      "createdAt": 1767953774414,
-      "id": "587ee6886f37ad8d589d0e2eb24f0da41a29735513c8946ac0465d61772273a8",
-      "label": "copied_script.sh",
-      "metadata": {
-        "accesses": [
-          {
-            "metadata": {},
-            "pid": 9170,
-            "role": "input"
-          },
-          {
-            "metadata": {},
-            "pid": 9170,
-            "role": "input"
-          },
-          {
-            "metadata": {},
-            "pid": 9164,
+        },
+        {
+            "createdAt": 1767953774414,
+            "id": "587ee6886f37ad8d589d0e2eb24f0da41a29735513c8946ac0465d61772273a8",
+            "label": "copied_script.sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {},
+                        "pid": 9170,
+                        "role": "input"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 9170,
+                        "role": "input"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 9164,
+                        "role": "output"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/tmp/change_exec_dirs_out/tmp/copied_script.sh"
+            },
             "role": "output"
-          }
-        ],
-        "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/tmp/change_exec_dirs_out/tmp/copied_script.sh"
-      },
-      "role": "output"
-    }
-  ]
+        }
+    ]
 }

@@ -14,9 +14,7 @@ export const getActivities = () => {
         )
         .output(
             z.object({
-                activities: z.array(
-                   activitySchema
-                ),
+                activities: z.array(activitySchema),
                 total: z.number(),
             }),
         )
@@ -32,8 +30,8 @@ export const getActivities = () => {
 
             logger.debug({ component: 'activities' }, `Fetched activities: ${activities.length} items`);
             const test = {
-                activities: activities.map(activity => ({
-                    metadata: activity.metadata ,
+                activities: activities.map((activity) => ({
+                    metadata: activity.metadata,
                     label: activity.label,
                     id: activity.id,
                     startedAt: activity.started_at.getTime(),

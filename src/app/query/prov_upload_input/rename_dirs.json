@@ -1,80 +1,74 @@
 {
-  "activity": {
-    "endedAt": 1767953764728,
-    "id": "504752a5cf837f12099349f66211afce421350c8dfa6fea669707016adff041f",
-    "label": "Run /bin/sh",
-    "metadata": {
-      "command": [
-        "/bin/sh",
-        "-c",
-        "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/rename_dirs.sh"
-      ]
+    "activity": {
+        "endedAt": 1767953764728,
+        "id": "504752a5cf837f12099349f66211afce421350c8dfa6fea669707016adff041f",
+        "label": "Run /bin/sh",
+        "metadata": {
+            "command": ["/bin/sh", "-c", "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/rename_dirs.sh"]
+        },
+        "startedAt": 1767953764613
     },
-    "startedAt": 1767953764613
-  },
-  "entities": [
-    {
-      "createdAt": 1765224003738,
-      "id": "b4a827afe1269ba19c71a5c2e736ed98ff5e062c76663c67761b82225ea95cfc",
-      "label": "rename_dirs.sh",
-      "metadata": {
-        "accesses": [
-          {
+    "entities": [
+        {
+            "createdAt": 1765224003738,
+            "id": "b4a827afe1269ba19c71a5c2e736ed98ff5e062c76663c67761b82225ea95cfc",
+            "label": "rename_dirs.sh",
             "metadata": {
-              "execve_argv": [
-                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/rename_dirs.sh"
-              ]
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": ["/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/rename_dirs.sh"]
+                        },
+                        "pid": 8368,
+                        "role": "process"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 8368,
+                        "role": "input"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/rename_dirs.sh"
             },
-            "pid": 8368,
             "role": "process"
-          },
-          {
-            "metadata": {},
-            "pid": 8368,
-            "role": "input"
-          }
-        ],
-        "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/rename_dirs.sh"
-      },
-      "role": "process"
-    },
-    {
-      "createdAt": 1738674881999,
-      "id": "a6f559e00b69a4aa4d8cb607be18d9386c5aee55c509e2c075549dcf00e00fc7",
-      "label": "sh",
-      "metadata": {
-        "accesses": [
-          {
+        },
+        {
+            "createdAt": 1738674881999,
+            "id": "a6f559e00b69a4aa4d8cb607be18d9386c5aee55c509e2c075549dcf00e00fc7",
+            "label": "sh",
             "metadata": {
-              "execve_argv": [
-                "/bin/sh",
-                "-c",
-                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/rename_dirs.sh"
-              ]
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": [
+                                "/bin/sh",
+                                "-c",
+                                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/rename_dirs.sh"
+                            ]
+                        },
+                        "pid": 8367,
+                        "role": "process"
+                    }
+                ],
+                "path": "/bin/sh"
             },
-            "pid": 8367,
             "role": "process"
-          }
-        ],
-        "path": "/bin/sh"
-      },
-      "role": "process"
-    },
-    {
-      "createdAt": 1767953764706,
-      "id": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03",
-      "label": "file",
-      "metadata": {
-        "accesses": [
-          {
-            "metadata": {},
-            "pid": 8375,
+        },
+        {
+            "createdAt": 1767953764706,
+            "id": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03",
+            "label": "file",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {},
+                        "pid": 8375,
+                        "role": "output"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/tmp/rename_dirs/dir2/file"
+            },
             "role": "output"
-          }
-        ],
-        "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/tmp/rename_dirs/dir2/file"
-      },
-      "role": "output"
-    }
-  ]
+        }
+    ]
 }
