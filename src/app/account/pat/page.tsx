@@ -3,6 +3,7 @@
 import { Page } from '@/components/client/Page';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Field, FieldLabel } from '@/components/ui/field';
 import {
     Dialog,
     DialogClose,
@@ -13,9 +14,15 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { useTRPC } from '@/lib/trpc';
-import type { PatToken } from '@/server/controller/pAccessToken';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { useTRPC, useTRPCClient } from '@/lib/trpc';
+import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { toast } from 'sonner';
 
@@ -79,19 +86,22 @@ export default function PatPage() {
                         value={newName}
                         onChange={(e) => setNewName((e.target as HTMLInputElement).value)}
                     />
-                    <select
-                        value={String(expiryDays)}
-                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setExpiryDays(Number(e.target.value))}
-                        className='w-40 rounded border px-2 py-1 bg-white'
-                    >
-                        <option value='0.0007'>1 minute</option>
-                        <option value='1'>1 day</option>
-                        <option value='7'>1 week</option>
-                        <option value='30'>1 month</option>
-                        <option value='365'>1 year</option>
-                    </select>
-                    <Button onClick={createToken} disabled={createPATMutation.isPending}>
-                        {createPATMutation.isPending ? 'Generating…' : 'Generate token'}
+                    <Field>
+                        <Select value={String(expiryDays)} onValueChange={(value) => setExpiryDays(Number(value))}>
+                            <SelectTrigger className='w-40'>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value='0.0007'>1 minute</SelectItem>
+                                <SelectItem value='1'>1 day</SelectItem>
+                                <SelectItem value='7'>1 week</SelectItem>
+                                <SelectItem value='30'>1 month</SelectItem>
+                                <SelectItem value='365'>1 year</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </Field>
+                    <Button onClick={createToken} disabled={creating}>
+                        {creating ? 'Generating…' : 'Generate token'}
                     </Button>
                 </div>
 
