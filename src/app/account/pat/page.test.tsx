@@ -7,6 +7,7 @@ const mockRefetch = vi.fn();
 const mockListPATs = vi.fn((): PatToken[] => []);
 const mockCreatePAT = vi.fn();
 const mockRevokePAT = vi.fn();
+const mockDeletePAT = vi.fn();
 
 vi.mock('@/lib/trpc', () => ({
     useTRPC: vi.fn(() => ({
@@ -20,7 +21,7 @@ vi.mock('@/lib/trpc', () => ({
             mutationOptions: vi.fn(() => ({ mutationFn: mockRevokePAT })),
         },
         deletePAT: {
-            mutationOptions: vi.fn(() => ({ mutationFn: mockRevokePAT })),
+            mutationOptions: vi.fn(() => ({ mutationFn: mockDeletePAT })),
         },
     })),
 }));
@@ -176,7 +177,7 @@ describe('PatPage', () => {
         fireEvent.click(deleteButton);
 
         await waitFor(() => {
-            expect(mockRevokePAT).toHaveBeenCalledWith({ id: 'pat-2' });
+            expect(mockDeletePAT).toHaveBeenCalledWith({ id: 'pat-2' });
         });
 
         expect(mockRefetch).toHaveBeenCalled();
