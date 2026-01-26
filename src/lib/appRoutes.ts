@@ -89,7 +89,7 @@ export const APP_ROUTES = {
         path: '/query',
         label: 'Query Page',
         icon: Search,
-        // isPublic: true,
+        isPublic: true,
         description: 'Find your Program',
         isMainNav: true,
     },

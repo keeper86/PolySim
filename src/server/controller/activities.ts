@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { db } from '../db';
 import { logger } from '../logger';
 import { protectedProcedure } from '../trpcRoot';
+import { activitySchema } from './uploadActivity';
+import { metadata } from '@/app/layout';
 
 export const getActivities = () => {
     return protectedProcedure
@@ -14,13 +16,7 @@ export const getActivities = () => {
         .output(
             z.object({
                 activities: z.array(
-                    z.object({
-                        id: z.string(),
-                        label: z.string(),
-                        started_at: z.string(),
-                        ended_at: z.string(),
-                        metadata: z.record(z.string(), z.any()).nullable(),
-                    }),
+                   activitySchema
                 ),
                 total: z.number(),
             }),
@@ -36,14 +32,17 @@ export const getActivities = () => {
             const activities = await query.orderBy('started_at', 'desc').offset(offset).limit(limit);
 
             logger.debug({ component: 'activities' }, `Fetched activities: ${activities.length} items`);
-
-            return {
+            const test = {
                 activities: activities.map(activity => ({
-                    ...activity,
-                    started_at: activity.started_at.toISOString(),
-                    ended_at: activity.ended_at.toISOString(),
+                    metadata: activity.metadata ,
+                    label: activity.label,
+                    id: activity.id,
+                    startedAt: activity.started_at.getTime(),
+                    endedAt: activity.ended_at.getTime(),
                 })),
                 total,
             };
+            console.log(test)
+            return test
         });
 };

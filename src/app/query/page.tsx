@@ -5,29 +5,24 @@ import { useTRPC } from '@/lib/trpc';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from './data-table';
+import { ActivitySchema } from '@/server/controller/uploadActivity';
 
-export type ActivityInTable = {
-    id: string;
-    label: string;
-    started_at: string;
-    ended_at: string    ;
-    metadata: Record<string, unknown> | null;
-};
 
-const columns: ColumnDef<ActivityInTable>[] = [
+
+const columns: ColumnDef<ActivitySchema>[] = [
     {
         accessorKey: 'label',
         header: 'Label',
     },
     {
-        accessorKey: 'started_at',
+        accessorKey: 'startedAt',
         header: 'Started At',
-        cell: ({ getValue }) => new Date(getValue() as string).toLocaleString(),
+        cell: ({ getValue }) => new Date(getValue() as number).toLocaleString(),
     },
     {
-        accessorKey: 'ended_at',
+        accessorKey: 'endedAt',
         header: 'Ended At',
-        cell: ({ getValue }) => new Date(getValue() as string).toLocaleString(),
+        cell: ({ getValue }) => new Date(getValue() as number).toLocaleString(),
     },
         {
         accessorKey: 'id',
@@ -42,6 +37,7 @@ export default function QueryPage() {
 
     return (
         <Page title='Query Page'>
+            <h2>Activities Table</h2>
             <DataTable columns={columns} data={activities}></DataTable>
         </Page>
     );
