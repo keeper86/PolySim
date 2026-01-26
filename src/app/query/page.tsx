@@ -5,9 +5,7 @@ import { useTRPC } from '@/lib/trpc';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from './data-table';
-import { ActivitySchema } from '@/server/controller/uploadActivity';
-
-
+import type { ActivitySchema } from '@/server/controller/uploadActivity';
 
 const columns: ColumnDef<ActivitySchema>[] = [
     {

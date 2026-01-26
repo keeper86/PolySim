@@ -3,7 +3,6 @@ import { db } from '../db';
 import { logger } from '../logger';
 import { protectedProcedure } from '../trpcRoot';
 import { activitySchema } from './uploadActivity';
-import { metadata } from '@/app/layout';
 
 export const getActivities = () => {
     return protectedProcedure
@@ -42,7 +41,7 @@ export const getActivities = () => {
                 })),
                 total,
             };
-            console.log(test)
-            return test
+            console.log(test);
+            return test;
         });
 };
