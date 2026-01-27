@@ -7,22 +7,21 @@ const mockRefetch = vi.fn();
 const mockListPATs = vi.fn((): PatToken[] => []);
 const mockCreatePAT = vi.fn();
 const mockRevokePAT = vi.fn();
+const mockDeletePAT = vi.fn();
 
 vi.mock('@/lib/trpc', () => ({
     useTRPC: vi.fn(() => ({
         listPATs: {
             queryOptions: vi.fn(() => ({ queryKey: ['pats'], queryFn: mockListPATs })),
         },
-    })),
-    useTRPCClient: vi.fn(() => ({
         createPAT: {
-            mutate: mockCreatePAT,
+            mutationOptions: vi.fn(() => ({ mutationFn: mockCreatePAT })),
         },
         revokePAT: {
-            mutate: mockRevokePAT,
+            mutationOptions: vi.fn(() => ({ mutationFn: mockRevokePAT })),
         },
         deletePAT: {
-            mutate: mockRevokePAT,
+            mutationOptions: vi.fn(() => ({ mutationFn: mockDeletePAT })),
         },
     })),
 }));
@@ -35,6 +34,10 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
             data: mockListPATs(),
             isLoading: false,
             refetch: mockRefetch,
+        })),
+        useMutation: vi.fn((options) => ({
+            mutateAsync: options?.mutationFn || vi.fn(),
+            isPending: false,
         })),
     };
 });
@@ -174,7 +177,7 @@ describe('PatPage', () => {
         fireEvent.click(deleteButton);
 
         await waitFor(() => {
-            expect(mockRevokePAT).toHaveBeenCalledWith({ id: 'pat-2' });
+            expect(mockDeletePAT).toHaveBeenCalledWith({ id: 'pat-2' });
         });
 
         expect(mockRefetch).toHaveBeenCalled();

@@ -13,8 +13,8 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { useTRPC, useTRPCClient } from '@/lib/trpc';
-import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@/lib/trpc';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { toast } from 'sonner';
 
@@ -30,9 +30,7 @@ const isExpired = (token: PatToken): boolean => {
 };
 export default function PatPage() {
     const trpc = useTRPC();
-    const trpcClient = useTRPCClient();
 
-    const [creating, setCreating] = React.useState(false);
     const [newName, setNewName] = React.useState('');
     const [latestTokenValue, setLatestTokenValue] = React.useState<string | null>(null);
     const [expiryDays, setExpiryDays] = React.useState<number>(1);
@@ -40,27 +38,23 @@ export default function PatPage() {
 
     const { data: tokens = [], isLoading, refetch } = useQuery(trpc.listPATs.queryOptions({}));
 
+    const createPATMutation = useMutation(trpc.createPAT.mutationOptions());
+    const revokePATMutation = useMutation(trpc.revokePAT.mutationOptions());
+    const deletePATMutation = useMutation(trpc.deletePAT.mutationOptions());
+
     async function createToken() {
-        if (creating) {
-            return;
-        }
-        setCreating(true);
         setLatestTokenValue(null);
 
-        try {
-            const result = await trpcClient.createPAT.mutate({
-                name: newName || undefined,
-                expiresInDays: expiryDays,
-            });
-            if (result?.token) {
-                setLatestTokenValue(result.token);
-                void refetch();
-                setOpenTokenDialog(true);
-            }
-            setNewName('');
-        } finally {
-            setCreating(false);
+        const result = await createPATMutation.mutateAsync({
+            name: newName || undefined,
+            expiresInDays: expiryDays,
+        });
+        if (result?.token) {
+            setLatestTokenValue(result.token);
+            void refetch();
+            setOpenTokenDialog(true);
         }
+        setNewName('');
     }
 
     function copyToClipboard(value: string) {
@@ -90,8 +84,8 @@ export default function PatPage() {
                         <option value='30'>1 month</option>
                         <option value='365'>1 year</option>
                     </select>
-                    <Button onClick={createToken} disabled={creating}>
-                        {creating ? 'Generating…' : 'Generate token'}
+                    <Button onClick={createToken} disabled={createPATMutation.isPending}>
+                        {createPATMutation.isPending ? 'Generating…' : 'Generate token'}
                     </Button>
                 </div>
 
@@ -157,7 +151,7 @@ export default function PatPage() {
                                 <div className='flex items-center gap-2'>
                                     <Button
                                         variant={isExpired(token) ? 'ghost' : 'outline'}
-                                        disabled={isExpired(token)}
+                                        disabled={isExpired(token) || revokePATMutation.isPending}
                                         title={isExpired(token) ? 'Already revoked' : 'Revoke token'}
                                         onClick={async () => {
                                             const ok = confirm(
@@ -166,7 +160,8 @@ export default function PatPage() {
                                             if (!ok) {
                                                 return;
                                             }
-                                            await trpcClient.revokePAT.mutate({ id: token.id });
+
+                                            await revokePATMutation.mutateAsync({ id: token.id });
                                             void refetch();
                                         }}
                                     >
@@ -174,6 +169,7 @@ export default function PatPage() {
                                     </Button>
                                     <Button
                                         variant='destructive'
+                                        disabled={deletePATMutation.isPending}
                                         onClick={async () => {
                                             const ok = confirm(
                                                 'Delete this personal access token? This cannot be undone.',
@@ -181,7 +177,8 @@ export default function PatPage() {
                                             if (!ok) {
                                                 return;
                                             }
-                                            await trpcClient.deletePAT.mutate({ id: token.id });
+
+                                            await deletePATMutation.mutateAsync({ id: token.id });
                                             void refetch();
                                         }}
                                     >
