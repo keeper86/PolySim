@@ -9,9 +9,10 @@ import { Spinner } from '@/components/ui/spinner';
 
 type Props = {
     userId?: string;
+    large?: boolean;
 };
 
-export default function UserAvatar({ userId }: Props) {
+export default function UserAvatar({ userId, large = false }: Props) {
     const trpc = useTRPC();
 
     const { data, isLoading, isError, error } = useQuery(trpc.getUser.queryOptions({ userId }));
@@ -31,7 +32,7 @@ export default function UserAvatar({ userId }: Props) {
 
     if (isLoading) {
         return (
-            <Avatar>
+            <Avatar className={large ? 'w-32 h-32' : undefined}>
                 <span className='flex items-center justify-center w-7/8 h-7/8 p-1'>
                     <Spinner className='h-8 w-8' />
                 </span>
@@ -43,7 +44,7 @@ export default function UserAvatar({ userId }: Props) {
         return (
             <Tooltip>
                 <TooltipTrigger>
-                    <Avatar>
+                    <Avatar className={large ? 'w-32 h-32' : undefined}>
                         <AvatarFallback className='rounded-lg p-1 bg-muted  text-red-500'>?</AvatarFallback>
                     </Avatar>
                 </TooltipTrigger>
@@ -55,14 +56,14 @@ export default function UserAvatar({ userId }: Props) {
     const avatarBase64 = data?.avatar;
     if (!avatarBase64) {
         return (
-            <Avatar>
+            <Avatar className={large ? 'w-32 h-32' : undefined}>
                 <AvatarFallback className='rounded-lg p-1 bg-muted'>{initials}</AvatarFallback>
             </Avatar>
         );
     }
 
     return (
-        <Avatar>
+        <Avatar className={large ? 'w-32 h-32' : undefined}>
             <AvatarImage src={`data:image/png;base64,${avatarBase64}`} alt={'User Avatar'} className='rounded-lg' />
         </Avatar>
     );
