@@ -17,6 +17,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTRPC } from '@/lib/trpc';
 import { useMutation } from '@tanstack/react-query';
 import { cn } from '@/lib/utils';
+import UserAvatar from '@/components/client/UserAvatar';
 
 interface AvatarUploadDialogProps {
     triggerLabel?: string;
@@ -169,48 +170,46 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
                 </DialogHeader>
 
                 <div className='flex flex-col items-center gap-6 py-4'>
-                    <Avatar className='h-32 w-32'>
-                        <AvatarImage src={previewUrl || currentAvatar || undefined} />
-                        <AvatarFallback />
-                    </Avatar>
-
                     {!previewUrl && (
-                        <div
-                            className={cn(
-                                'border-2 border-dashed rounded-lg p-8 w-full text-center transition-colors',
-                                isDragging
-                                    ? 'border-primary bg-primary/5'
-                                    : 'border-muted-foreground/25 hover:border-muted-foreground/50',
-                            )}
-                            onDragOver={handleDragOver}
-                            onDragLeave={handleDragLeave}
-                            onDrop={handleDrop}
-                        >
-                            <div className='flex flex-col items-center gap-3'>
-                                <div className='rounded-full bg-muted p-4'>
-                                    <Upload className='h-6 w-6 text-muted-foreground' />
+                        <>
+                            <UserAvatar large />
+                            <div
+                                className={cn(
+                                    'border-2 border-dashed rounded-lg p-8 w-full text-center transition-colors',
+                                    isDragging
+                                        ? 'border-primary bg-primary/5'
+                                        : 'border-muted-foreground/25 hover:border-muted-foreground/50',
+                                )}
+                                onDragOver={handleDragOver}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                            >
+                                <div className='flex flex-col items-center gap-3'>
+                                    <div className='rounded-full bg-muted p-4'>
+                                        <Upload className='h-6 w-6 text-muted-foreground' />
+                                    </div>
+                                    <div>
+                                        <p className='font-medium'>
+                                            Drop your image here, or{' '}
+                                            <button
+                                                onClick={() => fileInputRef.current?.click()}
+                                                className='text-primary hover:underline'
+                                            >
+                                                browse
+                                            </button>
+                                        </p>
+                                        <p className='text-muted-foreground text-sm mt-1'>PNG only (max 1MB)</p>
+                                    </div>
+                                    <Input
+                                        ref={fileInputRef}
+                                        type='file'
+                                        accept='image/png'
+                                        onChange={handleFileInputChange}
+                                        className='hidden'
+                                    />
                                 </div>
-                                <div>
-                                    <p className='font-medium'>
-                                        Drop your image here, or{' '}
-                                        <button
-                                            onClick={() => fileInputRef.current?.click()}
-                                            className='text-primary hover:underline'
-                                        >
-                                            browse
-                                        </button>
-                                    </p>
-                                    <p className='text-muted-foreground text-sm mt-1'>PNG only (max 1MB)</p>
-                                </div>
-                                <Input
-                                    ref={fileInputRef}
-                                    type='file'
-                                    accept='image/png'
-                                    onChange={handleFileInputChange}
-                                    className='hidden'
-                                />
                             </div>
-                        </div>
+                        </>
                     )}
 
                     {error && (
@@ -232,20 +231,30 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
                     )}
 
                     {previewUrl && (
-                        <div className='flex gap-3 w-full'>
-                            <Button onClick={handleUpload} className='flex-1' disabled={updateUserMutation.isPending}>
-                                <Camera className='h-4 w-4 mr-2' />
-                                {updateUserMutation.isPending ? 'Uploading...' : 'Upload Photo'}
-                            </Button>
-                            <Button
-                                onClick={setToDefault}
-                                variant='outline'
-                                className='flex-1'
-                                disabled={updateUserMutation.isPending}
-                            >
-                                Cancel
-                            </Button>
-                        </div>
+                        <>
+                            <Avatar className='h-32 w-32'>
+                                <AvatarImage src={previewUrl || currentAvatar || undefined} />
+                                <AvatarFallback />
+                            </Avatar>
+                            <div className='flex gap-3 w-full'>
+                                <Button
+                                    onClick={handleUpload}
+                                    className='flex-1'
+                                    disabled={updateUserMutation.isPending}
+                                >
+                                    <Camera className='h-4 w-4 mr-2' />
+                                    {updateUserMutation.isPending ? 'Uploading...' : 'Upload Photo'}
+                                </Button>
+                                <Button
+                                    onClick={setToDefault}
+                                    variant='outline'
+                                    className='flex-1'
+                                    disabled={updateUserMutation.isPending}
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </>
                     )}
 
                     {!previewUrl && (
