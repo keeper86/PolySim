@@ -1,0 +1,95 @@
+{
+    "activity": {
+        "endedAt": 1767953764888,
+        "id": "80d2b944e5a0b85b168072ef84cae788922ad6358c22f11f880c4cecf14b6053",
+        "label": "Run /bin/sh",
+        "metadata": {
+            "command": [
+                "/bin/sh",
+                "-c",
+                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/concurrent_append.sh"
+            ]
+        },
+        "startedAt": 1767953764810
+    },
+    "entities": [
+        {
+            "createdAt": 1765224003738,
+            "id": "c311eed7ae798c9aa032034689cf42ce53a9898a9c121478e05cce53a92ed3c3",
+            "label": "concurrent_append.sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": [
+                                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/concurrent_append.sh"
+                            ]
+                        },
+                        "pid": 8392,
+                        "role": "process"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 8392,
+                        "role": "input"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/concurrent_append.sh"
+            },
+            "role": "process"
+        },
+        {
+            "createdAt": 1738674881999,
+            "id": "a6f559e00b69a4aa4d8cb607be18d9386c5aee55c509e2c075549dcf00e00fc7",
+            "label": "sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": [
+                                "/bin/sh",
+                                "-c",
+                                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/concurrent_append.sh"
+                            ]
+                        },
+                        "pid": 8391,
+                        "role": "process"
+                    }
+                ],
+                "path": "/bin/sh"
+            },
+            "role": "process"
+        },
+        {
+            "createdAt": 1767953764870,
+            "id": "880553fca8fcea94e325ee2cfb48e5a985cc797f39a14cc6d3cedecfeb2ae4d2",
+            "label": "concurrent_append_file",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {},
+                        "pid": 8402,
+                        "role": "input"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 8401,
+                        "role": "output"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 8399,
+                        "role": "output"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 8397,
+                        "role": "output"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/tmp/concurrent_append_file"
+            },
+            "role": "output"
+        }
+    ]
+}

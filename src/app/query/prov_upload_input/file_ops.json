@@ -1,0 +1,100 @@
+{
+    "activity": {
+        "endedAt": 1767953764540,
+        "id": "54519424c5540e9f845bbadf7a40eb1f7335ddc996e4464ebdde3bd6a244a5bc",
+        "label": "Run /bin/sh",
+        "metadata": {
+            "command": ["/bin/sh", "-c", "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/file_ops.sh"]
+        },
+        "startedAt": 1767953764455
+    },
+    "entities": [
+        {
+            "createdAt": 1765224003738,
+            "id": "cf227ae945e19555ce47e04496397ff9493af2ddf97496d6dce20a12292dd519",
+            "label": "file_ops.sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": ["/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/file_ops.sh"]
+                        },
+                        "pid": 8344,
+                        "role": "process"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 8344,
+                        "role": "input"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/file_ops.sh"
+            },
+            "role": "process"
+        },
+        {
+            "createdAt": 1738674881999,
+            "id": "a6f559e00b69a4aa4d8cb607be18d9386c5aee55c509e2c075549dcf00e00fc7",
+            "label": "sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": [
+                                "/bin/sh",
+                                "-c",
+                                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/file_ops.sh"
+                            ]
+                        },
+                        "pid": 8343,
+                        "role": "process"
+                    }
+                ],
+                "path": "/bin/sh"
+            },
+            "role": "process"
+        },
+        {
+            "createdAt": 1767953764522,
+            "id": "73cb3858a687a8494ca3323053016282f3dad39d42cf62ca4e79dda2aac7d9ac",
+            "label": "b",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {},
+                        "pid": 8351,
+                        "role": "input"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 8350,
+                        "role": "output"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/tmp/file_ops/b"
+            },
+            "role": "output"
+        },
+        {
+            "createdAt": 1767953764510,
+            "id": "73cb3858a687a8494ca3323053016282f3dad39d42cf62ca4e79dda2aac7d9ac",
+            "label": "a",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {},
+                        "pid": 8350,
+                        "role": "input"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 8344,
+                        "role": "output"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/tmp/file_ops/a"
+            },
+            "role": "output"
+        }
+    ]
+}

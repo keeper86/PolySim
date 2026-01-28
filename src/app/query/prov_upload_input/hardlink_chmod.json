@@ -1,0 +1,92 @@
+{
+    "activity": {
+        "endedAt": 1767953764805,
+        "id": "c66cf8bf50b26af3ea4c8168a86e0d2167b9be024de141963e30618567458afc",
+        "label": "Run /bin/sh",
+        "metadata": {
+            "command": ["/bin/sh", "-c", "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/hardlink_chmod.sh"]
+        },
+        "startedAt": 1767953764733
+    },
+    "entities": [
+        {
+            "createdAt": 1767953764782,
+            "id": "87e434e018d14e940ef934c2b743e3c3e6dc6df381fb046ac9b52d5d1dd08421",
+            "label": "hard_a",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {},
+                        "pid": 8380,
+                        "role": "output"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/tmp/hard_link/hard_a"
+            },
+            "role": "output"
+        },
+        {
+            "createdAt": 1738674881999,
+            "id": "a6f559e00b69a4aa4d8cb607be18d9386c5aee55c509e2c075549dcf00e00fc7",
+            "label": "sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": [
+                                "/bin/sh",
+                                "-c",
+                                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/hardlink_chmod.sh"
+                            ]
+                        },
+                        "pid": 8379,
+                        "role": "process"
+                    }
+                ],
+                "path": "/bin/sh"
+            },
+            "role": "process"
+        },
+        {
+            "createdAt": 1767953764782,
+            "id": "87e434e018d14e940ef934c2b743e3c3e6dc6df381fb046ac9b52d5d1dd08421",
+            "label": "hard_b",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {},
+                        "pid": 8386,
+                        "role": "output"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/tmp/hard_link/hard_b"
+            },
+            "role": "output"
+        },
+        {
+            "createdAt": 1765224003738,
+            "id": "140d1f9f1a2b1f0fa94978c75e393158b71358c753362afad414e2195031f22c",
+            "label": "hardlink_chmod.sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": [
+                                "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/hardlink_chmod.sh"
+                            ]
+                        },
+                        "pid": 8380,
+                        "role": "process"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 8380,
+                        "role": "input"
+                    }
+                ],
+                "path": "/home/enno/Projects/PolySim/tools/polytrace/test/fixtures/hardlink_chmod.sh"
+            },
+            "role": "process"
+        }
+    ]
+}

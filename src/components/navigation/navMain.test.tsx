@@ -6,6 +6,7 @@ import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { NavMain } from './navMain';
 import { SidebarProvider } from '../ui/sidebar';
+import { NavSecondary } from './navSecondary';
 
 vi.mock('next/link', () => ({
     __esModule: true,
@@ -46,7 +47,10 @@ describe('NavMain', () => {
     it('shows only public routes when not logged in', () => {
         render(
             <AppProviders session={null}>
-                <NavMain />
+                <SidebarProvider>
+                    <NavMain />
+                    <NavSecondary />
+                </SidebarProvider>
             </AppProviders>,
         );
 
