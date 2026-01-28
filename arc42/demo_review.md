@@ -121,10 +121,28 @@ Visualization (shadcn + design +react) @Enno-Enno
       - Challenges faced and how they were overcome
 
 ---
+## Visualization
 
-Rule of thumb:
+- Good UI Matters <!-- .element: class="fragment" data-fragment-index="1" -->
+- Data without good Visuals is a bit useless <!-- .element: class="fragment" data-fragment-index="2" -->
 
-If it exists as a library, use it. Don't reinvent the wheel.
+---
+### What should the design achieve
+  - Overview at a glance <!-- .element: class="fragment" data-fragment-index="1" -->
+  - Connection between Project and its graph view <!-- .element: class="fragment" data-fragment-index="2" -->
+  - Maybe it is nice to imitate other successful website designs? <!-- .element: class="fragment" data-fragment-index="3" -->
+
+---
+### What does our design achieve
+- Lists all uploaded activities <!-- .element: class="fragment" data-fragment-index="1" -->
+- Represents them in an interactive Graph with the entities. <!-- .element: class="fragment" data-fragment-index="2" -->
+- Uses shadcn components for consistent visual representation. <!-- .element: class="fragment" data-fragment-index="3" --> 
+
+***Demo*** <!-- .element: class="fragment" data-fragment-index="4" -->
+<!-- --- -->
+
+<!-- ### Principles -->
+
 
 ---
 
