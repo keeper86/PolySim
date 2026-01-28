@@ -1,0 +1,18 @@
+{
+    "theme": "white",
+    "highlightTheme": "atom-one-dark",
+    "css": ["custom.css"],
+    "revealOptions": {
+        "transition": "fade",
+        "transitionSpeed": "fast",
+        "backgroundTransition": "slide",
+        "controls": true,
+        "progress": true,
+        "slideNumber": false,
+        "hash": true,
+        "center": true,
+        "width": 1280,
+        "height": 720,
+        "margin": 0.1
+    }
+}
