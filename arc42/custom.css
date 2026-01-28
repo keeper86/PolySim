@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+:root {
+  --r-main-font: "Inter", sans-serif;
+  --r-heading-font: "Inter", sans-serif;
+  --r-heading-color: #1e293b; /* slate-800 */
+  --r-main-color: #334155; /* slate-700 */
+  --r-background-color: #f8fafc; /* slate-50 */
+  --r-link-color: #0284c7; /* sky-600 */
+  --r-link-color-hover: #0369a1; /* sky-700 */
+  --r-selection-background-color: #bae6fd; /* sky-200 */
+  --r-selection-color: #0c4a6e; /* sky-900 */
+}
+
+.reveal {
+  font-family: var(--r-main-font);
+  color: var(--r-main-color);
+}
+
+.reveal h1, .reveal h2, .reveal h3 {
+  font-family: var(--r-heading-font);
+  color: var(--r-heading-color);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.reveal h1 {
+  font-size: 2.4em;
+  margin-bottom: 0.5em;
+}
+
+.reveal h2 {
+  font-size: 1.8em;
+  margin-bottom: 0.3em;
+}
+
+.reveal p {
+  font-size: 1.1em;
+  line-height: 1.6;
+}
+
+.reveal ul, .reveal ol {
+  font-size: 1.05em;
+  margin-left: 1.2em;
+}
+
+.reveal a {
+  color: var(--r-link-color);
+  text-decoration: none;
+}
+
+.reveal a:hover {
+  color: var(--r-link-color-hover);
+  text-decoration: underline;
+}
+
+.reveal pre code {
+  border-radius: 8px;
+  padding: 0.75em;
+  font-size: 0.9em;
+}
+
+.reveal .slide-number {
+  font-size: 0.7em;
+  color: #94a3b8; /* slate-400 */
+}
+
+.reveal .controls {
+  filter: drop-shadow(0 0 4px rgba(0,0,0,0.1));
+}
+
+.reveal section img {
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  max-height: 70vh;
+}
+
+/* fixed full-bleed variant: absolutely fill the slide viewport and crop as needed */
+.reveal section img.fullwidth-fixed {
+  position: fixed;
+  top: 0;
+  width: 1280px;
+  height: 720px;
+  object-fit: contain; 
+  display: block;
+  margin: 0;
+  scale: 110%;
+  z-index: 0;
+}
+
+/* Ensure section is a positioned container so absolute img is anchored to the slide */
+.reveal section {
+  position: relative;
+}
+
+.reveal::after {
+  content: "Polysim";
+  position: fixed;
+  bottom: 10px;
+  right: 20px;
+  font-size: 0.9em;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+}
+
+.reveal strong {
+  color: #0f172a; /* slate-900 */
+}
