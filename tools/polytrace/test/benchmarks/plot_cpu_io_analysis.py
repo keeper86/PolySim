@@ -20,8 +20,52 @@ import json
 import re
 from collections import defaultdict
 
-    print(f"Created: {output_path}")
-    plt.close()
+
+def load_benchmark_configs(script_dir: Path):
+    """Load benchmark JSON configs present in the benchmarks folder.
+
+    Returns a dict keyed by benchmark base name (e.g., '07_io_scaling_small').
+    """
+    configs = {}
+    for p in sorted(script_dir.glob("*.json")):
+        try:
+            with p.open('r', encoding='utf-8') as f:
+                cfg = json.load(f)
+            key = p.stem
+            configs[key] = cfg
+        except Exception:
+            continue
+    return configs
+
+
+def read_runtime_csv_with_metadata(csv_path: Path, configs: dict):
+    """Read runtime_overhead.csv and attach minimal metadata.
+
+    Expected columns: runtime_ms,postproc_pct,tracing_pct,writing_level,benchmark_id
+    Returns list of dicts for plotting.
+    """
+    data = []
+    with csv_path.open('r', newline='') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            try:
+                rt = float(row.get('runtime_ms', '0'))
+                pp = float(row.get('postproc_pct', '0'))
+                tr = float(row.get('tracing_pct', '0'))
+                lvl = (row.get('writing_level', '') or '').strip().lower()
+                bench = (row.get('benchmark_id', '') or '').strip()
+                if rt <= 0 or pp <= 0 or tr <= 0:
+                    continue
+                data.append({
+                    'runtime_ms': rt,
+                    'postproc_pct': pp,
+                    'tracing_pct': tr,
+                    'writing_level': lvl if lvl in {'none', 'little', 'much'} else 'little',
+                    'benchmark_id': bench,
+                })
+            except ValueError:
+                continue
+    return data
 
 
 def plot_io_scaling(data: list, output_dir: Path):
