@@ -17,16 +17,16 @@ import { useTRPC, useTRPCClient } from '@/lib/trpc';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { toast } from 'sonner';
+import type { PatToken } from '@/server/controller/pAccessToken';
 
-type PatToken = {
-    id: string;
-    name?: string | null;
-    created_at: string;
-    expires_at: string;
+// Client-side type with string dates (as received from API)
+type PatTokenClient = Omit<PatToken, 'created_at' | 'expires_at'> & {
+    createdAt: string;
+    expiresAt: string;
 };
 
-const isExpired = (token: PatToken): boolean => {
-    return !!(token.expires_at && new Date(token.expires_at) <= new Date());
+const isExpired = (token: PatTokenClient): boolean => {
+    return !!(token.expiresAt && new Date(token.expiresAt) <= new Date());
 };
 export default function PatPage() {
     const trpc = useTRPC();
@@ -39,6 +39,18 @@ export default function PatPage() {
     const [openTokenDialog, setOpenTokenDialog] = React.useState(false);
 
     const { data: tokens = [], isLoading, refetch } = useQuery(trpc.listPATs.queryOptions({}));
+
+    // Transform API tokens to client type (dates are strings from JSON serialization)
+    const transformedTokens: PatTokenClient[] = tokens.map((token) => {
+        const tokenData = token as PatToken & { created_at: string | Date; expires_at: string | Date };
+        return {
+            ...token,
+            createdAt:
+                typeof tokenData.created_at === 'string' ? tokenData.created_at : tokenData.created_at.toISOString(),
+            expiresAt:
+                typeof tokenData.expires_at === 'string' ? tokenData.expires_at : tokenData.expires_at.toISOString(),
+        };
+    });
 
     async function createToken() {
         if (creating) {
@@ -136,7 +148,7 @@ export default function PatPage() {
                     <div className='text-sm text-muted-foreground'>No tokens yet.</div>
                 ) : (
                     <ul className='space-y-2'>
-                        {tokens.map((token: PatToken) => (
+                        {transformedTokens.map((token: PatTokenClient) => (
                             <li key={token.id} className='flex items-center justify-between rounded border p-3'>
                                 <div>
                                     <div className='flex items-center gap-2'>
@@ -144,8 +156,8 @@ export default function PatPage() {
                                         {isExpired(token) ? <Badge variant='destructive'>Expired</Badge> : null}
                                     </div>
                                     <div className='text-xs text-muted-foreground'>
-                                        Created {new Date(token.created_at).toLocaleString()}
-                                        {' · '}Expires {new Date(token.expires_at).toLocaleString()}
+                                        Created {new Date(token.createdAt).toLocaleString()}
+                                        {' · '}Expires {new Date(token.expiresAt).toLocaleString()}
                                     </div>
                                 </div>
                                 <div className='flex items-center gap-2'>
