@@ -267,23 +267,23 @@ Visualization (shadcn + design +react) @Enno-Enno
    Content:
       - Why a good UI matters
       - Choosing shadcn/ui for design consistency
-      - Implementing responsive design with React components
-      - Challenges faced and how they were overcome
+      - Implementing responsive design with React components TODO
+      - Challenges faced and how they were overcome 
 
 ---
-## Visualization
+# Visualization
 
 - Good UI Matters <!-- .element: class="fragment" data-fragment-index="1" -->
 - Data without good Visuals is a bit useless <!-- .element: class="fragment" data-fragment-index="2" -->
 
 ---
-### What should the design achieve
+## What should the design achieve?
   - Overview at a glance <!-- .element: class="fragment" data-fragment-index="1" -->
   - Connection between Project and its graph view <!-- .element: class="fragment" data-fragment-index="2" -->
-  - Maybe it is nice to imitate other successful website designs? <!-- .element: class="fragment" data-fragment-index="3" -->
+  - Using  <!-- .element: class="fragment" data-fragment-index="3" -->
 
 ---
-### What does our design achieve
+## What does our design achieve?
 - Lists all uploaded activities <!-- .element: class="fragment" data-fragment-index="1" -->
 - Represents them in an interactive Graph with the entities. <!-- .element: class="fragment" data-fragment-index="2" -->
 - Uses shadcn components for consistent visual representation. <!-- .element: class="fragment" data-fragment-index="3" --> 
@@ -291,12 +291,13 @@ Visualization (shadcn + design +react) @Enno-Enno
 ***Demo*** <!-- .element: class="fragment" data-fragment-index="4" -->
 <!-- --- -->
 
-<!-- ### Principles -->
+<!-- ### Principles-->
 
 
 ---
 
-Especially true for authentication and authorization.
+- Use 
+- Especially true for authentication and authorization.
 
  -> keycloak
 
