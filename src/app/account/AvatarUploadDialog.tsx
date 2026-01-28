@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { AlertCircle, Camera, Upload, X } from 'lucide-react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     Dialog,
     DialogContent,
@@ -12,13 +12,11 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import UserAvatar from '@/components/client/UserAvatar';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTRPC } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
-import { Spinner } from '@/components/ui/spinner';
-import { getInitials } from '@/components/client/UserAvatar';
 
 interface AvatarUploadDialogProps {
     triggerLabel?: string;
@@ -28,8 +26,6 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
     const trpc = useTRPC();
     const queryClient = useQueryClient();
 
-    const { data: userData, isLoading: isLoadingUser } = useQuery(trpc.getUser.queryOptions({}));
-
     const [open, setOpen] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -38,16 +34,10 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const currentAvatar = userData?.avatar ? `data:image/png;base64,${userData.avatar}` : undefined;
-
-    const invalidateUserQuery = () => {
-        void queryClient.invalidateQueries({ queryKey: trpc.getUser.queryKey() });
-    };
-
     const updateUserMutation = useMutation(
         trpc.updateUser.mutationOptions({
             onSuccess: () => {
-                invalidateUserQuery();
+                void queryClient.invalidateQueries({ queryKey: trpc.getUser.queryKey() });
                 setPreviewUrl(null);
                 if (fileInputRef.current) {
                     fileInputRef.current.value = '';
@@ -189,18 +179,7 @@ export function AvatarUploadDialog({ triggerLabel = 'Upload Avatar' }: AvatarUpl
                 </DialogHeader>
 
                 <div className='flex flex-col items-center gap-6 py-4'>
-                    {isLoadingUser ? (
-                        <Avatar className='h-32 w-32'>
-                            <span className='flex items-center justify-center w-full h-full'>
-                                <Spinner className='h-8 w-8' />
-                            </span>
-                        </Avatar>
-                    ) : (
-                        <Avatar className='h-32 w-32'>
-                            <AvatarImage src={previewUrl || currentAvatar} />
-                            <AvatarFallback className='text-2xl'>{getInitials(userData?.displayName)}</AvatarFallback>
-                        </Avatar>
-                    )}
+                    <UserAvatar large src={previewUrl} />
 
                     {!previewUrl && (
                         <div
