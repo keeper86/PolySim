@@ -68,3 +68,14 @@ export default function UserAvatar({ userId, large = false }: Props) {
         </Avatar>
     );
 }
+export function getInitials(displayName: string | undefined): string {
+    if (!displayName) {
+        return '';
+    }
+    return displayName
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+}
