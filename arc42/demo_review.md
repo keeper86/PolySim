@@ -203,6 +203,8 @@ This allowed us to stay aligned **without artificial constraints**.
 
 ### The Board as the “Single Source of Truth”
 
+---
+
 - **Kanban = Ticket**
 - Each ticket represents:
   - A concrete, actionable unit of work
