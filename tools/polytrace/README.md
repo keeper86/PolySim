@@ -4,7 +4,8 @@
 CLI Tool for Tracing File Accesses via strace. Commands are assumed executed from the root of this README.md.
 
 ## 1. Important
-`polytrace` relies on `strace` which does not run natively on Windows and macOS devices. For development purposes, you can use a Docker container defined by the provided `Dockerfile`. For systems running Linux or Windows Subsystem for Linux (WSL), the following steps, steps 2.a and 2.b andmaybe skipped.
+PLEASE NOTE: For systems running Linux or Windows Subsystem for Linux (WSL), the following steps, steps 2.a and 2.b maybe skipped.
+`polytrace` relies on `strace`, that is built-in with linux but does not run natively on Windows and macOS devices. For development purposes, you can use a Docker container defined by the provided `Dockerfile`. 
 The performance impact of using containers has not yet been measured or reported.
 
 ### 2.a To Build the Container
