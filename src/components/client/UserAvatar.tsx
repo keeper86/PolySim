@@ -10,27 +10,32 @@ import { Spinner } from '@/components/ui/spinner';
 type Props = {
     userId?: string;
     large?: boolean;
+    src?: string | null;
 };
 
-export default function UserAvatar({ userId, large = false }: Props) {
+export default function UserAvatar({ userId, large = false, src = null }: Props) {
     const trpc = useTRPC();
 
-    const { data, isLoading, isError, error } = useQuery(trpc.getUser.queryOptions({ userId }));
+    const queryOptions = trpc.getUser.queryOptions({ userId });
+    const { data, isLoading, isError, error } = useQuery({ ...queryOptions, enabled: !src });
 
-    const displayName = data?.displayName;
+    const finalDisplayName = data?.displayName ?? 'JD';
+
     const initials = React.useMemo(() => {
-        if (!displayName) {
+        if (!finalDisplayName) {
             return '';
         }
-        return displayName
+        return finalDisplayName
             .split(' ')
             .map((n) => n[0])
             .join('')
             .toUpperCase()
             .slice(0, 2);
-    }, [displayName]);
+    }, [finalDisplayName]);
 
-    if (isLoading) {
+    const avatarSrc = src ?? (data?.avatar ? `data:image/png;base64,${data.avatar}` : null);
+
+    if (!src && isLoading) {
         return (
             <Avatar className={large ? 'w-32 h-32' : undefined}>
                 <span className='flex items-center justify-center w-7/8 h-7/8 p-1'>
@@ -40,7 +45,7 @@ export default function UserAvatar({ userId, large = false }: Props) {
         );
     }
 
-    if (isError) {
+    if (!src && isError) {
         return (
             <Tooltip>
                 <TooltipTrigger>
@@ -53,8 +58,7 @@ export default function UserAvatar({ userId, large = false }: Props) {
         );
     }
 
-    const avatarBase64 = data?.avatar;
-    if (!avatarBase64) {
+    if (!avatarSrc) {
         return (
             <Avatar className={large ? 'w-32 h-32' : undefined}>
                 <AvatarFallback className='rounded-lg p-1 bg-muted'>{initials}</AvatarFallback>
@@ -64,18 +68,7 @@ export default function UserAvatar({ userId, large = false }: Props) {
 
     return (
         <Avatar className={large ? 'w-32 h-32' : undefined}>
-            <AvatarImage src={`data:image/png;base64,${avatarBase64}`} alt={'User Avatar'} className='rounded-lg' />
+            <AvatarImage src={avatarSrc} alt={'User Avatar'} className='rounded-lg' />
         </Avatar>
     );
-}
-export function getInitials(displayName: string | undefined): string {
-    if (!displayName) {
-        return '';
-    }
-    return displayName
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2);
 }
