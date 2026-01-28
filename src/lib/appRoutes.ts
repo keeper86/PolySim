@@ -112,6 +112,44 @@ export const APP_ROUTES = {
         isSecondaryNav: true,
         description: 'Legal information and imprint',
     },
+    whatabout: {
+        root: {
+            path: '/whatabout',
+            label: 'Whatabout',
+            isMainNav: true,
+            isPublic: true,
+        },
+        clitool: {
+            path: '/whatabout/clitool',
+            label: 'CLI Tool',
+            isMainNav: true,
+            isPublic: true,
+        },
+        fairprinciples: {
+            path: '/whatabout/fairprinciples',
+            label: 'Fair Principles',
+            isMainNav: true,
+            isPublic: true,
+        },
+        proandgov: {
+            path: '/whatabout/proandgov',
+            label: 'Provenance and Governance',
+            isMainNav: true,
+            isPublic: true,
+        },
+        polytrace: {
+            path: '/whatabout/polytrace',
+            label: 'Polytrace',
+            isMainNav: true,
+            isPublic: true,
+        },
+        wcthree: {
+            path: '/whatabout/wcthree',
+            label: 'WC3',
+            isMainNav: true,
+            isPublic: true,
+        },
+    },
 } as const satisfies RouteManifest;
 
 const filterRoutes = (route: RouteManifestEntry, condition: (route: RouteMetadata) => boolean) => {
