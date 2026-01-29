@@ -39,7 +39,6 @@ export const getActivities = () => {
                 })),
                 total,
             };
-            console.log(test);
             return test;
         });
 };
