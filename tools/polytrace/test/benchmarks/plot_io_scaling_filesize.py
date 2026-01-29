@@ -103,22 +103,17 @@ def main():
         stds = np.array([p[2] for p in points])
 
         color = colors.get(file_size_mb, '#999999')
-        # Plot mean values with error bars (std dev)
-        ax.errorbar(
+        
+        ax.scatter(
             total_mbs,
             means,
-            yerr=stds,
-            fmt='o',
             color=color,
-            ecolor=color,
-            elinewidth=1,
-            capsize=3,
-            markersize=6,
-            label=f'{file_size_mb}MB files (mean ± std)',
+            s=40,
+            label=f'{file_size_mb}MB files (mean)',
             zorder=3,
         )
 
-        # Fit and plot line on mean values
+    
         if len(total_mbs) >= 2:
             m, b = _fit_loglog(total_mbs, means)
             x_line = np.linspace(total_mbs.min(), total_mbs.max(), 200)
@@ -129,8 +124,9 @@ def main():
     ax.set_yscale('log')
     ax.set_xlabel('Total data size (MB)')
     ax.set_ylabel('Overhead (%)')
+    # ax.set_ylim(2e2, 3e3)
     ax.grid(True, which='both', alpha=0.3)
-    ax.legend(loc='best', framealpha=0.9)
+    ax.legend(loc='best', framealpha=0.9, fontsize=12)
     plt.tight_layout()
     
     output_file = output_dir / 'scaling_io_datasize_vs_overhead_loglog.png'

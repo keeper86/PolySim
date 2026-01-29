@@ -37,9 +37,9 @@ def main():
                 continue
             try:
                 wall_untraced = float(row['wall_ms_untraced'])
-                traced_ms = float(row['traced_ms'] or 0)
-                if wall_untraced > 0 and traced_ms > 0:
-                    overhead_pct = ((traced_ms - wall_untraced) / wall_untraced) * 100
+                wall_traced = float(row['wall_ms_traced'] or 0)
+                if wall_untraced > 0 and wall_traced > 0:
+                    overhead_pct = ((wall_traced - wall_untraced) / wall_untraced) * 100
                     runtimes.append(wall_untraced)
                     overheads.append(overhead_pct)
             except (ValueError, KeyError):
@@ -71,7 +71,7 @@ def main():
     ax.set_xlabel('Runtime (ms)')
     ax.set_ylabel('Overhead (%)')
     ax.grid(True, which='both', alpha=0.3)
-    ax.legend(loc='upper right', framealpha=0.9)
+    ax.legend(loc='upper right', framealpha=0.9, fontsize=12)
     plt.tight_layout()
     
     output_file = output_dir / 'scaling_tracing_vs_runtime_cpu_only.png'
