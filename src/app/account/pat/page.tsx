@@ -16,7 +16,7 @@ import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTRPC } from '@/lib/trpc';
-import { PatToken } from '@/server/controller/pAccessToken';
+import type { PatToken } from '@/server/controller/pAccessToken';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import React from 'react';
 import { toast } from 'sonner';
@@ -82,7 +82,10 @@ export default function PatPage() {
                         onChange={(e) => setNewName((e.target as HTMLInputElement).value)}
                     />
                     <Field>
-                        <Select value={String(expiryDays)} onValueChange={(value: string) => setExpiryDays(Number(value))}>
+                        <Select
+                            value={String(expiryDays)}
+                            onValueChange={(value: string) => setExpiryDays(Number(value))}
+                        >
                             <SelectTrigger className='w-40'>
                                 <SelectValue />
                             </SelectTrigger>
