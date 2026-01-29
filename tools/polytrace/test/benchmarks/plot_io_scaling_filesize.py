@@ -121,7 +121,7 @@ def main():
     ax.legend(loc='best', framealpha=0.9, fontsize=12)
     plt.tight_layout()
     
-    output_file = output_dir / 'scaling_io_datasize_vs_overhead_loglog.png'
+    output_file = output_dir / 'scaling_io_datasize_vs_overhead.png'
     plt.savefig(output_file, dpi=100, bbox_inches='tight', facecolor='white', format='png')
     print(f"✓ {output_file}")
     

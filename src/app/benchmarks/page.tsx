@@ -16,18 +16,18 @@ export default function BenchmarksPage() {
         <Page title='Benchmarks'>
             <div className='space-y-10'>
                 <div className='text-lg text-slate-700 max-w-3xl'>
-                    Log–log scaling plots for I/O datasize overhead and CPU-only tracing overhead versus runtime.
+                    Scaling plots for I/O datasize overhead and CPU-only tracing overhead versus runtime.
                 </div>
 
                 <div className='bg-white rounded-lg shadow-lg overflow-hidden'>
                     <div className='p-6 bg-gradient-to-r from-slate-50 to-slate-50'>
                         <h2 className='text-2xl font-bold text-slate-900 mb-1'>I/O datasize vs overhead</h2>
-                        <p className='text-slate-600 text-sm'>Log–log scatter with fit</p>
+                        <p className='text-slate-600 text-sm'>Scatter plot (log x-axis, linear y-axis)</p>
                     </div>
                     <div className='p-4'>
                         <Image
-                            src='/benchmarks/scaling_io_datasize_vs_overhead_loglog.png'
-                            alt='I/O datasize versus overhead (log-log)'
+                            src='/benchmarks/scaling_io_datasize_vs_overhead.png'
+                            alt='I/O datasize versus overhead'
                             width={1400}
                             height={700}
                             className='w-full h-auto'
@@ -36,9 +36,9 @@ export default function BenchmarksPage() {
                         />
                     </div>
                     <div className='px-6 pb-6 text-sm text-slate-600'>
-                        I/O datasize vs overhead: expected to show decreasing relative overhead as total data size grows,
-                        since fixed tracing and bookkeeping costs get amortized. Differences between file-size groups
-                        reflect syscall mix and metadata pressure.
+                        I/O datasize vs overhead: Shows tracing overhead (%) for different file sizes (1MB, 10MB, 50MB) across
+                        varying total data volumes. Overhead patterns vary significantly by workload characteristics and syscall
+                        density. Three distinct file-size categories reveal different metadata pressure and I/O handling costs.
                     </div>
                 </div>
 
