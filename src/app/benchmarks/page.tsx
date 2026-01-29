@@ -59,8 +59,10 @@ export default function BenchmarksPage() {
                         />
                     </div>
                     <div className='px-6 pb-6 text-sm text-slate-600'>
-                        CPU-only tracing vs runtime: expected to follow a roughly 1/x‑like trend when startup overhead is
-                        mostly constant, with variability from scheduler effects and CPU cache behavior.
+                        CPU-only tracing vs runtime: demonstrates <strong>pure amortization</strong>—fixed tracing startup
+                        cost (~constant) divided by increasing CPU runtime. During pure computation, no file syscalls occur,
+                        so overhead stays constant in absolute terms but shrinks as %. Expected slope ≈ −1 in log-log space
+                        (1/x relationship). Variability from scheduler effects and CPU cache behavior.
                     </div>
                 </div>
 
