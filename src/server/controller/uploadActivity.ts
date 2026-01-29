@@ -14,13 +14,14 @@ const entitySchema = z.object({
 
 type Entity = z.infer<typeof entitySchema>;
 
-const activitySchema = z.object({
+export const activitySchema = z.object({
     id: z.hash('sha256'),
     label: z.string().optional().default(''),
     startedAt: z.number(),
     endedAt: z.number(),
     metadata: z.any().optional(),
 });
+export type ActivitySchema = z.infer<typeof activitySchema>;
 
 export const provUploadInputSchema = z.object({
     entities: z.array(entitySchema),
