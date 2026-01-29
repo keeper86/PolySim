@@ -28,7 +28,7 @@ describe('personal access token controller (integration)', () => {
         expect(stillThere).toBeDefined();
         expect(stillThere).toHaveProperty('expires_at');
 
-        const expiresAt = stillThere!.expires_at as Date | null;
+        const expiresAt = stillThere!.expiresAt as Date | null;
         expect(expiresAt).not.toBeNull();
         expect(new Date(expiresAt as Date).getTime()).toBeLessThanOrEqual(Date.now());
 
