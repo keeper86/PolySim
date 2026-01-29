@@ -18,12 +18,6 @@ export default function BenchmarksPage() {
                 <div className='text-lg text-slate-700 max-w-3xl'>
                     Log–log scaling plots for I/O datasize overhead and CPU-only tracing overhead versus runtime.
                 </div>
-                <div className='text-sm text-slate-600 max-w-3xl'>
-                    Both plots demonstrate negative scaling exponents, meaning overhead decreases as total data size
-                    increases. Smaller file sizes exhibit stronger scaling (steeper negative slopes), while larger file
-                    configurations show weaker but still negative trends. The high variability in overhead percentages
-                    reflects the inherent costs of syscall tracing across diverse I/O patterns.
-                </div>
 
                 <div className='bg-white rounded-lg shadow-lg overflow-hidden'>
                     <div className='p-6 bg-gradient-to-r from-slate-50 to-slate-50'>
@@ -40,6 +34,11 @@ export default function BenchmarksPage() {
                             priority
                             unoptimized
                         />
+                    </div>
+                    <div className='px-6 pb-6 text-sm text-slate-600'>
+                        I/O datasize vs overhead: expected to show decreasing relative overhead as total data size grows,
+                        since fixed tracing and bookkeeping costs get amortized. Differences between file-size groups
+                        reflect syscall mix and metadata pressure.
                     </div>
                 </div>
 
@@ -58,6 +57,10 @@ export default function BenchmarksPage() {
                             priority={false}
                             unoptimized
                         />
+                    </div>
+                    <div className='px-6 pb-6 text-sm text-slate-600'>
+                        CPU-only tracing vs runtime: expected to follow a roughly 1/x‑like trend when startup overhead is
+                        mostly constant, with variability from scheduler effects and CPU cache behavior.
                     </div>
                 </div>
 
