@@ -74,7 +74,7 @@ export default function PatPage() {
                 <label htmlFor='patNameInput' className='block mb-2 text-sm font-medium'>
                     Token name (optional)
                 </label>
-                <div className='flex gap-2 items-center'>
+                <div className='flex flex-wrap sm:flex-nowrap gap-2 items-center'>
                     <Input
                         id='patNameInput'
                         value={newName}
