@@ -104,7 +104,6 @@ describe('PatPage', () => {
         expect(token1).toHaveTextContent(new RegExp(`Expires ${expireDate}`, 'i'));
         expect(screen.getAllByRole('button', { name: /Delete/i }).length).toBe(2);
 
-        // Find the second token by name
         const token2Element = screen.getByText('API Key');
         const token2Item = token2Element.closest('div')?.parentElement?.parentElement;
         const token2Date = new Date(existingTokens[1].expiresAt).toLocaleString();
@@ -122,7 +121,10 @@ describe('PatPage', () => {
         fireEvent.change(nameInput, { target: { value: 'My New PAT' } });
 
         const expiryDropdown = screen.getByRole('combobox');
-        fireEvent.change(expiryDropdown, { target: { value: '30' } });
+        fireEvent.click(expiryDropdown);
+
+        const oneMonthOption = screen.getByRole('option', { name: /1 month/i });
+        fireEvent.click(oneMonthOption);
 
         const generateButton = screen.getByRole('button', { name: /Generate token/i });
         fireEvent.click(generateButton);
