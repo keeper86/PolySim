@@ -90,9 +90,9 @@ def main():
         std_ovh = float(np.std(arr, ddof=1)) if arr.size > 1 else 0.0
         by_file_size[file_size_mb].append((total_mb, mean_ovh, std_ovh, int(arr.size)))
     
-    # Create log-log plot
+    # Create plot with log x-axis and linear y-axis
     fig, ax = plt.subplots(figsize=(12, 6))
-    fig.suptitle('Mean tracing overhead vs total data size (log-log)', fontsize=16, fontweight='bold')
+    fig.suptitle('Mean tracing overhead vs total data size', fontsize=16, fontweight='bold')
     
     colors = {1: COLOR_SMALL, 10: COLOR_MEDIUM, 50: COLOR_LARGE}
     
@@ -109,22 +109,14 @@ def main():
             means,
             color=color,
             s=40,
-            label=f'{file_size_mb}MB files (mean)',
+            label=f'{file_size_mb}MB files',
             zorder=3,
         )
-
-    
-        if len(total_mbs) >= 2:
-            m, b = _fit_loglog(total_mbs, means)
-            x_line = np.linspace(total_mbs.min(), total_mbs.max(), 200)
-            y_line = 10**(m * np.log10(x_line) + b)
-            ax.plot(x_line, y_line, color=color, linewidth=2, alpha=0.7)
     
     ax.set_xscale('log')
-    ax.set_yscale('log')
     ax.set_xlabel('Total data size (MB)')
     ax.set_ylabel('Overhead (%)')
-    # ax.set_ylim(2e2, 3e3)
+    ax.set_ylim(0, 2000)
     ax.grid(True, which='both', alpha=0.3)
     ax.legend(loc='best', framealpha=0.9, fontsize=12)
     plt.tight_layout()

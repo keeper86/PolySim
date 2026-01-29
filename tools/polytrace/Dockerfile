@@ -14,8 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     vim \
     strace \
-        unzip \
-        jq \
+    unzip \
+    jq \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /polytrace
