@@ -1,6 +1,17 @@
+"use client";
+
 import Image from 'next/image';
+import { useTheme } from 'next-themes';
+import { useEffect , useState } from 'react';
 
 export default function Footer() {
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => setMounted(true), []);
+
+    const isDark = mounted && resolvedTheme === 'dark';
+
     return (
         <footer className='w-full border-t border-base-300 bg-base-100 mt-12 p-4'>
             <div className='w-full flex flex-row items-center justify-between'>
@@ -19,7 +30,7 @@ export default function Footer() {
                         alt='GitHub'
                         width={24}
                         height={24}
-                        className='inline-block align-middle'
+                        className={`${isDark ? 'invert' : ''} inline-block align-middle`}
                     />
                 </a>
             </div>
