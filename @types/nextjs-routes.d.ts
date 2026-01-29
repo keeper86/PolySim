@@ -25,7 +25,8 @@ declare module "nextjs-routes" {
     | StaticRoute<"/imprint">
     | StaticRoute<"/pong">
     | StaticRoute<"/query">
-    | StaticRoute<"/skills">;
+    | StaticRoute<"/skills">
+    | StaticRoute<"/upload">;
 
   interface StaticRoute<Pathname> {
     pathname: Pathname;

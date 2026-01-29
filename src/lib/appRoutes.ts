@@ -7,9 +7,9 @@ import {
     Gamepad,
     Home,
     KeyRound,
-    Map,
-    User,
     Search,
+    Upload,
+    User,
 } from 'lucide-react';
 
 import type { Route } from 'nextjs-routes';
@@ -47,21 +47,6 @@ export const APP_ROUTES = {
         isPublic: true,
         description: 'Dashboard and overview',
     },
-    files: {
-        root: {
-            path: '/files',
-            label: 'Files',
-            icon: Map,
-            description: 'File management and uploads',
-            isMainNav: true,
-        },
-        visNetworkDemo: {
-            path: '/files/vis-network-demo',
-            label: 'vis-network Demo',
-            description: 'Demonstration of vis-network (network.js) integration',
-            isMainNav: true,
-        },
-    },
     apiDoc: {
         path: '/api-doc',
         label: 'API Docs',
@@ -91,6 +76,13 @@ export const APP_ROUTES = {
         icon: Search,
         isPublic: true,
         description: 'Find your Program',
+        isMainNav: true,
+    },
+    upload: {
+        path: '/upload',
+        label: 'Upload',
+        icon: Upload,
+        description: 'Upload provenance data',
         isMainNav: true,
     },
     account: {
