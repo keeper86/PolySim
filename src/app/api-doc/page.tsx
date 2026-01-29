@@ -56,7 +56,7 @@ export default function PageContent() {
                     window.removeEventListener('message', onMessage);
                 };
 
-                const specStr = JSON.stringify(specRef.current).replace(/</g, '\u003c');
+                const specStr = JSON.stringify(specRef.current).replace(/</g, '\\u003c');
 
                 const htmlOpen = resolvedTheme === 'dark' ? '<html class="dark-mode">' : '<html>';
 
