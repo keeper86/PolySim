@@ -23,7 +23,7 @@ const isExpired = (token: PatToken2): boolean => {
     return new Date(token.expiresAt) <= new Date();
 };
 
-type PatToken2 = Pick<PatToken, 'id' | 'name' > & {
+type PatToken2 = Pick<PatToken, 'id' | 'name'> & {
     createdAt: Date;
     expiresAt: Date;
 };
