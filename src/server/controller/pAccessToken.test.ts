@@ -18,7 +18,7 @@ describe('personal access token controller (integration)', () => {
         expect(found).toBeDefined();
 
         expect(found).toHaveProperty('id');
-        expect(found).toHaveProperty('created_at');
+        expect(found).toHaveProperty('createdAt');
 
         const revokeResult = await caller.revokePAT({ id: String(found!.id) });
         expect(revokeResult).toHaveProperty('success', true);
@@ -26,7 +26,7 @@ describe('personal access token controller (integration)', () => {
         const patsAfter = await caller.listPATs({});
         const stillThere = patsAfter.find((p) => String(p.id) === String(found!.id));
         expect(stillThere).toBeDefined();
-        expect(stillThere).toHaveProperty('expires_at');
+        expect(stillThere).toHaveProperty('expiresAt');
 
         const expiresAt = stillThere!.expiresAt as Date | null;
         expect(expiresAt).not.toBeNull();
