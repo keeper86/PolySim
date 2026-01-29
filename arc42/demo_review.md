@@ -3,32 +3,24 @@
  
 ---
 
- ## PolySim - Provenance Computational Physics Simulations
+## Idea
+
+Working on a **realistic-ish** project
+
+Encounter irreducible **complexity**
 
 ---
 
+ ## PolySim 
 
-  Hands-on Multi-layered Course
-
-   - Learning how to work in a team on a real-world project
-   
-   - Using modern web technologies to build a full-stack application
-
-   - Implementing FAIR principles and data provenance in scientific simulations
-
+  Provenance tracking for scientific simulations
+  
 ---
 
-Working on a realistic-ish project
-
-Encountering real-world challenges rather than toy examples
-
----
-
-Course idea - two parts
+# Course idea - two parts
 
 
-Take our project seriously, build something useful
-  - learn 
+build something useful - learn how to organize
 
 ---
 
@@ -48,10 +40,6 @@ Here we can make the point why centralized storage and management of provenance 
 ---
 
 # overview
-
----
-
-<img src="provenance-poc.png" alt="Provenance Proof of Concept" class="full-width"/>
 
 ---
 
@@ -227,7 +215,17 @@ The board became a **shared coordination mechanism**
 
 ---
  
- transition slide
+ complexity: dark mode
+
+1 button, but concerns **every** component **everywhere**
+
+solution here? use an existing solution (shadcn/ui) 
+
+Note: ... because we need our time for more important things
+
+---
+
+<img src="provenance-poc.png" alt="Provenance Proof of Concept" class="full-width"/>
 
 ---
 
@@ -498,3 +496,14 @@ Current state of the project
 --- 
 
 logistical issues, LLM use, working in progress, working as a team.
+
+---
+
+  Hands-on Multi-layered Course
+
+   - Learning how to work in a team on a real-world project
+   
+   - Using modern web technologies to build a full-stack application
+
+   - Implementing FAIR principles and data provenance in scientific simulations
+
