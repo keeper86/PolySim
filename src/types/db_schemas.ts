@@ -74,7 +74,7 @@ export type PersonalAccessTokens = {
     user_id: string;
     name: string;
     token_hash: string;
-    expires_at: Date | null;
+    expires_at: Date;
     created_at: Date;
 };
 

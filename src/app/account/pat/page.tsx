@@ -14,20 +14,20 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useTRPC } from '@/lib/trpc';
+import type { PatToken } from '@/server/controller/pAccessToken';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { toast } from 'sonner';
 
-type PatToken = {
-    id: string;
-    name?: string | null;
-    created_at: string;
-    expires_at?: string | null;
+const isExpired = (token: PatToken2): boolean => {
+    return new Date(token.expiresAt) <= new Date();
 };
 
-const isExpired = (token: PatToken): boolean => {
-    return !!(token.expires_at && new Date(token.expires_at) <= new Date());
+type PatToken2 = Pick<PatToken, 'id' | 'name'> & {
+    createdAt: Date;
+    expiresAt: Date;
 };
+
 export default function PatPage() {
     const trpc = useTRPC();
 
@@ -36,7 +36,13 @@ export default function PatPage() {
     const [expiryDays, setExpiryDays] = React.useState<number>(1);
     const [openTokenDialog, setOpenTokenDialog] = React.useState(false);
 
-    const { data: tokens = [], isLoading, refetch } = useQuery(trpc.listPATs.queryOptions({}));
+    const { data = [], isLoading, refetch } = useQuery(trpc.listPATs.queryOptions({}));
+
+    const tokens: PatToken2[] = data.map((token) => ({
+        ...token,
+        createdAt: new Date(token.createdAt),
+        expiresAt: new Date(token.expiresAt),
+    }));
 
     const createPATMutation = useMutation(trpc.createPAT.mutationOptions());
     const revokePATMutation = useMutation(trpc.revokePAT.mutationOptions());
@@ -130,7 +136,7 @@ export default function PatPage() {
                     <div className='text-sm text-muted-foreground'>No tokens yet.</div>
                 ) : (
                     <ul className='space-y-2'>
-                        {tokens.map((token: PatToken) => (
+                        {tokens.map((token: PatToken2) => (
                             <li key={token.id} className='flex items-center justify-between rounded border p-3'>
                                 <div>
                                     <div className='flex items-center gap-2'>
@@ -138,14 +144,8 @@ export default function PatPage() {
                                         {isExpired(token) ? <Badge variant='destructive'>Expired</Badge> : null}
                                     </div>
                                     <div className='text-xs text-muted-foreground'>
-                                        Created {new Date(token.created_at).toLocaleString()}
-                                        {token.expires_at ? (
-                                            <span>
-                                                {' · '}Expires {new Date(token.expires_at).toLocaleString()}
-                                            </span>
-                                        ) : (
-                                            <span>{' · '}Never expires</span>
-                                        )}
+                                        Created {token.createdAt.toLocaleString()}
+                                        {' · '}Expires {token.expiresAt.toLocaleString()}
                                     </div>
                                 </div>
                                 <div className='flex items-center gap-2'>

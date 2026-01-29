@@ -14,8 +14,8 @@ const createPatInput = z.object({
 const patToken = z.object({
     id: z.uuid(),
     name: z.string().nullable(),
-    created_at: z.date(),
-    expires_at: z.date().nullable(),
+    createdAt: z.date(),
+    expiresAt: z.date(),
 });
 export type PatToken = z.infer<typeof patToken>;
 
@@ -33,9 +33,7 @@ export const createPAT = () => {
 
             const activeCountRow = await db('personal_access_tokens')
                 .where({ user_id: userId })
-                .andWhere(function () {
-                    this.whereNull('expires_at').orWhere('expires_at', '>', new Date().toISOString());
-                })
+                .andWhere('expires_at', '>', new Date().toISOString())
                 .count('id')
                 .first();
 
@@ -49,9 +47,7 @@ export const createPAT = () => {
             const tokenWithSalt = createHmac.update(token).digest('hex');
             const hash = crypto.createHash('sha256').update(tokenWithSalt).digest('hex');
 
-            const expiresAt = input.expiresInDays
-                ? new Date(Date.now() + input.expiresInDays * 24 * 3600 * 1000)
-                : null;
+            const expiresAt = new Date(Date.now() + input.expiresInDays * 24 * 3600 * 1000);
 
             await db('personal_access_tokens').insert({
                 user_id: userId,
@@ -73,7 +69,14 @@ export const listPATs = () => {
             const rows = await db('personal_access_tokens')
                 .where({ user_id: userId })
                 .select('id', 'name', 'created_at', 'expires_at');
-            return rows;
+            const tokens = rows.map((row) => ({
+                id: row.id,
+                name: row.name,
+                createdAt: row.created_at,
+                expiresAt: row.expires_at,
+            }));
+
+            return tokens;
         });
 };
 
