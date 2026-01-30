@@ -91,7 +91,7 @@ async function getContainer(): Promise<StartedPostgreSqlContainer> {
         return container;
     }
 
-    container = await new PostgreSqlContainer('postgres:15-alpine')
+    container = await new PostgreSqlContainer('apache/age:release_PG15_1.6.0')
         .withDatabase(process.env.POSTGRES_DB!)
         .withUsername(process.env.POSTGRES_USER!)
         .withPassword(process.env.POSTGRES_PASSWORD!)

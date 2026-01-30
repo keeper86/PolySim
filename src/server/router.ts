@@ -6,6 +6,8 @@ import { createPAT, listPATs, revokePAT, deletePAT } from './controller/pAccessT
 import { createProject } from './controller/projects';
 import { getSkillsAssessment, updateSkillsAssessment } from './controller/skillsAssessment';
 import { getUser, getUserIdFromSession as getUserIdFromPAT, getUsers, updateUser } from './controller/user';
+import { getProvGraph } from './controller/ageGraph';
+import { getProvGraphCypher } from './controller/ageGraphCypher';
 import { trpcRoot } from './trpcRoot';
 
 const protectedAppRouter = trpcRoot.router({
@@ -25,6 +27,8 @@ const protectedAppRouter = trpcRoot.router({
 export const publicAccessibleRouter = trpcRoot.router({
     logs: logs(),
     health: health(),
+    getProvGraph: getProvGraph(),
+    getProvGraphCypher: getProvGraphCypher(),
     getUserIdFromPAT: getUserIdFromPAT(),
     uploadActivity: activityUpload(),
 });

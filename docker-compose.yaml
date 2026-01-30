@@ -44,7 +44,7 @@ services:
         restart: 'no'
 
     db:
-        image: postgres:15-alpine
+        image: apache/age:release_PG15_1.6.0
         environment:
             POSTGRES_USER: ${POSTGRES_USER}
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
