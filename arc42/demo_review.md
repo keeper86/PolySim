@@ -299,31 +299,25 @@ Visualization (shadcn + design +react) @Enno-Enno
 - Data without good Visuals is a bit useless <!-- .element: class="fragment" data-fragment-index="2" -->
 - The website should look nice and be easy to use
 
-%% ## What should the design achieve?
+---
+##  How do we visualize things in our Website?
+-  shadcn components based on React
+	- Responsive
+	- Design toolbox
+- Tables
+- Graph view of Provenance
+---
+## Challenges 
+- Dark mode 
+- Different component sources
+- Controllers for the Data 
+
+---
+## What should the design achieve?
   - Overview at a glance <!-- .element: class="fragment" data-fragment-index="1" -->
   - Be usable and intuitive to use  <!-- .element: class="fragment" data-fragment-index="2" -->
   - Be responsive to   <!-- .element: class="fragment" data-fragment-index="3" -->
- %%
----
-## What does our design achieve?
-- Lists all uploaded activities <!-- .element: class="fragment" data-fragment-index="1" -->
-- Represents them in an interactive Graph with the entities. <!-- .element: class="fragment" data-fragment-index="2" -->
-- Uses shadcn components for consistent visual representation. <!-- .element: class="fragment" data-fragment-index="3" --> 
 
-***Demo*** <!-- .element: class="fragment" data-fragment-index="4" -->
-<!-- --- -->
-
-<!-- ### Principles-->
-
-
----
-
-- Use 
-- Especially true for authentication and authorization.
-
- -> keycloak
-
----
 ---
 ## Why Keycloak?
 
