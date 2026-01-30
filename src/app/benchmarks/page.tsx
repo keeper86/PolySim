@@ -36,9 +36,10 @@ export default function BenchmarksPage() {
                         />
                     </div>
                     <div className='px-6 pb-6 text-sm text-slate-600'>
-                        I/O datasize vs overhead: Shows tracing overhead (%) for different file sizes (1MB, 10MB, 50MB) across
-                        varying total data volumes. Overhead patterns vary significantly by workload characteristics and syscall
-                        density. Three distinct file-size categories reveal different metadata pressure and I/O handling costs.
+                        I/O datasize vs overhead: Shows tracing overhead (%) for different file sizes (1MB, 10MB, 50MB)
+                        across varying total data volumes. Overhead patterns vary significantly by workload
+                        characteristics and syscall density. Three distinct file-size categories reveal different
+                        metadata pressure and I/O handling costs.
                     </div>
                 </div>
 
@@ -59,10 +60,11 @@ export default function BenchmarksPage() {
                         />
                     </div>
                     <div className='px-6 pb-6 text-sm text-slate-600'>
-                        CPU-only tracing vs runtime: demonstrates <strong>pure amortization</strong>—fixed tracing startup
-                        cost (~constant) divided by increasing CPU runtime. During pure computation, no file syscalls occur,
-                        so overhead stays constant in absolute terms but shrinks as %. Expected slope ≈ −1 in log-log space
-                        (1/x relationship). Variability from scheduler effects and CPU cache behavior.
+                        CPU-only tracing vs runtime: demonstrates <strong>pure amortization</strong>—fixed tracing
+                        startup cost (~constant) divided by increasing CPU runtime. During pure computation, no file
+                        syscalls occur, so overhead stays constant in absolute terms but shrinks as %. Expected slope ≈
+                        −1 in log-log space (1/x relationship). Variability from scheduler effects and CPU cache
+                        behavior.
                     </div>
                 </div>
 
