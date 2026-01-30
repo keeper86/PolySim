@@ -308,7 +308,7 @@ Visualization (shadcn + design +react) @Enno-Enno
 - Graph view of Provenance
 ---
 ![alt text](RawJSON.png)
-
+   
 ---
 ## Challenges 
 - Dark mode 
