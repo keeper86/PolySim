@@ -62,7 +62,7 @@ def main():
         m, b = _fit_loglog(runtimes, overheads)
         x_line = np.linspace(runtimes.min(), runtimes.max(), 200)
         y_line = 10**(m * np.log10(x_line) + b)
-        ax.plot(x_line, y_line, color=COLOR_EMERALD, linewidth=2, label=f'fit: x^{m:.2f}')
+        ax.plot(x_line, y_line, color=COLOR_EMERALD, linewidth=2, label=rf'fit: $x^{{{m:.2f}}}$')
     
     _plot_inv_x(ax, runtimes, np.median(overheads))
     

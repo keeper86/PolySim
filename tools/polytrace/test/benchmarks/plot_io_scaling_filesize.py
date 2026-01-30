@@ -137,7 +137,7 @@ def main():
         stds_arr = np.array(stds)
         m, b = _fit_loglog(sizes_arr, means_arr)
         avg_std = float(np.mean(stds_arr)) if stds_arr.size else 0.0
-        print(f"\n{file_size_mb}MB files: scaling exponent = {m:.3f} (y ~ x^{m:.3f})")
+        print(f"\n{file_size_mb}MB files: scaling exponent = {m:.3f} (y ~ $x^{{{m:.3f}}}$)")
         print(f"  Size range: {sizes[0]}-{sizes[-1]}MB, Mean overhead: {means[0]:.2f}%-{means[-1]:.2f}%, Avg std: {avg_std:.2f}%")
         # Optional: show counts per point for transparency
         counts_str = ', '.join(str(c) for c in counts)
