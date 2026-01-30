@@ -3,6 +3,30 @@
  
 ---
 
+## Pictures we can use
+
+---
+
+<img src="upload_provenance-1.png" alt="Upload Provenance" class="full-width"/>
+
+---
+
+<img src="board_zoomed_out-1.png" alt="Team Board Zoomed Out" class="full-width"/>
+
+---
+
+<img src="extensive_logging-1.png" alt="Extensive Logging" class="full-width"/>
+
+---
+
+<img src="integration_test_pass-1.png" alt="Integration Test Pass" class="full-width"/>
+
+---
+
+<img src="unit_test_pass-1.png" alt="Unit Test Pass" class="full-width"/>
+
+---
+
 ## Idea
 
 Working on a **realistic-ish** project
