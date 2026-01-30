@@ -300,7 +300,61 @@ Visualization (shadcn + design +react) @Enno-Enno
  -> keycloak
 
 ---
+---
+## Why Keycloak?
 
+- **Security is complex:** Building a custom login system is risky and hard to get right.
+- **Trusted by Enterprises:** Used by major institutions like **CERN** and the **Bundesagentur für Arbeit**.
+- **Auth Layer:** It acts as a dedicated security guard, keeping authentication separate from our simulation logic.
+- **Open Source:** A transparent, community-driven solution that we can fully control.
+
+---
+
+## Setting up Keycloak with Next.js
+
+- **Infrastructure:** Keycloak runs as a separate **Docker container** on port 8080.
+- **The Bridge:** We use `next-auth` to connect our Next.js frontend with the Keycloak server.
+- **The Flow:** Users are redirected to Keycloak for login and return to PolySim with a secure token (JWT).
+
+---
+
+## Implementing avatar upload functionality
+
+- **Iteration:** We moved from a generic file component to a custom, user-friendly **Dialog**.
+- **The Path:** Click avatar (sidebar) → Account Page → "Upload Avatar" button.
+- **Visual Feedback:** A **live preview** ensures the user is happy with the image before the final upload.
+
+---
+
+## Storing and retrieving avatars from the database
+
+- **Storage:** Images are converted to **Base64 strings** for straightforward database handling.
+- **tRPC:** We use **mutations** to send the data and **queries** to fetch it back.
+- **Efficiency:** By storing strings directly in the DB, we avoid the need for external cloud storage.
+
+---
+
+## Integrating avatar display in the user interface
+
+- **Consistency:** The avatar is used across the app, from the sidebar to the profile settings.
+- **Unified Design:** Integrated with the project's layout to provide a professional and familiar feel.
+- **Shadcn Integration:** Leveraging the existing library for a polished visual representation.
+
+---
+
+## Experience while implementing? Challenges and solutions?
+
+- **The Illusion:** What starts as a "basic upload button" quickly turns into a complex task involving state management and data flows.
+- **Solution:** We realized that even small features need a structured approach. By using **tRPC**, we made the data flow predictable and safe.
+
+---
+
+# Demo
+
+- **Service:** Show the separate Keycloak container running on `:8080`.
+- **Login:** Demonstrate the redirect to the official Keycloak login interface.
+- **Upload:** Show the **Account Page**, the **Upload Dialog**, and the updated Avatar.
+---
 avatar uploading + Key Cloak @MikKusch
 
 Content:
