@@ -273,13 +273,13 @@ Visualization (shadcn + design +react) @Enno-Enno
 
 - Good UI Matters <!-- .element: class="fragment" data-fragment-index="1" -->
 - Data without good Visuals is a bit useless <!-- .element: class="fragment" data-fragment-index="2" -->
+- The website should look nice and be easy to use
 
----
-## What should the design achieve?
+%% ## What should the design achieve?
   - Overview at a glance <!-- .element: class="fragment" data-fragment-index="1" -->
-  - Connection between Project and its graph view <!-- .element: class="fragment" data-fragment-index="2" -->
-  - Using  <!-- .element: class="fragment" data-fragment-index="3" -->
-
+  - Be usable and intuitive to use  <!-- .element: class="fragment" data-fragment-index="2" -->
+  - Be responsive to   <!-- .element: class="fragment" data-fragment-index="3" -->
+ %%
 ---
 ## What does our design achieve?
 - Lists all uploaded activities <!-- .element: class="fragment" data-fragment-index="1" -->
