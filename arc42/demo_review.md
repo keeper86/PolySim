@@ -307,6 +307,9 @@ Visualization (shadcn + design +react) @Enno-Enno
 - Tables
 - Graph view of Provenance
 ---
+![alt text](RawJSON.png)
+
+---
 ## Challenges 
 - Dark mode 
 - Different component sources
@@ -316,7 +319,7 @@ Visualization (shadcn + design +react) @Enno-Enno
 ## What should the design achieve?
   - Overview at a glance <!-- .element: class="fragment" data-fragment-index="1" -->
   - Be usable and intuitive to use  <!-- .element: class="fragment" data-fragment-index="2" -->
-  - Be responsive to   <!-- .element: class="fragment" data-fragment-index="3" -->
+  - Be responsive  <!-- .element: class="fragment" data-fragment-index="3" -->
 
 ---
 ## Why Keycloak?
