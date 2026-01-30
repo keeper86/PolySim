@@ -22,7 +22,7 @@ export default function BenchmarksPage() {
                 <div className='bg-white rounded-lg shadow-lg overflow-hidden'>
                     <div className='p-6 bg-gradient-to-r from-slate-50 to-slate-50'>
                         <h2 className='text-2xl font-bold text-slate-900 mb-1'>I/O datasize vs overhead</h2>
-                        <p className='text-slate-600 text-sm'>Scatter plot (log x-axis, linear y-axis)</p>
+                        <p className='text-slate-600 text-sm'>Scatter plot</p>
                     </div>
                     <div className='p-4'>
                         <Image
