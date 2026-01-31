@@ -1,6 +1,6 @@
 services:
     db:
-        image: apache/age:release_PG15_1.6.0
+        image: apache/age:release_PG17_1.6.0
         deploy:
             resources:
                 limits:
