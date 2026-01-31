@@ -11,10 +11,10 @@ const getCount = (res: unknown): number => {
     }
     const asObj = res as Record<string, unknown>;
     if (typeof asObj.rowCount === 'number') {
-        return asObj.rowCount as number;
+        return asObj.rowCount;
     }
     if (Array.isArray(asObj.rows)) {
-        return (asObj.rows as unknown[]).length;
+        return asObj.rows.length;
     }
     return 0;
 };
