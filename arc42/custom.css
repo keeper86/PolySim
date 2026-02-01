@@ -111,11 +111,13 @@
   color: #0f172a; /* slate-900 */
 }
 
-.flow-grid-3x2 .arrow-left {
+.flow-grid-3x2 .arrow-left,
+.flow-grid-2x2 .arrow-left {
   position: relative;
 }
 
-.flow-grid-3x2 .arrow-left::before {
+.flow-grid-3x2 .arrow-left::before,
+.flow-grid-2x2 .arrow-left::before {
   content: "\2192";
   position: absolute;
   left: -22px;
@@ -228,7 +230,15 @@ section.compact .os-table td {
   margin-top: 18px;
 }
 
-.flow-grid-3x2 .cell {
+.flow-grid-2x2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.flow-grid-3x2 .cell,
+.flow-grid-2x2 .cell {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -242,7 +252,8 @@ section.compact .os-table td {
   line-height: 1.25;
 }
 
-.flow-grid-3x2 .code-cell {
+.flow-grid-3x2 .code-cell,
+.flow-grid-2x2 .code-cell {
   text-align: left;
   font-size: 0.5em;
   line-height: 1.35;
@@ -251,11 +262,41 @@ section.compact .os-table td {
 
 }
 
-.flow-grid-3x2 pre {
+.flow-grid-3x2 pre,
+.flow-grid-2x2 pre {
   margin: 0;
   width: 100%;
 }
 
-.flow-grid-3x2 .code-cell pre code {
-  display: block;;
+.flow-grid-3x2 .code-cell pre code,
+.flow-grid-2x2 .code-cell pre code {
+  display: block;
+}
+
+.flow-stack {
+  position: relative;
+  min-height: 360px;
+}
+
+.flow-stack .flow-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.flow-shift-out {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform: translateX(0);
+}
+
+.flow-shift-out.visible {
+  transform: translateX(calc(-50% - 6px));
+}
+
+.flow-shift-in {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform: translateX(calc(50% + 6px));
+}
+
+.flow-shift-in.visible {
+  transform: translateX(0);
 }
