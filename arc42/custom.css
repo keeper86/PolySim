@@ -283,6 +283,17 @@ section.compact .os-table td {
   inset: 0;
 }
 
+.flow-scroll .code-cell pre {
+  max-height: 220px;
+  max-width: 600px;
+  overflow: auto;
+}
+
+.flow-scroll .code-cell pre code {
+  max-height: none;
+  overflow: auto;
+}
+
 .flow-shift-out {
   transition: opacity 0.4s ease, transform 0.4s ease;
   transform: translateX(0);
