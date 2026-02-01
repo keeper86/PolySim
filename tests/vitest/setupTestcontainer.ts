@@ -129,6 +129,11 @@ async function getKnexInstance(): Promise<ReturnType<typeof knex>> {
     });
 
     await knexInstance.migrate.latest();
+    // Also run test-specific migrations
+    await knexInstance.migrate.latest({
+        directory: './tests/migrations',
+        tableName: 'knex_migrations_test',
+    });
     return knexInstance;
 }
 

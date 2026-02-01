@@ -23,14 +23,24 @@ export async function runGraphQuery(db: Knex, query: GraphQuery, input: QueryInp
     const params = query.input.parse(input);
     const name = queryNameSchema.parse(query.name);
 
+    // Set search path for AGE functions
+    await db.raw("SET search_path = ag_catalog, '$user', public");
+
     const functionName = `prov.${name}`;
     const sql = `
-        SELECT result AS result FROM ${functionName}(?)
+        SELECT * FROM ag_catalog.cypher('prov', $$ MATCH (v) RETURN v $$) AS (v json);
     `;
 
-    const { rows = [] } = (await db.raw(sql, [JSON.stringify(params)])) as {
+    const test = await db.raw(sql);
+    console.log(test);
+    exit(0);
+
+    const { rows = [] } = (await db.raw(sql)) as {
         rows?: { result: unknown }[];
     };
+
+    console.log(rows);
+    exit(0);
 
     if (rows.length !== 1) {
         throw new Error(`Graph query "${query.name}" returned ${rows.length} rows - expected exactly 1.`);
