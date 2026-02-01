@@ -23,10 +23,22 @@ exports.up = async function (knex) {
         DECLARE
             entity_id text;
             query text;
+            dynsql text;
         BEGIN
+            -- extract entity id from JSON params
             entity_id := params::json->>'entityId';
-            query := 'MATCH (e:Entity {id: "' || entity_id || '"}) RETURN e.kind AS kind';
-            RETURN QUERY EXECUTE 'SELECT json_build_object(''nodes'', json_build_array(json_build_object(''id'', ''' || entity_id || ''', ''kind'', t.kind::text)), ''edges'', ''[]''::json) FROM ag_catalog.cypher(''prov'', ' || '$$' || query || '$$' || ') AS t(kind ag_catalog.agtype)';
+
+            -- build a safe cypher query by quoting the literal to avoid injection
+            query := 'MATCH (e:Entity {id: ' || quote_literal(entity_id) || '}) RETURN e.kind AS kind';
+
+            -- build the dynamic SQL that calls ag_catalog.cypher and constructs
+            -- the JSON payload. We request AGE to return JSON for the "kind"
+            -- column so we avoid problematic casts from agtype -> jsonb.
+            dynsql := 'SELECT json_build_object(''
+                ''nodes'', json_build_array(json_build_object(''id'', ' || quote_literal(entity_id) || ', ''kind'', t.kind::text)), ''edges'', ''[]''::json) '
+                || 'FROM ag_catalog.cypher(''prov'', $$' || query || '$$) AS t(kind json)';
+
+            RETURN QUERY EXECUTE dynsql;
         END;
         $function$;
     `);

@@ -9,7 +9,14 @@ exports.up = async function (knex) {
     BEGIN
 
         RETURN QUERY EXECUTE
-        'SELECT * FROM ag_catalog.cypher(''prov'', $$ MATCH (u $param) RETURN u $$, $1) AS (u json)'
+          'SELECT * FROM ag_catalog.cypher(
+              ''prov'', 
+              $$
+                  MATCH (u '$id')
+                  RETURN u
+              $$, 
+              $1
+          ) AS (user_node json)'
         USING params;
 
     END;
