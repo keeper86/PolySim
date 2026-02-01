@@ -322,59 +322,116 @@ Visualization (shadcn + design +react) @Enno-Enno
   - Be responsive  <!-- .element: class="fragment" data-fragment-index="3" -->
 
 ---
+
+> Complexity is the worst enemy of security.
+
+-Bruce Schneier
+
+---
+
 ## Why Keycloak?
 
-- **Security is complex:** Building a custom login system is risky and hard to get right.
-- **Trusted by Enterprises:** Used by major institutions like **CERN** and the **Bundesagentur für Arbeit**.
-- **Auth Layer:** It acts as a dedicated security guard, keeping authentication separate from our simulation logic.
-- **Open Source:** A transparent, community-driven solution that we can fully control.
+- **Trust the Pros:** Industry standard (BMW, Cisco, CERN)
+- **Open Source:** Audited by thousands of developers
+- **Focus on Features:** Skip weeks of auth work, build PolySim instead
 
 ---
 
 ## Setting up Keycloak with Next.js
 
-- **Infrastructure:** Keycloak runs as a separate **Docker container** on port 8080.
-- **The Bridge:** We use `next-auth` to connect our Next.js frontend with the Keycloak server.
-- **The Flow:** Users are redirected to Keycloak for login and return to PolySim with a secure token (JWT).
+<div style="display: flex; gap: 2rem; margin-top: 2rem;">
+  <div style="flex: 1;">
+
+**The Infrastructure**
+- Keycloak runs in its own Docker container
+- Separate from the web app
+- Port `:8080`
+
+  </div>
+  <div style="flex: 1;">
+
+**The Bridge**
+- `next-auth` connects Next.js to Keycloak
+- Acts like a secure "translator"
+- Handles redirects and tokens
+
+  </div>
+</div>
+
+---
+## The Login Flow
+
+| Step | Action |
+|------|--------|
+| 1️⃣ | User clicks "Login" |
+| 2️⃣ | Redirected to Keycloak login page |
+| 3️⃣ | Keycloak verifies credentials |
+| 4️⃣ | JWT Token returned |
+| 5️⃣ | PolySim grants access ✅ |
+---
+
+## Implementing Avatar Upload
+
+**The Evolution: From File Input → Dialog**
+
+| Before | After |
+|--------|-------|
+| Generic Shadcn file component | Dedicated Dialog modal |
+| No preview | Live preview before upload |
+| Confusing UX | Clear, focused workflow |
 
 ---
 
-## Implementing avatar upload functionality
+## Avatar Upload Workflow
 
-- **Iteration:** We moved from a generic file component to a custom, user-friendly **Dialog**.
-- **The Path:** Click avatar (sidebar) → Account Page → "Upload Avatar" button.
-- **Visual Feedback:** A **live preview** ensures the user is happy with the image before the final upload.
+**Click avatar (sidebar)** → **Account Page** → **"Upload Avatar" button** → **Dialog opens** → **Preview image** → **Confirm upload**
 
 ---
 
-## Storing and retrieving avatars from the database
+## Storing Avatars in the Database
 
-- **Storage:** Images are converted to **Base64 strings** for straightforward database handling.
-- **tRPC:** We use **mutations** to send the data and **queries** to fetch it back.
-- **Efficiency:** By storing strings directly in the DB, we avoid the need for external cloud storage.
+**Image → Base64 String → Database**
 
----
-
-## Integrating avatar display in the user interface
-
-- **Consistency:** The avatar is used across the app, from the sidebar to the profile settings.
-- **Unified Design:** Integrated with the project's layout to provide a professional and familiar feel.
-- **Shadcn Integration:** Leveraging the existing library for a polished visual representation.
+- Convert image to **Base64** text format
+- Send via **tRPC mutation**
+- Store directly in PostgreSQL
+- **No external cloud storage needed**
 
 ---
 
-## Experience while implementing? Challenges and solutions?
+## Retrieving Avatars
 
-- **The Illusion:** What starts as a "basic upload button" quickly turns into a complex task involving state management and data flows.
-- **Solution:** We realized that even small features need a structured approach. By using **tRPC**, we made the data flow predictable and safe.
+**Database → Base64 String → Browser Display**
+
+- tRPC query fetches the Base64 string
+- Browser converts it back to an image
+- Shown in sidebar and profile page
+- **Simple and efficient** ✅
 
 ---
 
-# Demo
+## Experience: Complexity in Practice
 
-- **Service:** Show the separate Keycloak container running on `:8080`.
-- **Login:** Demonstrate the redirect to the official Keycloak login interface.
-- **Upload:** Show the **Account Page**, the **Upload Dialog**, and the updated Avatar.
+**What looks simple becomes surprisingly tricky**
+
+Avatar upload seemed straightforward, but required:
+- Base64 encoding/decoding
+- Real-time UI updates
+- Proper error handling
+
+**Our solution:** Iterate, test, refine
+---
+## Demo
+
+🎯 **What we'll show:**
+
+1. **Keycloak running** — Show the separate container on `:8080`
+2. **Login flow** — Redirect to official Keycloak interface
+3. **Avatar upload** — Account Page → Upload Dialog → Live preview
+4. **Result** — Avatar updated across the app
+
+> Key insight: Keycloak is a **separate service**, not part of our app logic.
+
 ---
 avatar uploading + Key Cloak @MikKusch
 
