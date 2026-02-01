@@ -5,6 +5,8 @@ import type { Network, Node, Edge, Options } from 'react-graph-vis';
 import { createDummyProvData } from './graphGenerator';
 import { Loader } from 'lucide-react';
 import { X } from 'lucide-react';
+import { useTRPC } from '@/lib/trpc';
+import { useQuery } from '@tanstack/react-query';
 
 export default function VisNetworkDemoPage() {
     const defaultAgents = 2;
@@ -45,6 +47,35 @@ export default function VisNetworkDemoPage() {
     const [generatedPerActivity, setGeneratedPerActivity] = useState<number>(defaultGeneratedPerActivity);
     const [usedPerActivity, setUsedPerActivity] = useState<number>(defaultUsedPerActivity);
     const [showEntities, setShowEntities] = useState<boolean>(true);
+
+    const trpc = useTRPC();
+    const { data: provData } = useQuery(trpc.getProvGraph.queryOptions({ maxItemsPerType: 500 }));
+
+    type ProvNode = { id: string; label?: string; group?: string };
+    type ProvEdge = { from: string; to: string; label?: string };
+
+    useEffect(() => {
+        console.log('provData:', provData);
+
+        if (!provData) {
+            return;
+        }
+
+        // Map server nodes/edges to vis nodes/edges
+        const nodes: Node[] = provData.nodes.map((n: ProvNode) => ({
+            id: String(n.id),
+            label: n.label ?? String(n.id),
+        }));
+        const edges: Edge[] = provData.edges.map((e: ProvEdge) => ({
+            from: String(e.from),
+            to: String(e.to),
+            label: e.label,
+        }));
+
+        setGraphData({ nodes, edges });
+        setGraphKey((k) => k + 1);
+        setSelectedIds([]);
+    }, [provData]);
 
     useEffect(() => {
         setVisReady(true);

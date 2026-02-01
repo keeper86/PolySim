@@ -1,6 +1,6 @@
 services:
     db:
-        image: postgres:15-alpine
+        image: apache/age:release_PG17_1.6.0
         deploy:
             resources:
                 limits:

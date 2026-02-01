@@ -1,10 +1,12 @@
-import { activityUpload } from './controller/uploadActivity';
 import { getActivities } from './controller/activities';
+import { getProvGraph } from './controller/ageGraph';
 import { health } from './controller/health';
 import { logs } from './controller/logs';
-import { createPAT, listPATs, revokePAT, deletePAT } from './controller/pAccessToken';
+import { createPAT, deletePAT, listPATs, revokePAT } from './controller/pAccessToken';
 import { createProject } from './controller/projects';
+import { getEntityLineage } from './controller/provenance';
 import { getSkillsAssessment, updateSkillsAssessment } from './controller/skillsAssessment';
+import { activityUpload } from './controller/uploadActivity';
 import { getUser, getUserIdFromSession as getUserIdFromPAT, getUsers, updateUser } from './controller/user';
 import { trpcRoot } from './trpcRoot';
 
@@ -25,6 +27,8 @@ const protectedAppRouter = trpcRoot.router({
 export const publicAccessibleRouter = trpcRoot.router({
     logs: logs(),
     health: health(),
+    getProvGraph: getProvGraph(),
+    getEntityLineage: getEntityLineage(),
     getUserIdFromPAT: getUserIdFromPAT(),
     uploadActivity: activityUpload(),
 });

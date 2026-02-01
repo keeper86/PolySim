@@ -91,7 +91,7 @@ async function getContainer(): Promise<StartedPostgreSqlContainer> {
         return container;
     }
 
-    container = await new PostgreSqlContainer('postgres:15-alpine')
+    container = await new PostgreSqlContainer('apache/age:release_PG17_1.6.0')
         .withDatabase(process.env.POSTGRES_DB!)
         .withUsername(process.env.POSTGRES_USER!)
         .withPassword(process.env.POSTGRES_PASSWORD!)
@@ -129,6 +129,14 @@ async function getKnexInstance(): Promise<ReturnType<typeof knex>> {
     });
 
     await knexInstance.migrate.latest();
+
+    await knexInstance.migrate.latest({
+        directory: './tests/migrations',
+        tableName: 'knex_migrations_test',
+    });
+
+    // Run test seeds
+    await knexInstance.seed.run();
     return knexInstance;
 }
 
