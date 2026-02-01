@@ -16,35 +16,40 @@ export const queryNameSchema = z
     });
 
 type QueryInput = z.infer<GraphQuery['input']>;
-type QueryResult = z.infer<GraphQuery['result']>;
-export async function runGraphQuery(db: Knex, query: GraphQuery, input: QueryInput): Promise<QueryResult> {
-    console.log(query.name);
+export async function runGraphQuery(db: Knex, query: GraphQuery, input: QueryInput): Promise<unknown[]> {
+    const _params = query.input.parse(input);
+    const _name = queryNameSchema.parse(query.name);
 
-    const params = query.input.parse(input);
-    const name = queryNameSchema.parse(query.name);
-
-    // Set search path for AGE functions
     await db.raw("SET search_path = ag_catalog, '$user', public");
 
-    const functionName = `prov.${name}`;
-    const sql = `
-        SELECT * FROM ag_catalog.cypher('prov', $$ MATCH (v) RETURN v $$) AS (v json);
-    `;
-
-    const test = await db.raw(sql);
-    console.log(test);
-    exit(0);
-
-    const { rows = [] } = (await db.raw(sql)) as {
-        rows?: { result: unknown }[];
+    console.log(_params);
+    const param = {
+        id: 'e8e5fac19389c6b5d4401398edce9b9a9b27d689cc92fb49dfc60c6834a0eeb2',
     };
 
-    console.log(rows);
-    exit(0);
+    const existingId = 'b4a827afe1269ba19c71a5c2e736ed98ff5e062c76663c67761b82225ea95cfc';
+    const sql = `SELECT * FROM ag_catalog.cypher('prov', $$ MATCH (v{myid: '${existingId}'}) RETURN v $$) AS (v json);`;
 
-    if (rows.length !== 1) {
-        throw new Error(`Graph query "${query.name}" returned ${rows.length} rows - expected exactly 1.`);
-    }
+    const result = await db.raw(
+        `
+        SELECT * FROM ag_catalog.cypher(
+            'prov', 
+            $$
+                MATCH (u $props)
+                RETURN u
+            $$, 
+            ?::agtype
+        ) AS (user_node json) 
+    `,
+        [{ props: { id: existingId } }],
+    );
 
-    return query.result.parse(rows[0].result);
+    console.log('RESULT', result);
+
+    const { rows = [] } = result as {
+        rows?: { v: unknown }[];
+    };
+
+    const vertices = rows.map((row) => row.v);
+    return vertices;
 }
