@@ -584,18 +584,177 @@ aka
 PAT can be used for...
 
 ---
+## PolyTrace and Uploader
+---
+## What is PolyTrace?
 
-uploader + tracer @pherease
+A CLI tool to record filesystem activity
+---
+<div class="flow-vertical">
+   <div class="box fragment"><strong>Run PolyTrace</strong><br/>executes the target program</div>
+   <div class="arrow fragment">↓</div>
+   <div class="box fragment"><strong>Execute</strong><br/> target → child processes</div>
+   <div class="arrow fragment">↓</div>
+   <div class="box fragment"><strong>Trace</strong><br/>filesystem actions (I/O)</div>
+   <div class="arrow fragment">↓</div>
+   <div class="box fragment"><strong>Export</strong><br/>hash traced files with timestamps → create<code>PROV</code> file</div>
+   <div class="arrow fragment">↓</div>
+   <div class="box fragment"><strong>Upload</strong><br/>uploader expects a PAT to upload the <code>PROV</code> file</div>		
+</div>
+---
+<section class = compact>
+   <h2>Platform support</h2>
 
-    Content:
-        - Overview of PolyTrace CLI tool
-        - brief demo instead of theoretical background?
-        - explain what it is doing -> strace/fs_usage -> interaction with file system (reads and writes, mention filtering of system files here?) -> hash input and output files for identification (content-addressable, draw connection to git) -> upload to PolySim server (show how PAT is used here for authentication)
+   <table class="os-table">
+      <thead>
+      <tr>
+         <th>OS</th>
+         <th>How PolyTrace traces filesystem activity</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+         <td>Linux</td>
+         <td>
+         Uses <code>strace</code>
+         </td>
+      </tr>
+      <tr>
+         <td>Windows</td>
+         <td>
+         Uses <code>strace</code> via <strong>WSL</strong>
+         </td>
+      </tr>
+      <tr>
+         <td>macOS</td>
+         <td>
+         Uses <code>fs_usage</code> with some limitations
+         </td>
+      </tr>
+      <tr></tr>
+      </tbody>
+   </table>
+   </section>
+---
+## Linux with strace
+<div class="flow-grid-3x2">
+  <div class="cell fragment" data-fragment-index="1"><strong>PolyTrace executes target program</strong></div>
+  <div class="cell arrow-left fragment" data-fragment-index="3"><strong>strace output</strong></div>
+  <div class="cell arrow-left fragment" data-fragment-index="5"><strong>PROV output</strong></div>
 
-        for demo: 2 activities where the second uses an entity that the first created
+  <div class="cell code-cell fragment" data-fragment-index="2">
+  <pre><code>BASE_DIR=$(cd "$(dirname "$0")" && pwd)
+OUT="$BASE_DIR/tmp/simple_run_out"
+rm -f "$OUT"
+cat /etc/ld.so.cache > /dev/null 2>/dev/null || true
+echo hello > "$OUT"
+sleep 0.01
+exit 0</code></pre>
+  </div>
+
+  <div class="cell code-cell fragment" data-fragment-index="4">
+    <pre><code>1769772754.266682 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=960733, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+1769772754.266720 chdir("/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures") = 0
+1769772754.266818 +++ exited with 0 +++
+1769772754.265826 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.sdkman/candidates/java/current/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.265864 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.nvm/versions/node/v24.9.0/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.265880 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.local/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.265894 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/local/sbin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.265908 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/local/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.265922 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/sbin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.265935 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/bin/dirname", {st_mode=S_IFREG|0755, st_size=35208, ...}, 0) = 0
+1769772754.265955 execve("/usr/bin/dirname", ["dirname", "test/fixtures/simple_run.sh"], 0x5cd2a5f43598 /* 78 vars */) = 0
+1769772754.266179 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)</code></pre>
+  </div>
+  
+  <div class="cell code-cell fragment" data-fragment-index="6">
+    <pre><code>{
+  "activity": {
+    "endedAt": 1769725453183,
+    "id": "cf843303e1d1269de4c3155fae1b8d1fee2bf84f4bde84b1f004e4784a7b9458",
+    "label": "Run /bin/sh",
+    "metadata": {
+      "command": [
+        "/bin/sh",
+        "-c",
+        "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+      ]
+    },
+    "startedAt": 1769725453141
+  },
+  "entities": [
+    {
+      "createdAt": 1711874845999,
+      "id": "86d31f6fb799e91fa21bad341484564510ca287703a16e9e46c53338776f4f42",
+      "label": "sh",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {
+              "execve_argv": [
+                "/bin/sh",
+                "-c",
+                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+              ]
+            },
+            "pid": 587656,
+            "role": "process"
+          }
+        ],
+        "path": "/bin/sh"
+      },
+      "role": "process"
+    },
+    {
+      "createdAt": 1769725453169,
+      "id": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03",
+      "label": "simple_run_out",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {},
+            "pid": 587657,
+            "role": "output"
+          }
+        ],
+        "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out"
+      },
+      "role": "output"
+    },
+    {
+      "createdAt": 1769698204766,
+      "id": "e8e5fac19389c6b5d4401398edce9b9a9b27d689cc92fb49dfc60c6834a0eeb2",
+      "label": "simple_run.sh",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {
+              "execve_argv": [
+                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+              ]
+            },
+            "pid": 587657,
+            "role": "process"
+          },
+          {
+            "metadata": {},
+            "pid": 587657,
+            "role": "input"
+          }
+        ],
+        "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+      },
+      "role": "process"
+    }
+  ]
+}
+</code></pre>
+  </div>
+</div>
+
+
 
 ---
-
 @timtheissel
 
 Demo worklow: 
@@ -638,4 +797,3 @@ logistical issues, LLM use, working in progress, working as a team.
    - Using modern web technologies to build a full-stack application
 
    - Implementing FAIR principles and data provenance in scientific simulations
-
