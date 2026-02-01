@@ -60,6 +60,10 @@
   font-size: 0.9em;
 }
 
+.flow-grid-3x2 .code-cell .hljs {
+  min-height: 0;
+}
+
 .reveal .slide-number {
   font-size: 0.7em;
   color: #94a3b8; /* slate-400 */
@@ -105,4 +109,153 @@
 
 .reveal strong {
   color: #0f172a; /* slate-900 */
+}
+
+.flow-grid-3x2 .arrow-left {
+  position: relative;
+}
+
+.flow-grid-3x2 .arrow-left::before {
+  content: "\2192";
+  position: absolute;
+  left: -22px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2em;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 2;
+}
+
+
+.reveal code {
+  padding: 0.1em 0.25em;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.flow-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.flow-vertical .box {
+  padding: 16px 18px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-radius: 14px;
+  background: rgba(162, 162, 162, 0.261);
+  width: min(760px, 92%);
+  font-size: 0.9em;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.flow-vertical .arrow {
+  font-size: 1.8em;
+  opacity: 0.85;
+  user-select: none;
+  line-height: 1;
+}
+
+.os-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85em;
+  margin-top: 18px;
+}
+
+.os-table th,
+.os-table td {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 14px 16px;
+  vertical-align: top;
+}
+
+.os-table th {
+  text-align: left;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.os-table td:first-child {
+  width: 22%;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+section.compact {
+  font-size: 0.9em;
+}
+
+section.compact h2 {
+  margin: 0 0 10px 0;
+}
+
+section.compact .flow-vertical {
+  gap: 8px;
+  margin-top: 10px;
+}
+
+section.compact .flow-vertical .box {
+  padding: 10px 12px;
+  border-radius: 12px;
+  width: min(740px, 96%);
+  font-size: 0.85em;
+  line-height: 1.15;
+}
+
+section.compact .flow-vertical .arrow {
+  font-size: 1.3em;
+}
+
+section.compact .os-table {
+  font-size: 0.78em;
+  margin-top: 10px;
+}
+
+section.compact .os-table th,
+section.compact .os-table td {
+  padding: 10px 12px;
+  line-height: 1.15;
+}
+
+.flow-grid-3x2 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.flow-grid-3x2 .cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 4px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-radius: 14px;
+  background:  rgba(162, 162, 162, 0.261);
+  text-align: center;
+  font-size: 0.9em;
+  line-height: 1.25;
+}
+
+.flow-grid-3x2 .code-cell {
+  text-align: left;
+  font-size: 0.5em;
+  line-height: 1.35;
+  border: 2px solid rgba(255, 255, 255, 0);
+  background:  rgba(255, 255, 255, 0.1);
+
+}
+
+.flow-grid-3x2 pre {
+  margin: 0;
+  width: 100%;
+}
+
+.flow-grid-3x2 .code-cell pre code {
+  display: block;;
 }
