@@ -35,13 +35,13 @@ export async function runGraphQuery(db: Knex, query: GraphQuery, input: QueryInp
         SELECT * FROM ag_catalog.cypher(
             'prov', 
             $$
-                MATCH (u $props)
+                MATCH (u $param)
                 RETURN u
             $$, 
             ?::agtype
         ) AS (user_node json) 
     `,
-        [{ props: { id: existingId } }],
+        [{ param }],
     );
 
     console.log('RESULT', result);
