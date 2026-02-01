@@ -1,21 +1,35 @@
-import type { z } from 'zod';
+import { z } from 'zod';
+import type { ZodType } from 'zod';
 import type { Knex } from 'knex';
 
-type GraphQuery = {
+export type GraphQuery = {
     name: string;
-    params: z.ZodType;
-    result: z.ZodType;
+    input: ZodType;
+    result: ZodType;
 };
 
-type QueryInput = z.infer<GraphQuery['params']>;
-type QueryResult = z.infer<GraphQuery['result']>;
+export const queryNameSchema = z
+    .string()
+    .transform((s) => s.toLowerCase())
+    .refine((s) => /^[a-z0-9_]+$/.test(s), {
+        message: 'graph query name must contain only lowercase a-z, numbers and underscore',
+    });
 
+type QueryInput = z.infer<GraphQuery['input']>;
+type QueryResult = z.infer<GraphQuery['result']>;
 export async function runGraphQuery(db: Knex, query: GraphQuery, input: QueryInput): Promise<QueryResult> {
-    const params = query.params.parse(input);
-    const functionName = `prov.${query.name.replace(/[^a-zA-Z0-9_]/g, '_')}`;
-    const sql = `SELECT * FROM ${functionName}(?)`;
+    console.log(query.name);
+
+    const params = query.input.parse(input);
+    const name = queryNameSchema.parse(query.name);
+
+    const functionName = `prov.${name}`;
+    const sql = `
+        SELECT result AS result FROM ${functionName}(?)
+    `;
+
     const { rows = [] } = (await db.raw(sql, [JSON.stringify(params)])) as {
-        rows?: { result: QueryResult }[];
+        rows?: { result: unknown }[];
     };
 
     if (rows.length !== 1) {
