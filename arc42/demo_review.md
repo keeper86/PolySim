@@ -643,7 +643,8 @@ A CLI tool to record filesystem activity
   <div class="cell arrow-left fragment" data-fragment-index="5"><strong>PROV output</strong></div>
 
   <div class="cell code-cell fragment" data-fragment-index="2">
-  <pre><code>BASE_DIR=$(cd "$(dirname "$0")" && pwd)
+   <pre><code> #!/bin/sh
+BASE_DIR=$(cd "$(dirname "$0")" && pwd)
 OUT="$BASE_DIR/tmp/simple_run_out"
 rm -f "$OUT"
 cat /etc/ld.so.cache > /dev/null 2>/dev/null || true
@@ -653,7 +654,8 @@ exit 0</code></pre>
   </div>
 
   <div class="cell code-cell fragment" data-fragment-index="4">
-    <pre><code>1769772754.266682 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=960733, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+    <pre><code>
+1769772754.266682 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=960733, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
 1769772754.266720 chdir("/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures") = 0
 1769772754.266818 +++ exited with 0 +++
 1769772754.265826 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.sdkman/candidates/java/current/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
@@ -663,8 +665,23 @@ exit 0</code></pre>
 1769772754.265908 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/local/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
 1769772754.265922 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/sbin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
 1769772754.265935 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/bin/dirname", {st_mode=S_IFREG|0755, st_size=35208, ...}, 0) = 0
-1769772754.265955 execve("/usr/bin/dirname", ["dirname", "test/fixtures/simple_run.sh"], 0x5cd2a5f43598 /* 78 vars */) = 0
-1769772754.266179 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)</code></pre>
+1769772754.265955 execve("/usr/bin/dirname", ("dirname", "test/fixtures/simple_run.sh"), 0x5cd2a5f43598 /* 78 vars */) = 0
+1769772754.266179 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.266194 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+1769772754.266242 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libc.so.6>
+1769772754.266515 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 3</usr/lib/locale/locale-archive>
+1769772754.266671 +++ exited with 0 +++
+1769772754.263656 execve("test/fixtures/simple_run.sh", ("test/fixtures/simple_run.sh"), 0x7ffe5dddec40 /* 78 vars */) = 0
+1769772754.264033 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.264169 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+1769772754.264444 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libc.so.6>
+1769772754.265159 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/Projekte/PolySim/tools/polytrace", {st_mode=S_IFDIR|0775, st_size=4096, ...}, 0) = 0
+1769772754.265203 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, ".", {st_mode=S_IFDIR|0775, st_size=4096, ...}, 0) = 0
+1769772754.265221 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "test/fixtures/simple_run.sh", O_RDONLY) = 3</home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh>
+.
+.
+.
+</code></pre>
   </div>
   
   <div class="cell code-cell fragment" data-fragment-index="6">
@@ -753,6 +770,135 @@ exit 0</code></pre>
 </div>
 
 
+
+---
+## Linux with strace (animated)
+
+<div class="flow-stack">
+  <div class="flow-layer flow-grid-2x2 fragment fade-out flow-shift-out" data-fragment-index="4">
+    <div class="cell fragment" data-fragment-index="1"><strong>PolyTrace executes target program</strong></div>
+    <div class="cell arrow-left fragment" data-fragment-index="2">
+      <div class="r-stack">
+        <div class="fragment fade-out" data-fragment-index="3"><strong>strace output</strong></div>
+        <div class="fragment" data-fragment-index="3"><strong>fs_usage output</strong></div>
+      </div>
+    </div>
+    <div class="cell code-cell fragment" data-fragment-index="1">
+      <pre><code> #!/bin/sh
+BASE_DIR=$(cd "$(dirname "$0")" && pwd)
+OUT="$BASE_DIR/tmp/simple_run_out"
+rm -f "$OUT"
+cat /etc/ld.so.cache > /dev/null 2>/dev/null || true
+echo hello > "$OUT"
+sleep 0.01
+exit 0</code></pre>
+    </div>
+    <div class="cell code-cell fragment" data-fragment-index="2">
+      <div class="r-stack">
+        <div class="fragment fade-out" data-fragment-index="3">
+          <pre><code>
+1769772754.266682 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=960733, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+1769772754.266720 chdir("/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures") = 0
+1769772754.266818 +++ exited with 0 +++
+1769772754.265826 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.sdkman/candidates/java/current/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.265864 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.nvm/versions/node/v24.9.0/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.265880 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.local/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.265894 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/local/sbin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.265908 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/local/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.265922 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/sbin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.265935 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/bin/dirname", {st_mode=S_IFREG|0755, st_size=35208, ...}, 0) = 0
+1769772754.265955 execve("/usr/bin/dirname", ("dirname", "test/fixtures/simple_run.sh"), 0x5cd2a5f43598 /* 78 vars */) = 0
+1769772754.266179 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.266194 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+1769772754.266242 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libc.so.6>
+1769772754.266515 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 3</usr/lib/locale/locale-archive>
+1769772754.266671 +++ exited with 0 +++
+1769772754.263656 execve("test/fixtures/simple_run.sh", ("test/fixtures/simple_run.sh"), 0x7ffe5dddec40 /* 78 vars */) = 0
+1769772754.264033 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.264169 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+1769772754.264444 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libc.so.6>
+1769772754.265159 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/Projekte/PolySim/tools/polytrace", {st_mode=S_IFDIR|0775, st_size=4096, ...}, 0) = 0
+1769772754.265203 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, ".", {st_mode=S_IFDIR|0775, st_size=4096, ...}, 0) = 0
+1769772754.265221 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "test/fixtures/simple_run.sh", O_RDONLY) = 3</home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh>
+.
+.
+.
+</code></pre>
+        </div>
+        <div class="fragment" data-fragment-index="3">
+          <pre><code>fs_usage -w -f filesys -t 5 /path/to/target
+12:34:56 open   /path/to/target/input.dat
+12:34:56 read   /path/to/target/input.dat
+12:34:56 write  /path/to/target/output.dat
+...
+</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-layer flow-grid-2x2 fragment flow-shift-in" data-fragment-index="4">
+    <div class="cell arrow-left"><strong>fs_usage output</strong></div>
+    <div class="cell arrow-left"><strong>PROV output</strong></div>
+    <div class="cell code-cell">
+      <pre><code>fs_usage -w -f filesys -t 5 /path/to/target
+12:34:56 open   /path/to/target/input.dat
+12:34:56 read   /path/to/target/input.dat
+12:34:56 write  /path/to/target/output.dat
+...
+</code></pre>
+    </div>
+    <div class="cell code-cell">
+      <pre><code>{
+  "activity": {
+    "endedAt": 1769725453183,
+    "id": "cf843303e1d1269de4c3155fae1b8d1fee2bf84f4bde84b1f004e4784a7b9458",
+    "label": "Run /bin/sh",
+    "metadata": {
+      "command": [
+        "/bin/sh",
+        "-c",
+        "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+      ]
+    },
+    "startedAt": 1769725453141
+  },
+  "entities": [
+    {
+      "createdAt": 1711874845999,
+      "id": "86d31f6fb799e91fa21bad341484564510ca287703a16e9e46c53338776f4f42",
+      "label": "sh",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {
+              "execve_argv": [
+                "/bin/sh",
+                "-c",
+                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+              ]
+            },
+            "pid": 587656,
+            "role": "input"
+          }
+        ],
+        "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+      },
+      "role": "process"
+    }
+  ]
+}
+</code></pre>
+    </div>
+  </div>
+</div>
+
+---
+## Uploader
+
+### <u> Expects:
+- PolyTrace output (PROV JSON)
+- PAT (can be stored locally)
 
 ---
 @timtheissel
