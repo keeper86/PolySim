@@ -173,6 +173,10 @@ Kanban focuses on **how work flows through the system**.
 
 **Purpose of Kanban:**  
 Optimize flow, reduce bottlenecks, and make work visible.
+Note:
+
+- Software development is complex
+- We optimize for people, not for paperwork
 
 ---
 
@@ -257,6 +261,45 @@ We combined the strengths of both approaches:
   
 
 This allowed us to stay aligned **without artificial constraints**.
+### From Theory to Reality
+
+---
+
+### The Reality Check
+
+We started with strict **Scrum**, but...
+
+- **Constraint 1:** Unplanned work
+- **Constraint 2:** Time constraints
+- **Constraint 3:** Part-time nature
+
+**Result:** Mismatch between process and reality.
+
+---
+
+### The Philosophy
+
+How we reacted:
+
+> "Overcoming harsh constraints by improvising an effective solution using limited resources."
+
+---
+
+### Our Solution: Scrumban
+
+_Flexibility & Adaptability_
+
+We combined the best of both worlds:
+
+- **From Scrum (Structure):**
+    - "Daily" syncs & Retrospectives (Alignment)
+    - Shared Responsibility
+- **From Kanban (Flow):**
+    - Continuous refinement
+    - **Pull-based** work (when time allows)
+    - Flexible prioritization
+
+**Outcome:** Alignment without artificial constraints.
 
 ---
 
