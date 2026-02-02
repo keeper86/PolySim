@@ -988,45 +988,39 @@ exit 0</code></pre>
 - PAT (can be stored locally)
 
 ---
-@timtheissel
+### Conclusion:
 
-Demo worklow: 
+-Self-Organized Teamwork: Process optimization through regular Retrospectives (transition from Scrum to Scrumban).
 
-    Content:
-        - Showing uploaded provenance data in PolySim
-        - explaining how Polysim implements prov-dm from w3c
-        - show from previous demo that the two activities are linked via the entity "informedBy")
+-Industry Standards: Integrated Git Workflows, mandatory Code Reviews, and automated CI/CD pipelines.
 
+-FAIR & Provenance: Built a system to track scientific data origin, ensuring reproducibility in research.
 
----
-
-What we achieved
-
-- established a team with structures and processes that are decided by the team itself via reflection via retrospectives
-- getting used to modern development practices (version control, code reviews, CI/CD, testing)
-- Implementing the provenance tracking system for scientific simulations following FAIR principles (ongoing ;)
-- managing complexity via modular design and clear separation of concerns
-
+-Architectural Clarity: Managed high complexity using modular design and a strict separation of concerns.
 
 
 
 ---
 
-Current state of the project
- 
- - PoC is working, but still a lot of work to do
- - vertical slice from frontend to backend to faciliate _first_ provenance tracking
+### Current State of the project
+Working PoC: Functional "Vertical Slice" from CLI-tracing to Database and UI-visualization
 
---- 
+Infrastructure: Full-stack integration with Docker, Keycloak Auth, and tRPC type-safety
+---
+### Lessons Learned
+Complexity Management: Balancing feature-richness with core logic
 
-logistical issues, LLM use, working in progress, working as a team.
+Team Coordination: Overcoming communication bottlenecks
+
+Aligning work in a non-full-time environment.
+
+Process Realism: Adapting workflows to fit actual student time-constraints
 
 ---
 
-  Hands-on Multi-layered Course
+### Summary: A Multi-layered Course
+Team Dynamics: Collaborative development on a complex, real-world project
 
-   - Learning how to work in a team on a real-world project
-   
-   - Using modern web technologies to build a full-stack application
+Modern Tech Stack: Hands-on experience with Next.js, PostgreSQL, and Type-safe APIs
 
-   - Implementing FAIR principles and data provenance in scientific simulations
+Scientific Value: Bridging the gap between software engineering and FAIR simulation principles
