@@ -281,24 +281,21 @@ Knex.js is used as a SQL query builder to interact with our PostgreSQL database,
 Docker is used for containerization and deployment, ensuring consistency across different environments. 
 
 ---
-
-UI 
-
-Visualization (shadcn + design +react) @Enno-Enno
-
-   Content:
-      - Why a good UI matters
-      - Choosing shadcn/ui for design consistency
-      - Implementing responsive design with React components TODO
-      - Challenges faced and how they were overcome 
-
----
 # Visualization
 
-- Good UI Matters <!-- .element: class="fragment" data-fragment-index="1" -->
-- Data without good Visuals is a bit useless <!-- .element: class="fragment" data-fragment-index="2" -->
+- Good UI Matters 
+- Data without good Visuals is a bit useless 
 - The website should look nice and be easy to use
 
+---
+![](RawJSON.png)
+   
+---
+![](Database.png)
+
+---
+- Table in Demo 
+- Graph in Demo
 ---
 ##  How do we visualize things in our Website?
 -  shadcn components based on React
@@ -307,27 +304,29 @@ Visualization (shadcn + design +react) @Enno-Enno
 - Tables
 - Graph view of Provenance
 ---
-![alt text](RawJSON.png)
-   
----
 ## Challenges 
 - Dark mode 
 - Different component sources
-- Controllers for the Data 
 
 ---
-## What should the design achieve?
-  - Overview at a glance <!-- .element: class="fragment" data-fragment-index="1" -->
-  - Be usable and intuitive to use  <!-- .element: class="fragment" data-fragment-index="2" -->
-  - Be responsive  <!-- .element: class="fragment" data-fragment-index="3" -->
+# Notes
+- Good UI Matters
+- go through the way that the Data changes in each Step 
+- first Raw JSON
+- after the Upload we can see the Data in our Database 
+	- special Tool required to see it
+- For a usable experience we need the Website
+- Uses React Components
+	- Useful for an Interactive Website
+	- Performant rendering of interactive website parts
+	- Able to do a global Darkmode
+	- For consistency we take shadcn -- Industry standard website components
+	- It for example Ships with a site wide Darkmode that we can use for our purpose (show)
+- activities Table
+- Graph view
 
 ---
 
-> Complexity is the worst enemy of security.
-
--Bruce Schneier
-
----
 
 ## Why Keycloak?
 
