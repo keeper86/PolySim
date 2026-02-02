@@ -1,6 +1,5 @@
+# Softwareengineering for Physicists
 
- # Softwareengineering for Physicists
- 
 ---
 
 ## Pictures we can use
@@ -35,31 +34,26 @@ Encounter irreducible **complexity**
 
 ---
 
- ## PolySim 
+## PolySim
 
-  Provenance tracking for scientific simulations
-  
+Provenance tracking for scientific simulations
+
 ---
 
 # Course idea - two parts
-
 
 build something useful - learn how to organize
 
 ---
 
-FAIR Principles + Provenance @alfiyabegum111-bot - 
+FAIR Principles + Provenance @alfiyabegum111-bot -
 Basically the motivation for the project. A real issue in scientific computing.
 
-   Content:
-      - Introduction to FAIR principles
-      - Importance of data provenance in scientific simulations
-      - Tracking data provenance in simulations
-      - Benefits of FAIR and provenance for researchers
+Content: - Introduction to FAIR principles - Importance of data provenance in scientific simulations - Tracking data provenance in simulations - Benefits of FAIR and provenance for researchers
 
 Here we can make the point why centralized storage and management of provenance data is important
- 
- -> web platform
+
+-> web platform
 
 ---
 
@@ -69,22 +63,21 @@ Here we can make the point why centralized storage and management of provenance 
 
 Modern software engineering practices
 
- - Version Control with Git and GitHub
- - Agile Methodologies (Scrum/Kanban)
- - Code Reviews and Collaboration
- - Continuous Integration/Continuous Deployment (CI/CD)
- - Testing and Quality Assurance
-
+- Version Control with Git and GitHub
+- Agile Methodologies (Scrum/Kanban)
+- Code Reviews and Collaboration
+- Continuous Integration/Continuous Deployment (CI/CD)
+- Testing and Quality Assurance
 
 ---
 
 # Agile, Scrum & Kanban
+
 ## Mindset over Method
 
 ---
 
 ## 1. What does 'AGILE' mean?
-
 
 Agile is **not a tool**. It is a **mindset**.
 
@@ -95,12 +88,12 @@ Agile is **not a tool**. It is a **mindset**.
 
 ## 1. What does 'AGILE' mean?
 
-
-* **Uncertainty** 
-* **Increments** 
-* **People** Collaboration > Rigid Processes
+- **Uncertainty**
+- **Increments**
+- **People** Collaboration > Rigid Processes
 
 Note:
+
 - Software development is complex, not predictable
 - We optimize for people, not for paperwork
 
@@ -111,12 +104,13 @@ Note:
 ---
 
 ### Scrum (Structure)
-*Rhythm & Roles*
 
-* **Time-boxed:** Fixed Sprints 
-* **Roles:** PO, Scrum Master, Developers
-* **Loop:** Plan → Work → Review → Retro
-* **Goal:** Alignment & Inspect/Adapt
+_Rhythm & Roles_
+
+- **Time-boxed:** Fixed Sprints
+- **Roles:** PO, Scrum Master, Developers
+- **Loop:** Plan → Work → Review → Retro
+- **Goal:** Alignment & Inspect/Adapt
 
 ---
 
@@ -125,48 +119,48 @@ Note:
 ---
 
 ### Kanban (Flow)
-*Visualizing Work*
 
-* **Visual Board:** To Do → Doing → Done
-* **Pull Principle:** No pushing tasks onto people
-* **WIP Limits:** Stop starting, start finishing
-* **Goal:** Optimize flow, reduce bottlenecks
+_Visualizing Work_
+
+- **Visual Board:** To Do → Doing → Done
+- **Pull Principle:** No pushing tasks onto people
+- **WIP Limits:** Stop starting, start finishing
+- **Goal:** Optimize flow, reduce bottlenecks
 
 ---
 
 ## Our Board
 
-
 ---
 
 ## 3. Why do we do this?
 
-* **Large Work Packages:**
-    
-* **Team Coordination:**
-    
-* **Fighting Complexity:**
-    
+- **Large Work Packages:**
+- **Team Coordination:**
+- **Fighting Complexity:**
 
 ---
 
 ## 4. How did this pan out for us?
+
 ### From Theory to Reality
 
 ---
 
 ### The Reality Check
+
 We started with strict **Scrum**, but...
 
-* **Constraint 1:** Unplanned work 
-* **Constraint 2:** Time constraints 
-* **Constraint 3:** Part-time nature
+- **Constraint 1:** Unplanned work
+- **Constraint 2:** Time constraints
+- **Constraint 3:** Part-time nature
 
 **Result:** Mismatch between process and reality. Commitments were missed.
 
 ---
 
 ### The Philosophy
+
 How we reacted:
 
 > "Overcoming harsh constraints by improvising an effective solution using limited resources."
@@ -174,17 +168,18 @@ How we reacted:
 ---
 
 ### Our Solution: Scrumban
-*Flexibility & Adaptability*
+
+_Flexibility & Adaptability_
 
 We combined the best of both worlds:
 
-* **From Scrum (Structure):**
-    * "Daily" syncs & Retrospectives (Alignment)
-    * Shared Responsibility
-* **From Kanban (Flow):**
-    * Continuous refinement
-    * **Pull-based** work (when time allows)
-    * Flexible prioritization
+- **From Scrum (Structure):**
+    - "Daily" syncs & Retrospectives (Alignment)
+    - Shared Responsibility
+- **From Kanban (Flow):**
+    - Continuous refinement
+    - **Pull-based** work (when time allows)
+    - Flexible prioritization
 
 **Outcome:** Alignment without artificial constraints.
 
@@ -198,31 +193,33 @@ We combined the best of both worlds:
 
 - **Kanban = Ticket**
 - Each ticket represents:
-  - A concrete, actionable unit of work
-  - confined task 
-  - Clear ownership
-  - Visible status
+    - A concrete, actionable unit of work
+    - confined task
+    - Clear ownership
+    - Visible status
 
 ### How we worked with it
+
 - No one assigns tasks — developers **pull** tickets
 - WIP limits prevent overload
 - Blockers are immediately visible
 - Progress is transparent to the entire team
 
 ### Result
+
 - Better focus
 - Fewer bottlenecks
 - True self-organization
 
-The board became a **shared coordination mechanism** 
+The board became a **shared coordination mechanism**
 
 ---
- 
- complexity: dark mode
+
+complexity: dark mode
 
 1 button, but concerns **every** component **everywhere**
 
-solution here? use an existing solution (shadcn/ui) 
+solution here? use an existing solution (shadcn/ui)
 
 Note: ... because we need our time for more important things
 
@@ -239,7 +236,7 @@ Web development (next + trpc + technical stuff + knex) @keeper86
         tRPC (type-safe API layer)
         Knex.js (SQL query builder)
         Database integration (PostgreSQL)
-       
+
         Deployment and Hosting (Docker)
 
          Authentication and Authorization (Keycloak)
@@ -255,23 +252,21 @@ We use Next.js on top of React for server-side rendering and static site generat
 tRPC provides a type-safe API layer between the frontend and backend, ensuring seamless communication and full-stack type safety.
 
 Knex.js is used as a SQL query builder to interact with our PostgreSQL database, allowing us to write database queries in a more intuitive way.
- - migrations and seeding
 
-Docker is used for containerization and deployment, ensuring consistency across different environments. 
+- migrations and seeding
+
+Docker is used for containerization and deployment, ensuring consistency across different environments.
 
 ---
 
-UI 
+UI
 
 Visualization (shadcn + design +react) @Enno-Enno
 
-   Content:
-      - Why a good UI matters
-      - Choosing shadcn/ui for design consistency
-      - Implementing responsive design with React components TODO
-      - Challenges faced and how they were overcome 
+Content: - Why a good UI matters - Choosing shadcn/ui for design consistency - Implementing responsive design with React components TODO - Challenges faced and how they were overcome
 
 ---
+
 # Visualization
 
 - Good UI Matters <!-- .element: class="fragment" data-fragment-index="1" -->
@@ -279,26 +274,34 @@ Visualization (shadcn + design +react) @Enno-Enno
 - The website should look nice and be easy to use
 
 ---
-##  How do we visualize things in our Website?
--  shadcn components based on React
-	- Responsive
-	- Design toolbox
+
+## How do we visualize things in our Website?
+
+- shadcn components based on React
+    - Responsive
+    - Design toolbox
 - Tables
 - Graph view of Provenance
----
-![alt text](RawJSON.png)
-   
----
-## Challenges 
-- Dark mode 
-- Different component sources
-- Controllers for the Data 
 
 ---
+
+![alt text](RawJSON.png)
+
+---
+
+## Challenges
+
+- Dark mode
+- Different component sources
+- Controllers for the Data
+
+---
+
 ## What should the design achieve?
-  - Overview at a glance <!-- .element: class="fragment" data-fragment-index="1" -->
-  - Be usable and intuitive to use  <!-- .element: class="fragment" data-fragment-index="2" -->
-  - Be responsive  <!-- .element: class="fragment" data-fragment-index="3" -->
+
+- Overview at a glance <!-- .element: class="fragment" data-fragment-index="1" -->
+- Be usable and intuitive to use <!-- .element: class="fragment" data-fragment-index="2" -->
+- Be responsive <!-- .element: class="fragment" data-fragment-index="3" -->
 
 ---
 
@@ -322,42 +325,46 @@ Visualization (shadcn + design +react) @Enno-Enno
   <div style="flex: 1;">
 
 **The Infrastructure**
+
 - Keycloak runs in its own Docker container
 - Separate from the web app
 - Port `:8080`
 
-  </div>
-  <div style="flex: 1;">
+    </div>
+    <div style="flex: 1;">
 
 **The Bridge**
+
 - `next-auth` connects Next.js to Keycloak
 - Acts like a secure "translator"
 - Handles redirects and tokens
 
+    </div>
   </div>
-</div>
 
 ---
+
 ## The Login Flow
 
-| Step | Action |
-|------|--------|
-| 1️⃣ | User clicks "Login" |
-| 2️⃣ | Redirected to Keycloak login page |
-| 3️⃣ | Keycloak verifies credentials |
-| 4️⃣ | JWT Token returned |
-| 5️⃣ | PolySim grants access ✅ |
+| Step | Action                            |
+| ---- | --------------------------------- |
+| 1️⃣   | User clicks "Login"               |
+| 2️⃣   | Redirected to Keycloak login page |
+| 3️⃣   | Keycloak verifies credentials     |
+| 4️⃣   | JWT Token returned                |
+| 5️⃣   | PolySim grants access ✅          |
+
 ---
 
 ## Implementing Avatar Upload
 
 **The Evolution: From File Input → Dialog**
 
-| Before | After |
-|--------|-------|
-| Generic Shadcn file component | Dedicated Dialog modal |
-| No preview | Live preview before upload |
-| Confusing UX | Clear, focused workflow |
+| Before                        | After                      |
+| ----------------------------- | -------------------------- |
+| Generic Shadcn file component | Dedicated Dialog modal     |
+| No preview                    | Live preview before upload |
+| Confusing UX                  | Clear, focused workflow    |
 
 ---
 
@@ -394,12 +401,13 @@ Visualization (shadcn + design +react) @Enno-Enno
 **What looks simple becomes surprisingly tricky**
 
 Avatar upload seemed straightforward, but required:
+
 - Base64 encoding/decoding
 - Real-time UI updates
 - Proper error handling
 
-**Our solution:** Iterate, test, refine
----
+## **Our solution:** Iterate, test, refine
+
 ## Demo
 
 🎯 **What we'll show:**
@@ -412,26 +420,28 @@ Avatar upload seemed straightforward, but required:
 > Key insight: Keycloak is a **separate service**, not part of our app logic.
 
 ---
+
 avatar uploading + Key Cloak @MikKusch
 
 Content:
-   - Why Keycloak?
-   - Setting up Keycloak with Next.js
-   - Implementing avatar upload functionality
-   - Storing and retrieving avatars from the database
-   - Integrating avatar display in the user interface
-   - Experience while implementing? Challenges and solutions?
 
-   demo? showing keycloak login and avatar upload; show that keycloak is a separate service/container
+- Why Keycloak?
+- Setting up Keycloak with Next.js
+- Implementing avatar upload functionality
+- Storing and retrieving avatars from the database
+- Integrating avatar display in the user interface
+- Experience while implementing? Challenges and solutions?
+
+demo? showing keycloak login and avatar upload; show that keycloak is a separate service/container
 
 ---
 
 # Remote Procedure Calls (RPC) and types
 
- - RPC = "executing a function on a different machine"
+- RPC = "executing a function on a different machine"
     - tRPC = type-safe RPC framework for TypeScript
 
-    Why types? 
+    Why types?
     - Catch errors at compile time
     - Better developer experience (autocompletion, documentation)
     - Consistency between frontend and backend
@@ -466,6 +476,7 @@ A **Personal Access Token (PAT)** is a long-lived, opaque authentication token u
 PATs serve as an alternative to username/password authentication, particularly for programmatic access, automation, and backend-to-backend communication.
 
 A PAT typically:
+
 - Is generated by the backend
 - Is shown to the user **once**
 - Is stored **hashed** on the server
@@ -481,11 +492,14 @@ In practice, a PAT acts as a **revocable, least-privileged credential** tied to 
 PATs solve several common backend authentication problems:
 
 ### Non-interactive Authentication
+
 Automated systems (CI/CD pipelines, background jobs, scripts) cannot perform interactive logins.  
 PATs enable secure authentication without user presence.
 
 ### Least-Privilege Access
+
 Unlike passwords, PATs can be scoped:
+
 - Read-only
 - Write access
 - Resource-specific permissions
@@ -493,15 +507,19 @@ Unlike passwords, PATs can be scoped:
 This minimizes blast radius in case of leakage.
 
 ### Safe Revocation and Rotation
+
 PATs can be individually:
+
 - Revoked - even by the user themself, giving them more power over their own security
-- Expired - so the 
+- Expired - so the
 - Rotated
 
 Compromising a PAT does not require resetting the user’s primary credentials.
 
 ### Auditing and Observability
+
 Each PAT can be tracked independently:
+
 - Creation time
 - Last usage
 - Owning user or service
@@ -516,23 +534,24 @@ This allows fine-grained security auditing.
 Typically, a PAT system is setup as follows
 
 1. **Token Generation**
-   - Cryptographically secure random token
-   - High entropy, in our case, 256 bits
+    - Cryptographically secure random token
+    - High entropy, in our case, 256 bits
 
 2. **Secure Storage**
-   - Store only a hash of the token
-   - Never store plaintext tokens!
-   - Even the client is only shown the token once and then never again for more security. 
+    - Store only a hash of the token
+    - Never store plaintext tokens!
+    - Even the client is only shown the token once and then never again for more security.
 
 3. **Request Authentication**
-   - Client sends PAT
-   - Backend hashes incoming token and compares
-   - Permissions and expiration are validated
+    - Client sends PAT
+    - Backend hashes incoming token and compares
+    - Permissions and expiration are validated
 
 4. **Context Injection (tRPC-compatible)**
-   - Once validated, the token resolves to a user
-   - Identity is injected into the request context
-   - Downstream procedures rely on the context, not the token itself
+    - Once validated, the token resolves to a user
+    - Identity is injected into the request context
+    - Downstream procedures rely on the context, not the token itself
+
     ```
     const userId = getUserIdFromContext(ctx);
     ```
@@ -543,6 +562,7 @@ Typically, a PAT system is setup as follows
     - HMAC takes the token and server-side secret and essentially hashes it again
     - This server secret is stored only in backend configuration, i.e., the environment variables
     - It is never exposed to clients or stored in the database
+
 ---
 
 overall the code looks like
@@ -563,12 +583,15 @@ aka
 PAT can be used for...
 
 ---
+
 ## PolyTrace and Uploader
+
 ---
+
 ## What is PolyTrace?
 
-A CLI tool to record filesystem activity
----
+## A CLI tool to record filesystem activity
+
 <div class="flow-vertical">
    <div class="box fragment"><strong>Run PolyTrace</strong><br/>executes the target program</div>
    <div class="arrow fragment">↓</div>
@@ -748,9 +771,8 @@ exit 0</code></pre>
   </div>
 </div>
 
-
-
 ---
+
 ## Linux with strace (animated)
 
 <div class="flow-stack">
@@ -873,22 +895,24 @@ exit 0</code></pre>
 </div>
 
 ---
+
 ## Uploader
 
 ### <u> Expects:
+
 - PolyTrace output (PROV JSON)
 - PAT (can be stored locally)
 
 ---
+
 @timtheissel
 
-Demo worklow: 
+Demo worklow:
 
     Content:
         - Showing uploaded provenance data in PolySim
         - explaining how Polysim implements prov-dm from w3c
         - show from previous demo that the two activities are linked via the entity "informedBy")
-
 
 ---
 
@@ -899,26 +923,23 @@ What we achieved
 - Implementing the provenance tracking system for scientific simulations following FAIR principles (ongoing ;)
 - managing complexity via modular design and clear separation of concerns
 
-
-
-
 ---
 
 Current state of the project
- 
- - PoC is working, but still a lot of work to do
- - vertical slice from frontend to backend to faciliate _first_ provenance tracking
 
---- 
+- PoC is working, but still a lot of work to do
+- vertical slice from frontend to backend to faciliate _first_ provenance tracking
+
+---
 
 logistical issues, LLM use, working in progress, working as a team.
 
 ---
 
-  Hands-on Multi-layered Course
+Hands-on Multi-layered Course
 
-   - Learning how to work in a team on a real-world project
-   
-   - Using modern web technologies to build a full-stack application
+- Learning how to work in a team on a real-world project
 
-   - Implementing FAIR principles and data provenance in scientific simulations
+- Using modern web technologies to build a full-stack application
+
+- Implementing FAIR principles and data provenance in scientific simulations

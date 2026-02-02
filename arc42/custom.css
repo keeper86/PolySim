@@ -1,313 +1,318 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
 :root {
-  --r-main-font: "Inter", sans-serif;
-  --r-heading-font: "Inter", sans-serif;
-  --r-heading-color: #1e293b; /* slate-800 */
-  --r-main-color: #334155; /* slate-700 */
-  --r-background-color: #f8fafc; /* slate-50 */
-  --r-link-color: #0284c7; /* sky-600 */
-  --r-link-color-hover: #0369a1; /* sky-700 */
-  --r-selection-background-color: #bae6fd; /* sky-200 */
-  --r-selection-color: #0c4a6e; /* sky-900 */
+    --r-main-font: 'Inter', sans-serif;
+    --r-heading-font: 'Inter', sans-serif;
+    --r-heading-color: #1e293b; /* slate-800 */
+    --r-main-color: #334155; /* slate-700 */
+    --r-background-color: #f8fafc; /* slate-50 */
+    --r-link-color: #0284c7; /* sky-600 */
+    --r-link-color-hover: #0369a1; /* sky-700 */
+    --r-selection-background-color: #bae6fd; /* sky-200 */
+    --r-selection-color: #0c4a6e; /* sky-900 */
 }
 
 .reveal {
-  font-family: var(--r-main-font);
-  color: var(--r-main-color);
+    font-family: var(--r-main-font);
+    color: var(--r-main-color);
 }
 
-.reveal h1, .reveal h2, .reveal h3 {
-  font-family: var(--r-heading-font);
-  color: var(--r-heading-color);
-  font-weight: 600;
-  letter-spacing: -0.01em;
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+    font-family: var(--r-heading-font);
+    color: var(--r-heading-color);
+    font-weight: 600;
+    letter-spacing: -0.01em;
 }
 
 .reveal h1 {
-  font-size: 2.4em;
-  margin-bottom: 0.5em;
+    font-size: 2.4em;
+    margin-bottom: 0.5em;
 }
 
 .reveal h2 {
-  font-size: 1.8em;
-  margin-bottom: 0.3em;
+    font-size: 1.8em;
+    margin-bottom: 0.3em;
 }
 
 .reveal p {
-  font-size: 1.1em;
-  line-height: 1.6;
+    font-size: 1.1em;
+    line-height: 1.6;
 }
 
-.reveal ul, .reveal ol {
-  font-size: 1.05em;
-  margin-left: 1.2em;
+.reveal ul,
+.reveal ol {
+    font-size: 1.05em;
+    margin-left: 1.2em;
 }
 
 .reveal a {
-  color: var(--r-link-color);
-  text-decoration: none;
+    color: var(--r-link-color);
+    text-decoration: none;
 }
 
 .reveal a:hover {
-  color: var(--r-link-color-hover);
-  text-decoration: underline;
+    color: var(--r-link-color-hover);
+    text-decoration: underline;
 }
 
 .reveal pre code {
-  border-radius: 8px;
-  padding: 0.75em;
-  font-size: 0.9em;
+    border-radius: 8px;
+    padding: 0.75em;
+    font-size: 0.9em;
 }
 
 .flow-grid-3x2 .code-cell .hljs {
-  min-height: 0;
+    min-height: 0;
 }
 
 .reveal .slide-number {
-  font-size: 0.7em;
-  color: #94a3b8; /* slate-400 */
+    font-size: 0.7em;
+    color: #94a3b8; /* slate-400 */
 }
 
 .reveal .controls {
-  filter: drop-shadow(0 0 4px rgba(0,0,0,0.1));
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.1));
 }
 
 .reveal section img {
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-  max-height: 70vh;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    max-height: 70vh;
 }
 
 /* fixed full-bleed variant: absolutely fill the slide viewport and crop as needed */
 .reveal section img.fullwidth-fixed {
-  position: fixed;
-  top: 0;
-  width: 1280px;
-  height: 720px;
-  object-fit: contain; 
-  display: block;
-  margin: 0;
-  scale: 110%;
-  z-index: 0;
+    position: fixed;
+    top: 0;
+    width: 1280px;
+    height: 720px;
+    object-fit: contain;
+    display: block;
+    margin: 0;
+    scale: 110%;
+    z-index: 0;
 }
 
 /* Ensure section is a positioned container so absolute img is anchored to the slide */
 .reveal section {
-  position: relative;
+    position: relative;
 }
 
 .reveal::after {
-  content: "Polysim";
-  position: fixed;
-  bottom: 10px;
-  right: 20px;
-  font-size: 0.9em;
-  color: #94a3b8;
-  letter-spacing: 0.05em;
+    content: 'Polysim';
+    position: fixed;
+    bottom: 10px;
+    right: 20px;
+    font-size: 0.9em;
+    color: #94a3b8;
+    letter-spacing: 0.05em;
 }
 
 .reveal strong {
-  color: #0f172a; /* slate-900 */
+    color: #0f172a; /* slate-900 */
 }
 
 .flow-grid-3x2 .arrow-left,
 .flow-grid-2x2 .arrow-left {
-  position: relative;
+    position: relative;
 }
 
 .flow-grid-3x2 .arrow-left::before,
 .flow-grid-2x2 .arrow-left::before {
-  content: "\2192";
-  position: absolute;
-  left: -22px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.2em;
-  opacity: 0.85;
-  pointer-events: none;
-  z-index: 2;
+    content: '\2192';
+    position: absolute;
+    left: -22px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+    opacity: 0.85;
+    pointer-events: none;
+    z-index: 2;
 }
 
-
 .reveal code {
-  padding: 0.1em 0.25em;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.12);
+    padding: 0.1em 0.25em;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.12);
 }
 
 .flow-vertical {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-top: 20px;
 }
 
 .flow-vertical .box {
-  padding: 16px 18px;
-  border: 2px solid rgba(255, 255, 255, 0.45);
-  border-radius: 14px;
-  background: rgba(162, 162, 162, 0.261);
-  width: min(760px, 92%);
-  font-size: 0.9em;
-  line-height: 1.25;
-  text-align: center;
+    padding: 16px 18px;
+    border: 2px solid rgba(255, 255, 255, 0.45);
+    border-radius: 14px;
+    background: rgba(162, 162, 162, 0.261);
+    width: min(760px, 92%);
+    font-size: 0.9em;
+    line-height: 1.25;
+    text-align: center;
 }
 
 .flow-vertical .arrow {
-  font-size: 1.8em;
-  opacity: 0.85;
-  user-select: none;
-  line-height: 1;
+    font-size: 1.8em;
+    opacity: 0.85;
+    user-select: none;
+    line-height: 1;
 }
 
 .os-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85em;
-  margin-top: 18px;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+    margin-top: 18px;
 }
 
 .os-table th,
 .os-table td {
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  padding: 14px 16px;
-  vertical-align: top;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 14px 16px;
+    vertical-align: top;
 }
 
 .os-table th {
-  text-align: left;
-  background: rgba(255, 255, 255, 0.08);
+    text-align: left;
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .os-table td:first-child {
-  width: 22%;
-  font-weight: 700;
-  white-space: nowrap;
+    width: 22%;
+    font-weight: 700;
+    white-space: nowrap;
 }
 
 section.compact {
-  font-size: 0.9em;
+    font-size: 0.9em;
 }
 
 section.compact h2 {
-  margin: 0 0 10px 0;
+    margin: 0 0 10px 0;
 }
 
 section.compact .flow-vertical {
-  gap: 8px;
-  margin-top: 10px;
+    gap: 8px;
+    margin-top: 10px;
 }
 
 section.compact .flow-vertical .box {
-  padding: 10px 12px;
-  border-radius: 12px;
-  width: min(740px, 96%);
-  font-size: 0.85em;
-  line-height: 1.15;
+    padding: 10px 12px;
+    border-radius: 12px;
+    width: min(740px, 96%);
+    font-size: 0.85em;
+    line-height: 1.15;
 }
 
 section.compact .flow-vertical .arrow {
-  font-size: 1.3em;
+    font-size: 1.3em;
 }
 
 section.compact .os-table {
-  font-size: 0.78em;
-  margin-top: 10px;
+    font-size: 0.78em;
+    margin-top: 10px;
 }
 
 section.compact .os-table th,
 section.compact .os-table td {
-  padding: 10px 12px;
-  line-height: 1.15;
+    padding: 10px 12px;
+    line-height: 1.15;
 }
 
 .flow-grid-3x2 {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
 }
 
 .flow-grid-2x2 {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
 }
 
 .flow-grid-3x2 .cell,
 .flow-grid-2x2 .cell {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 4px 4px;
-  border: 2px solid rgba(255, 255, 255, 0.45);
-  border-radius: 14px;
-  background:  rgba(162, 162, 162, 0.261);
-  text-align: center;
-  font-size: 0.9em;
-  line-height: 1.25;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 4px;
+    border: 2px solid rgba(255, 255, 255, 0.45);
+    border-radius: 14px;
+    background: rgba(162, 162, 162, 0.261);
+    text-align: center;
+    font-size: 0.9em;
+    line-height: 1.25;
 }
 
 .flow-grid-3x2 .code-cell,
 .flow-grid-2x2 .code-cell {
-  text-align: left;
-  font-size: 0.5em;
-  line-height: 1.35;
-  border: 2px solid rgba(255, 255, 255, 0);
-  background:  rgba(255, 255, 255, 0.1);
-
+    text-align: left;
+    font-size: 0.5em;
+    line-height: 1.35;
+    border: 2px solid rgba(255, 255, 255, 0);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .flow-grid-3x2 pre,
 .flow-grid-2x2 pre {
-  margin: 0;
-  width: 100%;
+    margin: 0;
+    width: 100%;
 }
 
 .flow-grid-3x2 .code-cell pre code,
 .flow-grid-2x2 .code-cell pre code {
-  display: block;
+    display: block;
 }
 
 .flow-stack {
-  position: relative;
-  min-height: 360px;
+    position: relative;
+    min-height: 360px;
 }
 
 .flow-stack .flow-layer {
-  position: absolute;
-  inset: 0;
+    position: absolute;
+    inset: 0;
 }
 
 .flow-scroll .code-cell pre {
-  max-height: 220px;
-  max-width: 600px;
-  overflow: auto;
+    max-height: 220px;
+    max-width: 600px;
+    overflow: auto;
 }
 
 .flow-scroll .code-cell pre code {
-  max-height: none;
-  overflow: auto;
+    max-height: none;
+    overflow: auto;
 }
 
 .flow-shift-out {
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  transform: translateX(0);
+    transition:
+        opacity 0.4s ease,
+        transform 0.4s ease;
+    transform: translateX(0);
 }
 
 .flow-shift-out.visible {
-  transform: translateX(calc(-50% - 6px));
+    transform: translateX(calc(-50% - 6px));
 }
 
 .flow-shift-in {
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  transform: translateX(calc(50% + 6px));
+    transition:
+        opacity 0.4s ease,
+        transform 0.4s ease;
+    transform: translateX(calc(50% + 6px));
 }
 
 .flow-shift-in.visible {
-  transform: translateX(0);
+    transform: translateX(0);
 }
