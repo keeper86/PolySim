@@ -94,7 +94,7 @@ Agile is **not a tool**. It is a **mindset**.
 
 Note:
 
-- Software development is complex, not predictable
+- Software development is complex
 - We optimize for people, not for paperwork
 
 ---
@@ -155,7 +155,7 @@ We started with strict **Scrum**, but...
 - **Constraint 2:** Time constraints
 - **Constraint 3:** Part-time nature
 
-**Result:** Mismatch between process and reality. Commitments were missed.
+**Result:** Mismatch between process and reality.
 
 ---
 
