@@ -291,8 +291,7 @@ section.compact .os-table td {
 }
 
 .flow-scroll .code-cell pre code {
-    max-height: none;
-    overflow: auto;
+    overflow: visible;
 }
 
 .flow-shift-out {
