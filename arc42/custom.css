@@ -63,10 +63,6 @@
     font-size: 0.9em;
 }
 
-.flow-grid-3x2 .code-cell .hljs {
-    min-height: 0;
-}
-
 .reveal .slide-number {
     font-size: 0.7em;
     color: #94a3b8; /* slate-400 */
@@ -80,19 +76,6 @@
     border-radius: 8px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
     max-height: 70vh;
-}
-
-/* fixed full-bleed variant: absolutely fill the slide viewport and crop as needed */
-.reveal section img.fullwidth-fixed {
-    position: fixed;
-    top: 0;
-    width: 1280px;
-    height: 720px;
-    object-fit: contain;
-    display: block;
-    margin: 0;
-    scale: 110%;
-    z-index: 0;
 }
 
 /* Ensure section is a positioned container so absolute img is anchored to the slide */
@@ -114,12 +97,10 @@
     color: #0f172a; /* slate-900 */
 }
 
-.flow-grid-3x2 .arrow-left,
 .flow-grid-2x2 .arrow-left {
     position: relative;
 }
 
-.flow-grid-3x2 .arrow-left::before,
 .flow-grid-2x2 .arrow-left::before {
     content: '\2192';
     position: absolute;
@@ -146,6 +127,16 @@
     margin-top: 20px;
 }
 
+.flow-horizontal {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: nowrap;
+}
+
 .flow-vertical .box {
     padding: 16px 18px;
     border: 2px solid rgba(255, 255, 255, 0.45);
@@ -157,11 +148,31 @@
     text-align: center;
 }
 
+.flow-horizontal .box {
+    padding: 10px 12px;
+    border: 2px solid rgba(255, 255, 255, 0.45);
+    border-radius: 12px;
+    background: rgba(162, 162, 162, 0.261);
+    width: clamp(140px, 14vw, 180px);
+    font-size: 0.72em;
+    line-height: 1.2;
+    text-align: center;
+    flex: 0 0 auto;
+}
+
 .flow-vertical .arrow {
     font-size: 1.8em;
     opacity: 0.85;
     user-select: none;
     line-height: 1;
+}
+
+.flow-horizontal .arrow {
+    font-size: 1.4em;
+    opacity: 0.85;
+    user-select: none;
+    line-height: 1;
+    flex: 0 0 auto;
 }
 
 .os-table {
@@ -225,13 +236,6 @@ section.compact .os-table td {
     line-height: 1.15;
 }
 
-.flow-grid-3x2 {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-    margin-top: 18px;
-}
-
 .flow-grid-2x2 {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -239,7 +243,6 @@ section.compact .os-table td {
     margin-top: 18px;
 }
 
-.flow-grid-3x2 .cell,
 .flow-grid-2x2 .cell {
     display: flex;
     flex-direction: column;
@@ -254,7 +257,6 @@ section.compact .os-table td {
     line-height: 1.25;
 }
 
-.flow-grid-3x2 .code-cell,
 .flow-grid-2x2 .code-cell {
     text-align: left;
     font-size: 0.5em;
@@ -263,13 +265,11 @@ section.compact .os-table td {
     background: rgba(255, 255, 255, 0.1);
 }
 
-.flow-grid-3x2 pre,
 .flow-grid-2x2 pre {
     margin: 0;
     width: 100%;
 }
 
-.flow-grid-3x2 .code-cell pre code,
 .flow-grid-2x2 .code-cell pre code {
     display: block;
 }

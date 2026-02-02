@@ -1,5 +1,6 @@
-# Softwareengineering for Physicists
 
+ # Softwareengineering for Physicists
+ 
 ---
 
 ## Pictures we can use
@@ -34,26 +35,31 @@ Encounter irreducible **complexity**
 
 ---
 
-## PolySim
+ ## PolySim 
 
-Provenance tracking for scientific simulations
-
+  Provenance tracking for scientific simulations
+  
 ---
 
 # Course idea - two parts
+
 
 build something useful - learn how to organize
 
 ---
 
-FAIR Principles + Provenance @alfiyabegum111-bot -
+FAIR Principles + Provenance @alfiyabegum111-bot - 
 Basically the motivation for the project. A real issue in scientific computing.
 
-Content: - Introduction to FAIR principles - Importance of data provenance in scientific simulations - Tracking data provenance in simulations - Benefits of FAIR and provenance for researchers
+   Content:
+      - Introduction to FAIR principles
+      - Importance of data provenance in scientific simulations
+      - Tracking data provenance in simulations
+      - Benefits of FAIR and provenance for researchers
 
 Here we can make the point why centralized storage and management of provenance data is important
-
--> web platform
+ 
+ -> web platform
 
 ---
 
@@ -63,13 +69,14 @@ Here we can make the point why centralized storage and management of provenance 
 
 Modern software engineering practices
 
-- Version Control with Git and GitHub
-- Agile Methodologies (Scrum/Kanban)
-- Code Reviews and Collaboration
-- Continuous Integration/Continuous Deployment (CI/CD)
-- Testing and Quality Assurance
+ - Version Control with Git and GitHub
+ - Agile Methodologies (Scrum/Kanban)
+ - Code Reviews and Collaboration
+ - Continuous Integration/Continuous Deployment (CI/CD)
+ - Testing and Quality Assurance
 
 ---
+
 
 ## What does AGILE mean?
 
@@ -81,7 +88,6 @@ At its core (Agile Manifesto, 2001):
 > “Responding to change over following a plan.”
 
 **In practice, Agile means:**
-
 - We expect requirements to change.
 - We learn by building small increments and getting feedback.
 - We optimize for people and collaboration, not rigid processes.
@@ -93,16 +99,15 @@ Agile exists because **software development is complex, not predictable**.
 ## What are Scrum and Kanban? (rough outline)
 
 ### Scrum — Structure for Learning
-
 Scrum is a **framework** that adds rhythm and roles to Agile work.
 
 - Time-boxed iterations (**Sprints**)
 - Defined roles (Product Owner, Scrum Master, Developers)
 - Regular feedback loops:
-    - Planning and refining
-    - Daily
-    - Review
-    - Retrospective
+  - Planning and refining
+  - Daily
+  - Review
+  - Retrospective
 
 **Purpose of Scrum:**  
 Create alignment, transparency, and frequent opportunities to inspect & adapt.
@@ -110,7 +115,6 @@ Create alignment, transparency, and frequent opportunities to inspect & adapt.
 ---
 
 ### Kanban — Flow for Work
-
 Kanban focuses on **how work flows through the system**.
 
 - Visual board (To Do → In Progress → Done)
@@ -124,8 +128,7 @@ Optimize flow, reduce bottlenecks, and make work visible.
 ---
 
 ### Key Difference (very short)
-
-- **Scrum:** Time-based, structured learning cycles
+- **Scrum:** Time-based, structured learning cycles  
 - **Kanban:** Flow-based, continuous work system
 
 ---
@@ -133,7 +136,6 @@ Optimize flow, reduce bottlenecks, and make work visible.
 ## Why do we do this?
 
 ### 1. Managing Large Work Packages
-
 - Big software problems cannot be fully specified upfront.
 - Agile breaks work into **small, inspectable increments**.
 - This reduces risk and wasted effort.
@@ -141,35 +143,31 @@ Optimize flow, reduce bottlenecks, and make work visible.
 ---
 
 ### 2. Team Coordination
-
 - Software work is highly interdependent.
 - Agile replaces top-down task assignment with **shared visibility**.
 - Teams coordinate via:
-    - Boards
-    - "Daily" syncs
-    - Clear ownership
+  - Boards
+  - "Daily" syncs
+  - Clear ownership
 
 This enables **self-organization** instead of micromanagement.
 
 ---
 
 ### 3. Fighting Complexity
-
 Software systems are:
-
 - Non-linear
 - Uncertain
 - Constantly changing
 
 Agile embraces this by:
-
 - Short feedback loops
 - Continuous adaptation
 - Empirical decision-making
 
 Instead of pretending we can plan everything, we **adapt as we learn**.
 
-## Flexibility and adaptability
+## Flexibility and adaptability 
 
 ---
 
@@ -178,18 +176,18 @@ Instead of pretending we can plan everything, we **adapt as we learn**.
 ### Retrospective → Self-Organization → Adaptation
 
 1. **We started with Scrum**
-    - Fixed sprints
-    - Planned commitments
+   - Fixed sprints
+   - Planned commitments
 
 2. **Reality check**
-    - Unplanned work (bugs, urgent tasks)
-    - Time constraints because of other courses
-    - No 'full time' job  
-      → hard to finish assigned tickets in given time frames
+   - Unplanned work (bugs, urgent tasks)
+   - Time constraints because of other courses
+   - No 'full time' job  
+   → hard to finish assigned tickets in given time frames 
 
 3. **Retrospective insight**
-    - The problem was not necessarily discipline
-    - The problem was **mismatch between process and reality**
+   - The problem was not necessarily discipline
+   - The problem was **mismatch between process and reality**
 
 ---
 
@@ -198,15 +196,16 @@ Instead of pretending we can plan everything, we **adapt as we learn**.
 We combined the strengths of both approaches:
 
 - From **Scrum**:
-    - "Daily" syncs
-    - Retrospectives
-    - Shared responsibility
+  - "Daily" syncs
+  - Retrospectives
+  - Shared responsibility
 
 - From **Kanban**:
-    - continouos refinement of new tickets
-    - Pull-based work
-    - Continuous flow
-    - Flexible prioritization
+  - continouos refinement of new tickets 
+  - Pull-based work
+  - Continuous flow
+  - Flexible prioritization
+  
 
 This allowed us to stay aligned **without artificial constraints**.
 
@@ -220,33 +219,31 @@ This allowed us to stay aligned **without artificial constraints**.
 
 - **Kanban = Ticket**
 - Each ticket represents:
-    - A concrete, actionable unit of work
-    - confined task
-    - Clear ownership
-    - Visible status
+  - A concrete, actionable unit of work
+  - confined task 
+  - Clear ownership
+  - Visible status
 
 ### How we worked with it
-
 - No one assigns tasks — developers **pull** tickets
 - WIP limits prevent overload
 - Blockers are immediately visible
 - Progress is transparent to the entire team
 
 ### Result
-
 - Better focus
 - Fewer bottlenecks
 - True self-organization
 
-The board became a **shared coordination mechanism**
+The board became a **shared coordination mechanism** 
 
 ---
-
-complexity: dark mode
+ 
+ complexity: dark mode
 
 1 button, but concerns **every** component **everywhere**
 
-solution here? use an existing solution (shadcn/ui)
+solution here? use an existing solution (shadcn/ui) 
 
 Note: ... because we need our time for more important things
 
@@ -263,7 +260,7 @@ Web development (next + trpc + technical stuff + knex) @keeper86
         tRPC (type-safe API layer)
         Knex.js (SQL query builder)
         Database integration (PostgreSQL)
-
+       
         Deployment and Hosting (Docker)
 
          Authentication and Authorization (Keycloak)
@@ -279,21 +276,23 @@ We use Next.js on top of React for server-side rendering and static site generat
 tRPC provides a type-safe API layer between the frontend and backend, ensuring seamless communication and full-stack type safety.
 
 Knex.js is used as a SQL query builder to interact with our PostgreSQL database, allowing us to write database queries in a more intuitive way.
+ - migrations and seeding
 
-- migrations and seeding
-
-Docker is used for containerization and deployment, ensuring consistency across different environments.
+Docker is used for containerization and deployment, ensuring consistency across different environments. 
 
 ---
 
-UI
+UI 
 
 Visualization (shadcn + design +react) @Enno-Enno
 
-Content: - Why a good UI matters - Choosing shadcn/ui for design consistency - Implementing responsive design with React components TODO - Challenges faced and how they were overcome
+   Content:
+      - Why a good UI matters
+      - Choosing shadcn/ui for design consistency
+      - Implementing responsive design with React components TODO
+      - Challenges faced and how they were overcome 
 
 ---
-
 # Visualization
 
 - Good UI Matters <!-- .element: class="fragment" data-fragment-index="1" -->
@@ -301,34 +300,26 @@ Content: - Why a good UI matters - Choosing shadcn/ui for design consistency - I
 - The website should look nice and be easy to use
 
 ---
-
-## How do we visualize things in our Website?
-
-- shadcn components based on React
-    - Responsive
-    - Design toolbox
+##  How do we visualize things in our Website?
+-  shadcn components based on React
+	- Responsive
+	- Design toolbox
 - Tables
 - Graph view of Provenance
-
 ---
-
 ![alt text](RawJSON.png)
-
+   
 ---
-
-## Challenges
-
-- Dark mode
+## Challenges 
+- Dark mode 
 - Different component sources
-- Controllers for the Data
+- Controllers for the Data 
 
 ---
-
 ## What should the design achieve?
-
-- Overview at a glance <!-- .element: class="fragment" data-fragment-index="1" -->
-- Be usable and intuitive to use <!-- .element: class="fragment" data-fragment-index="2" -->
-- Be responsive <!-- .element: class="fragment" data-fragment-index="3" -->
+  - Overview at a glance <!-- .element: class="fragment" data-fragment-index="1" -->
+  - Be usable and intuitive to use  <!-- .element: class="fragment" data-fragment-index="2" -->
+  - Be responsive  <!-- .element: class="fragment" data-fragment-index="3" -->
 
 ---
 
@@ -352,46 +343,42 @@ Content: - Why a good UI matters - Choosing shadcn/ui for design consistency - I
   <div style="flex: 1;">
 
 **The Infrastructure**
-
 - Keycloak runs in its own Docker container
 - Separate from the web app
 - Port `:8080`
 
-    </div>
-    <div style="flex: 1;">
+  </div>
+  <div style="flex: 1;">
 
 **The Bridge**
-
 - `next-auth` connects Next.js to Keycloak
 - Acts like a secure "translator"
 - Handles redirects and tokens
 
-    </div>
   </div>
+</div>
 
 ---
-
 ## The Login Flow
 
-| Step | Action                            |
-| ---- | --------------------------------- |
-| 1️⃣   | User clicks "Login"               |
-| 2️⃣   | Redirected to Keycloak login page |
-| 3️⃣   | Keycloak verifies credentials     |
-| 4️⃣   | JWT Token returned                |
-| 5️⃣   | PolySim grants access ✅          |
-
+| Step | Action |
+|------|--------|
+| 1️⃣ | User clicks "Login" |
+| 2️⃣ | Redirected to Keycloak login page |
+| 3️⃣ | Keycloak verifies credentials |
+| 4️⃣ | JWT Token returned |
+| 5️⃣ | PolySim grants access ✅ |
 ---
 
 ## Implementing Avatar Upload
 
 **The Evolution: From File Input → Dialog**
 
-| Before                        | After                      |
-| ----------------------------- | -------------------------- |
-| Generic Shadcn file component | Dedicated Dialog modal     |
-| No preview                    | Live preview before upload |
-| Confusing UX                  | Clear, focused workflow    |
+| Before | After |
+|--------|-------|
+| Generic Shadcn file component | Dedicated Dialog modal |
+| No preview | Live preview before upload |
+| Confusing UX | Clear, focused workflow |
 
 ---
 
@@ -428,13 +415,12 @@ Content: - Why a good UI matters - Choosing shadcn/ui for design consistency - I
 **What looks simple becomes surprisingly tricky**
 
 Avatar upload seemed straightforward, but required:
-
 - Base64 encoding/decoding
 - Real-time UI updates
 - Proper error handling
 
-## **Our solution:** Iterate, test, refine
-
+**Our solution:** Iterate, test, refine
+---
 ## Demo
 
 🎯 **What we'll show:**
@@ -447,28 +433,26 @@ Avatar upload seemed straightforward, but required:
 > Key insight: Keycloak is a **separate service**, not part of our app logic.
 
 ---
-
 avatar uploading + Key Cloak @MikKusch
 
 Content:
+   - Why Keycloak?
+   - Setting up Keycloak with Next.js
+   - Implementing avatar upload functionality
+   - Storing and retrieving avatars from the database
+   - Integrating avatar display in the user interface
+   - Experience while implementing? Challenges and solutions?
 
-- Why Keycloak?
-- Setting up Keycloak with Next.js
-- Implementing avatar upload functionality
-- Storing and retrieving avatars from the database
-- Integrating avatar display in the user interface
-- Experience while implementing? Challenges and solutions?
-
-demo? showing keycloak login and avatar upload; show that keycloak is a separate service/container
+   demo? showing keycloak login and avatar upload; show that keycloak is a separate service/container
 
 ---
 
 # Remote Procedure Calls (RPC) and types
 
-- RPC = "executing a function on a different machine"
+ - RPC = "executing a function on a different machine"
     - tRPC = type-safe RPC framework for TypeScript
 
-    Why types?
+    Why types? 
     - Catch errors at compile time
     - Better developer experience (autocompletion, documentation)
     - Consistency between frontend and backend
@@ -503,7 +487,6 @@ A **Personal Access Token (PAT)** is a long-lived, opaque authentication token u
 PATs serve as an alternative to username/password authentication, particularly for programmatic access, automation, and backend-to-backend communication.
 
 A PAT typically:
-
 - Is generated by the backend
 - Is shown to the user **once**
 - Is stored **hashed** on the server
@@ -519,14 +502,11 @@ In practice, a PAT acts as a **revocable, least-privileged credential** tied to 
 PATs solve several common backend authentication problems:
 
 ### Non-interactive Authentication
-
 Automated systems (CI/CD pipelines, background jobs, scripts) cannot perform interactive logins.  
 PATs enable secure authentication without user presence.
 
 ### Least-Privilege Access
-
 Unlike passwords, PATs can be scoped:
-
 - Read-only
 - Write access
 - Resource-specific permissions
@@ -534,19 +514,15 @@ Unlike passwords, PATs can be scoped:
 This minimizes blast radius in case of leakage.
 
 ### Safe Revocation and Rotation
-
 PATs can be individually:
-
 - Revoked - even by the user themself, giving them more power over their own security
-- Expired - so the
+- Expired - so the 
 - Rotated
 
 Compromising a PAT does not require resetting the user’s primary credentials.
 
 ### Auditing and Observability
-
 Each PAT can be tracked independently:
-
 - Creation time
 - Last usage
 - Owning user or service
@@ -561,24 +537,23 @@ This allows fine-grained security auditing.
 Typically, a PAT system is setup as follows
 
 1. **Token Generation**
-    - Cryptographically secure random token
-    - High entropy, in our case, 256 bits
+   - Cryptographically secure random token
+   - High entropy, in our case, 256 bits
 
 2. **Secure Storage**
-    - Store only a hash of the token
-    - Never store plaintext tokens!
-    - Even the client is only shown the token once and then never again for more security.
+   - Store only a hash of the token
+   - Never store plaintext tokens!
+   - Even the client is only shown the token once and then never again for more security. 
 
 3. **Request Authentication**
-    - Client sends PAT
-    - Backend hashes incoming token and compares
-    - Permissions and expiration are validated
+   - Client sends PAT
+   - Backend hashes incoming token and compares
+   - Permissions and expiration are validated
 
 4. **Context Injection (tRPC-compatible)**
-    - Once validated, the token resolves to a user
-    - Identity is injected into the request context
-    - Downstream procedures rely on the context, not the token itself
-
+   - Once validated, the token resolves to a user
+   - Identity is injected into the request context
+   - Downstream procedures rely on the context, not the token itself
     ```
     const userId = getUserIdFromContext(ctx);
     ```
@@ -589,7 +564,6 @@ Typically, a PAT system is setup as follows
     - HMAC takes the token and server-side secret and essentially hashes it again
     - This server secret is stored only in backend configuration, i.e., the environment variables
     - It is never exposed to clients or stored in the database
-
 ---
 
 overall the code looks like
@@ -610,24 +584,21 @@ aka
 PAT can be used for...
 
 ---
-
 ## PolyTrace and Uploader
-
 ---
-
 ## What is PolyTrace?
 
-## A CLI tool to record filesystem activity
-
-<div class="flow-vertical">
+A CLI tool to record filesystem activity
+---
+<div class="flow-horizontal">
    <div class="box fragment"><strong>Run PolyTrace</strong><br/>executes the target program</div>
-   <div class="arrow fragment">↓</div>
-   <div class="box fragment"><strong>Execute</strong><br/> target → child processes</div>
-   <div class="arrow fragment">↓</div>
+   <div class="arrow fragment">→</div>
+   <div class="box fragment"><strong>Execute</strong><br/> target and child processes</div>
+   <div class="arrow fragment">→</div>
    <div class="box fragment"><strong>Trace</strong><br/>filesystem actions (I/O)</div>
-   <div class="arrow fragment">↓</div>
-   <div class="box fragment"><strong>Export</strong><br/>hash traced files with timestamps → create<code>PROV</code> file</div>
-   <div class="arrow fragment">↓</div>
+   <div class="arrow fragment">→</div>
+   <div class="box fragment"><strong>Export</strong><br/>hash traced files with timestamps to create<code>PROV</code> file</div>
+   <div class="arrow fragment">→</div>
    <div class="box fragment"><strong>Upload</strong><br/>uploader expects a PAT to upload the <code>PROV</code> file</div>		
 </div>
 ---
@@ -779,7 +750,8 @@ exit 0</code></pre>
 1769772754.283591 +++ exited with 0 +++
 
 </code></pre>
-</div>
+        </div>
+
 <div class="fragment" data-fragment-index="3">
 <pre><code>17:31:54.814998 fsgetpath /usr/lib/dyld 0.000038 simple_run.6475663
 17:31:54.815776 fsgetpath /usr/lib/dyld 0.000019 simple_run.6475663
@@ -840,130 +812,125 @@ exit 0</code></pre>
 17:31:54.820403 close F=3 0.000069 simple_run.6475663
 17:31:54.820414 WrData[A] D=0x03c734eb B=0x1000 /dev/disk3s5 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out 0.000058 W simple_run.6475663
 17:31:54.832652 exit 0.000033 simple_run.6475663
-
 </code></pre>
-</div>
-</div>
-</div>
-</div>
+        </div>
+        </div>
+      </div>
+    </div>
 
   <div class="flow-layer flow-grid-2x2 fragment flow-shift-in" data-fragment-index="4">
     <div class="cell arrow-left"><strong>fs_usage output</strong></div>
     <div class="cell arrow-left"><strong>PROV output</strong></div>
     <div class="cell code-cell">
-      <pre><code>17:31:54.814998  fsgetpath                              /usr/lib/dyld                                                                                      0.000038   simple_run.6475663
-17:31:54.815776  fsgetpath                              /usr/lib/dyld                                                                                      0.000019   simple_run.6475663
-17:31:54.816178  open              F=3        (R______________)  .                                                                                         0.000098   simple_run.6475663
-17:31:54.816182  fcntl             F=3   <GETPATH>                                                                                                         0.000004   simple_run.6475663
-17:31:54.816187  close             F=3                                                                                                                     0.000005   simple_run.6475663
-17:31:54.816197  fsgetpath                              /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run                                 0.000008   simple_run.6475663
-17:31:54.816213  fsgetpath                              /usr/lib/dyld                                                                                      0.000015   simple_run.6475663
-17:31:54.816345  open              F=3        (R___________f__)                                                                                            0.000030   simple_run.6475663
-17:31:54.816396  openat            F=4        (R______________)  [3]/../../System/Volumes/Preboot/Cryptexes/OS                                             0.000050   simple_run.6475663
-17:31:54.816415  fstatat64                              [4]/System/Library/dyld                                                                            0.000012   simple_run.6475663
-17:31:54.816440  openat            F=6        (R______________)  [4]/System/Library/dyld                                                                   0.000024   simple_run.6475663
-17:31:54.816444  fcntl             F=6   <GETPATH>                                                                                                         0.000003   simple_run.6475663
-17:31:54.816451  close             F=3                                                                                                                     0.000003   simple_run.6475663
-17:31:54.816452  close             F=5                                                                                                                     0.000001   simple_run.6475663
-17:31:54.816454  close             F=4                                                                                                                     0.000001   simple_run.6475663
-17:31:54.816455  close             F=6                                                                                                                     0.000001   simple_run.6475663
-17:31:54.816480  fsgetpath                              /System/Volumes/Preboot/Cryptexes/OS/System/Library/dyld/dyld_shared_cache_arm64e                  0.000008   simple_run.6475663
-17:31:54.816483  fcntl             F=8   <GETPATH>                                                                                                         0.000002   simple_run.6475663
-17:31:54.816487  close             F=8                                                                                                                     0.000002   simple_run.6475663
-17:31:54.816489  close             F=7                                                                                                                     0.000002   simple_run.6475663
-17:31:54.816534  stat64                                 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run                                 0.000012   simple_run.6475663
-17:31:54.816599  open              F=3        (R______________)  /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run                        0.000064   simple_run.6475663
-17:31:54.816635  fcntl             F=3   <GETPATH>                                                                                                         0.000003   simple_run.6475663
-17:31:54.816651  close             F=3                                                                                                                     0.000003   simple_run.6475663
-17:31:54.816662  stat64                                 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run                                 0.000011   simple_run.6475663
-17:31:54.816694  stat64                 [  2]           /usr/lib/libc++.1.dylib                                                                            0.000005   simple_run.6475663
-17:31:54.816720  stat64                 [  2]           /System/Volumes/Preboot/Cryptexes/OS/usr/lib/libc++.1.dylib                                        0.000011   simple_run.6475663
-17:31:54.816751  stat64                 [  2]           /usr/lib/libSystem.B.dylib                                                                         0.000007   simple_run.6475663
-17:31:54.816763  stat64                 [  2]           /System/Volumes/Preboot/Cryptexes/OS/usr/lib/libSystem.B.dylib                                     0.000004   simple_run.6475663
-17:31:54.817614  open              F=3        (R______________)  /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run                        0.000059   simple_run.6475663
-17:31:54.817653  close             F=3                                                                                                                     0.000002   simple_run.6475663
-17:31:54.817891  getfsstat64                                                                                                                               0.000006   simple_run.6475663
-17:31:54.817913  getfsstat64                                                                                                                               0.000014   simple_run.6475663
-17:31:54.817929  getattrlist                                                                                                                               0.000015   simple_run.6475663
-17:31:54.818177  open              F=3        (RW_____________)  /dev/dtracehelper                                                                         0.000092   simple_run.6475663
-17:31:54.818207  ioctl             F=3   <CMD=0x80086804>                                                                                                  0.000030   simple_run.6475663
-17:31:54.818216  close             F=3                                                                                                                     0.000009   simple_run.6475663
-17:31:54.818271  access                 [  2] (___F)    /AppleInternal/XBS/.isChrooted                                                                     0.000005   simple_run.6475663
-17:31:54.818451  fstat64           F=3                                                                                                                     0.000002   simple_run.6475663
-17:31:54.818466  close             F=3                                                                                                                     0.000002   simple_run.6475663
-17:31:54.818533  ioctl             F=2   <CMD=0x4004667a>                                                                                                  0.000003   simple_run.6475663
-17:31:54.819107  getattrlist                            /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run                                 0.000026   simple_run.6475663
-17:31:54.819169  access                       (R___)    /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures                                            0.000060   simple_run.6475663
-17:31:54.819204  open              F=3        (R______________)  /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures                                   0.000035   simple_run.6475663
-17:31:54.819206  fstat64           F=3                                                                                                                     0.000002   simple_run.6475663
-17:31:54.819221  fgetattrlist      F=3                                                                                                                     0.000014   simple_run.6475663
-17:31:54.819263  fcntl             F=3   <GETPATH>                                                                                                         0.000007   simple_run.6475663
-17:31:54.819267  close             F=3                                                                                                                     0.000003   simple_run.6475663
-17:31:54.819294  open                   [  2] (R______________)  /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/Info.plist                        0.000025   simple_run.6475663
-17:31:54.819707  PAGE_IN_FILE      A=0x0104e20000                                                                                                          0.000049   simple_run.6475663
-17:31:54.819730  lstat64                                /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out                         0.000017   simple_run.6475663
-17:31:54.820017  unlink                                 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out                         0.000287   simple_run.6475663
-17:31:54.820040  open                   [  2] (R______________)  private/etc/ld.so.cache                                                                   0.000017   simple_run.6475663
-17:31:54.820246  open              F=3        (_WC_T__________)  /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out                0.000182   simple_run.6475663
-17:31:54.820256  fstat64           F=3                                                                                                                     0.000005   simple_run.6475663
-17:31:54.820333  write             F=3    B=0x5                                                                                                            0.000073   simple_run.6475663
-17:31:54.820403  close             F=3                                                                                                                     0.000069   simple_run.6475663
-17:31:54.820414    WrData[A]       D=0x03c734eb  B=0x1000   /dev/disk3s5  /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out       0.000058 W simple_run.6475663
-17:31:54.832652  exit                                                                                                                                      0.000033   simple_run.6475663
+<pre><code>17:31:54.814998 fsgetpath /usr/lib/dyld 0.000038 simple_run.6475663
+17:31:54.815776 fsgetpath /usr/lib/dyld 0.000019 simple_run.6475663
+17:31:54.816178 open F=3 (R******\_\_******) . 0.000098 simple_run.6475663
+17:31:54.816182 fcntl F=3 <GETPATH> 0.000004 simple_run.6475663
+17:31:54.816187 close F=3 0.000005 simple_run.6475663
+17:31:54.816197 fsgetpath /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run 0.000008 simple_run.6475663
+17:31:54.816213 fsgetpath /usr/lib/dyld 0.000015 simple_run.6475663
+17:31:54.816345 open F=3 (R****\_\_\_****f**) 0.000030 simple_run.6475663
+17:31:54.816396 openat F=4 (R****\_\_\_\_******) [3]/../../System/Volumes/Preboot/Cryptexes/OS 0.000050 simple_run.6475663
+17:31:54.816415 fstatat64 [4]/System/Library/dyld 0.000012 simple_run.6475663
+17:31:54.816440 openat F=6 (R******\_\_******) [4]/System/Library/dyld 0.000024 simple_run.6475663
+17:31:54.816444 fcntl F=6 <GETPATH> 0.000003 simple_run.6475663
+17:31:54.816451 close F=3 0.000003 simple_run.6475663
+17:31:54.816452 close F=5 0.000001 simple_run.6475663
+17:31:54.816454 close F=4 0.000001 simple_run.6475663
+17:31:54.816455 close F=6 0.000001 simple_run.6475663
+17:31:54.816480 fsgetpath /System/Volumes/Preboot/Cryptexes/OS/System/Library/dyld/dyld_shared_cache_arm64e 0.000008 simple_run.6475663
+17:31:54.816483 fcntl F=8 <GETPATH> 0.000002 simple_run.6475663
+17:31:54.816487 close F=8 0.000002 simple_run.6475663
+17:31:54.816489 close F=7 0.000002 simple_run.6475663
+17:31:54.816534 stat64 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run 0.000012 simple_run.6475663
+17:31:54.816599 open F=3 (R******\_\_******) /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run 0.000064 simple_run.6475663
+17:31:54.816635 fcntl F=3 <GETPATH> 0.000003 simple_run.6475663
+17:31:54.816651 close F=3 0.000003 simple_run.6475663
+17:31:54.816662 stat64 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run 0.000011 simple_run.6475663
+17:31:54.816694 stat64 [ 2] /usr/lib/libc++.1.dylib 0.000005 simple_run.6475663
+17:31:54.816720 stat64 [ 2] /System/Volumes/Preboot/Cryptexes/OS/usr/lib/libc++.1.dylib 0.000011 simple_run.6475663
+17:31:54.816751 stat64 [ 2] /usr/lib/libSystem.B.dylib 0.000007 simple_run.6475663
+17:31:54.816763 stat64 [ 2] /System/Volumes/Preboot/Cryptexes/OS/usr/lib/libSystem.B.dylib 0.000004 simple_run.6475663
+17:31:54.817614 open F=3 (R******\_\_******) /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run 0.000059 simple_run.6475663
+17:31:54.817653 close F=3 0.000002 simple_run.6475663
+17:31:54.817891 getfsstat64 0.000006 simple_run.6475663
+17:31:54.817913 getfsstat64 0.000014 simple_run.6475663
+17:31:54.817929 getattrlist 0.000015 simple_run.6475663
+17:31:54.818177 open F=3 (RW******\_******) /dev/dtracehelper 0.000092 simple_run.6475663
+17:31:54.818207 ioctl F=3 <CMD=0x80086804> 0.000030 simple_run.6475663
+17:31:54.818216 close F=3 0.000009 simple_run.6475663
+17:31:54.818271 access [ 2] (**_F) /AppleInternal/XBS/.isChrooted 0.000005 simple_run.6475663
+17:31:54.818451 fstat64 F=3 0.000002 simple_run.6475663
+17:31:54.818466 close F=3 0.000002 simple_run.6475663
+17:31:54.818533 ioctl F=2 <CMD=0x4004667a> 0.000003 simple_run.6475663
+17:31:54.819107 getattrlist /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run 0.000026 simple_run.6475663
+17:31:54.819169 access (R_**) /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures 0.000060 simple_run.6475663
+17:31:54.819204 open F=3 (R******\_\_******) /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures 0.000035 simple_run.6475663
+17:31:54.819206 fstat64 F=3 0.000002 simple_run.6475663
+17:31:54.819221 fgetattrlist F=3 0.000014 simple_run.6475663
+17:31:54.819263 fcntl F=3 <GETPATH> 0.000007 simple_run.6475663
+17:31:54.819267 close F=3 0.000003 simple_run.6475663
+17:31:54.819294 open [ 2] (R******\_\_******) /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/Info.plist 0.000025 simple_run.6475663
+17:31:54.819707 PAGE_IN_FILE A=0x0104e20000 0.000049 simple_run.6475663
+17:31:54.819730 lstat64 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out 0.000017 simple_run.6475663
+17:31:54.820017 unlink /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out 0.000287 simple_run.6475663
+17:31:54.820040 open [ 2] (R******\_\_******) private/etc/ld.so.cache 0.000017 simple_run.6475663
+17:31:54.820246 open F=3 (\_WC_T****\_\_****) /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out 0.000182 simple_run.6475663
+17:31:54.820256 fstat64 F=3 0.000005 simple_run.6475663
+17:31:54.820333 write F=3 B=0x5 0.000073 simple_run.6475663
+17:31:54.820403 close F=3 0.000069 simple_run.6475663
+17:31:54.820414 WrData[A] D=0x03c734eb B=0x1000 /dev/disk3s5 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out 0.000058 W simple_run.6475663
+17:31:54.832652 exit 0.000033 simple_run.6475663
+</code></pre>
+    </div>
+    <div class="cell code-cell">
+      <pre><code>
+  "activity": {
+    "endedAt": 1769725453183,
+    "id": "cf843303e1d1269de4c3155fae1b8d1fee2bf84f4bde84b1f004e4784a7b9458",
+    "label": "Run /bin/sh",
+    "metadata": {
+      "command": [
+        "/bin/sh",
+        "-c",
+        "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+      ]
+    },
+    "startedAt": 1769725453141
+  },
+  "entities": [
+    {
+      "id": "86d31f6fb799e91fa21bad341484564510ca287703a16e9e46c53338776f4f42",
+      "label": "sh",
+      "metadata": {
+        "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+      }
+    }
+  ],
+  ...
 
 </code></pre>
-</div>
-<div class="cell code-cell">
-<pre><code>
-"activity": {
-"endedAt": 1769725453183,
-"id": "cf843303e1d1269de4c3155fae1b8d1fee2bf84f4bde84b1f004e4784a7b9458",
-"label": "Run /bin/sh",
-"metadata": {
-"command": [
-"/bin/sh",
-"-c",
-"/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
-]
-},
-"startedAt": 1769725453141
-},
-"entities": [
-{
-"id": "86d31f6fb799e91fa21bad341484564510ca287703a16e9e46c53338776f4f42",
-"label": "sh",
-"metadata": {
-"path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
-}
-}
-],
-...
-
-</code></pre>
-</div>
-
+    </div>
   </div>
 </div>
 
 ---
-
 ## Uploader
 
 ### <u> Expects:
-
 - PolyTrace output (PROV JSON)
 - PAT (can be stored locally)
 
 ---
-
 @timtheissel
 
-Demo worklow:
+Demo worklow: 
 
     Content:
         - Showing uploaded provenance data in PolySim
         - explaining how Polysim implements prov-dm from w3c
         - show from previous demo that the two activities are linked via the entity "informedBy")
+
 
 ---
 
@@ -974,23 +941,26 @@ What we achieved
 - Implementing the provenance tracking system for scientific simulations following FAIR principles (ongoing ;)
 - managing complexity via modular design and clear separation of concerns
 
+
+
+
 ---
 
 Current state of the project
+ 
+ - PoC is working, but still a lot of work to do
+ - vertical slice from frontend to backend to faciliate _first_ provenance tracking
 
-- PoC is working, but still a lot of work to do
-- vertical slice from frontend to backend to faciliate _first_ provenance tracking
-
----
+--- 
 
 logistical issues, LLM use, working in progress, working as a team.
 
 ---
 
-Hands-on Multi-layered Course
+  Hands-on Multi-layered Course
 
-- Learning how to work in a team on a real-world project
+   - Learning how to work in a team on a real-world project
+   
+   - Using modern web technologies to build a full-stack application
 
-- Using modern web technologies to build a full-stack application
-
-- Implementing FAIR principles and data provenance in scientific simulations
+   - Implementing FAIR principles and data provenance in scientific simulations
