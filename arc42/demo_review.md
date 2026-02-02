@@ -75,139 +75,118 @@ Modern software engineering practices
  - Continuous Integration/Continuous Deployment (CI/CD)
  - Testing and Quality Assurance
 
----
-
-
-## What does AGILE mean?
-
-Agile is **not a process or a tool**.  
-It is a **mindset** for dealing with uncertainty in software development.
-
-At its core (Agile Manifesto, 2001):
-
-> “Responding to change over following a plan.”
-
-**In practice, Agile means:**
-- We expect requirements to change.
-- We learn by building small increments and getting feedback.
-- We optimize for people and collaboration, not rigid processes.
-
-Agile exists because **software development is complex, not predictable**.
 
 ---
 
-## What are Scrum and Kanban? (rough outline)
-
-### Scrum — Structure for Learning
-Scrum is a **framework** that adds rhythm and roles to Agile work.
-
-- Time-boxed iterations (**Sprints**)
-- Defined roles (Product Owner, Scrum Master, Developers)
-- Regular feedback loops:
-  - Planning and refining
-  - Daily
-  - Review
-  - Retrospective
-
-**Purpose of Scrum:**  
-Create alignment, transparency, and frequent opportunities to inspect & adapt.
+# Agile, Scrum & Kanban
+## Mindset over Method
 
 ---
 
-### Kanban — Flow for Work
-Kanban focuses on **how work flows through the system**.
+## 1. What does 'AGILE' mean?
 
-- Visual board (To Do → In Progress → Done)
-- Pull principle (no pushing work onto people)
-- WIP limits (limit parallel work)
-- Continuous delivery instead of fixed iterations
 
-**Purpose of Kanban:**  
-Optimize flow, reduce bottlenecks, and make work visible.
+Agile is **not a tool**. It is a **mindset**.
+
+> "Responding to change over following a plan."
+> -- Agile Manifesto (2001)
 
 ---
 
-### Key Difference (very short)
-- **Scrum:** Time-based, structured learning cycles  
-- **Kanban:** Flow-based, continuous work system
+## 1. What does 'AGILE' mean?
+
+
+* **Uncertainty** 
+* **Increments** 
+* **People** Collaboration > Rigid Processes
+
+Note:
+- Software development is complex, not predictable
+- We optimize for people, not for paperwork
 
 ---
 
-## Why do we do this?
-
-### 1. Managing Large Work Packages
-- Big software problems cannot be fully specified upfront.
-- Agile breaks work into **small, inspectable increments**.
-- This reduces risk and wasted effort.
+## 2. The Tools
 
 ---
 
-### 2. Team Coordination
-- Software work is highly interdependent.
-- Agile replaces top-down task assignment with **shared visibility**.
-- Teams coordinate via:
-  - Boards
-  - "Daily" syncs
-  - Clear ownership
+### Scrum (Structure)
+*Rhythm & Roles*
 
-This enables **self-organization** instead of micromanagement.
+* **Time-boxed:** Fixed Sprints 
+* **Roles:** PO, Scrum Master, Developers
+* **Loop:** Plan → Work → Review → Retro
+* **Goal:** Alignment & Inspect/Adapt
 
 ---
 
-### 3. Fighting Complexity
-Software systems are:
-- Non-linear
-- Uncertain
-- Constantly changing
-
-Agile embraces this by:
-- Short feedback loops
-- Continuous adaptation
-- Empirical decision-making
-
-Instead of pretending we can plan everything, we **adapt as we learn**.
-
-## Flexibility and adaptability 
+<img src="scrum.png" alt="Scrum scheme" class="full-width"/>
 
 ---
 
-## How did this pan out for us?
+### Kanban (Flow)
+*Visualizing Work*
 
-### Retrospective → Self-Organization → Adaptation
-
-1. **We started with Scrum**
-   - Fixed sprints
-   - Planned commitments
-
-2. **Reality check**
-   - Unplanned work (bugs, urgent tasks)
-   - Time constraints because of other courses
-   - No 'full time' job  
-   → hard to finish assigned tickets in given time frames 
-
-3. **Retrospective insight**
-   - The problem was not necessarily discipline
-   - The problem was **mismatch between process and reality**
+* **Visual Board:** To Do → Doing → Done
+* **Pull Principle:** No pushing tasks onto people
+* **WIP Limits:** Stop starting, start finishing
+* **Goal:** Optimize flow, reduce bottlenecks
 
 ---
 
-### Our Adaptation: Scrumban
+## Our Board
 
-We combined the strengths of both approaches:
 
-- From **Scrum**:
-  - "Daily" syncs
-  - Retrospectives
-  - Shared responsibility
+---
 
-- From **Kanban**:
-  - continouos refinement of new tickets 
-  - Pull-based work
-  - Continuous flow
-  - Flexible prioritization
-  
+## 3. Why do we do this?
 
-This allowed us to stay aligned **without artificial constraints**.
+* **Large Work Packages:**
+    
+* **Team Coordination:**
+    
+* **Fighting Complexity:**
+    
+
+---
+
+## 4. How did this pan out for us?
+### From Theory to Reality
+
+---
+
+### The Reality Check
+We started with strict **Scrum**, but...
+
+* **Constraint 1:** Unplanned work 
+* **Constraint 2:** Time constraints 
+* **Constraint 3:** Part-time nature
+
+**Result:** Mismatch between process and reality. Commitments were missed.
+
+---
+
+### The Philosophy
+How we reacted:
+
+> "Overcoming harsh constraints by improvising an effective solution using limited resources."
+
+---
+
+### Our Solution: Scrumban
+*Flexibility & Adaptability*
+
+We combined the best of both worlds:
+
+* **From Scrum (Structure):**
+    * "Daily" syncs & Retrospectives (Alignment)
+    * Shared Responsibility
+* **From Kanban (Flow):**
+    * Continuous refinement
+    * **Pull-based** work (when time allows)
+    * Flexible prioritization
+
+**Outcome:** Alignment without artificial constraints.
 
 ---
 
