@@ -1,29 +1,4 @@
-	
- # Softwareengineering for Physicists
- 
----
-
-## Pictures we can use
-
----
-
-<img src="upload_provenance-1.png" alt="Upload Provenance" class="full-width"/>
-
----
-
-<img src="board_zoomed_out-1.png" alt="Team Board Zoomed Out" class="full-width"/>
-
----
-
-<img src="extensive_logging-1.png" alt="Extensive Logging" class="full-width"/>
-
----
-
-<img src="integration_test_pass-1.png" alt="Integration Test Pass" class="full-width"/>
-
----
-
-<img src="unit_test_pass-1.png" alt="Unit Test Pass" class="full-width"/>
+# Softwareengineering for Physicists
 
 ---
 
@@ -33,40 +8,29 @@ Working on a **realistic-ish** project
 
 Encounter irreducible **complexity**
 
----
-
- ## PolySim 
-
-  Provenance tracking for scientific simulations
-  
----
-
-# Course idea - two parts
-
-
-build something useful - learn how to organize
+Learn how to **organize**
 
 ---
 
-FAIR Principles + Provenance @alfiyabegum111-bot - 
-Basically the motivation for the project. A real issue in scientific computing.
+## Our project
 
-   Content:
-      - Introduction to FAIR principles
-      - Importance of data provenance in scientific simulations
-      - Tracking data provenance in simulations
-      - Benefits of FAIR and provenance for researchers
-
-Here we can make the point why centralized storage and management of provenance data is important
- 
- -> web platform
+**Provenance** tracking for scientific simulations
 
 ---
+
+First, we need to understand
+
+**Provenance**
+
+---
+
 <!-- # FAIR Principles & Data Provenance -->
  <!-- Making Data Reusable, Trustworthy, and Transparent -->
- ### FAIR Principles + Data Provenance
+
+### FAIR Principles + Data Provenance
 
 ---
+
 <!-- ### Introduction to FAIR Principles -->
   <!-- - **Findable:** Easy to discover with proper metadata and identifiers -->
   <!-- - **Accessible:** Retrievable using standard protocols -->
@@ -76,56 +40,84 @@ Here we can make the point why centralized storage and management of provenance 
 ### FAIR Principles
 
 - F – Findable (metadata, identifiers)
-- A – Accessible (standers protocols)
+- A – Accessible (standards, protocols)
 - I – Interoperable (tools, system)
 - R – Reusable (structured)
 
 ---
+
 ### What is Data Provenance?
+
 - Where data comes from
 - How it was produced
 - Who produced it
 - What transformations were applied
 
 ---
+
 ### W3C PROV Conceptual Model
+
 <img src="data_provenance.png" alt="Data Provenance" class="full-width"/>
 
 ---
+
 ### Importance of data provenance in scientific simulations
+
 - Reproducibility
-<!-- - Transparency & Trust -->
+  <!-- - Transparency & Trust -->
 - Debugging & Error Tracking
 - Collaboration & Sharing
 - Data Reuse & FAIR Compliance
 - Scientific Integrity & Validation
 - Automation & Workflow Management
+
 ---
+
 ### Tracking data provenance in simulations
+
 - Inputs & Outputs
 - Processes
 - Agents
 - Environment
 
 ---
+
 <!-- ### Benefits of FAIR and provenance for researchers -->
 
 ---
 
-# overview
+## Our answer to FAIR
+
+**PolySim**
+
+web application (and CLI tool)  
+to track provenance data for scientific simulations.
 
 ---
 
-Modern software engineering practices
-
- - Version Control with Git and GitHub
- - Agile Methodologies (Scrum/Kanban)
- - Code Reviews and Collaboration
- - Continuous Integration/Continuous Deployment (CI/CD)
- - Testing and Quality Assurance
+# How to build a web app?
 
 ---
 
+### By using other people's stuff
+
+Whether **technical**...
+
+- Docker (containerization):
+- Caddy (reverse proxy, ssl)
+- Next.js (frontend+backend via trpc)
+- PostgreSQL (database)
+- Keycloak (authentication)
+
+---
+
+... or **organizational**
+
+- git, CI/CD (GitHub Actions)
+- industrial best practices (code reviews, testing)
+- Agile methodologies (Scrum/Kanban)
+
+---
 
 ## What does AGILE mean?
 
@@ -137,6 +129,7 @@ At its core (Agile Manifesto, 2001):
 > “Responding to change over following a plan.”
 
 **In practice, Agile means:**
+
 - We expect requirements to change.
 - We learn by building small increments and getting feedback.
 - We optimize for people and collaboration, not rigid processes.
@@ -148,6 +141,7 @@ Agile exists because **software development is complex, not predictable**.
 ## What are Scrum and Kanban? (rough outline)
 
 ### Scrum — Structure for Learning
+
 Scrum is a **framework** that adds rhythm and roles to Agile work.
 
 - Time-boxed iterations (**Sprints**)
@@ -164,6 +158,7 @@ Create alignment, transparency, and frequent opportunities to inspect & adapt.
 ---
 
 ### Kanban — Flow for Work
+
 Kanban focuses on **how work flows through the system**.
 
 - Visual board (To Do → In Progress → Done)
@@ -181,7 +176,8 @@ Note:
 ---
 
 ### Key Difference (very short)
-- **Scrum:** Time-based, structured learning cycles  
+
+- **Scrum:** Time-based, structured learning cycles
 - **Kanban:** Flow-based, continuous work system
 
 ---
@@ -189,6 +185,7 @@ Note:
 ## Why do we do this?
 
 ### 1. Managing Large Work Packages
+
 - Big software problems cannot be fully specified upfront.
 - Agile breaks work into **small, inspectable increments**.
 - This reduces risk and wasted effort.
@@ -196,6 +193,7 @@ Note:
 ---
 
 ### 2. Team Coordination
+
 - Software work is highly interdependent.
 - Agile replaces top-down task assignment with **shared visibility**.
 - Teams coordinate via:
@@ -208,19 +206,22 @@ This enables **self-organization** instead of micromanagement.
 ---
 
 ### 3. Fighting Complexity
+
 Software systems are:
+
 - Non-linear
 - Uncertain
 - Constantly changing
 
 Agile embraces this by:
+
 - Short feedback loops
 - Continuous adaptation
 - Empirical decision-making
 
 Instead of pretending we can plan everything, we **adapt as we learn**.
 
-## Flexibility and adaptability 
+## Flexibility and adaptability
 
 ---
 
@@ -261,6 +262,7 @@ We combined the strengths of both approaches:
   
 
 This allowed us to stay aligned **without artificial constraints**.
+
 ### From Theory to Reality
 
 ---
@@ -317,27 +319,27 @@ We combined the best of both worlds:
   - Visible status
 
 ### How we worked with it
+
 - No one assigns tasks — developers **pull** tickets
 - WIP limits prevent overload
 - Blockers are immediately visible
 - Progress is transparent to the entire team
 
 ### Result
+
 - Better focus
 - Fewer bottlenecks
 - True self-organization
 
-The board became a **shared coordination mechanism** 
+The board became a **shared coordination mechanism**
 
 ---
- 
- complexity: dark mode
 
-1 button, but concerns **every** component **everywhere**
+We **know** what we want to build
 
-solution here? use an existing solution (shadcn/ui) 
+We **know** how we organize ourselves.
 
-Note: ... because we need our time for more important things
+Now we need to **plan** the app.
 
 ---
 
@@ -345,65 +347,48 @@ Note: ... because we need our time for more important things
 
 ---
 
-Web development (next + trpc + technical stuff + knex) @keeper86
-
-    Content (very brief overview):
-        Next.js (app directory, server components, client components, routing)
-        tRPC (type-safe API layer)
-        Knex.js (SQL query builder)
-        Database integration (PostgreSQL)
-       
-        Deployment and Hosting (Docker)
-
-         Authentication and Authorization (Keycloak)
-
----
-
-## Modern tech stack
-
-Combination of various modern technologies allow us to build a robust and scalable web application.
-
-We use Next.js on top of React for server-side rendering and static site generation to provide a modern and performant UI
-
-tRPC provides a type-safe API layer between the frontend and backend, ensuring seamless communication and full-stack type safety.
-
-Knex.js is used as a SQL query builder to interact with our PostgreSQL database, allowing us to write database queries in a more intuitive way.
- - migrations and seeding
-
-Docker is used for containerization and deployment, ensuring consistency across different environments. 
-
----
 # Visualization
 
-- Good UI Matters 
-- Data without good Visuals is a bit useless 
+- Good UI Matters
+- Data without good Visuals is a bit useless
 - The website should look nice and be easy to use
 
 ---
+
 ![](RawJSON.png)
-   
+
 ---
+
 ![](Database.png)
 
 ---
-- Table in Demo 
+
+- Table in Demo
 - Graph in Demo
+
 ---
+
 ##  How do we visualize things in our Website?
+
 -  shadcn components based on React
 	- Responsive
 	- Design toolbox
 - Tables
 - Graph view of Provenance
+
 ---
-## Challenges 
-- Dark mode 
+
+## Challenges
+
+- Dark mode
 - Different component sources
 
 ---
+
 ## Notes
+
 - Good UI Matters
-- go through the way that the Data changes in each Step 
+- go through the way that the Data changes in each Step
 - first Raw JSON
 - after the Upload we can see the Data in our Database 
 	- special Tool required to see it
@@ -419,7 +404,6 @@ Docker is used for containerization and deployment, ensuring consistency across 
 
 ---
 
-
 ## Why Keycloak?
 
 - **Trust the Pros:** Industry standard (BMW, Cisco, CERN)
@@ -434,6 +418,7 @@ Docker is used for containerization and deployment, ensuring consistency across 
   <div style="flex: 1;">
 
 **The Infrastructure**
+
 - Keycloak runs in its own Docker container
 - Separate from the web app
 - Port `:8080`
@@ -442,6 +427,7 @@ Docker is used for containerization and deployment, ensuring consistency across 
   <div style="flex: 1;">
 
 **The Bridge**
+
 - `next-auth` connects Next.js to Keycloak
 - Acts like a secure "translator"
 - Handles redirects and tokens
@@ -450,6 +436,7 @@ Docker is used for containerization and deployment, ensuring consistency across 
 </div>
 
 ---
+
 ## The Login Flow
 
 | Step | Action |
@@ -506,12 +493,15 @@ Docker is used for containerization and deployment, ensuring consistency across 
 **What looks simple becomes surprisingly tricky**
 
 Avatar upload seemed straightforward, but required:
+
 - Base64 encoding/decoding
 - Real-time UI updates
 - Proper error handling
 
 **Our solution:** Iterate, test, refine
+
 ---
+
 ## Demo
 
 🎯 **What we'll show:**
@@ -524,26 +514,18 @@ Avatar upload seemed straightforward, but required:
 > Key insight: Keycloak is a **separate service**, not part of our app logic.
 
 ---
-avatar uploading + Key Cloak @MikKusch
 
-Content:
-   - Why Keycloak?
-   - Setting up Keycloak with Next.js
-   - Implementing avatar upload functionality
-   - Storing and retrieving avatars from the database
-   - Integrating avatar display in the user interface
-   - Experience while implementing? Challenges and solutions?
 
-   demo? showing keycloak login and avatar upload; show that keycloak is a separate service/container
 
 ---
 
+
 # Remote Procedure Calls (RPC) and types
 
- - RPC = "executing a function on a different machine"
+- RPC = "executing a function on a different machine"
     - tRPC = type-safe RPC framework for TypeScript
 
-    Why types? 
+    Why types?
     - Catch errors at compile time
     - Better developer experience (autocompletion, documentation)
     - Consistency between frontend and backend
@@ -577,6 +559,7 @@ PAT @SurajArunBapu (maybe after trace/upload part?)
 ## Authentication for the Public API
 
 For CLI tools like **PolyTrace**, we need a secure authentication method:
+
 - No interactive login possible
 - Classic solution: **Personal Access Tokens**
 
@@ -587,6 +570,7 @@ For CLI tools like **PolyTrace**, we need a secure authentication method:
 A **PAT** is a long-lived token for API authentication.
 
 Key characteristics:
+
 - Generated by backend, shown **once**
 - Stored **hashed** on server
 - Sent via `Authorization` header
@@ -597,16 +581,20 @@ Key characteristics:
 ## Why Use PATs?
 
 #### Non-interactive Authentication
+
 Automated systems (CLI tools, scripts) cannot perform interactive logins.
 
 #### Least-Privilege Access
+
 PATs can be scoped with specific permissions.
 
 #### Safe Revocation
+
 Compromising a PAT doesn't require resetting the user's password.
 
 #### Auditing
-Each PAT can be tracked independently (creation time, last usage) 
+
+Each PAT can be tracked independently (creation time, last usage)
 
 ---
 
@@ -623,8 +611,6 @@ Each PAT can be tracked independently (creation time, last usage)
   <div style="position: absolute; top: 45%; left: 8%; font-size: 2rem; color: #94a3b8;">↑</div>
 </div>
 
-
-
 ---
 
 ## Security: Double Hashing
@@ -632,11 +618,13 @@ Each PAT can be tracked independently (creation time, last usage)
 **Why HMAC + SHA-256?**
 
 **HMAC with server secret**
+
 - Secret in env vars only
 - Never exposed to clients/DB
 - Prevents rainbow tables
 
 **SHA-256 hash**
+
 - Stored in PostgreSQL
 - One-way, cannot recover token
 
@@ -686,12 +674,17 @@ aka
 PAT can be used for...
 
 ---
+
 ## PolyTrace and Uploader
+
 ---
+
 ## What is PolyTrace?
 
 A CLI tool to record filesystem activity
+
 ---
+
 <div class="flow-horizontal">
    <div class="box fragment"><strong>Run PolyTrace</strong><br/>executes the target program</div>
    <div class="arrow fragment">→</div>
@@ -852,7 +845,8 @@ exit 0</code></pre>
 1769772754.283591 +++ exited with 0 +++
 
 </code></pre>
-        </div>
+
+</div>
 
 <div class="fragment" data-fragment-index="3">
 <pre><code>17:31:54.814998 fsgetpath /usr/lib/dyld 0.000038 simple_run.6475663
@@ -1073,13 +1067,16 @@ exit 0</code></pre>
 </div>
 
 ---
+
 ## Uploader
 
 ### <u> Expects:
+
 - PolyTrace output (PROV JSON)
 - PAT (can be stored locally)
 
 ---
+
 ### Conclusion:
 
 -Self-Organized Teamwork: Process optimization through regular Retrospectives (transition from Scrum to Scrumban).
@@ -1090,16 +1087,18 @@ exit 0</code></pre>
 
 -Architectural Clarity: Managed high complexity using modular design and a strict separation of concerns.
 
-
-
 ---
 
 ### Current State of the project
+
 Working PoC: Functional "Vertical Slice" from CLI-tracing to Database and UI-visualization
 
 Infrastructure: Full-stack integration with Docker, Keycloak Auth, and tRPC type-safety
+
 ---
+
 ### Lessons Learned
+
 Complexity Management: Balancing feature-richness with core logic
 
 Team Coordination: Overcoming communication bottlenecks
@@ -1111,8 +1110,33 @@ Process Realism: Adapting workflows to fit actual student time-constraints
 ---
 
 ### Summary: A Multi-layered Course
+
 Team Dynamics: Collaborative development on a complex, real-world project
 
 Modern Tech Stack: Hands-on experience with Next.js, PostgreSQL, and Type-safe APIs
 
 Scientific Value: Bridging the gap between software engineering and FAIR simulation principles
+
+---
+
+## Pictures we can use
+
+---
+
+<img src="upload_provenance-1.png" alt="Upload Provenance" class="full-width"/>
+
+---
+
+<img src="board_zoomed_out-1.png" alt="Team Board Zoomed Out" class="full-width"/>
+
+---
+
+<img src="extensive_logging-1.png" alt="Extensive Logging" class="full-width"/>
+
+---
+
+<img src="integration_test_pass-1.png" alt="Integration Test Pass" class="full-width"/>
+
+---
+
+<img src="unit_test_pass-1.png" alt="Unit Test Pass" class="full-width"/>
