@@ -1,4 +1,4 @@
-
+	
  # Softwareengineering for Physicists
  
 ---
@@ -309,7 +309,7 @@ Docker is used for containerization and deployment, ensuring consistency across 
 - Different component sources
 
 ---
-# Notes
+## Notes
 - Good UI Matters
 - go through the way that the Data changes in each Step 
 - first Raw JSON
