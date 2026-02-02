@@ -71,117 +71,144 @@ Modern software engineering practices
 
 ---
 
-# Agile, Scrum & Kanban
+## What does AGILE mean?
 
-## Mindset over Method
+Agile is **not a process or a tool**.  
+It is a **mindset** for dealing with uncertainty in software development.
 
----
+At its core (Agile Manifesto, 2001):
 
-## 1. What does 'AGILE' mean?
+> “Responding to change over following a plan.”
 
-Agile is **not a tool**. It is a **mindset**.
+**In practice, Agile means:**
 
-> "Responding to change over following a plan."
-> -- Agile Manifesto (2001)
+- We expect requirements to change.
+- We learn by building small increments and getting feedback.
+- We optimize for people and collaboration, not rigid processes.
 
----
-
-## 1. What does 'AGILE' mean?
-
-- **Uncertainty**
-- **Increments**
-- **People** Collaboration > Rigid Processes
-
-Note:
-
-- Software development is complex, not predictable
-- We optimize for people, not for paperwork
+Agile exists because **software development is complex, not predictable**.
 
 ---
 
-## 2. The Tools
+## What are Scrum and Kanban? (rough outline)
+
+### Scrum — Structure for Learning
+
+Scrum is a **framework** that adds rhythm and roles to Agile work.
+
+- Time-boxed iterations (**Sprints**)
+- Defined roles (Product Owner, Scrum Master, Developers)
+- Regular feedback loops:
+    - Planning and refining
+    - Daily
+    - Review
+    - Retrospective
+
+**Purpose of Scrum:**  
+Create alignment, transparency, and frequent opportunities to inspect & adapt.
 
 ---
 
-### Scrum (Structure)
+### Kanban — Flow for Work
 
-_Rhythm & Roles_
+Kanban focuses on **how work flows through the system**.
 
-- **Time-boxed:** Fixed Sprints
-- **Roles:** PO, Scrum Master, Developers
-- **Loop:** Plan → Work → Review → Retro
-- **Goal:** Alignment & Inspect/Adapt
+- Visual board (To Do → In Progress → Done)
+- Pull principle (no pushing work onto people)
+- WIP limits (limit parallel work)
+- Continuous delivery instead of fixed iterations
 
----
-
-<img src="scrum.png" alt="Scrum scheme" class="full-width"/>
-
----
-
-### Kanban (Flow)
-
-_Visualizing Work_
-
-- **Visual Board:** To Do → Doing → Done
-- **Pull Principle:** No pushing tasks onto people
-- **WIP Limits:** Stop starting, start finishing
-- **Goal:** Optimize flow, reduce bottlenecks
+**Purpose of Kanban:**  
+Optimize flow, reduce bottlenecks, and make work visible.
 
 ---
 
-## Our Board
+### Key Difference (very short)
+
+- **Scrum:** Time-based, structured learning cycles
+- **Kanban:** Flow-based, continuous work system
 
 ---
 
-## 3. Why do we do this?
+## Why do we do this?
 
-- **Large Work Packages:**
-- **Team Coordination:**
-- **Fighting Complexity:**
+### 1. Managing Large Work Packages
 
----
-
-## 4. How did this pan out for us?
-
-### From Theory to Reality
+- Big software problems cannot be fully specified upfront.
+- Agile breaks work into **small, inspectable increments**.
+- This reduces risk and wasted effort.
 
 ---
 
-### The Reality Check
+### 2. Team Coordination
 
-We started with strict **Scrum**, but...
+- Software work is highly interdependent.
+- Agile replaces top-down task assignment with **shared visibility**.
+- Teams coordinate via:
+    - Boards
+    - "Daily" syncs
+    - Clear ownership
 
-- **Constraint 1:** Unplanned work
-- **Constraint 2:** Time constraints
-- **Constraint 3:** Part-time nature
-
-**Result:** Mismatch between process and reality. Commitments were missed.
-
----
-
-### The Philosophy
-
-How we reacted:
-
-> "Overcoming harsh constraints by improvising an effective solution using limited resources."
+This enables **self-organization** instead of micromanagement.
 
 ---
 
-### Our Solution: Scrumban
+### 3. Fighting Complexity
 
-_Flexibility & Adaptability_
+Software systems are:
 
-We combined the best of both worlds:
+- Non-linear
+- Uncertain
+- Constantly changing
 
-- **From Scrum (Structure):**
-    - "Daily" syncs & Retrospectives (Alignment)
-    - Shared Responsibility
-- **From Kanban (Flow):**
-    - Continuous refinement
-    - **Pull-based** work (when time allows)
+Agile embraces this by:
+
+- Short feedback loops
+- Continuous adaptation
+- Empirical decision-making
+
+Instead of pretending we can plan everything, we **adapt as we learn**.
+
+## Flexibility and adaptability
+
+---
+
+## How did this pan out for us?
+
+### Retrospective → Self-Organization → Adaptation
+
+1. **We started with Scrum**
+    - Fixed sprints
+    - Planned commitments
+
+2. **Reality check**
+    - Unplanned work (bugs, urgent tasks)
+    - Time constraints because of other courses
+    - No 'full time' job  
+      → hard to finish assigned tickets in given time frames
+
+3. **Retrospective insight**
+    - The problem was not necessarily discipline
+    - The problem was **mismatch between process and reality**
+
+---
+
+### Our Adaptation: Scrumban
+
+We combined the strengths of both approaches:
+
+- From **Scrum**:
+    - "Daily" syncs
+    - Retrospectives
+    - Shared responsibility
+
+- From **Kanban**:
+    - continouos refinement of new tickets
+    - Pull-based work
+    - Continuous flow
     - Flexible prioritization
 
-**Outcome:** Alignment without artificial constraints.
+This allowed us to stay aligned **without artificial constraints**.
 
 ---
 
@@ -638,144 +665,10 @@ PAT can be used for...
    </table>
    </section>
 ---
-## Linux with strace
-<div class="flow-grid-3x2">
-  <div class="cell fragment" data-fragment-index="1"><strong>PolyTrace executes target program</strong></div>
-  <div class="cell arrow-left fragment" data-fragment-index="3"><strong>strace output</strong></div>
-  <div class="cell arrow-left fragment" data-fragment-index="5"><strong>PROV output</strong></div>
 
-  <div class="cell code-cell fragment" data-fragment-index="2">
-   <pre><code> #!/bin/sh
-BASE_DIR=$(cd "$(dirname "$0")" && pwd)
-OUT="$BASE_DIR/tmp/simple_run_out"
-rm -f "$OUT"
-cat /etc/ld.so.cache > /dev/null 2>/dev/null || true
-echo hello > "$OUT"
-sleep 0.01
-exit 0</code></pre>
-  </div>
+## PolyTrace Pipeline
 
-  <div class="cell code-cell fragment" data-fragment-index="4">
-    <pre><code>
-1769772754.266682 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=960733, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
-1769772754.266720 chdir("/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures") = 0
-1769772754.266818 +++ exited with 0 +++
-1769772754.265826 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.sdkman/candidates/java/current/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
-1769772754.265864 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.nvm/versions/node/v24.9.0/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
-1769772754.265880 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.local/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
-1769772754.265894 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/local/sbin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
-1769772754.265908 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/local/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
-1769772754.265922 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/sbin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
-1769772754.265935 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/bin/dirname", {st_mode=S_IFREG|0755, st_size=35208, ...}, 0) = 0
-1769772754.265955 execve("/usr/bin/dirname", ("dirname", "test/fixtures/simple_run.sh"), 0x5cd2a5f43598 /* 78 vars */) = 0
-1769772754.266179 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
-1769772754.266194 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
-1769772754.266242 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libc.so.6>
-1769772754.266515 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 3</usr/lib/locale/locale-archive>
-1769772754.266671 +++ exited with 0 +++
-1769772754.263656 execve("test/fixtures/simple_run.sh", ("test/fixtures/simple_run.sh"), 0x7ffe5dddec40 /* 78 vars */) = 0
-1769772754.264033 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
-1769772754.264169 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
-1769772754.264444 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libc.so.6>
-1769772754.265159 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/Projekte/PolySim/tools/polytrace", {st_mode=S_IFDIR|0775, st_size=4096, ...}, 0) = 0
-1769772754.265203 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, ".", {st_mode=S_IFDIR|0775, st_size=4096, ...}, 0) = 0
-1769772754.265221 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "test/fixtures/simple_run.sh", O_RDONLY) = 3</home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh>
-.
-.
-.
-</code></pre>
-  </div>
-  
-  <div class="cell code-cell fragment" data-fragment-index="6">
-    <pre><code>{
-  "activity": {
-    "endedAt": 1769725453183,
-    "id": "cf843303e1d1269de4c3155fae1b8d1fee2bf84f4bde84b1f004e4784a7b9458",
-    "label": "Run /bin/sh",
-    "metadata": {
-      "command": [
-        "/bin/sh",
-        "-c",
-        "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
-      ]
-    },
-    "startedAt": 1769725453141
-  },
-  "entities": [
-    {
-      "createdAt": 1711874845999,
-      "id": "86d31f6fb799e91fa21bad341484564510ca287703a16e9e46c53338776f4f42",
-      "label": "sh",
-      "metadata": {
-        "accesses": [
-          {
-            "metadata": {
-              "execve_argv": [
-                "/bin/sh",
-                "-c",
-                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
-              ]
-            },
-            "pid": 587656,
-            "role": "process"
-          }
-        ],
-        "path": "/bin/sh"
-      },
-      "role": "process"
-    },
-    {
-      "createdAt": 1769725453169,
-      "id": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03",
-      "label": "simple_run_out",
-      "metadata": {
-        "accesses": [
-          {
-            "metadata": {},
-            "pid": 587657,
-            "role": "output"
-          }
-        ],
-        "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out"
-      },
-      "role": "output"
-    },
-    {
-      "createdAt": 1769698204766,
-      "id": "e8e5fac19389c6b5d4401398edce9b9a9b27d689cc92fb49dfc60c6834a0eeb2",
-      "label": "simple_run.sh",
-      "metadata": {
-        "accesses": [
-          {
-            "metadata": {
-              "execve_argv": [
-                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
-              ]
-            },
-            "pid": 587657,
-            "role": "process"
-          },
-          {
-            "metadata": {},
-            "pid": 587657,
-            "role": "input"
-          }
-        ],
-        "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
-      },
-      "role": "process"
-    }
-  ]
-}
-</code></pre>
-  </div>
-</div>
-
----
-
-## Linux with strace (animated)
-
-<div class="flow-stack">
+<div class="flow-stack flow-scroll">
   <div class="flow-layer flow-grid-2x2 fragment fade-out flow-shift-out" data-fragment-index="4">
     <div class="cell fragment" data-fragment-index="1"><strong>PolyTrace executes target program</strong></div>
     <div class="cell arrow-left fragment" data-fragment-index="2">
@@ -797,8 +690,7 @@ exit 0</code></pre>
     <div class="cell code-cell fragment" data-fragment-index="2">
       <div class="r-stack">
         <div class="fragment fade-out" data-fragment-index="3">
-          <pre><code>
-1769772754.266682 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=960733, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+          <pre><code>1769772754.266682 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=960733, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
 1769772754.266720 chdir("/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures") = 0
 1769772754.266818 +++ exited with 0 +++
 1769772754.265826 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.sdkman/candidates/java/current/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
@@ -808,89 +700,248 @@ exit 0</code></pre>
 1769772754.265908 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/local/bin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
 1769772754.265922 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/sbin/dirname", 0x7ffc1d955610, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
 1769772754.265935 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/bin/dirname", {st_mode=S_IFREG|0755, st_size=35208, ...}, 0) = 0
-1769772754.265955 execve("/usr/bin/dirname", ("dirname", "test/fixtures/simple_run.sh"), 0x5cd2a5f43598 /* 78 vars */) = 0
+1769772754.265955 execve("/usr/bin/dirname", ["dirname", "test/fixtures/simple_run.sh"], 0x5cd2a5f43598 /* 78 vars */) = 0
 1769772754.266179 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
 1769772754.266194 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
 1769772754.266242 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libc.so.6>
 1769772754.266515 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 3</usr/lib/locale/locale-archive>
 1769772754.266671 +++ exited with 0 +++
-1769772754.263656 execve("test/fixtures/simple_run.sh", ("test/fixtures/simple_run.sh"), 0x7ffe5dddec40 /* 78 vars */) = 0
+1769772754.263656 execve("test/fixtures/simple_run.sh", ["test/fixtures/simple_run.sh"], 0x7ffe5dddec40 /* 78 vars */) = 0
 1769772754.264033 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
 1769772754.264169 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
 1769772754.264444 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libc.so.6>
 1769772754.265159 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/Projekte/PolySim/tools/polytrace", {st_mode=S_IFDIR|0775, st_size=4096, ...}, 0) = 0
 1769772754.265203 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, ".", {st_mode=S_IFDIR|0775, st_size=4096, ...}, 0) = 0
 1769772754.265221 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "test/fixtures/simple_run.sh", O_RDONLY) = 3</home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh>
-.
-.
-.
+1769772754.266843 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=960732, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+1769772754.266945 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.sdkman/candidates/java/current/bin/rm", 0x7ffc1d955c20, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.266993 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.nvm/versions/node/v24.9.0/bin/rm", 0x7ffc1d955c20, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.267025 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.local/bin/rm", 0x7ffc1d955c20, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.267054 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/local/sbin/rm", 0x7ffc1d955c20, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.267082 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/local/bin/rm", 0x7ffc1d955c20, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.267110 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/sbin/rm", 0x7ffc1d955c20, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.267142 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/bin/rm", {st_mode=S_IFREG|0755, st_size=59912, ...}, 0) = 0
+1769772754.268733 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=960734, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+1769772754.268788 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+1769772754.268897 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/dev/null", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</dev/null>
+1769772754.268994 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.sdkman/candidates/java/current/bin/cat", 0x7ffc1d955bb0, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.269040 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.nvm/versions/node/v24.9.0/bin/cat", 0x7ffc1d955bb0, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.269072 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.local/bin/cat", 0x7ffc1d955bb0, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.269102 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/local/sbin/cat", 0x7ffc1d955bb0, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.269131 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/local/bin/cat", 0x7ffc1d955bb0, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.269171 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/sbin/cat", 0x7ffc1d955bb0, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.269202 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/bin/cat", {st_mode=S_IFREG|0755, st_size=39384, ...}, 0) = 0
+1769772754.270649 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=960736, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+1769772754.270768 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3</home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out>
+1769772754.270955 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.sdkman/candidates/java/current/bin/sleep", 0x7ffc1d955c20, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.271009 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.nvm/versions/node/v24.9.0/bin/sleep", 0x7ffc1d955c20, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.271033 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/.local/bin/sleep", 0x7ffc1d955c20, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.271047 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/local/sbin/sleep", 0x7ffc1d955c20, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.271062 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/local/bin/sleep", 0x7ffc1d955c20, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.271076 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/sbin/sleep", 0x7ffc1d955c20, 0) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.271090 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/bin/sleep", {st_mode=S_IFREG|0755, st_size=35336, ...}, 0) = 0
+1769772754.283708 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=960738, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+1769772754.283910 +++ exited with 0 +++
+1769772754.269374 execve("/usr/bin/cat", ["cat", "/etc/ld.so.cache"], 0x5cd2a5f43ae8 /* 78 vars */) = 0
+1769772754.269693 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.269714 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+1769772754.269780 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libc.so.6>
+1769772754.270157 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 3</usr/lib/locale/locale-archive>
+1769772754.270392 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/etc/ld.so.cache", O_RDONLY) = 3</etc/ld.so.cache>
+1769772754.270623 +++ exited with 0 +++
+1769772754.267353 execve("/usr/bin/rm", ["rm", "-f", "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out"], 0x5cd2a5f43678 /* 78 vars */) = 0
+1769772754.267640 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.267676 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+1769772754.267780 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libc.so.6>
+1769772754.268298 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 3</usr/lib/locale/locale-archive>
+1769772754.268436 newfstatat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out", {st_mode=S_IFREG|0664, st_size=6, ...}, AT_SYMLINK_NOFOLLOW) = 0
+1769772754.268475 unlinkat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out", 0) = 0
+1769772754.268706 +++ exited with 0 +++
+1769772754.271726 execve("/usr/bin/sleep", ["sleep", "0.01"], 0x5cd2a5f45ed8 /* 78 vars */) = 0
+1769772754.272184 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.272216 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>
+1769772754.272279 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/libc.so.6>
+1769772754.272603 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 3</usr/lib/locale/locale-archive>
+1769772754.272672 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/share/locale/locale.alias", O_RDONLY|O_CLOEXEC) = 3</etc/locale.alias>
+1769772754.272744 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/share/locale/de_DE.UTF-8/LC_MESSAGES/coreutils.mo", O_RDONLY) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.272761 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/share/locale/de_DE.utf8/LC_MESSAGES/coreutils.mo", O_RDONLY) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.272776 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/share/locale/de_DE/LC_MESSAGES/coreutils.mo", O_RDONLY) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.272792 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/share/locale/de.UTF-8/LC_MESSAGES/coreutils.mo", O_RDONLY) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.272806 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/share/locale/de.utf8/LC_MESSAGES/coreutils.mo", O_RDONLY) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.272821 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/share/locale/de/LC_MESSAGES/coreutils.mo", O_RDONLY) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.272836 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/share/locale-langpack/de_DE.UTF-8/LC_MESSAGES/coreutils.mo", O_RDONLY) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.272850 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/share/locale-langpack/de_DE.utf8/LC_MESSAGES/coreutils.mo", O_RDONLY) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.272865 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/share/locale-langpack/de_DE/LC_MESSAGES/coreutils.mo", O_RDONLY) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.272879 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/share/locale-langpack/de.UTF-8/LC_MESSAGES/coreutils.mo", O_RDONLY) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.272893 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/share/locale-langpack/de.utf8/LC_MESSAGES/coreutils.mo", O_RDONLY) = -1 ENOENT (Datei oder Verzeichnis nicht gefunden)
+1769772754.272907 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/share/locale-langpack/de/LC_MESSAGES/coreutils.mo", O_RDONLY) = 3</usr/share/locale-langpack/de/LC_MESSAGES/coreutils.mo>
+1769772754.272975 openat(AT_FDCWD</home/tobias/Projekte/PolySim/tools/polytrace>, "/usr/lib/x86_64-linux-gnu/gconv/gconv-modules.cache", O_RDONLY|O_CLOEXEC) = 3</usr/lib/x86_64-linux-gnu/gconv/gconv-modules.cache>
+1769772754.283591 +++ exited with 0 +++
+
 </code></pre>
-        </div>
-        <div class="fragment" data-fragment-index="3">
-          <pre><code>fs_usage -w -f filesys -t 5 /path/to/target
-12:34:56 open   /path/to/target/input.dat
-12:34:56 read   /path/to/target/input.dat
-12:34:56 write  /path/to/target/output.dat
-...
+</div>
+<div class="fragment" data-fragment-index="3">
+<pre><code>17:31:54.814998 fsgetpath /usr/lib/dyld 0.000038 simple_run.6475663
+17:31:54.815776 fsgetpath /usr/lib/dyld 0.000019 simple_run.6475663
+17:31:54.816178 open F=3 (R******\_\_******) . 0.000098 simple_run.6475663
+17:31:54.816182 fcntl F=3 <GETPATH> 0.000004 simple_run.6475663
+17:31:54.816187 close F=3 0.000005 simple_run.6475663
+17:31:54.816197 fsgetpath /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run 0.000008 simple_run.6475663
+17:31:54.816213 fsgetpath /usr/lib/dyld 0.000015 simple_run.6475663
+17:31:54.816345 open F=3 (R****\_\_\_****f**) 0.000030 simple_run.6475663
+17:31:54.816396 openat F=4 (R****\_\_\_\_******) [3]/../../System/Volumes/Preboot/Cryptexes/OS 0.000050 simple_run.6475663
+17:31:54.816415 fstatat64 [4]/System/Library/dyld 0.000012 simple_run.6475663
+17:31:54.816440 openat F=6 (R******\_\_******) [4]/System/Library/dyld 0.000024 simple_run.6475663
+17:31:54.816444 fcntl F=6 <GETPATH> 0.000003 simple_run.6475663
+17:31:54.816451 close F=3 0.000003 simple_run.6475663
+17:31:54.816452 close F=5 0.000001 simple_run.6475663
+17:31:54.816454 close F=4 0.000001 simple_run.6475663
+17:31:54.816455 close F=6 0.000001 simple_run.6475663
+17:31:54.816480 fsgetpath /System/Volumes/Preboot/Cryptexes/OS/System/Library/dyld/dyld_shared_cache_arm64e 0.000008 simple_run.6475663
+17:31:54.816483 fcntl F=8 <GETPATH> 0.000002 simple_run.6475663
+17:31:54.816487 close F=8 0.000002 simple_run.6475663
+17:31:54.816489 close F=7 0.000002 simple_run.6475663
+17:31:54.816534 stat64 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run 0.000012 simple_run.6475663
+17:31:54.816599 open F=3 (R******\_\_******) /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run 0.000064 simple_run.6475663
+17:31:54.816635 fcntl F=3 <GETPATH> 0.000003 simple_run.6475663
+17:31:54.816651 close F=3 0.000003 simple_run.6475663
+17:31:54.816662 stat64 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run 0.000011 simple_run.6475663
+17:31:54.816694 stat64 [ 2] /usr/lib/libc++.1.dylib 0.000005 simple_run.6475663
+17:31:54.816720 stat64 [ 2] /System/Volumes/Preboot/Cryptexes/OS/usr/lib/libc++.1.dylib 0.000011 simple_run.6475663
+17:31:54.816751 stat64 [ 2] /usr/lib/libSystem.B.dylib 0.000007 simple_run.6475663
+17:31:54.816763 stat64 [ 2] /System/Volumes/Preboot/Cryptexes/OS/usr/lib/libSystem.B.dylib 0.000004 simple_run.6475663
+17:31:54.817614 open F=3 (R******\_\_******) /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run 0.000059 simple_run.6475663
+17:31:54.817653 close F=3 0.000002 simple_run.6475663
+17:31:54.817891 getfsstat64 0.000006 simple_run.6475663
+17:31:54.817913 getfsstat64 0.000014 simple_run.6475663
+17:31:54.817929 getattrlist 0.000015 simple_run.6475663
+17:31:54.818177 open F=3 (RW******\_******) /dev/dtracehelper 0.000092 simple_run.6475663
+17:31:54.818207 ioctl F=3 <CMD=0x80086804> 0.000030 simple_run.6475663
+17:31:54.818216 close F=3 0.000009 simple_run.6475663
+17:31:54.818271 access [ 2] (**_F) /AppleInternal/XBS/.isChrooted 0.000005 simple_run.6475663
+17:31:54.818451 fstat64 F=3 0.000002 simple_run.6475663
+17:31:54.818466 close F=3 0.000002 simple_run.6475663
+17:31:54.818533 ioctl F=2 <CMD=0x4004667a> 0.000003 simple_run.6475663
+17:31:54.819107 getattrlist /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run 0.000026 simple_run.6475663
+17:31:54.819169 access (R_**) /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures 0.000060 simple_run.6475663
+17:31:54.819204 open F=3 (R******\_\_******) /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures 0.000035 simple_run.6475663
+17:31:54.819206 fstat64 F=3 0.000002 simple_run.6475663
+17:31:54.819221 fgetattrlist F=3 0.000014 simple_run.6475663
+17:31:54.819263 fcntl F=3 <GETPATH> 0.000007 simple_run.6475663
+17:31:54.819267 close F=3 0.000003 simple_run.6475663
+17:31:54.819294 open [ 2] (R******\_\_******) /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/Info.plist 0.000025 simple_run.6475663
+17:31:54.819707 PAGE_IN_FILE A=0x0104e20000 0.000049 simple_run.6475663
+17:31:54.819730 lstat64 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out 0.000017 simple_run.6475663
+17:31:54.820017 unlink /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out 0.000287 simple_run.6475663
+17:31:54.820040 open [ 2] (R******\_\_******) private/etc/ld.so.cache 0.000017 simple_run.6475663
+17:31:54.820246 open F=3 (\_WC_T****\_\_****) /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out 0.000182 simple_run.6475663
+17:31:54.820256 fstat64 F=3 0.000005 simple_run.6475663
+17:31:54.820333 write F=3 B=0x5 0.000073 simple_run.6475663
+17:31:54.820403 close F=3 0.000069 simple_run.6475663
+17:31:54.820414 WrData[A] D=0x03c734eb B=0x1000 /dev/disk3s5 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out 0.000058 W simple_run.6475663
+17:31:54.832652 exit 0.000033 simple_run.6475663
+
 </code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
+</div>
+</div>
+</div>
+</div>
 
   <div class="flow-layer flow-grid-2x2 fragment flow-shift-in" data-fragment-index="4">
     <div class="cell arrow-left"><strong>fs_usage output</strong></div>
     <div class="cell arrow-left"><strong>PROV output</strong></div>
     <div class="cell code-cell">
-      <pre><code>fs_usage -w -f filesys -t 5 /path/to/target
-12:34:56 open   /path/to/target/input.dat
-12:34:56 read   /path/to/target/input.dat
-12:34:56 write  /path/to/target/output.dat
-...
+      <pre><code>17:31:54.814998  fsgetpath                              /usr/lib/dyld                                                                                      0.000038   simple_run.6475663
+17:31:54.815776  fsgetpath                              /usr/lib/dyld                                                                                      0.000019   simple_run.6475663
+17:31:54.816178  open              F=3        (R______________)  .                                                                                         0.000098   simple_run.6475663
+17:31:54.816182  fcntl             F=3   <GETPATH>                                                                                                         0.000004   simple_run.6475663
+17:31:54.816187  close             F=3                                                                                                                     0.000005   simple_run.6475663
+17:31:54.816197  fsgetpath                              /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run                                 0.000008   simple_run.6475663
+17:31:54.816213  fsgetpath                              /usr/lib/dyld                                                                                      0.000015   simple_run.6475663
+17:31:54.816345  open              F=3        (R___________f__)                                                                                            0.000030   simple_run.6475663
+17:31:54.816396  openat            F=4        (R______________)  [3]/../../System/Volumes/Preboot/Cryptexes/OS                                             0.000050   simple_run.6475663
+17:31:54.816415  fstatat64                              [4]/System/Library/dyld                                                                            0.000012   simple_run.6475663
+17:31:54.816440  openat            F=6        (R______________)  [4]/System/Library/dyld                                                                   0.000024   simple_run.6475663
+17:31:54.816444  fcntl             F=6   <GETPATH>                                                                                                         0.000003   simple_run.6475663
+17:31:54.816451  close             F=3                                                                                                                     0.000003   simple_run.6475663
+17:31:54.816452  close             F=5                                                                                                                     0.000001   simple_run.6475663
+17:31:54.816454  close             F=4                                                                                                                     0.000001   simple_run.6475663
+17:31:54.816455  close             F=6                                                                                                                     0.000001   simple_run.6475663
+17:31:54.816480  fsgetpath                              /System/Volumes/Preboot/Cryptexes/OS/System/Library/dyld/dyld_shared_cache_arm64e                  0.000008   simple_run.6475663
+17:31:54.816483  fcntl             F=8   <GETPATH>                                                                                                         0.000002   simple_run.6475663
+17:31:54.816487  close             F=8                                                                                                                     0.000002   simple_run.6475663
+17:31:54.816489  close             F=7                                                                                                                     0.000002   simple_run.6475663
+17:31:54.816534  stat64                                 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run                                 0.000012   simple_run.6475663
+17:31:54.816599  open              F=3        (R______________)  /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run                        0.000064   simple_run.6475663
+17:31:54.816635  fcntl             F=3   <GETPATH>                                                                                                         0.000003   simple_run.6475663
+17:31:54.816651  close             F=3                                                                                                                     0.000003   simple_run.6475663
+17:31:54.816662  stat64                                 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run                                 0.000011   simple_run.6475663
+17:31:54.816694  stat64                 [  2]           /usr/lib/libc++.1.dylib                                                                            0.000005   simple_run.6475663
+17:31:54.816720  stat64                 [  2]           /System/Volumes/Preboot/Cryptexes/OS/usr/lib/libc++.1.dylib                                        0.000011   simple_run.6475663
+17:31:54.816751  stat64                 [  2]           /usr/lib/libSystem.B.dylib                                                                         0.000007   simple_run.6475663
+17:31:54.816763  stat64                 [  2]           /System/Volumes/Preboot/Cryptexes/OS/usr/lib/libSystem.B.dylib                                     0.000004   simple_run.6475663
+17:31:54.817614  open              F=3        (R______________)  /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run                        0.000059   simple_run.6475663
+17:31:54.817653  close             F=3                                                                                                                     0.000002   simple_run.6475663
+17:31:54.817891  getfsstat64                                                                                                                               0.000006   simple_run.6475663
+17:31:54.817913  getfsstat64                                                                                                                               0.000014   simple_run.6475663
+17:31:54.817929  getattrlist                                                                                                                               0.000015   simple_run.6475663
+17:31:54.818177  open              F=3        (RW_____________)  /dev/dtracehelper                                                                         0.000092   simple_run.6475663
+17:31:54.818207  ioctl             F=3   <CMD=0x80086804>                                                                                                  0.000030   simple_run.6475663
+17:31:54.818216  close             F=3                                                                                                                     0.000009   simple_run.6475663
+17:31:54.818271  access                 [  2] (___F)    /AppleInternal/XBS/.isChrooted                                                                     0.000005   simple_run.6475663
+17:31:54.818451  fstat64           F=3                                                                                                                     0.000002   simple_run.6475663
+17:31:54.818466  close             F=3                                                                                                                     0.000002   simple_run.6475663
+17:31:54.818533  ioctl             F=2   <CMD=0x4004667a>                                                                                                  0.000003   simple_run.6475663
+17:31:54.819107  getattrlist                            /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/simple_run                                 0.000026   simple_run.6475663
+17:31:54.819169  access                       (R___)    /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures                                            0.000060   simple_run.6475663
+17:31:54.819204  open              F=3        (R______________)  /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures                                   0.000035   simple_run.6475663
+17:31:54.819206  fstat64           F=3                                                                                                                     0.000002   simple_run.6475663
+17:31:54.819221  fgetattrlist      F=3                                                                                                                     0.000014   simple_run.6475663
+17:31:54.819263  fcntl             F=3   <GETPATH>                                                                                                         0.000007   simple_run.6475663
+17:31:54.819267  close             F=3                                                                                                                     0.000003   simple_run.6475663
+17:31:54.819294  open                   [  2] (R______________)  /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/Info.plist                        0.000025   simple_run.6475663
+17:31:54.819707  PAGE_IN_FILE      A=0x0104e20000                                                                                                          0.000049   simple_run.6475663
+17:31:54.819730  lstat64                                /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out                         0.000017   simple_run.6475663
+17:31:54.820017  unlink                                 /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out                         0.000287   simple_run.6475663
+17:31:54.820040  open                   [  2] (R______________)  private/etc/ld.so.cache                                                                   0.000017   simple_run.6475663
+17:31:54.820246  open              F=3        (_WC_T__________)  /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out                0.000182   simple_run.6475663
+17:31:54.820256  fstat64           F=3                                                                                                                     0.000005   simple_run.6475663
+17:31:54.820333  write             F=3    B=0x5                                                                                                            0.000073   simple_run.6475663
+17:31:54.820403  close             F=3                                                                                                                     0.000069   simple_run.6475663
+17:31:54.820414    WrData[A]       D=0x03c734eb  B=0x1000   /dev/disk3s5  /Users/efemyuksel/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out       0.000058 W simple_run.6475663
+17:31:54.832652  exit                                                                                                                                      0.000033   simple_run.6475663
+
 </code></pre>
-    </div>
-    <div class="cell code-cell">
-      <pre><code>{
-  "activity": {
-    "endedAt": 1769725453183,
-    "id": "cf843303e1d1269de4c3155fae1b8d1fee2bf84f4bde84b1f004e4784a7b9458",
-    "label": "Run /bin/sh",
-    "metadata": {
-      "command": [
-        "/bin/sh",
-        "-c",
-        "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
-      ]
-    },
-    "startedAt": 1769725453141
-  },
-  "entities": [
-    {
-      "createdAt": 1711874845999,
-      "id": "86d31f6fb799e91fa21bad341484564510ca287703a16e9e46c53338776f4f42",
-      "label": "sh",
-      "metadata": {
-        "accesses": [
-          {
-            "metadata": {
-              "execve_argv": [
-                "/bin/sh",
-                "-c",
-                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
-              ]
-            },
-            "pid": 587656,
-            "role": "input"
-          }
-        ],
-        "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
-      },
-      "role": "process"
-    }
-  ]
+</div>
+<div class="cell code-cell">
+<pre><code>
+"activity": {
+"endedAt": 1769725453183,
+"id": "cf843303e1d1269de4c3155fae1b8d1fee2bf84f4bde84b1f004e4784a7b9458",
+"label": "Run /bin/sh",
+"metadata": {
+"command": [
+"/bin/sh",
+"-c",
+"/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+]
+},
+"startedAt": 1769725453141
+},
+"entities": [
+{
+"id": "86d31f6fb799e91fa21bad341484564510ca287703a16e9e46c53338776f4f42",
+"label": "sh",
+"metadata": {
+"path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
 }
+}
+],
+...
+
 </code></pre>
-    </div>
+</div>
+
   </div>
 </div>
 
