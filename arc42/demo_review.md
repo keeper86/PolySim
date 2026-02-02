@@ -895,6 +895,7 @@ exit 0</code></pre>
     </div>
     <div class="cell code-cell">
       <pre><code>
+{
   "activity": {
     "endedAt": 1769725453183,
     "id": "cf843303e1d1269de4c3155fae1b8d1fee2bf84f4bde84b1f004e4784a7b9458",
@@ -910,15 +911,70 @@ exit 0</code></pre>
   },
   "entities": [
     {
+      "createdAt": 1711874845999,
       "id": "86d31f6fb799e91fa21bad341484564510ca287703a16e9e46c53338776f4f42",
       "label": "sh",
       "metadata": {
+        "accesses": [
+          {
+            "metadata": {
+              "execve_argv": [
+                "/bin/sh",
+                "-c",
+                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+              ]
+            },
+            "pid": 587656,
+            "role": "process"
+          }
+        ],
+        "path": "/bin/sh"
+      },
+      "role": "process"
+    },
+    {
+      "createdAt": 1769725453169,
+      "id": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03",
+      "label": "simple_run_out",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {},
+            "pid": 587657,
+            "role": "output"
+          }
+        ],
+        "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out"
+      },
+      "role": "output"
+    },
+    {
+      "createdAt": 1769698204766,
+      "id": "e8e5fac19389c6b5d4401398edce9b9a9b27d689cc92fb49dfc60c6834a0eeb2",
+      "label": "simple_run.sh",
+      "metadata": {
+        "accesses": [
+          {
+            "metadata": {
+              "execve_argv": [
+                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+              ]
+            },
+            "pid": 587657,
+            "role": "process"
+          },
+          {
+            "metadata": {},
+            "pid": 587657,
+            "role": "input"
+          }
+        ],
         "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
-      }
+      },
+      "role": "process"
     }
-  ],
-  ...
-
+  ]
+}
 </code></pre>
     </div>
   </div>
