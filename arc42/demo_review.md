@@ -62,6 +62,55 @@ Here we can make the point why centralized storage and management of provenance 
  -> web platform
 
 ---
+<!-- # FAIR Principles & Data Provenance -->
+ <!-- Making Data Reusable, Trustworthy, and Transparent -->
+ ### FAIR Principles + Data Provenance
+
+---
+<!-- ### Introduction to FAIR Principles -->
+  <!-- - **Findable:** Easy to discover with proper metadata and identifiers -->
+  <!-- - **Accessible:** Retrievable using standard protocols -->
+  <!-- - **Interoperable:** Compatible with different tools and systems -->
+  <!-- - **Reusable:** Well-described so others can use it in the future -->
+
+### FAIR Principles
+
+- F – Findable (metadata, identifiers)
+- A – Accessible (standers protocols)
+- I – Interoperable (tools, system)
+- R – Reusable (structured)
+
+---
+### What is Data Provenance?
+- Where data comes from
+- How it was produced
+- Who produced it
+- What transformations were applied
+
+---
+### W3C PROV Conceptual Model
+<img src="data_provenance.png" alt="Data Provenance" class="full-width"/>
+
+---
+### Importance of data provenance in scientific simulations
+- Reproducibility
+<!-- - Transparency & Trust -->
+- Debugging & Error Tracking
+- Collaboration & Sharing
+- Data Reuse & FAIR Compliance
+- Scientific Integrity & Validation
+- Automation & Workflow Management
+---
+### Tracking data provenance in simulations
+- Inputs & Outputs
+- Processes
+- Agents
+- Environment
+
+---
+<!-- ### Benefits of FAIR and provenance for researchers -->
+
+---
 
 # overview
 
