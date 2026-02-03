@@ -1,74 +1,9 @@
 [
     {
-        "id": "01_long_run",
-        "title": "Long-Running Write Operations",
-        "description": "Baseline benchmark: Write 8 files (131KB each) with 4 threads over 2 iterations plus a 5-second CPU burn phase. Tests sustained I/O with moderate CPU overhead.",
-        "imageFile": "/benchmarks/benchmark_01_long_run.png",
-        "stats": {
-            "postprocMean": 1.59,
-            "postprocStdev": 1.97,
-            "incrTracingMean": 7.64,
-            "incrTracingStdev": 10.38,
-            "nSamples": 4
-        }
-    },
-    {
-        "id": "02_io_heavy",
-        "title": "I/O Heavy: Large File Writes",
-        "description": "Stress test: Write 4 large files (100MB each) with 4 threads at 65KB chunk size. Tests throughput-heavy I/O scenarios with high post-processing overhead due to large payloads.",
-        "imageFile": "/benchmarks/benchmark_02_io_heavy.png",
-        "stats": {
-            "postprocMean": 20.43,
-            "postprocStdev": 28.34,
-            "incrTracingMean": 62.61,
-            "incrTracingStdev": 87.5,
-            "nSamples": 4
-        }
-    },
-    {
-        "id": "03_many_small_files",
-        "title": "Metadata Intensive: Many Small Files",
-        "description": "Extreme stress: Create 1000 small files (4KB each) with a single thread, then 500 create+unlink operations. Tests metadata overhead and fs-heavy scenarios.",
-        "imageFile": "/benchmarks/benchmark_03_many_small_files.png",
-        "stats": {
-            "postprocMean": 10.5,
-            "postprocStdev": 3.87,
-            "incrTracingMean": 1116.08,
-            "incrTracingStdev": 751.97,
-            "nSamples": 4
-        }
-    },
-    {
-        "id": "04_write_then_read",
-        "title": "Read-Write Pipeline",
-        "description": "Pipeline test: Write 16 medium files (2MB each) with 2 threads, then read them back with 4 threads. Measures cache effects and read path overhead.",
-        "imageFile": "/benchmarks/benchmark_04_write_then_read.png",
-        "stats": {
-            "postprocMean": 7.17,
-            "postprocStdev": 1.77,
-            "incrTracingMean": 214.22,
-            "incrTracingStdev": 217.41,
-            "nSamples": 4
-        }
-    },
-    {
-        "id": "05_mixed_phases",
-        "title": "Mixed Workload: I/O + Sleep + CPU",
-        "description": "Realistic scenario: Write phase (8 files, 4MB each) + sleep phase (1s × 10 iterations) + CPU-intensive phase (1s burn × 5 iterations). Captures diverse system behaviors.",
-        "imageFile": "/benchmarks/benchmark_05_mixed_phases.png",
-        "stats": {
-            "postprocMean": 1.17,
-            "postprocStdev": 1.18,
-            "incrTracingMean": 170.79,
-            "incrTracingStdev": 262.47,
-            "nSamples": 6
-        }
-    },
-    {
-        "id": "06_pure_cpu",
-        "title": "Pure CPU: No I/O Overhead Baseline",
-        "description": "CPU-only benchmark: Varying CPU burn times (100ms to 30s) with different thread counts (1-8 threads). Validates that polytrace overhead is ~0% for pure computation without any I/O operations.",
-        "imageFile": "/benchmarks/cpu_only_overhead.png",
+        "id": "01_io_datasize_overhead",
+        "title": "I/O datasize vs overhead",
+        "description": "Scatter plot showing tracing overhead (%) for different file sizes (1MB, 10MB, 50MB) across varying total data volumes. Overhead patterns vary significantly by workload characteristics and syscall density.",
+        "imageFile": "/benchmarks/scaling_io_datasize_vs_overhead.png",
         "stats": {
             "postprocMean": 0,
             "postprocStdev": 0,
@@ -78,36 +13,10 @@
         }
     },
     {
-        "id": "07_io_scaling_small",
-        "title": "I/O Scaling: Small Files (4KB)",
-        "description": "I/O scaling benchmark: Write 10-2000 small files (4KB each) with single thread. Measures overhead growth as a function of file count for small metadata-intensive operations.",
-        "imageFile": "/benchmarks/io_scaling_by_filecount.png",
-        "stats": {
-            "postprocMean": 0,
-            "postprocStdev": 0,
-            "incrTracingMean": 0,
-            "incrTracingStdev": 0,
-            "nSamples": 0
-        }
-    },
-    {
-        "id": "08_io_scaling_medium",
-        "title": "I/O Scaling: Medium Files (1MB)",
-        "description": "I/O scaling benchmark: Write 5-200 medium files (1MB each) with 2 threads. Measures overhead scaling for typical application file sizes.",
-        "imageFile": "/benchmarks/io_scaling_by_filecount.png",
-        "stats": {
-            "postprocMean": 0,
-            "postprocStdev": 0,
-            "incrTracingMean": 0,
-            "incrTracingStdev": 0,
-            "nSamples": 0
-        }
-    },
-    {
-        "id": "09_io_scaling_large",
-        "title": "I/O Scaling: Large Files (10MB)",
-        "description": "I/O scaling benchmark: Write 2-50 large files (10MB each) with 4 threads. Measures overhead for throughput-heavy workloads.",
-        "imageFile": "/benchmarks/io_scaling_by_filecount.png",
+        "id": "02_cpu_only_tracing",
+        "title": "CPU-only tracing vs runtime",
+        "description": "Log–log scatter with fit and 1/x reference. Demonstrates pure amortization—fixed tracing startup cost (~constant) divided by increasing CPU runtime. Expected slope ≈ −1 in log-log space.",
+        "imageFile": "/benchmarks/scaling_tracing_vs_runtime_cpu_only.png",
         "stats": {
             "postprocMean": 0,
             "postprocStdev": 0,

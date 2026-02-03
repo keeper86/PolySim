@@ -96,6 +96,7 @@ export const APP_ROUTES = {
         path: '/benchmarks',
         label: 'Benchmarks',
         icon: BarChart3,
+        isPublic: true,
         description: 'Performance analysis and benchmarks',
         isSecondaryNav: true,
     },
