@@ -21,6 +21,7 @@ declare module "nextjs-routes" {
     | DynamicRoute<"/api/public/[...trpc]", { "trpc": string[] }>
     | StaticRoute<"/api/public/openapi.json">
     | DynamicRoute<"/api/trpc/[trpc]", { "trpc": string }>
+    | StaticRoute<"/benchmarks">
     | StaticRoute<"/graph">
     | StaticRoute<"/howto">
     | StaticRoute<"/imprint">
