@@ -92,16 +92,16 @@ Note: informedBy relationships can be inferred transitively. "Connecting the dot
 
 ---
 
-## Our answer to FAIR
+Our answer to **FAIR**
 
-**PolySim**
+ ## PolySim 
 
-web application (and CLI tool)  
-to track provenance data for scientific simulations.
+**web application + CLI tool**   
+<small>_to track provenance data for scientific simulations_</small>
 
 ---
 
-# How to build a web app?
+## How to build a web app?
 
 ---
 
@@ -109,19 +109,18 @@ to track provenance data for scientific simulations.
 
 Whether **technical**...
 
-- Docker (containerization):
-- Caddy (reverse proxy, ssl)
-- Next.js (frontend+backend via trpc)
-- PostgreSQL (database)
-- Keycloak (authentication)
-
+- **Docker** containerization
+- **Caddy** reverse proxy, ssl
+- **Next.js** frontend+backend via trpc
+- **PostgreSQL** database
+- **Keycloak** authentication
 ---
 
 ... or **organizational**
 
-- git, CI/CD (GitHub Actions)
-- industrial best practices (code reviews, testing)
-- Agile methodologies (Scrum/Kanban)
+- **git, CI/CD** GitHub Actions
+- **best practices** code reviews, testing
+- **agile methodologies** Scrum/Kanban
 
 ---
 
@@ -259,6 +258,18 @@ Now we need to **plan** the app.
 ---
 
 <img src="provenance-poc.png" alt="Provenance Proof of Concept" class="full-width"/>
+
+---
+
+ # KEYCLOAK HERE
+
+---
+
+ # VISUALIZATION HERE
+
+---
+
+# UPLOADING AVATARS HERE
 
 ---
 
@@ -541,7 +552,7 @@ const userId = getUserIdFromContext(ctx);
 
 ---
 
-public API secured with PATs!
+**public API** secured with **PATs**!
 
 -> http://localhost:3000/api-doc
 
