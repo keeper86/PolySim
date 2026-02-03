@@ -1,0 +1,26 @@
+{
+  "id": "01_io_datasize_overhead_small",
+  "repeats": 3,
+  "bench_program": {
+    "mode": "write",
+    "path": "test/io_scaling_small",
+    "files": 50,
+    "file_size": 1048576,
+    "write_size": 8192,
+    "iterations": 10,
+    "threads": 1,
+    "cpu_ms": 0
+  },
+  "plan": [
+    {},
+    { "bench_program": { "files": 100 } },
+    { "bench_program": { "files": 150 } },
+    { "bench_program": { "files": 200 } },
+    { "bench_program": { "files": 300 } },
+    { "bench_program": { "files": 500 } },
+    { "bench_program": { "files": 750 } },
+    { "bench_program": { "files": 1000 } },
+    { "bench_program": { "files": 1500 } },
+    { "bench_program": { "files": 2000 } }
+  ]
+}

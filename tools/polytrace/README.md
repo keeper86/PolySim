@@ -37,6 +37,32 @@ The command build will create two binaries in `/build/bin/`:
 - `trace`: The main tracing tool.
 - `upload`: Tool to upload trace results to our server.
 
+## Prerequisites
+
+Install required packages for building on Debian/Ubuntu:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y build-essential cmake libssl-dev strace clang-tidy
+```
+
+On Fedora/RHEL:
+
+```bash
+sudo dnf install -y gcc-c++ make cmake openssl-devel strace clang-tools-extra
+```
+
+- `build-essential`/`gcc-c++`: Provides C/C++ compilers and `make`.
+- `cmake`: Generates build files.
+- `libssl-dev`/`openssl-devel`: OpenSSL headers required by the SHA256 implementation.
+- `strace`: Runtime dependency for tracing.
+- `clang-tidy`: Optional static analysis; build will warn if missing.
+
+### Common Build Issues
+
+- `fatal error: openssl/types.h: No such file or directory` → Install `libssl-dev` (Debian/Ubuntu) or `openssl-devel` (Fedora/RHEL).
+- `No CMAKE_CXX_COMPILER could be found` → Install `build-essential` (Debian/Ubuntu) or `gcc-c++` (Fedora/RHEL).
+
 ## 4. Usage
 
 To trace a program, use the `trace` binary followed by the command you want to trace. For example:
