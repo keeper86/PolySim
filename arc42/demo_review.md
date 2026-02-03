@@ -341,6 +341,18 @@ The board became a **shared coordination mechanism**
 
 ---
 
+## Communication is Key
+
+Also for machine _-to->_ human communication
+
+<img src="extensive_logging-1.png" alt="Extensive Logging" class="full-width"/>
+
+aka **Logging**
+
+---
+
+## What next?
+
 We **know** what we want to build
 
 We **know** how we organize ourselves.
@@ -518,6 +530,10 @@ Avatar upload seemed straightforward, but required:
 4. **Result** — Avatar updated across the app
 
 > Key insight: Keycloak is a **separate service**, not part of our app logic.
+
+---
+
+## Bridging frontend & backend
 
 ---
 
@@ -1047,6 +1063,15 @@ exit 0</code></pre>
 
 ---
 
+## Polysim
+
+Quite a complex project:
+- Full-stack web application (2 servers)
+- CLI tracing tool (PolyTrace) 
+- integration with Keycloak Auth
+
+---
+
 ### Good software developer practice
 
  well **tested** code
@@ -1106,24 +1131,21 @@ Scientific Value: Bridging the gap between software engineering and FAIR simulat
 
 ---
 
-## Pictures we can use
+End - Questions?
+
+---
+
+Left intentionally blank
 
 ---
 
 <img src="upload_provenance-1.png" alt="Upload Provenance" class="full-width"/>
 
+Note: Fallback when live-demo of trace+upload fails
+
 ---
 
 <img src="board_zoomed_out-1.png" alt="Team Board Zoomed Out" class="full-width"/>
 
----
+Note: Fallback when live-demo of board fails
 
-<img src="extensive_logging-1.png" alt="Extensive Logging" class="full-width"/>
-
----
-
-<img src="integration_test_pass-1.png" alt="Integration Test Pass" class="full-width"/>
-
----
-
-<img src="unit_test_pass-1.png" alt="Unit Test Pass" class="full-width"/>
