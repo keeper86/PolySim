@@ -19,8 +19,7 @@ export function NavSecondary({ ...props }: React.ComponentPropsWithoutRef<typeof
 
     const loggedIn = useSession().status === 'authenticated';
 
-    const showRoute = (route: RouteMetadata): boolean =>
-        route.isSecondaryNav === true && (route.isPublic === true || loggedIn);
+    const showRoute = (route: RouteMetadata): boolean => route.isSecondaryNav === true;
 
     return (
         <SidebarGroup {...props}>
@@ -35,8 +34,8 @@ export function NavSecondary({ ...props }: React.ComponentPropsWithoutRef<typeof
                                         size='sm'
                                         onClick={() => isMobile && setOpenMobile(false)}
                                     >
-                                        <Link href={item.path}>
-                                            {item.icon && <item.icon />}
+                                        <Link href={item.path} aria-disabled={!(item.isPublic === true || loggedIn)}>
+                                            {item.icon && <item.icon width={16} height={16} />}
                                             <span>{item.label}</span>
                                         </Link>
                                     </SidebarMenuButton>

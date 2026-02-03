@@ -12,8 +12,8 @@ describe('user endpoint (integration)', async () => {
         expect(Array.isArray(result.users)).toBe(true);
 
         const users = Object.values(testUsers);
-        expect(result.users.length).toBeLessThanOrEqual(users.length);
-        expect(result.total).toBe(users.length);
+        // The normal dev seeding will have an extra user created.
+        expect(result.total).toBe(users.length + 1);
         expect(result.users).toEqual(
             expect.arrayContaining(
                 users.map((u) =>

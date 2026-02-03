@@ -10,6 +10,7 @@ import type { JSX } from 'react/jsx-runtime';
 function RenderNavEntry(route: RouteMetadata, opts?: { isSub?: boolean }): JSX.Element {
     const { isSub } = opts || {};
     const { isMobile, setOpenMobile } = useSidebar();
+    const loggedIn = useSession().status === 'authenticated';
 
     const handleClick = () => {
         if (isMobile) {
@@ -17,16 +18,18 @@ function RenderNavEntry(route: RouteMetadata, opts?: { isSub?: boolean }): JSX.E
         }
     };
 
+    const showRoute = (route: RouteMetadata): boolean => route.isPublic === true || loggedIn;
+
     return (
         <SidebarMenuItem key={route.path}>
             <SidebarMenuButton
                 asChild
                 size={isSub ? 'sm' : 'default'}
-                className={isSub ? 'font-normal text-muted-foreground' : 'font-medium'}
+                className={isSub ? 'font-normal text-muted-foreground' : 'text-md'}
                 onClick={handleClick}
             >
-                <Link href={route.path}>
-                    {route.icon && !isSub ? <route.icon width={14} height={14} /> : null}
+                <Link href={route.path} aria-disabled={!showRoute(route)}>
+                    {route.icon && !isSub ? <route.icon width={16} height={16} /> : null}
                     <span>{route.label}</span>
                 </Link>
             </SidebarMenuButton>
@@ -35,28 +38,24 @@ function RenderNavEntry(route: RouteMetadata, opts?: { isSub?: boolean }): JSX.E
 }
 
 export function NavMain() {
-    const loggedIn = useSession().status === 'authenticated';
-
-    const showRoute = (route: RouteMetadata): boolean =>
-        route.isMainNav === true && (route.isPublic === true || loggedIn);
     return (
         <nav className='py-4 px-4'>
             <SidebarMenu>
                 {Object.values(APP_ROUTES).map((route) => {
                     if (isRoute(route)) {
-                        if (!showRoute(route)) {
-                            return null;
+                        if (route.isMainNav === true) {
+                            return RenderNavEntry(route);
                         }
-                        return RenderNavEntry(route);
+                        return null;
                     }
                     if (isRouteManifest(route)) {
                         const { root, ...rest } = route;
-                        if (!isRoute(root) || !showRoute(root)) {
+                        if (!isRoute(root) || root.isMainNav !== true) {
                             return null;
                         }
                         const subItems: JSX.Element[] = [];
                         Object.values(rest).forEach((subRoute) => {
-                            if (isRoute(subRoute) && showRoute(subRoute)) {
+                            if (isRoute(subRoute)) {
                                 subItems.push(RenderNavEntry(subRoute, { isSub: true }));
                             }
                         });

@@ -24,6 +24,13 @@ export default function AccountPage() {
                     </Button>
                 </Link>
 
+                <Link href={APP_ROUTES.account.skills.root.path}>
+                    <Button className='w-full justify-start' variant='outline'>
+                        <Brain className='w-4 h-4' />
+                        Skills Radar
+                    </Button>
+                </Link>
+
                 <Link href={APP_ROUTES.account.pat.path}>
                     <Button className='w-full justify-start' variant='outline'>
                         <KeyRound />

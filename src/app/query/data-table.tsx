@@ -4,13 +4,17 @@ import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-tabl
 import type { ColumnDef } from '@tanstack/react-table';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import DataTableColumnHeader from '@/components/data-table-column-header';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
+    onSort?: (columnId: string) => void;
+    sortBy?: string | null;
+    sortDir?: 'asc' | 'desc';
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, onSort, sortBy, sortDir }: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
         columns,
@@ -26,9 +30,17 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                             {headerGroup.headers.map((header) => {
                                 return (
                                     <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(header.column.columnDef.header, header.getContext())}
+                                        {header.isPlaceholder ? null : onSort ? (
+                                            <DataTableColumnHeader
+                                                title={flexRender(header.column.columnDef.header, header.getContext())}
+                                                sortable={true}
+                                                isSorted={sortBy === header.id}
+                                                sortDir={sortDir}
+                                                onSort={() => onSort(header.id)}
+                                            />
+                                        ) : (
+                                            flexRender(header.column.columnDef.header, header.getContext())
+                                        )}
                                     </TableHead>
                                 );
                             })}

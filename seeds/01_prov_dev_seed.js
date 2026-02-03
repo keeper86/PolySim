@@ -90,7 +90,7 @@ exports.seed = async function (knex) {
             counts.activities += 1;
 
             await trx('agents')
-                .insert({ id: userId, metadata: { autoCreated: true } })
+                .insert({ id: userId, metadata: { autoCreated: true }, label: 'Dev Admin User' })
                 .onConflict('id')
                 .ignore();
 
