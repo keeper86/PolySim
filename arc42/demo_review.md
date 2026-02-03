@@ -311,114 +311,188 @@ Now we need to **plan** the app.
 
 ---
 
-## Why Keycloak?
+## Notes
 
-- **Trust the Pros:** Industry standard (BMW, Cisco, CERN)
-- **Open Source:** Audited by thousands of developers
-- **Focus on Features:** Skip weeks of auth work, build PolySim instead
+- Good UI Matters
+- go through the way that the Data changes in each Step
+- first Raw JSON
+- after the Upload we can see the Data in our Database 
+	- special Tool required to see it
+- For a usable experience we need the Website
+- Uses React Components
+	- Useful for an Interactive Website
+	- Performant rendering of interactive website parts
+	- Able to do a global Darkmode
+	- For consistency we take shadcn -- Industry standard website components
+	- It for example Ships with a site wide Darkmode that we can use for our purpose (show)
+- activities Table
+- Graph view
 
 ---
 
-## Setting up Keycloak with Next.js
+#### Why Keycloak?
 
-<div style="display: flex; gap: 2rem; margin-top: 2rem;">
-  <div style="flex: 1;">
-
-**The Infrastructure**
-
-- Keycloak runs in its own Docker container
-- Separate from the web app
-- Port `:8080`
-
-  </div>
-  <div style="flex: 1;">
-
-**The Bridge**
-
-- `next-auth` connects Next.js to Keycloak
-- Acts like a secure "translator"
-- Handles redirects and tokens
-
-  </div>
+<div class="flow-grid-2x2">
+    <div class="cell">
+        <strong>Security is hard</strong><br>
+        <span style="font-size: 0.8em">Don't build your own vault. Small mistakes lead to big hacks.</span>
+    </div>
+    <div class="cell">
+        <strong>Trust the Pros</strong><br>
+        <span style="font-size: 0.8em">Industry standard used by BMW & Cisco. Audited Open Source code.</span>
+    </div>
+    <div class="cell">
+        <strong>Focus on App</strong><br>
+        <span style="font-size: 0.8em">We skip building login pages/DBs and focus on PolySim features.</span>
+    </div>
+    <div class="cell">
+        <strong>Our Auth Layer</strong><br>
+        <span style="font-size: 0.8em">The "Security Guard" checking IDs before letting users in.</span>
+    </div>
 </div>
 
----
-
-## The Login Flow
-
-| Step | Action |
-|------|--------|
-| 1️⃣ | User clicks "Login" |
-| 2️⃣ | Redirected to Keycloak login page |
-| 3️⃣ | Keycloak verifies credentials |
-| 4️⃣ | JWT Token returned |
-| 5️⃣ | PolySim grants access ✅ |
----
-
-## Implementing Avatar Upload
-
-**The Evolution: From File Input → Dialog**
-
-| Before | After |
-|--------|-------|
-| Generic Shadcn file component | Dedicated Dialog modal |
-| No preview | Live preview before upload |
-| Confusing UX | Clear, focused workflow |
+Note:
+- **Context:** Why external service?
+- **Analogy:** Don't build your own vault (Security = Complex)
+- **Trust:** Industry Standard (CERN, Bundesagentur für Arbeit)
+- **Role:** Keycloak is our "Auth Layer" (The Security Guard)
+- **Benefit:** We focus on PolySim features, not password hashing
 
 ---
 
-## Avatar Upload Workflow
+#### The Architecture: Next.js & Keycloak
 
-**Click avatar (sidebar)** → **Account Page** → **"Upload Avatar" button** → **Dialog opens** → **Preview image** → **Confirm upload**
+<div class="flow-vertical">
+    <div class="box">
+        <strong>Docker Container (:8080)</strong><br>
+        <span style="font-size: 0.8em">Keycloak runs completely separate from the App</span>
+    </div>
+    <div style="margin: 2px 0;">
+        <span style="background: rgba(255,255,255,0.1); border: 1px dashed rgba(255,255,255,0.3); border-radius: 20px; padding: 5px 15px; font-size: 0.75em; color: var(--r-main-color);">
+            ⬇️ via next-auth Bridge
+        </span>
+    </div>
+    <div class="box">
+        <strong>Next.js Application</strong><br>
+        <span style="font-size: 0.8em">Never sees the password, only receives the "Ticket" (JWT)</span>
+    </div>
+</div>
 
----
+<br>
 
-## Storing Avatars in the Database
+**The Login Flow:**
+<div class="flow-horizontal" style="margin-top: 10px;">
+    <div class="box">Click "Login"</div>
+    <div class="arrow">→</div>
+    <div class="box">Redirect to Keycloak</div>
+    <div class="arrow">→</div>
+    <div class="box">Verify Creds</div>
+    <div class="arrow">→</div>
+    <div class="box">Back with Token</div>
+</div>
 
-**Image → Base64 String → Database**
-
-- Convert image to **Base64** text format
-- Send via **tRPC mutation**
-- Store directly in PostgreSQL
-- **No external cloud storage needed**
-
----
-
-## Retrieving Avatars
-
-**Database → Base64 String → Browser Display**
-
-- tRPC query fetches the Base64 string
-- Browser converts it back to an image
-- Shown in sidebar and profile page
-- **Simple and efficient** ✅
-
----
-
-## Experience: Complexity in Practice
-
-**What looks simple becomes surprisingly tricky**
-
-Avatar upload seemed straightforward, but required:
-
-- Base64 encoding/decoding
-- Real-time UI updates
-- Proper error handling
-
-**Our solution:** Iterate, test, refine
+Note:
+- **Infrastructure:** Keycloak runs isolated (Docker Container).
+- **Integration:** `next-auth` acts as the bridge.
+- **The Flow:** Redirect -> Login External -> Return with Ticket (JWT).
+- **Security:** Our App NEVER sees the password, only the token.
 
 ---
 
-## Demo
+#### Implementing Avatar Upload
 
-🎯 **What we'll show:**
+**The Evolution: From File Input to Dialog**
 
-1. **Keycloak running** — Show the separate container on `:8080`
-2. **Login flow** — Redirect to official Keycloak interface
-3. **Avatar upload** — Account Page → Upload Dialog → Live preview
-4. **Result** — Avatar updated across the app
+| Feature | Version 1 (Generic) | Version 2 (Refined) |
+| :--- | :--- | :--- |
+| **Component** | Standard Shadcn Input | **Dedicated Modal (Dialog)** |
+| **Feedback** | Filename only | **Live Image Preview** |
+| **UX** | "Is it uploaded?" | Explicit "Confirm" Action |
 
-> Key insight: Keycloak is a **separate service**, not part of our app logic.
+<div class="fragment flow-horizontal" style="margin-top: 30px; font-size: 0.8em;">
+    <div class="box">Sidebar<br>Avatar</div>
+    <div class="arrow">→</div>
+    <div class="box">Account<br>Page</div>
+    <div class="arrow">→</div>
+    <div class="box">Upload<br>Dialog</div>
+    <div class="arrow">→</div>
+    <div class="box" style="border-color: #bae6fd;">Preview<br>& Confirm</div>
+</div>
+
+Note:
+- **Evolution:** Moved from generic input to custom Dialog
+- **UX Key:** Live Preview is crucial for user confidence
+- **Workflow:** Select -> Preview -> Confirm
+- **Why:** Prevents errors, feels more "App-like"
+
+---
+
+#### Avatar Data Lifecycle
+
+**Problem:** How to store images without external storage (S3)?
+**Solution:** Store directly in Postgres as Base64.
+
+<div class="flow-vertical" style="margin-top: 20px;">
+    <div class="flow-horizontal">
+        <div class="box">
+            <strong>Frontend (Image)</strong><br>
+            <span style="font-size: 0.7em">User selects file</span>
+        </div>
+        <div class="arrow">→</div>
+        <div class="box" style="background: rgba(255,255,255,0.15);">
+            <strong>Base64 Conversion</strong><br>
+            <span style="font-size: 0.7em">Image to String</span>
+        </div>
+        <div class="arrow">→</div>
+        <div class="box">
+            <strong>tRPC Mutation</strong><br>
+            <span style="font-size: 0.7em">Type-safe transfer</span>
+        </div>
+        <div class="arrow">→</div>
+        <div class="box">
+            <strong>Database</strong><br>
+            <span style="font-size: 0.7em">Stored as Text</span>
+        </div>
+    </div>
+</div>
+
+<div class="fragment" style="margin-top: 30px;">
+    <strong>Retrieval:</strong> <br>
+    The browser receives the string via <strong>tRPC Query</strong> and renders it back to an image automatically.
+    <br><br>
+    <em>Using Shadcn Avatar Component for consistent circular display & Fallback initials.</em>
+</div>
+
+Note:
+- **Challenge:** No S3/Cloud storage available
+- **Technique:** Base64 (Convert Image -> Long Text String)
+- **Pipeline:** Frontend -> tRPC Mutation -> Postgres DB
+- **Retrieval:** tRPC Query -> Browser renders string automatically
+- **UI:** Shadcn Avatar handles Fallbacks (Initials)
+
+---
+
+#### Experience & Demo
+
+**Lessons Learned:**
+*   **Complexity:** Managing async State (Upload -> Preview -> Server) is tricky.
+*   **Base64:** Handling large strings on the client requires care.
+*   **UI Updates:** Ensuring the avatar updates immediately in the sidebar.
+
+<br>
+
+### 🎯 Live Demo Points
+1.  **Keycloak Container** (Port :8080)
+2.  **The Login Redirect** (App -> Auth -> App)
+3.  **Avatar Upload** (Preview Feature)
+
+Note:
+- **Lesson:** Simple features != Simple code (Async state is tricky)
+- **Technical:** Handling Base64 strings on client
+- **DEMO ROADMAP:**
+    1. Show Docker Container (:8080)
+    2. Perform Login (Redirect flow)
+    3. Show Upload Dialog & Preview
 
 ---
 
