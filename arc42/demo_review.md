@@ -562,6 +562,12 @@ const userId = getUserIdFromContext(ctx);
 
 ---
 
+public API secured with PATs!
+
+-> http://localhost:3000/api-docs
+
+---
+
 
 ## PolyTrace and Uploader
 
