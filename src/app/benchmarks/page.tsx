@@ -1,17 +1,7 @@
-'use client';
-
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
 import { Page } from '@/components/client/Page';
+import Image from 'next/image';
 
 export default function BenchmarksPage() {
-    const [generatedDate, setGeneratedDate] = useState('');
-
-    useEffect(() => {
-        // Client-only date to avoid hydration mismatch
-        setGeneratedDate(new Date().toLocaleDateString());
-    }, []);
-
     return (
         <Page title='Benchmarks'>
             <div className='space-y-10'>
@@ -69,7 +59,7 @@ export default function BenchmarksPage() {
                 </div>
 
                 <div className='text-center text-xs text-slate-500'>
-                    <p>Generated: {generatedDate || '—'} | Data: tools/polytrace/test/benchmarks/results.csv</p>
+                    <p>Generated: 3.02.2026 | Data: tools/polytrace/test/benchmarks/results.csv</p>
                 </div>
             </div>
         </Page>
