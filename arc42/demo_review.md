@@ -101,7 +101,7 @@ to track provenance data for scientific simulations.
 
 ---
 
-## How to build a web app?
+# How to build a web app?
 
 ---
 
@@ -125,150 +125,76 @@ Whether **technical**...
 
 ---
 
-## What does AGILE mean?
-
-Agile is **not a process or a tool**.  
-It is a **mindset** for dealing with uncertainty in software development.
-
-At its core (Agile Manifesto, 2001):
-
-> “Responding to change over following a plan.”
-
-**In practice, Agile means:**
-
-- We expect requirements to change.
-- We learn by building small increments and getting feedback.
-- We optimize for people and collaboration, not rigid processes.
-
-Agile exists because **software development is complex, not predictable**.
+# Agile, Scrum & Kanban
 
 ---
 
-## What are Scrum and Kanban? (rough outline)
+## 1. What implies "AGILE" really?
 
-### Scrum — Structure for Learning
+Agile is **not a tool**. It is a **mindset**.
 
-Scrum is a **framework** that adds rhythm and roles to Agile work.
-
-- Time-boxed iterations (**Sprints**)
-- Defined roles (Product Owner, Scrum Master, Developers)
-- Regular feedback loops:
-  - Planning and refining
-  - Daily
-  - Review
-  - Retrospective
-
-**Purpose of Scrum:**  
-Create alignment, transparency, and frequent opportunities to inspect & adapt.
+> "Responding to change over following a plan."
+> -- Agile Manifesto (2001)
 
 ---
 
-### Kanban — Flow for Work
+## 1. What implies "AGILE" really?
 
-Kanban focuses on **how work flows through the system**.
 
-- Visual board (To Do → In Progress → Done)
-- Pull principle (no pushing work onto people)
-- WIP limits (limit parallel work)
-- Continuous delivery instead of fixed iterations
+* **Uncertainty** 
+* **Increments** 
+* **People** Collaboration > Rigid Processes
 
-**Purpose of Kanban:**  
-Optimize flow, reduce bottlenecks, and make work visible.
 Note:
-
-- Software development is complex
+- Software development is complex, not predictable
 - We optimize for people, not for paperwork
 
 ---
 
-### Key Difference (very short)
-
-- **Scrum:** Time-based, structured learning cycles
-- **Kanban:** Flow-based, continuous work system
+## 2. The Tools
 
 ---
 
-## Why do we do this?
+### Scrum (Structure)
+*Rhythm & Roles*
 
-### 1. Managing Large Work Packages
-
-- Big software problems cannot be fully specified upfront.
-- Agile breaks work into **small, inspectable increments**.
-- This reduces risk and wasted effort.
-
----
-
-### 2. Team Coordination
-
-- Software work is highly interdependent.
-- Agile replaces top-down task assignment with **shared visibility**.
-- Teams coordinate via:
-  - Boards
-  - "Daily" syncs
-  - Clear ownership
-
-This enables **self-organization** instead of micromanagement.
+* **Time-boxed:** Fixed Sprints 
+* **Roles:** PO, Scrum Master, Developers
+* **Loop:** Plan → Work → Review → Retro
+* **Goal:** Alignment & Inspect/Adapt
 
 ---
 
-### 3. Fighting Complexity
-
-Software systems are:
-
-- Non-linear
-- Uncertain
-- Constantly changing
-
-Agile embraces this by:
-
-- Short feedback loops
-- Continuous adaptation
-- Empirical decision-making
-
-Instead of pretending we can plan everything, we **adapt as we learn**.
-
-## Flexibility and adaptability
+<img src="scrum.png" alt="Scrum Scheme" class="full-width"/>
 
 ---
 
-## How did this pan out for us?
+### Kanban (Flow)
+*Visualizing Work*
 
-### Retrospective → Self-Organization → Adaptation
-
-1. **We started with Scrum**
-   - Fixed sprints
-   - Planned commitments
-
-2. **Reality check**
-   - Unplanned work (bugs, urgent tasks)
-   - Time constraints because of other courses
-   - No 'full time' job  
-   → hard to finish assigned tickets in given time frames 
-
-3. **Retrospective insight**
-   - The problem was not necessarily discipline
-   - The problem was **mismatch between process and reality**
+* **Visual Board:** To Do → Doing → Done
+* **Pull Principle:** No pushing tasks onto people
+* **WIP Limits:** Stop starting, start finishing
+* **Goal:** Optimize flow, reduce bottlenecks
 
 ---
 
-### Our Adaptation: Scrumban
+## Our Board
 
-We combined the strengths of both approaches:
+---
 
-- From **Scrum**:
-  - "Daily" syncs
-  - Retrospectives
-  - Shared responsibility
+## 3. Why do we do this?
 
-- From **Kanban**:
-  - continouos refinement of new tickets 
-  - Pull-based work
-  - Continuous flow
-  - Flexible prioritization
-  
+* **Large Work Packages**
+    
+* **Team Coordination**
+    
+* **Fighting Complexity**
+    
 
-This allowed us to stay aligned **without artificial constraints**.
+---
 
+## 4. How did this pan out for us?
 ### From Theory to Reality
 
 ---
@@ -277,81 +203,39 @@ This allowed us to stay aligned **without artificial constraints**.
 
 We started with strict **Scrum**, but...
 
-- **Constraint 1:** Unplanned work
-- **Constraint 2:** Time constraints
-- **Constraint 3:** Part-time nature
+* **Constraint 1:** Unplanned work 
+* **Constraint 2:** Time constraints 
+* **Constraint 3:** Part-time nature
 
 **Result:** Mismatch between process and reality.
 
 ---
 
-### The Philosophy
+## How we reacted:
 
-How we reacted:
-
+**Jugaad:** 
 > "Overcoming harsh constraints by improvising an effective solution using limited resources."
 
 ---
 
-### Our Solution: Scrumban
+## Our Solution: Scrumban
+*Flexibility & Adaptability*
 
-_Flexibility & Adaptability_
+---
 
-We combined the best of both worlds:
+## We combined the best of both worlds:
 
-- **From Scrum (Structure):**
-    - "Daily" syncs & Retrospectives (Alignment)
-    - Shared Responsibility
-- **From Kanban (Flow):**
-    - Continuous refinement
-    - **Pull-based** work (when time allows)
-    - Flexible prioritization
+* ### From Scrum (Structure):
+    * "Daily" syncs & Retrospectives (Alignment)
+    * Shared Responsibility
+* ### From Kanban (Flow):
+    * Continuous refinement
+    * **Pull-based** work (when time allows)
+    * Flexible prioritization
 
 **Outcome:** Alignment without artificial constraints.
 
 ---
-
-## Show the Board — How we used it
-
-### The Board as the “Single Source of Truth”
-
----
-
-- **Kanban = Ticket**
-- Each ticket represents:
-  - A concrete, actionable unit of work
-  - confined task 
-  - Clear ownership
-  - Visible status
-
-### How we worked with it
-
-- No one assigns tasks — developers **pull** tickets
-- WIP limits prevent overload
-- Blockers are immediately visible
-- Progress is transparent to the entire team
-
-### Result
-
-- Better focus
-- Fewer bottlenecks
-- True self-organization
-
-The board became a **shared coordination mechanism**
-
----
-
-## Communication is Key
-
-Also for machine _-to->_ human communication
-
-<img src="extensive_logging-1.png" alt="Extensive Logging" class="full-width"/>
-
-aka **Logging**
-
----
-
-## What next?
 
 We **know** what we want to build
 
@@ -559,13 +443,15 @@ Avatar upload seemed straightforward, but required:
 For CLI tools like **PolyTrace**, we need a secure authentication method:
 
 - No interactive login possible
-- Classic solution: **Personal Access Tokens** (PATs)
+- Classic solution: **Personal Access Tokens**
 
 ---
 
-## What are PATs?
+## What are Personal Access Tokens?
 
 A **PAT** is a long-lived token for API authentication.
+
+Key characteristics:
 
 - Generated by backend, shown **once**
 - Stored **hashed** on server
@@ -638,6 +524,17 @@ const hash = crypto.createHash('sha256').update(salted).digest('hex');
 
 ---
 
+## How We Use PATs in PolySim
+
+1. User generates PAT via web interface
+2. Token shown **once** (store locally)
+3. PolyTrace sends PAT in requests
+4. Server validates and grants access
+
+**Use case:** Upload provenance from PolyTrace
+
+---
+
 ## Backend Authentication Flow
 
 1. Client sends PAT in `Authorization` header
@@ -652,14 +549,6 @@ const userId = getUserIdFromContext(ctx);
 
 ---
 
-## How We Use PATs in PolySim
-
-1. User generates PAT via web interface
-2. Token shown **once** (store locally)
-3. **PolyTrace** sends PAT in requests
-4. Server validates and grants access
-
----
 
 ## PolyTrace and Uploader
 
