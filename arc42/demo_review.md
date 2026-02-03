@@ -86,6 +86,12 @@ First, we need to understand
 
 ---
 
+<img src="informed_by_schema.png" alt="Infer informedBy relationships" class="full-width"/>
+
+Note: informedBy relationships can be inferred transitively. "Connecting the dots..."
+
+---
+
 ## Our answer to FAIR
 
 **PolySim**
