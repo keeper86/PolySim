@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const getDevAdminUserFromInitialDevRealm = require('./00_upsert_keycloak_user').getDevAdminUserFromInitialDevRealm;
 
-const fixtureDir = 'tools/polytrace/test/fixtures/tmp/prov_upload_input';
+const fixtureDir = 'seeds/provDevSeedData';
 let provInputs = [];
 if (fs.existsSync(fixtureDir)) {
     const stat = fs.statSync(fixtureDir);

@@ -1,0 +1,95 @@
+{
+    "activity": {
+        "endedAt": 1770075859236,
+        "id": "8e617524949678cac34d7aec29e22bab833a08281b0d71125e340246c43ec81f",
+        "label": "Run /bin/sh",
+        "metadata": {
+            "command": [
+                "/bin/sh",
+                "-c",
+                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/concurrent_append.sh"
+            ]
+        },
+        "startedAt": 1770075859217
+    },
+    "entities": [
+        {
+            "createdAt": 1770075859231,
+            "id": "880553fca8fcea94e325ee2cfb48e5a985cc797f39a14cc6d3cedecfeb2ae4d2",
+            "label": "concurrent_append_file",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {},
+                        "pid": 335632,
+                        "role": "output"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 335628,
+                        "role": "output"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 335633,
+                        "role": "input"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 335630,
+                        "role": "output"
+                    }
+                ],
+                "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/tmp/concurrent_append_file"
+            },
+            "role": "output"
+        },
+        {
+            "createdAt": 1769698204766,
+            "id": "c311eed7ae798c9aa032034689cf42ce53a9898a9c121478e05cce53a92ed3c3",
+            "label": "concurrent_append.sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": [
+                                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/concurrent_append.sh"
+                            ]
+                        },
+                        "pid": 335623,
+                        "role": "process"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 335623,
+                        "role": "input"
+                    }
+                ],
+                "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/concurrent_append.sh"
+            },
+            "role": "process"
+        },
+        {
+            "createdAt": 1711874846000,
+            "id": "86d31f6fb799e91fa21bad341484564510ca287703a16e9e46c53338776f4f42",
+            "label": "sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": [
+                                "/bin/sh",
+                                "-c",
+                                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/concurrent_append.sh"
+                            ]
+                        },
+                        "pid": 335622,
+                        "role": "process"
+                    }
+                ],
+                "path": "/bin/sh"
+            },
+            "role": "process"
+        }
+    ]
+}
