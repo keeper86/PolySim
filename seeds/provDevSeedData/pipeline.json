@@ -1,0 +1,74 @@
+{
+    "activity": {
+        "endedAt": 1770075859047,
+        "id": "0d19d6544ab141f13d8c42e651612dfdc6ed7c7242491cc6135a57d38b2eed15",
+        "label": "Run /bin/sh",
+        "metadata": {
+            "command": ["/bin/sh", "-c", "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/pipeline.sh"]
+        },
+        "startedAt": 1770075858991
+    },
+    "entities": [
+        {
+            "createdAt": 1770075859032,
+            "id": "3016bd6c71b4b67760fe2414a033f8dfd134995015c6bac1c9ba03a34b708850",
+            "label": "2",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {},
+                        "pid": 335570,
+                        "role": "output"
+                    }
+                ],
+                "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/tmp/pipeline_out/2"
+            },
+            "role": "output"
+        },
+        {
+            "createdAt": 1769698204766,
+            "id": "3bcb6e8969050df4774bc3ff5894c38324d7f8f83cfcbbbd91459ed82c47a256",
+            "label": "pipeline.sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": ["/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/pipeline.sh"]
+                        },
+                        "pid": 335562,
+                        "role": "process"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 335562,
+                        "role": "input"
+                    }
+                ],
+                "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/pipeline.sh"
+            },
+            "role": "process"
+        },
+        {
+            "createdAt": 1711874846000,
+            "id": "86d31f6fb799e91fa21bad341484564510ca287703a16e9e46c53338776f4f42",
+            "label": "sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": [
+                                "/bin/sh",
+                                "-c",
+                                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/pipeline.sh"
+                            ]
+                        },
+                        "pid": 335561,
+                        "role": "process"
+                    }
+                ],
+                "path": "/bin/sh"
+            },
+            "role": "process"
+        }
+    ]
+}

@@ -1,0 +1,74 @@
+{
+    "activity": {
+        "endedAt": 1770075858985,
+        "id": "790641e292e5bcf30e4c6f0d528b35a7c81797f1990c14c6409ccd8d132142a5",
+        "label": "Run /bin/sh",
+        "metadata": {
+            "command": ["/bin/sh", "-c", "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"]
+        },
+        "startedAt": 1770075858956
+    },
+    "entities": [
+        {
+            "createdAt": 1770075858971,
+            "id": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03",
+            "label": "simple_run_out",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {},
+                        "pid": 335552,
+                        "role": "output"
+                    }
+                ],
+                "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/tmp/simple_run_out"
+            },
+            "role": "output"
+        },
+        {
+            "createdAt": 1711874846000,
+            "id": "86d31f6fb799e91fa21bad341484564510ca287703a16e9e46c53338776f4f42",
+            "label": "sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": [
+                                "/bin/sh",
+                                "-c",
+                                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+                            ]
+                        },
+                        "pid": 335551,
+                        "role": "process"
+                    }
+                ],
+                "path": "/bin/sh"
+            },
+            "role": "process"
+        },
+        {
+            "createdAt": 1769698204766,
+            "id": "e8e5fac19389c6b5d4401398edce9b9a9b27d689cc92fb49dfc60c6834a0eeb2",
+            "label": "simple_run.sh",
+            "metadata": {
+                "accesses": [
+                    {
+                        "metadata": {
+                            "execve_argv": ["/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"]
+                        },
+                        "pid": 335552,
+                        "role": "process"
+                    },
+                    {
+                        "metadata": {},
+                        "pid": 335552,
+                        "role": "input"
+                    }
+                ],
+                "path": "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+            },
+            "role": "process"
+        }
+    ]
+}
