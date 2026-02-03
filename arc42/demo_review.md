@@ -262,7 +262,7 @@ Now we need to **plan** the app.
 
 ---
 
-# Visualization
+## Visualization
 
 - Good UI Matters
 - Data without good Visuals is a bit useless
@@ -278,12 +278,10 @@ Now we need to **plan** the app.
 
 ---
 
-- Table in Demo
-- Graph in Demo
-
+### We need to look at the Website!
 ---
 
-##  How do we visualize things in our Website?
+###  How do we visualize things in our Website?
 
 -  shadcn components based on React
 	- Responsive
@@ -293,29 +291,10 @@ Now we need to **plan** the app.
 
 ---
 
-## Challenges
+### Challenges
 
 - Dark mode
 - Different component sources
-
----
-
-## Notes
-
-- Good UI Matters
-- go through the way that the Data changes in each Step
-- first Raw JSON
-- after the Upload we can see the Data in our Database 
-	- special Tool required to see it
-- For a usable experience we need the Website
-- Uses React Components
-	- Useful for an Interactive Website
-	- Performant rendering of interactive website parts
-	- Able to do a global Darkmode
-	- For consistency we take shadcn -- Industry standard website components
-	- It for example Ships with a site wide Darkmode that we can use for our purpose (show)
-- activities Table
-- Graph view
 
 ---
 
