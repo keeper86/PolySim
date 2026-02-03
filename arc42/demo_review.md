@@ -236,6 +236,20 @@ We started with strict **Scrum**, but...
 
 ---
 
+# Communication is Key
+
+---
+
+Also for machine _-to->_ human communication
+
+<img src="extensive_logging-1.png" alt="Extensive Logging" class="full-width"/>
+
+aka **Logging**
+
+---
+
+## What next?
+
 We **know** what we want to build
 
 We **know** how we organize ourselves.
