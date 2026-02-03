@@ -8,7 +8,7 @@ Working on a **realistic-ish** project
 
 Encounter irreducible **complexity**
 
-Learn how to **organize**
+Learn how to become a **team** 
 
 ---
 
