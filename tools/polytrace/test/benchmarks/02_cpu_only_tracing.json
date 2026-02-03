@@ -1,5 +1,5 @@
 {
-  "id": "06_pure_cpu",
+  "id": "02_cpu_only_tracing",
   "repeats": 4,
   "bench_program": {
     "mode": "cpu",

@@ -1,8 +1,34 @@
 [
     {
-        "id": "01_io_datasize_overhead",
-        "title": "I/O datasize vs overhead",
-        "description": "Scatter plot showing tracing overhead (%) for different file sizes (1MB, 10MB, 50MB) across varying total data volumes. Overhead patterns vary significantly by workload characteristics and syscall density.",
+        "id": "01_io_datasize_overhead_small",
+        "title": "I/O datasize vs overhead (small files)",
+        "description": "Scatter plot showing tracing overhead (%) for small files across varying total data volumes. Overhead patterns vary significantly by workload characteristics and syscall density.",
+        "imageFile": "/benchmarks/scaling_io_datasize_vs_overhead.png",
+        "stats": {
+            "postprocMean": 0,
+            "postprocStdev": 0,
+            "incrTracingMean": 0,
+            "incrTracingStdev": 0,
+            "nSamples": 0
+        }
+    },
+    {
+        "id": "01_io_datasize_overhead_medium",
+        "title": "I/O datasize vs overhead (medium files)",
+        "description": "Scatter plot showing tracing overhead (%) for medium files across varying total data volumes. Overhead patterns vary significantly by workload characteristics and syscall density.",
+        "imageFile": "/benchmarks/scaling_io_datasize_vs_overhead.png",
+        "stats": {
+            "postprocMean": 0,
+            "postprocStdev": 0,
+            "incrTracingMean": 0,
+            "incrTracingStdev": 0,
+            "nSamples": 0
+        }
+    },
+    {
+        "id": "01_io_datasize_overhead_large",
+        "title": "I/O datasize vs overhead (large files)",
+        "description": "Scatter plot showing tracing overhead (%) for large files across varying total data volumes. Overhead patterns vary significantly by workload characteristics and syscall density.",
         "imageFile": "/benchmarks/scaling_io_datasize_vs_overhead.png",
         "stats": {
             "postprocMean": 0,

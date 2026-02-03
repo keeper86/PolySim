@@ -1,5 +1,5 @@
 {
-  "id": "09_io_scaling_large",
+  "id": "01_io_datasize_overhead_large",
   "repeats": 3,
   "bench_program": {
     "mode": "write",

@@ -1,5 +1,5 @@
 {
-  "id": "08_io_scaling_medium",
+  "id": "01_io_datasize_overhead_medium",
   "repeats": 3,
   "bench_program": {
     "mode": "write",

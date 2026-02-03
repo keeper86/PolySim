@@ -35,7 +35,7 @@ def main():
     with results_csv.open('r') as f:
         for row in csv.DictReader(f):
             run_id = row['run_id']
-            if not any(x in run_id for x in ['run_07_io_scaling_small', 'run_08_io_scaling_medium', 'run_09_io_scaling_large']):
+            if not any(x in run_id for x in ['run_01_io_datasize_overhead_small', 'run_01_io_datasize_overhead_medium', 'run_01_io_datasize_overhead_large']):
                 continue
             
             try:
@@ -48,17 +48,17 @@ def main():
                 overhead_pct = ((traced_ms - wall_untraced) / wall_untraced) * 100
                 
                 # Determine benchmark config
-                if 'run_07' in run_id:
+                if 'run_01_io_datasize_overhead_small' in run_id:
                     file_size_mb = 1
                     step = int(run_id.split('_step')[1].split('_')[0])
                     file_counts = [50, 100, 150, 200, 300, 500, 750, 1000, 1500, 2000]
                     file_count = file_counts[step]
-                elif 'run_08' in run_id:
+                elif 'run_01_io_datasize_overhead_medium' in run_id:
                     file_size_mb = 10
                     step = int(run_id.split('_step')[1].split('_')[0])
                     file_counts = [5, 10, 15, 20, 30, 50, 75, 100, 150, 200]
                     file_count = file_counts[step]
-                elif 'run_09' in run_id:
+                elif 'run_01_io_datasize_overhead_large' in run_id:
                     file_size_mb = 50
                     step = int(run_id.split('_step')[1].split('_')[0])
                     file_counts = [1, 2, 3, 4, 6, 10, 15, 20, 30, 40]

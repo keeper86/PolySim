@@ -33,7 +33,7 @@ def main():
     
     with results_csv.open('r') as f:
         for row in csv.DictReader(f):
-            if 'run_06_pure_cpu' not in row['run_id']:
+            if 'run_02_cpu_only_tracing' not in row['run_id']:
                 continue
             try:
                 wall_untraced = float(row['wall_ms_untraced'])
