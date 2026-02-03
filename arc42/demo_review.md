@@ -165,7 +165,7 @@ Note:
 
 ---
 
-<img src="scrum.png" alt="Scrum Scheme" class="full-width"/>
+<img src="images/scrum.png" alt="Scrum Scheme" class="full-width"/>
 
 ---
 
@@ -211,9 +211,9 @@ We started with strict **Scrum**, but...
 
 ---
 
-## How we reacted:
+## How we reacted
 
-**Jugaad:** 
+**Jugaad** 
 > "Overcoming harsh constraints by improvising an effective solution using limited resources."
 
 ---
@@ -223,17 +223,16 @@ We started with strict **Scrum**, but...
 
 ---
 
-## We combined the best of both worlds:
+## We combined the best of both worlds
 
-* ### From Scrum (Structure):
+*  **From Scrum (Structure):** 
     * "Daily" syncs & Retrospectives (Alignment)
     * Shared Responsibility
-* ### From Kanban (Flow):
+
+* **From Kanban (Flow):** 
     * Continuous refinement
     * **Pull-based** work (when time allows)
-    * Flexible prioritization
-
-**Outcome:** Alignment without artificial constraints.
+    * Flexible prioritizations
 
 ---
 
