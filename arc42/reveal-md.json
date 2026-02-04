@@ -1,5 +1,5 @@
 {
-    "theme": "white",
+    "theme": "moon",
     "highlightTheme": "atom-one-dark",
     "css": ["custom.css"],
     "revealOptions": {

@@ -1,15 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
 :root {
-    --r-main-font: 'Inter', sans-serif;
-    --r-heading-font: 'Inter', sans-serif;
-    --r-heading-color: #1e293b; /* slate-800 */
-    --r-main-color: #334155; /* slate-700 */
-    --r-background-color: #f8fafc; /* slate-50 */
-    --r-link-color: #0284c7; /* sky-600 */
-    --r-link-color-hover: #0369a1; /* sky-700 */
-    --r-selection-background-color: #bae6fd; /* sky-200 */
-    --r-selection-color: #0c4a6e; /* sky-900 */
+    --r-background-color: #061f52ca; /* slate-50 */
+    --r-heading-color: #d49709; /* slate-900 */
+    --r-main-color: #b9ced6; /* slate-100 */
+
 }
 
 .reveal {
@@ -94,7 +89,7 @@
 }
 
 .reveal strong {
-    color: #0f172a; /* slate-900 */
+    color: #dfd273; /* slate-900 */
 }
 
 .flow-grid-2x2 .arrow-left {
@@ -117,6 +112,7 @@
     padding: 0.1em 0.25em;
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.12);
+    color: #ffc765;
 }
 
 .flow-vertical {

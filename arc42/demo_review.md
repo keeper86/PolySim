@@ -1,4 +1,5 @@
-# Softwareengineering for Physicists
+# Softwareengineering
+# for Physicists
 
 ---
 
@@ -663,7 +664,7 @@ const userId = getUserIdFromContext(ctx);
 A CLI tool to record filesystem activity
 
 ---
-
+## PolyTrace Workflow
 <div class="flow-horizontal">
    <div class="box fragment"><strong>Run PolyTrace</strong><br/>executes the target program</div>
    <div class="arrow fragment">→</div>
@@ -1049,7 +1050,7 @@ exit 0</code></pre>
 
 ## Uploader
 
-### <u> Expects:
+**<u> Expects**:
 
 - PolyTrace output (PROV JSON)
 - PAT (can be stored locally)
