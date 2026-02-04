@@ -252,49 +252,7 @@ Now we need to **plan** the app.
 
 ---
 
-<img src="provenance-poc.png" alt="Provenance Proof of Concept" class="full-width"/>
-
----
-
- # KEYCLOAK HERE
-
----
-
-## Visualization
-
-- Good UI Matters
-- Data without good Visuals is a bit useless
-- The website should look nice and be easy to use
-
----
-
-![](RawJSON.png)
-
----
-
-![](Database.png)
-
----
-
-### We need to look at the Website!
----
-
-###  How do we visualize things in our Website?
-
--  shadcn components based on React
-	- Responsive
-	- Design toolbox
-- Tables
-- Graph view of Provenance
-
----
-
-### Challenges
-
-- Dark mode
-- Different component sources
 <img src="poc1.png" alt="Provenance Proof of Concept" class="full-width"/>
-
 
 ---
 
@@ -324,19 +282,8 @@ Note:
 - **Analogy:** Don't build your own vault (Security = Complex).
 - **Trust:** Industry Standard (BMW, Cisco, etc.).
 - **Role:** Keycloak is our "Auth Layer" (The Security Guard).
-- **Benefit:** We focus on PolySim features, not password hashing.
+- **Benefit:** We focus on PolySim features, not password hashing
 
----
-
-## The Login Flow
-
-| Step | Action |
-|------|--------|
-| 1️⃣ | User clicks "Login" |
-| 2️⃣ | Redirected to Keycloak login page |
-| 3️⃣ | Keycloak verifies credentials |
-| 4️⃣ | JWT Token returned |
-| 5️⃣ | PolySim grants access ✅ |
 ---
 
 <img src="poc2.png" alt="Provenance Proof of Concept" class="full-width"/>
@@ -366,7 +313,6 @@ Note:
 ---
 
 ### We need to look at the Website!
-
 ---
 
 ###  How do we visualize things in our Website?
@@ -386,18 +332,6 @@ Note:
 
 ---
 
-
-## Implementing Avatar Upload
-
-**The Evolution: From File Input → Dialog**
-
-| Before | After |
-|--------|-------|
-| Generic Shadcn file component | Dedicated Dialog modal |
-| No preview | Live preview before upload |
-| Confusing UX | Clear, focused workflow |
-
----
 
 #### The Architecture: Next.js & Keycloak
 
@@ -520,6 +454,8 @@ Note:
     <em style="opacity: 0.8; font-size: 0.9em;">(Shadcn Avatar handles circular display & Fallback initials)</em>
 </div>
 
+
+
 Note:
 - **Challenge:** No S3/Cloud storage available.
 - **Technique:** Base64 (Convert Image -> Long Text String).
@@ -529,42 +465,10 @@ Note:
 
 ---
 
-#### Experience & Demo
-
-<div style="font-size: 0.85em;">
-    <strong>Lessons Learned:</strong>
-    <ul style="margin-top: 5px; margin-bottom: 20px;">
-        <li><strong>Complexity:</strong> Managing async State (Upload -> Preview) is tricky.</li>
-        <li><strong>Base64:</strong> Handling large strings on the client requires care.</li>
-        <li><strong>UI Updates:</strong> Instant feedback in sidebar is harder than it looks.</li>
-    </ul>
-    <h3 style="font-size: 1.3em; margin-bottom: 10px;">🎯 Live Demo Points</h3>
-    <ol style="margin-top: 5px;">
-        <li><strong>Keycloak Container</strong> (Port :8080)</li>
-        <li><strong>The Login Redirect</strong> (App -> Auth -> App)</li>
-        <li><strong>Avatar Upload</strong> (Preview Feature)</li>
-    </ol>
-</div>
-**What looks simple becomes surprisingly tricky**
-
-Avatar upload seemed straightforward, but required:
-
-- Base64 encoding/decoding
-- Real-time UI updates
-- Proper error handling
-
-**Our solution:** Iterate, test, refine
-
-Note: Show don't tell
-
-Note:
-- **Lesson:** Simple features != Simple code (Async state is tricky).
-- **Technical:** Handling Base64 strings on client.
-- **DEMO ROADMAP:**
-    1. Show Docker Container (:8080).
-    2. Perform Login (Redirect flow).
-    3. Show Upload Dialog & Preview.
+     [Avatar Upload](http://localhost:3000/account)
+     
 ---
+
 
 ## Bridging frontend & backend
 
@@ -1104,7 +1008,6 @@ exit 0</code></pre>
 
 ## Uploader
 
-**<u> Expects**:
 <img src="upload_provenance-1.png" alt="Upload Provenance" class="full-width"/>
 
 Note: Fallback when live-demo of trace+upload fails
@@ -1153,18 +1056,6 @@ We made sure it **works**!
 But is it **fast** enough?
 
 [Benchmarks](http://localhost:3000/benchmarks)
-
----
-
-### Conclusion:
-
--Self-Organized Teamwork: Process optimization through regular Retrospectives (transition from Scrum to Scrumban).
-
--Industry Standards: Integrated Git Workflows, mandatory Code Reviews, and automated CI/CD pipelines.
-
--FAIR & Provenance: Built a system to track scientific data origin, ensuring reproducibility in research.
-
--Architectural Clarity: Managed high complexity using modular design and a strict separation of concerns.
 
 ---
 
