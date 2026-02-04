@@ -447,7 +447,7 @@ Avatar upload seemed straightforward, but required:
 
 For CLI tools like **PolyTrace**, we need a secure authentication method:
 
-- No interactive login possible
+- Non-interactive login
 - Classic solution: **Personal Access Tokens**
 
 ---
@@ -495,7 +495,6 @@ Each PAT can be tracked independently (creation time, last usage)
   <div class="box fragment" data-fragment-index="3" style="grid-column: 2; grid-row: 2;"><strong>3. HMAC</strong><br/>+ secret "blablabla" → <code>7c8e...</code></div>
   <div class="fragment" data-fragment-index="4" style="position: absolute; bottom: 20%; left: 48%; font-size: 2rem; color: #0ea5e9;">←</div>
   <div class="box fragment" data-fragment-index="4" style="grid-column: 1; grid-row: 2;"><strong>4. SHA-256</strong><br/><code>2f1a...</code> (stored in DB)</div>
-  <div style="position: absolute; top: 45%; left: 8%; font-size: 2rem; color: #94a3b8;">↑</div>
 </div>
 
 ---
