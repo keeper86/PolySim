@@ -332,56 +332,55 @@ Now we need to **plan** the app.
 
 #### Why Keycloak?
 
-<div class="flow-grid-2x2">
+<div class="flow-grid-2x2" style="margin-top: 10px;">
     <div class="cell">
         <strong>Security is hard</strong><br>
-        <span style="font-size: 0.8em">Don't build your own vault. Small mistakes lead to big hacks.</span>
+        <span style="font-size: 0.75em">Don't build your own vault. Small mistakes lead to big hacks.</span>
     </div>
     <div class="cell">
         <strong>Trust the Pros</strong><br>
-        <span style="font-size: 0.8em">Industry standard used by BMW & Cisco. Audited Open Source code.</span>
+        <span style="font-size: 0.75em">Industry standard used by BMW & Cisco. Audited Open Source code.</span>
     </div>
     <div class="cell">
         <strong>Focus on App</strong><br>
-        <span style="font-size: 0.8em">We skip building login pages/DBs and focus on PolySim features.</span>
+        <span style="font-size: 0.75em">We skip building login pages/DBs and focus on PolySim features.</span>
     </div>
     <div class="cell">
         <strong>Our Auth Layer</strong><br>
-        <span style="font-size: 0.8em">The "Security Guard" checking IDs before letting users in.</span>
+        <span style="font-size: 0.75em">The "Security Guard" checking IDs before letting users in.</span>
     </div>
 </div>
 
 Note:
 - **Context:** Why external service?
-- **Analogy:** Don't build your own vault (Security = Complex)
-- **Trust:** Industry Standard (CERN, Bundesagentur für Arbeit)
-- **Role:** Keycloak is our "Auth Layer" (The Security Guard)
-- **Benefit:** We focus on PolySim features, not password hashing
+- **Analogy:** Don't build your own vault (Security = Complex).
+- **Trust:** Industry Standard (BMW, Cisco, etc.).
+- **Role:** Keycloak is our "Auth Layer" (The Security Guard).
+- **Benefit:** We focus on PolySim features, not password hashing.
 
 ---
 
 #### The Architecture: Next.js & Keycloak
 
-<div class="flow-vertical">
-    <div class="box">
+<div class="flow-vertical" style="gap: 8px; margin-top: 10px;">
+    <div class="box" style="padding: 10px;">
         <strong>Docker Container (:8080)</strong><br>
-        <span style="font-size: 0.8em">Keycloak runs completely separate from the App</span>
+        <span style="font-size: 0.75em">Keycloak runs completely separate from the App</span>
     </div>
-    <div style="margin: 2px 0;">
-        <span style="background: rgba(255,255,255,0.1); border: 1px dashed rgba(255,255,255,0.3); border-radius: 20px; padding: 5px 15px; font-size: 0.75em; color: var(--r-main-color);">
+    <div style="margin: 0;">
+        <span style="background: rgba(255,255,255,0.1); border: 1px dashed rgba(255,255,255,0.3); border-radius: 20px; padding: 4px 12px; font-size: 0.7em; color: var(--r-main-color);">
             ⬇️ via next-auth Bridge
         </span>
     </div>
-    <div class="box">
+    <div class="box" style="padding: 10px;">
         <strong>Next.js Application</strong><br>
-        <span style="font-size: 0.8em">Never sees the password, only receives the "Ticket" (JWT)</span>
+        <span style="font-size: 0.75em">Never sees the password, only receives the "Ticket" (JWT)</span>
     </div>
 </div>
-
-<br>
+<br style="display: block; margin: 5px 0; content: ' ';">
 
 **The Login Flow:**
-<div class="flow-horizontal" style="margin-top: 10px;">
+<div class="flow-horizontal" style="margin-top: 5px; gap: 8px;">
     <div class="box">Click "Login"</div>
     <div class="arrow">→</div>
     <div class="box">Redirect to Keycloak</div>
@@ -401,15 +400,35 @@ Note:
 
 #### Implementing Avatar Upload
 
-**The Evolution: From File Input to Dialog**
-
-| Feature | Version 1 (Generic) | Version 2 (Refined) |
-| :--- | :--- | :--- |
-| **Component** | Standard Shadcn Input | **Dedicated Modal (Dialog)** |
-| **Feedback** | Filename only | **Live Image Preview** |
-| **UX** | "Is it uploaded?" | Explicit "Confirm" Action |
-
-<div class="fragment flow-horizontal" style="margin-top: 30px; font-size: 0.8em;">
+<div style="font-size: 0.8em;">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                <th style="padding: 5px;">Feature</th>
+                <th style="padding: 5px; opacity: 0.7;">Version 1 (Generic)</th>
+                <th style="padding: 5px; font-weight: bold;">Version 2 (Refined)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 5px;"><strong>Component</strong></td>
+                <td style="padding: 5px;">Standard Input</td>
+                <td style="padding: 5px;"><strong>Dedicated Modal</strong></td>
+            </tr>
+            <tr>
+                <td style="padding: 5px;"><strong>Feedback</strong></td>
+                <td style="padding: 5px;">Filename only</td>
+                <td style="padding: 5px;"><strong>Live Image Preview</strong></td>
+            </tr>
+            <tr>
+                <td style="padding: 5px;"><strong>UX</strong></td>
+                <td style="padding: 5px;">"Is it uploaded?"</td>
+                <td style="padding: 5px;">Explicit "Confirm"</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="fragment flow-horizontal" style="margin-top: 20px; font-size: 0.75em;">
     <div class="box">Sidebar<br>Avatar</div>
     <div class="arrow">→</div>
     <div class="box">Account<br>Page</div>
@@ -420,80 +439,81 @@ Note:
 </div>
 
 Note:
-- **Evolution:** Moved from generic input to custom Dialog
-- **UX Key:** Live Preview is crucial for user confidence
-- **Workflow:** Select -> Preview -> Confirm
-- **Why:** Prevents errors, feels more "App-like"
+- **Evolution:** Moved from generic input to custom Dialog.
+- **UX Key:** Live Preview is crucial for user confidence.
+- **Workflow:** Select -> Preview -> Confirm.
+- **Why:** Prevents errors, feels more "App-like".
 
 ---
 
 #### Avatar Data Lifecycle
 
-**Problem:** How to store images without external storage (S3)?
-**Solution:** Store directly in Postgres as Base64.
-
-<div class="flow-vertical" style="margin-top: 20px;">
+<div style="font-size: 0.9em">
+    <strong>Problem:</strong> No S3/Cloud? &nbsp;&nbsp; <strong>Solution:</strong> Postgres + Base64.
+</div>
+<div class="flow-vertical" style="margin-top: 15px;">
     <div class="flow-horizontal">
         <div class="box">
-            <strong>Frontend (Image)</strong><br>
-            <span style="font-size: 0.7em">User selects file</span>
+            <strong>Frontend</strong><br>
+            <span style="font-size: 0.7em">File Select</span>
         </div>
         <div class="arrow">→</div>
         <div class="box" style="background: rgba(255,255,255,0.15);">
-            <strong>Base64 Conversion</strong><br>
-            <span style="font-size: 0.7em">Image to String</span>
+            <strong>Base64</strong><br>
+            <span style="font-size: 0.7em">Img to Text</span>
         </div>
         <div class="arrow">→</div>
         <div class="box">
-            <strong>tRPC Mutation</strong><br>
-            <span style="font-size: 0.7em">Type-safe transfer</span>
+            <strong>tRPC</strong><br>
+            <span style="font-size: 0.7em">Mutation</span>
         </div>
         <div class="arrow">→</div>
         <div class="box">
             <strong>Database</strong><br>
-            <span style="font-size: 0.7em">Stored as Text</span>
+            <span style="font-size: 0.7em">Stored Text</span>
         </div>
     </div>
 </div>
-
-<div class="fragment" style="margin-top: 30px;">
+<div class="fragment" style="margin-top: 20px; font-size: 0.8em; line-height: 1.3;">
     <strong>Retrieval:</strong> <br>
     The browser receives the string via <strong>tRPC Query</strong> and renders it back to an image automatically.
-    <br><br>
-    <em>Using Shadcn Avatar Component for consistent circular display & Fallback initials.</em>
+    <br>
+    <em style="opacity: 0.8; font-size: 0.9em;">(Shadcn Avatar handles circular display & Fallback initials)</em>
 </div>
 
 Note:
-- **Challenge:** No S3/Cloud storage available
-- **Technique:** Base64 (Convert Image -> Long Text String)
-- **Pipeline:** Frontend -> tRPC Mutation -> Postgres DB
-- **Retrieval:** tRPC Query -> Browser renders string automatically
-- **UI:** Shadcn Avatar handles Fallbacks (Initials)
+- **Challenge:** No S3/Cloud storage available.
+- **Technique:** Base64 (Convert Image -> Long Text String).
+- **Pipeline:** Frontend -> tRPC Mutation -> Postgres DB.
+- **Retrieval:** tRPC Query -> Browser renders string automatically.
+- **UI:** Shadcn Avatar handles Fallbacks (Initials).
 
 ---
 
 #### Experience & Demo
 
-**Lessons Learned:**
-*   **Complexity:** Managing async State (Upload -> Preview -> Server) is tricky.
-*   **Base64:** Handling large strings on the client requires care.
-*   **UI Updates:** Ensuring the avatar updates immediately in the sidebar.
-
-<br>
-
-### 🎯 Live Demo Points
-1.  **Keycloak Container** (Port :8080)
-2.  **The Login Redirect** (App -> Auth -> App)
-3.  **Avatar Upload** (Preview Feature)
+<div style="font-size: 0.85em;">
+    <strong>Lessons Learned:</strong>
+    <ul style="margin-top: 5px; margin-bottom: 20px;">
+        <li><strong>Complexity:</strong> Managing async State (Upload -> Preview) is tricky.</li>
+        <li><strong>Base64:</strong> Handling large strings on the client requires care.</li>
+        <li><strong>UI Updates:</strong> Instant feedback in sidebar is harder than it looks.</li>
+    </ul>
+    <h3 style="font-size: 1.3em; margin-bottom: 10px;">🎯 Live Demo Points</h3>
+    <ol style="margin-top: 5px;">
+        <li><strong>Keycloak Container</strong> (Port :8080)</li>
+        <li><strong>The Login Redirect</strong> (App -> Auth -> App)</li>
+        <li><strong>Avatar Upload</strong> (Preview Feature)</li>
+    </ol>
+</div>
 
 Note:
-- **Lesson:** Simple features != Simple code (Async state is tricky)
-- **Technical:** Handling Base64 strings on client
+- **Lesson:** Simple features != Simple code (Async state is tricky).
+- **Technical:** Handling Base64 strings on client.
 - **DEMO ROADMAP:**
-    1. Show Docker Container (:8080)
-    2. Perform Login (Redirect flow)
-    3. Show Upload Dialog & Preview
-
+    1. Show Docker Container (:8080).
+    2. Perform Login (Redirect flow).
+    3. Show Upload Dialog & Preview.
 ---
 
 ## Bridging frontend & backend
