@@ -1,5 +1,4 @@
-<h1 class="letter-spacing-title">Softwareengineering</h1>
-<h1 class="non-letter-spacing-title">for Physicists</h1>
+# Softwareengineering for Physicists
 
 ---
 
