@@ -183,6 +183,10 @@ Note:
 
 ## Our Board
 
+<a href="https://github.com/users/keeper86/projects/3"><img src="board_zoomed_out-1.png" alt="Team Board Zoomed Out" class="full-width"/></a>
+
+Note: Fallback when live-demo of board fails
+
 ---
 
 ## 3. Why do we do this?
@@ -238,18 +242,6 @@ We started with strict **Scrum**, but...
 
 ---
 
-# Communication is Key
-
----
-
-Also for machine _-to->_ human communication
-
-<img src="extensive_logging-1.png" alt="Extensive Logging" class="full-width"/>
-
-aka **Logging**
-
----
-
 ## What next?
 
 We **know** what we want to build
@@ -301,10 +293,8 @@ Now we need to **plan** the app.
 
 - Dark mode
 - Different component sources
+<img src="poc1.png" alt="Provenance Proof of Concept" class="full-width"/>
 
----
-
-# UPLOADING AVATARS HERE
 
 ---
 
@@ -335,6 +325,77 @@ Note:
 - **Trust:** Industry Standard (BMW, Cisco, etc.).
 - **Role:** Keycloak is our "Auth Layer" (The Security Guard).
 - **Benefit:** We focus on PolySim features, not password hashing.
+
+---
+
+## The Login Flow
+
+| Step | Action |
+|------|--------|
+| 1️⃣ | User clicks "Login" |
+| 2️⃣ | Redirected to Keycloak login page |
+| 3️⃣ | Keycloak verifies credentials |
+| 4️⃣ | JWT Token returned |
+| 5️⃣ | PolySim grants access ✅ |
+---
+
+<img src="poc2.png" alt="Provenance Proof of Concept" class="full-width"/>
+
+---
+
+# React
+
+<small>_Some things are easier clicked than typed_</small>
+
+---
+
+## Visualization
+
+- Good UI Matters
+- Data without good Visuals is a bit useless
+- The website should look nice and be easy to use
+
+---
+
+![](RawJSON.png)
+
+---
+
+![](Database.png)
+
+---
+
+### We need to look at the Website!
+
+---
+
+###  How do we visualize things in our Website?
+
+-  shadcn components based on React
+	- Responsive
+	- Design toolbox
+- Tables
+- Graph view of Provenance
+
+---
+
+### Challenges
+
+- Dark mode
+- Different component sources
+
+---
+
+
+## Implementing Avatar Upload
+
+**The Evolution: From File Input → Dialog**
+
+| Before | After |
+|--------|-------|
+| Generic Shadcn file component | Dedicated Dialog modal |
+| No preview | Live preview before upload |
+| Confusing UX | Clear, focused workflow |
 
 ---
 
@@ -484,6 +545,17 @@ Note:
         <li><strong>Avatar Upload</strong> (Preview Feature)</li>
     </ol>
 </div>
+**What looks simple becomes surprisingly tricky**
+
+Avatar upload seemed straightforward, but required:
+
+- Base64 encoding/decoding
+- Real-time UI updates
+- Proper error handling
+
+**Our solution:** Iterate, test, refine
+
+Note: Show don't tell
 
 Note:
 - **Lesson:** Simple features != Simple code (Async state is tricky).
@@ -508,6 +580,9 @@ Note:
 
  **easy** internal and public API development   
 
+---
+
+<img src="poc3.png" alt="Provenance Proof of Concept" class="full-width"/>
 
 ---
 
@@ -625,9 +700,11 @@ const userId = getUserIdFromContext(ctx);
 
 ---
 
-**public API** secured with **PATs**!
+[**public API**](http://localhost:3000/api-doc) secured with **PATs**!
 
--> http://localhost:3000/api-doc
+---
+
+<img src="poc4.png" alt="Provenance Proof of Concept" class="full-width"/>
 
 ---
 
@@ -1028,19 +1105,22 @@ exit 0</code></pre>
 ## Uploader
 
 **<u> Expects**:
+<img src="upload_provenance-1.png" alt="Upload Provenance" class="full-width"/>
 
-- PolyTrace output (PROV JSON)
-- PAT (can be stored locally)
+Note: Fallback when live-demo of trace+upload fails
+
+---
+
+<img src="poc5.png" alt="Provenance Proof of Concept" class="full-width"/>
 
 ---
 
 ## Polysim
 
-Quite a complex project:
 - Full-stack web application (2 servers)
 - CLI tracing tool (PolyTrace) 
 - integration with Keycloak Auth
-
+   
 ---
 
 ### Good software developer practice
@@ -1060,7 +1140,31 @@ Does it work as intended?
 
 ---
 
-### Conclusion
+### CI&CD 
+
+<small> _Continuous Integration & Continuous Deployment_ </small>
+
+[Github Actions](https://github.com/keeper86/PolySim/actions/runs/21652040518/job/62418639722)
+
+---
+
+We made sure it **works**!   
+
+But is it **fast** enough?
+
+[Benchmarks](http://localhost:3000/benchmarks)
+
+---
+
+### Conclusion:
+
+-Self-Organized Teamwork: Process optimization through regular Retrospectives (transition from Scrum to Scrumban).
+
+-Industry Standards: Integrated Git Workflows, mandatory Code Reviews, and automated CI/CD pipelines.
+
+-FAIR & Provenance: Built a system to track scientific data origin, ensuring reproducibility in research.
+
+-Architectural Clarity: Managed high complexity using modular design and a strict separation of concerns.
 
 ---
 
@@ -1112,16 +1216,17 @@ End - Questions?
 
 ---
 
-Left intentionally blank
+<small>_Left intentionally blank_</small>
 
 ---
 
-<img src="upload_provenance-1.png" alt="Upload Provenance" class="full-width"/>
+Currently deployed at   
+https://polysim.work
 
-Note: Fallback when live-demo of trace+upload fails
 
----
+**Username**: demo.user   
+**Password**: tu-dortmund
 
-<img src="board_zoomed_out-1.png" alt="Team Board Zoomed Out" class="full-width"/>
 
 Note: Fallback when live-demo of board fails
+
