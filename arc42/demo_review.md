@@ -430,7 +430,7 @@ Note:
             <span style="font-size: 0.7em">File Select</span>
         </div>
         <div class="arrow">→</div>
-        <div class="box" style="background: rgba(255,255,255,0.15);">
+        <div class="box">
             <strong>Base64</strong><br>
             <span style="font-size: 0.7em">Img to Text</span>
         </div>
