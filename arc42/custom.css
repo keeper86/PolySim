@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
 :root {
-    --r-background-color: #061f52ca; /* slate-50 */
+    --r-background-color: #031945d6; /* slate-50 */
     --r-heading-color: #d49709; /* slate-900 */
     --r-main-color: #b9ced6; /* slate-100 */
 
@@ -24,6 +24,14 @@
 .reveal h1 {
     font-size: 2.4em;
     margin-bottom: 0.5em;
+}
+
+.reveal .letter-spacing-title {
+    letter-spacing: 0.02em;
+}
+
+.reveal .non-letter-spacing-title {
+    letter-spacing: 0.00em;
 }
 
 .reveal h2 {

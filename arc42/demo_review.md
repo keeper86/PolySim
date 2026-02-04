@@ -1,5 +1,5 @@
-# Softwareengineering
-# for Physicists
+<h1 class="letter-spacing-title">Softwareengineering</h1>
+<h1 class="non-letter-spacing-title">for Physicists</h1>
 
 ---
 
@@ -1148,4 +1148,3 @@ Note: Fallback when live-demo of trace+upload fails
 <img src="board_zoomed_out-1.png" alt="Team Board Zoomed Out" class="full-width"/>
 
 Note: Fallback when live-demo of board fails
-
