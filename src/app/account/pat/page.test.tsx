@@ -7,22 +7,21 @@ const mockRefetch = vi.fn();
 const mockListPATs = vi.fn((): PatToken[] => []);
 const mockCreatePAT = vi.fn();
 const mockRevokePAT = vi.fn();
+const mockDeletePAT = vi.fn();
 
 vi.mock('@/lib/trpc', () => ({
     useTRPC: vi.fn(() => ({
         listPATs: {
             queryOptions: vi.fn(() => ({ queryKey: ['pats'], queryFn: mockListPATs })),
         },
-    })),
-    useTRPCClient: vi.fn(() => ({
         createPAT: {
-            mutate: mockCreatePAT,
+            mutationOptions: vi.fn(() => ({ mutationFn: mockCreatePAT })),
         },
         revokePAT: {
-            mutate: mockRevokePAT,
+            mutationOptions: vi.fn(() => ({ mutationFn: mockRevokePAT })),
         },
         deletePAT: {
-            mutate: mockRevokePAT,
+            mutationOptions: vi.fn(() => ({ mutationFn: mockDeletePAT })),
         },
     })),
 }));
@@ -35,6 +34,10 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
             data: mockListPATs(),
             isLoading: false,
             refetch: mockRefetch,
+        })),
+        useMutation: vi.fn((options) => ({
+            mutateAsync: options?.mutationFn || vi.fn(),
+            isPending: false,
         })),
     };
 });
@@ -65,14 +68,14 @@ describe('PatPage', () => {
         {
             id: 'pat-1',
             name: 'Test Token 1',
-            created_at: new Date('2025-01-01T10:00:00Z'),
-            expires_at: new Date('2025-01-08T10:00:00Z'),
+            createdAt: new Date('2025-01-01T10:00:00Z'),
+            expiresAt: new Date('2025-01-08T10:00:00Z'),
         },
         {
             id: 'pat-2',
             name: 'API Key',
-            created_at: new Date('2025-02-15T12:00:00Z'),
-            expires_at: null, // Never expires
+            createdAt: new Date('2025-02-15T12:00:00Z'),
+            expiresAt: new Date('2025-03-15T12:00:00Z'),
         },
     ];
 
@@ -93,16 +96,18 @@ describe('PatPage', () => {
         mockListPATs.mockReturnValue(existingTokens);
         render(<PatPage />);
 
-        const createDate = new Date(existingTokens[0].created_at).toLocaleString();
-        const expireDate = new Date(existingTokens[0].expires_at ?? '').toLocaleString();
+        const createDate = new Date(existingTokens[0].createdAt).toLocaleString();
+        const expireDate = new Date(existingTokens[0].expiresAt).toLocaleString();
 
         const token1 = screen.getByText('Test Token 1').closest('li');
         expect(token1).toHaveTextContent(new RegExp(`Created ${createDate}`, 'i'));
         expect(token1).toHaveTextContent(new RegExp(`Expires ${expireDate}`, 'i'));
         expect(screen.getAllByRole('button', { name: /Delete/i }).length).toBe(2);
 
-        const token2 = screen.getByText('API Key').closest('li');
-        expect(token2).toHaveTextContent(/Never expires/i);
+        const token2Element = screen.getByText('API Key');
+        const token2Item = token2Element.closest('div')?.parentElement?.parentElement;
+        const token2Date = new Date(existingTokens[1].expiresAt).toLocaleString();
+        expect(token2Item).toHaveTextContent(new RegExp(`Expires ${token2Date}`, 'i'));
     });
 
     it('presses the create pat button and listens for the copy Pat dialog and for the backend call createPat', async () => {
@@ -116,7 +121,10 @@ describe('PatPage', () => {
         fireEvent.change(nameInput, { target: { value: 'My New PAT' } });
 
         const expiryDropdown = screen.getByRole('combobox');
-        fireEvent.change(expiryDropdown, { target: { value: '30' } });
+        fireEvent.click(expiryDropdown);
+
+        const oneMonthOption = screen.getByRole('option', { name: /1 month/i });
+        fireEvent.click(oneMonthOption);
 
         const generateButton = screen.getByRole('button', { name: /Generate token/i });
         fireEvent.click(generateButton);
@@ -174,7 +182,7 @@ describe('PatPage', () => {
         fireEvent.click(deleteButton);
 
         await waitFor(() => {
-            expect(mockRevokePAT).toHaveBeenCalledWith({ id: 'pat-2' });
+            expect(mockDeletePAT).toHaveBeenCalledWith({ id: 'pat-2' });
         });
 
         expect(mockRefetch).toHaveBeenCalled();

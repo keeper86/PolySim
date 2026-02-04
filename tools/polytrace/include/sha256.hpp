@@ -6,7 +6,6 @@
 #include <iostream>
 #include <openssl/evp.h>
 #include <openssl/sha.h>
-#include <openssl/types.h>
 #include <sstream>
 #include <string>
 #include <vector>

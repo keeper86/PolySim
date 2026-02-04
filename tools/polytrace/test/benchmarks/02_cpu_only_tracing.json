@@ -1,0 +1,55 @@
+{
+  "id": "02_cpu_only_tracing",
+  "repeats": 4,
+  "bench_program": {
+    "mode": "cpu",
+    "threads": 1,
+    "iterations": 5,
+    "cpu_ms": 200
+  },
+  "plan": [
+    {},
+    {
+      "bench_program": {
+        "threads": 2,
+        "iterations": 5,
+        "cpu_ms": 400
+      }
+    },
+    {
+      "bench_program": {
+        "threads": 4,
+        "iterations": 4,
+        "cpu_ms": 800
+      }
+    },
+    {
+      "bench_program": {
+        "threads": 4,
+        "iterations": 3,
+        "cpu_ms": 1500
+      }
+    },
+    {
+      "bench_program": {
+        "threads": 8,
+        "iterations": 3,
+        "cpu_ms": 2500
+      }
+    },
+    {
+      "bench_program": {
+        "threads": 8,
+        "iterations": 2,
+        "cpu_ms": 5000
+      }
+    },
+    {
+      "bench_program": {
+        "threads": 8,
+        "iterations": 2,
+        "cpu_ms": 8000
+      }
+    }
+  ]
+}

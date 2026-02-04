@@ -2,119 +2,87 @@
 
 ---
 
-## Pictures we can use
-
----
-
-<img src="upload_provenance-1.png" alt="Upload Provenance" class="full-width"/>
-
----
-
-<img src="board_zoomed_out-1.png" alt="Team Board Zoomed Out" class="full-width"/>
-
----
-
-<img src="extensive_logging-1.png" alt="Extensive Logging" class="full-width"/>
-
----
-
-<img src="integration_test_pass-1.png" alt="Integration Test Pass" class="full-width"/>
-
----
-
-<img src="unit_test_pass-1.png" alt="Unit Test Pass" class="full-width"/>
-
----
-
 ## Idea
 
 Working on a **realistic-ish** project
 
 Encounter irreducible **complexity**
 
----
-
-## PolySim
-
-Provenance tracking for scientific simulations
+Learn how to become a **team** 
 
 ---
 
-# Course idea - two parts
+## Our project
 
-build something useful - learn how to organize
-
----
-
-<!-- FAIR Principles + Provenance @alfiyabegum111-bot -
-Basically the motivation for the project. A real issue in scientific computing.
-
-   Content:
-      - Introduction to FAIR principles
-      - Importance of data provenance in scientific simulations
-      - Tracking data provenance in simulations
-      - Benefits of FAIR and provenance for researchers
-
-Here we can make the point why centralized storage and management of provenance data is important
-
- -> web platform
-
---- -->
-
-**FAIR Principles + Data Provenance**
+**Provenance** tracking for scientific simulations
 
 ---
 
-**FAIR Principles**
+First, we need to understand
+
+**Provenance**
+
+---
+
+### FAIR Principles + Data Provenance
+
+---
+
+### What are FAIR Principles
 
 - F – Findable (metadata, identifiers)
-- A – Accessible (standers protocols)
+- A – Accessible (standards, protocols)
 - I – Interoperable (tools, system)
 - R – Reusable (structured)
 
 ---
 
-**What is Data Provenance?**
+### What is Data Provenance?
 
 - Where data comes from
 - How it was produced
 - Who produced it
 - What transformations were applied
 
+*“How was this result created?”*
 ---
 
-**W3C PROV Conceptual Model**
+### W3C PROV Conceptual Model
+
 <img src="data_provenance.png" alt="Data Provenance" class="full-width"/>
 
 ---
 
-## <img src="informed_by_schema.png" alt="Data Provenance" class="full-width"/>
+<!-- ## <img src="informed_by_schema.png" alt="Data Provenance" class="full-width"/> -->
 
----
-**Graph Representation Data in PolySim**
+<!-- --- -->
+### Graph Representation Data in PolySim
 <img src="prov_table.png" alt="Data Provenance" width="600px" class="full-width"/>
 
 ---
 
-**Importance of Data Provenance in Scientific Simulations**
+### Importance of FAIR & Data Provenance in Scientific Simulations
 
 - Reproducibility
 - Debugging & Error Tracking
 - Collaboration & Sharing
 - Data Reuse & FAIR Compliance
-- Scientific Integrity & Validation
 - Automation & Workflow Management
 
 ---
 
-**Tracking Data Provenance in Simulations**
+### Tracking Data Provenance in Simulations
 
-<!-- - Inputs & Outputs -->
-<!-- - Processes -->
+- Entity(Inputs)
+- Agents(researchers, system )
+- outputs(plots)
 
-- Entity
-- Agents
-- Environment
+*Every result can be traced back to its origin*
+---
+
+<img src="informed_by_schema.png" alt="Infer informedBy relationships" class="full-width"/>
+
+Note: informedBy relationships can be inferred transitively. "Connecting the dots..."
 
 ---
 
@@ -126,198 +94,168 @@ Together, they empower better science for researchers.
 
 ---
 
-# overview
+Our answer to **FAIR**
+
+ ## PolySim 
+
+**web application + CLI tool**   
+<small>_to track provenance data for scientific simulations_</small>
 
 ---
 
-Modern software engineering practices
-
-- Version Control with Git and GitHub
-- Agile Methodologies (Scrum/Kanban)
-- Code Reviews and Collaboration
-- Continuous Integration/Continuous Deployment (CI/CD)
-- Testing and Quality Assurance
+## How to build a web app?
 
 ---
 
-## What does AGILE mean?
+### By using other people's stuff
 
-Agile is **not a process or a tool**.  
-It is a **mindset** for dealing with uncertainty in software development.
+Whether **technical**...
 
-At its core (Agile Manifesto, 2001):
+- **Docker** containerization
+- **Caddy** reverse proxy, ssl
+- **Next.js** frontend+backend via trpc
+- **PostgreSQL** database
+- **Keycloak** authentication
+---
 
-> “Responding to change over following a plan.”
+... or **organizational**
 
-**In practice, Agile means:**
-
-- We expect requirements to change.
-- We learn by building small increments and getting feedback.
-- We optimize for people and collaboration, not rigid processes.
-
-Agile exists because **software development is complex, not predictable**.
+- **git, CI/CD** GitHub Actions
+- **best practices** code reviews, testing
+- **agile methodologies** Scrum/Kanban
 
 ---
 
-## What are Scrum and Kanban? (rough outline)
-
-### Scrum — Structure for Learning
-
-Scrum is a **framework** that adds rhythm and roles to Agile work.
-
-- Time-boxed iterations (**Sprints**)
-- Defined roles (Product Owner, Scrum Master, Developers)
-- Regular feedback loops:
-    - Planning and refining
-    - Daily
-    - Review
-    - Retrospective
-
-**Purpose of Scrum:**  
-Create alignment, transparency, and frequent opportunities to inspect & adapt.
+# Agile, Scrum & Kanban
 
 ---
 
-### Kanban — Flow for Work
+## 1. What implies "AGILE" really?
 
-Kanban focuses on **how work flows through the system**.
+Agile is **not a tool**. It is a **mindset**.
 
-- Visual board (To Do → In Progress → Done)
-- Pull principle (no pushing work onto people)
-- WIP limits (limit parallel work)
-- Continuous delivery instead of fixed iterations
-
-**Purpose of Kanban:**  
-Optimize flow, reduce bottlenecks, and make work visible.
+> "Responding to change over following a plan."
+> -- Agile Manifesto (2001)
 
 ---
 
-### Key Difference (very short)
+## 1. What implies "AGILE" really?
 
-- **Scrum:** Time-based, structured learning cycles
-- **Kanban:** Flow-based, continuous work system
 
----
+* **Uncertainty** 
+* **Increments** 
+* **People** Collaboration > Rigid Processes
 
-## Why do we do this?
-
-### 1. Managing Large Work Packages
-
-- Big software problems cannot be fully specified upfront.
-- Agile breaks work into **small, inspectable increments**.
-- This reduces risk and wasted effort.
+Note:
+- Software development is complex, not predictable
+- We optimize for people, not for paperwork
 
 ---
 
-### 2. Team Coordination
-
-- Software work is highly interdependent.
-- Agile replaces top-down task assignment with **shared visibility**.
-- Teams coordinate via:
-    - Boards
-    - "Daily" syncs
-    - Clear ownership
-
-This enables **self-organization** instead of micromanagement.
+## 2. The Tools
 
 ---
 
-### 3. Fighting Complexity
+### Scrum (Structure)
+*Rhythm & Roles*
 
-Software systems are:
-
-- Non-linear
-- Uncertain
-- Constantly changing
-
-Agile embraces this by:
-
-- Short feedback loops
-- Continuous adaptation
-- Empirical decision-making
-
-Instead of pretending we can plan everything, we **adapt as we learn**.
-
-## Flexibility and adaptability
+* **Time-boxed:** Fixed Sprints 
+* **Roles:** PO, Scrum Master, Developers
+* **Loop:** Plan → Work → Review → Retro
+* **Goal:** Alignment & Inspect/Adapt
 
 ---
 
-## How did this pan out for us?
-
-### Retrospective → Self-Organization → Adaptation
-
-1. **We started with Scrum**
-    - Fixed sprints
-    - Planned commitments
-
-2. **Reality check**
-    - Unplanned work (bugs, urgent tasks)
-    - Time constraints because of other courses
-    - No 'full time' job  
-      → hard to finish assigned tickets in given time frames
-
-3. **Retrospective insight**
-    - The problem was not necessarily discipline
-    - The problem was **mismatch between process and reality**
+<img src="images/scrum.png" alt="Scrum Scheme" class="full-width"/>
 
 ---
 
-### Our Adaptation: Scrumban
+### Kanban (Flow)
+*Visualizing Work*
 
-We combined the strengths of both approaches:
-
-- From **Scrum**:
-    - "Daily" syncs
-    - Retrospectives
-    - Shared responsibility
-
-- From **Kanban**:
-    - continouos refinement of new tickets
-    - Pull-based work
-    - Continuous flow
-    - Flexible prioritization
-
-This allowed us to stay aligned **without artificial constraints**.
+* **Visual Board:** To Do → Doing → Done
+* **Pull Principle:** No pushing tasks onto people
+* **WIP Limits:** Stop starting, start finishing
+* **Goal:** Optimize flow, reduce bottlenecks
 
 ---
 
-## Show the Board — How we used it
-
-### The Board as the “Single Source of Truth”
+## Our Board
 
 ---
 
-- **Kanban = Ticket**
-- Each ticket represents:
-    - A concrete, actionable unit of work
-    - confined task
-    - Clear ownership
-    - Visible status
+## 3. Why do we do this?
 
-### How we worked with it
-
-- No one assigns tasks — developers **pull** tickets
-- WIP limits prevent overload
-- Blockers are immediately visible
-- Progress is transparent to the entire team
-
-### Result
-
-- Better focus
-- Fewer bottlenecks
-- True self-organization
-
-The board became a **shared coordination mechanism**
+* **Large Work Packages**
+    
+* **Team Coordination**
+    
+* **Fighting Complexity**
+    
 
 ---
 
-complexity: dark mode
+## 4. How did this pan out for us?
+### From Theory to Reality
 
-1 button, but concerns **every** component **everywhere**
+---
 
-solution here? use an existing solution (shadcn/ui)
+### The Reality Check
 
-Note: ... because we need our time for more important things
+We started with strict **Scrum**, but...
+
+* **Constraint 1:** Unplanned work 
+* **Constraint 2:** Time constraints 
+* **Constraint 3:** Part-time nature
+
+**Result:** Mismatch between process and reality.
+
+---
+
+## How we reacted
+
+**Jugaad** 
+> "Overcoming harsh constraints by improvising an effective solution using limited resources."
+
+---
+
+## Our Solution: Scrumban
+*Flexibility & Adaptability*
+
+---
+
+## We combined the best of both worlds
+
+*  **From Scrum (Structure):** 
+    * "Daily" syncs & Retrospectives (Alignment)
+    * Shared Responsibility
+
+* **From Kanban (Flow):** 
+    * Continuous refinement
+    * **Pull-based** work (when time allows)
+    * Flexible prioritizations
+
+---
+
+# Communication is Key
+
+---
+
+Also for machine _-to->_ human communication
+
+<img src="extensive_logging-1.png" alt="Extensive Logging" class="full-width"/>
+
+aka **Logging**
+
+---
+
+## What next?
+
+We **know** what we want to build
+
+We **know** how we organize ourselves.
+
+Now we need to **plan** the app.
 
 ---
 
@@ -325,37 +263,19 @@ Note: ... because we need our time for more important things
 
 ---
 
-Web development (next + trpc + technical stuff + knex) @keeper86
-
-    Content (very brief overview):
-        Next.js (app directory, server components, client components, routing)
-        tRPC (type-safe API layer)
-        Knex.js (SQL query builder)
-        Database integration (PostgreSQL)
-
-        Deployment and Hosting (Docker)
-
-         Authentication and Authorization (Keycloak)
+ # KEYCLOAK HERE
 
 ---
 
-## Modern tech stack
-
-Combination of various modern technologies allow us to build a robust and scalable web application.
-
-We use Next.js on top of React for server-side rendering and static site generation to provide a modern and performant UI
-
-tRPC provides a type-safe API layer between the frontend and backend, ensuring seamless communication and full-stack type safety.
-
-Knex.js is used as a SQL query builder to interact with our PostgreSQL database, allowing us to write database queries in a more intuitive way.
-
-- migrations and seeding
-
-Docker is used for containerization and deployment, ensuring consistency across different environments.
+ # VISUALIZATION HERE
 
 ---
 
-# Visualization
+# UPLOADING AVATARS HERE
+
+---
+
+## Visualization
 
 - Good UI Matters
 - Data without good Visuals is a bit useless
@@ -371,44 +291,23 @@ Docker is used for containerization and deployment, ensuring consistency across 
 
 ---
 
-- Table in Demo
-- Graph in Demo
-
+### We need to look at the Website!
 ---
 
-## How do we visualize things in our Website?
+###  How do we visualize things in our Website?
 
-- shadcn components based on React
-    - Responsive
-    - Design toolbox
+-  shadcn components based on React
+	- Responsive
+	- Design toolbox
 - Tables
 - Graph view of Provenance
 
 ---
 
-## Challenges
+### Challenges
 
 - Dark mode
 - Different component sources
-
----
-
-## Notes
-
-- Good UI Matters
-- go through the way that the Data changes in each Step
-- first Raw JSON
-- after the Upload we can see the Data in our Database
-    - special Tool required to see it
-- For a usable experience we need the Website
-- Uses React Components
-    - Useful for an Interactive Website
-    - Performant rendering of interactive website parts
-    - Able to do a global Darkmode
-    - For consistency we take shadcn -- Industry standard website components
-    - It for example Ships with a site wide Darkmode that we can use for our purpose (show)
-- activities Table
-- Graph view
 
 ---
 
@@ -431,8 +330,8 @@ Docker is used for containerization and deployment, ensuring consistency across 
 - Separate from the web app
 - Port `:8080`
 
-    </div>
-    <div style="flex: 1;">
+  </div>
+  <div style="flex: 1;">
 
 **The Bridge**
 
@@ -440,32 +339,31 @@ Docker is used for containerization and deployment, ensuring consistency across 
 - Acts like a secure "translator"
 - Handles redirects and tokens
 
-    </div>
   </div>
+</div>
 
 ---
 
 ## The Login Flow
 
-| Step | Action                            |
-| ---- | --------------------------------- |
-| 1️⃣   | User clicks "Login"               |
-| 2️⃣   | Redirected to Keycloak login page |
-| 3️⃣   | Keycloak verifies credentials     |
-| 4️⃣   | JWT Token returned                |
-| 5️⃣   | PolySim grants access ✅          |
-
+| Step | Action |
+|------|--------|
+| 1️⃣ | User clicks "Login" |
+| 2️⃣ | Redirected to Keycloak login page |
+| 3️⃣ | Keycloak verifies credentials |
+| 4️⃣ | JWT Token returned |
+| 5️⃣ | PolySim grants access ✅ |
 ---
 
 ## Implementing Avatar Upload
 
 **The Evolution: From File Input → Dialog**
 
-| Before                        | After                      |
-| ----------------------------- | -------------------------- |
-| Generic Shadcn file component | Dedicated Dialog modal     |
-| No preview                    | Live preview before upload |
-| Confusing UX                  | Clear, focused workflow    |
+| Before | After |
+|--------|-------|
+| Generic Shadcn file component | Dedicated Dialog modal |
+| No preview | Live preview before upload |
+| Confusing UX | Clear, focused workflow |
 
 ---
 
@@ -507,7 +405,9 @@ Avatar upload seemed straightforward, but required:
 - Real-time UI updates
 - Proper error handling
 
-## **Our solution:** Iterate, test, refine
+**Our solution:** Iterate, test, refine
+
+---
 
 ## Demo
 
@@ -522,50 +422,20 @@ Avatar upload seemed straightforward, but required:
 
 ---
 
-avatar uploading + Key Cloak @MikKusch
-
-Content:
-
-- Why Keycloak?
-- Setting up Keycloak with Next.js
-- Implementing avatar upload functionality
-- Storing and retrieving avatars from the database
-- Integrating avatar display in the user interface
-- Experience while implementing? Challenges and solutions?
-
-demo? showing keycloak login and avatar upload; show that keycloak is a separate service/container
+## Bridging frontend & backend
 
 ---
 
-# Remote Procedure Calls (RPC) and types
+### Next.js + tRPC 
 
-- RPC = "executing a function on a different machine"
-    - tRPC = type-safe RPC framework for TypeScript
+**Type-Safe Full-Stack**
 
-    Why types?
-    - Catch errors at compile time
-    - Better developer experience (autocompletion, documentation)
-    - Consistency between frontend and backend
+**Next.js** = Folder -> Route mapping
 
----
+**trpc** = frontend<->backend as simple as (typed) function
 
-Heavy usage of types in PolySim
+ **easy** internal and public API development   
 
-Single source of truth defined at the "controller" (tRPC router)
-
-Types flow from backend to frontend automatically
-
-database types (Knex + PostgreSQL) integrated into tRPC types
-
----
-
-Public API
-
-For CLI tool classic auth solution -> Personal Access Tokens (PATs)
-
----
-
-PAT @SurajArunBapu (maybe after trace/upload part?)
 
 ---
 
@@ -684,13 +554,12 @@ const userId = getUserIdFromContext(ctx);
 
 ---
 
-some kind of transition slide
+**public API** secured with **PATs**!
 
-aka
-
-PAT can be used for...
+-> http://localhost:3000/api-doc
 
 ---
+
 
 ## PolyTrace and Uploader
 
@@ -698,7 +567,9 @@ PAT can be used for...
 
 ## What is PolyTrace?
 
-## A CLI tool to record filesystem activity
+A CLI tool to record filesystem activity
+
+---
 
 <div class="flow-horizontal">
    <div class="box fragment"><strong>Run PolyTrace</strong><br/>executes the target program</div>
@@ -860,6 +731,7 @@ exit 0</code></pre>
 1769772754.283591 +++ exited with 0 +++
 
 </code></pre>
+
 </div>
 
 <div class="fragment" data-fragment-index="3">
@@ -1091,6 +963,32 @@ exit 0</code></pre>
 
 ---
 
+## Polysim
+
+Quite a complex project:
+- Full-stack web application (2 servers)
+- CLI tracing tool (PolyTrace) 
+- integration with Keycloak Auth
+
+---
+
+### Good software developer practice
+
+ well **tested** code
+
+<small><cursive>
+Does it work as intended?   
+ What if someone change something that they didnt wrote?   
+ What if we break something unrelated with our changes?   
+</cursive>
+</small>
+
+---
+
+<img src="all_tests.png" alt="Test Pass"/>
+
+---
+
 ### Conclusion:
 
 -Self-Organized Teamwork: Process optimization through regular Retrospectives (transition from Scrum to Scrumban).
@@ -1107,7 +1005,9 @@ exit 0</code></pre>
 
 Working PoC: Functional "Vertical Slice" from CLI-tracing to Database and UI-visualization
 
-## Infrastructure: Full-stack integration with Docker, Keycloak Auth, and tRPC type-safety
+Infrastructure: Full-stack integration with Docker, Keycloak Auth, and tRPC type-safety
+
+---
 
 ### Lessons Learned
 
@@ -1128,3 +1028,24 @@ Team Dynamics: Collaborative development on a complex, real-world project
 Modern Tech Stack: Hands-on experience with Next.js, PostgreSQL, and Type-safe APIs
 
 Scientific Value: Bridging the gap between software engineering and FAIR simulation principles
+
+---
+
+End - Questions?
+
+---
+
+Left intentionally blank
+
+---
+
+<img src="upload_provenance-1.png" alt="Upload Provenance" class="full-width"/>
+
+Note: Fallback when live-demo of trace+upload fails
+
+---
+
+<img src="board_zoomed_out-1.png" alt="Team Board Zoomed Out" class="full-width"/>
+
+Note: Fallback when live-demo of board fails
+

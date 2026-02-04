@@ -27,7 +27,9 @@ test.describe('API Documentation', () => {
         expect(currentUrl).not.toContain('auth');
 
         await expect(page.locator('.swagger-ui-wrapper')).toBeVisible({ timeout: 10000 });
-        await expect(page.locator('.swagger-ui')).toBeVisible({ timeout: 10000 });
+
+        const frame = page.frameLocator('.swagger-ui-wrapper iframe');
+        await expect(frame.locator('#swagger-ui')).toBeVisible({ timeout: 10000 });
 
         const significantErrors = jsErrors.filter(
             (error) =>

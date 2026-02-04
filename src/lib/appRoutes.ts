@@ -7,16 +7,22 @@ import {
     Gamepad,
     Home,
     KeyRound,
-    Map,
+    Search,
+    Upload,
     User,
+    BarChart3,
 } from 'lucide-react';
+import { PiGraphDuotone } from 'react-icons/pi';
 
 import type { Route } from 'nextjs-routes';
+import type { IconType } from 'react-icons';
+
+import { AiTwotoneApi } from 'react-icons/ai';
 
 export type RouteMetadata = {
     path: Exclude<Route['pathname'], `/api/${string}`>; // Exclude API routes
     label: string;
-    icon?: LucideIcon;
+    icon?: LucideIcon | IconType;
     isPublic?: boolean;
     description?: string;
     isMainNav?: boolean;
@@ -46,26 +52,53 @@ export const APP_ROUTES = {
         isPublic: true,
         description: 'Dashboard and overview',
     },
-    files: {
+    howto: {
+        path: '/howto',
+        label: 'How To',
+        icon: BookOpen,
+        isPublic: true,
+        isMainNav: true,
+        description: 'How to guides and tutorials',
+    },
+    query: {
+        path: '/query',
+        label: 'Query Page',
+        icon: Search,
+        description: 'Find your Program',
+        isMainNav: true,
+    },
+    graph: {
         root: {
-            path: '/files',
-            label: 'Files',
-            icon: Map,
-            description: 'File management and uploads',
+            path: '/graph',
+            label: 'Graph',
+            icon: PiGraphDuotone,
+            description: 'Graph demonstration',
             isMainNav: true,
         },
-        visNetworkDemo: {
-            path: '/files/vis-network-demo',
-            label: 'vis-network Demo',
-            description: 'Demonstration of vis-network (network.js) integration',
+    },
+    upload: {
+        root: {
+            path: '/upload',
+            label: 'Upload',
+            icon: Upload,
+            description: 'Upload provenance data',
             isMainNav: true,
         },
     },
     apiDoc: {
         path: '/api-doc',
         label: 'API Docs',
-        icon: BookOpen,
+        icon: AiTwotoneApi,
         description: 'Interactive API documentation',
+        isSecondaryNav: true,
+        isPublic: true,
+    },
+    benchmarks: {
+        path: '/benchmarks',
+        label: 'Benchmarks',
+        icon: BarChart3,
+        isPublic: true,
+        description: 'Performance analysis and benchmarks',
         isSecondaryNav: true,
     },
     pong: {
@@ -74,15 +107,6 @@ export const APP_ROUTES = {
         icon: Gamepad,
         isPublic: true,
         description: 'Classic pong game',
-    },
-    skills: {
-        root: {
-            path: '/skills',
-            label: 'Skillradar',
-            icon: Brain,
-            description: 'Manage and assess your skills',
-            isSecondaryNav: true,
-        },
     },
     account: {
         root: {
@@ -96,6 +120,14 @@ export const APP_ROUTES = {
             label: 'Skills Assessment',
             icon: BadgeCheck,
             description: 'Assess and track your technical skills',
+        },
+        skills: {
+            root: {
+                path: '/account/skills',
+                label: 'Skillradar',
+                icon: Brain,
+                description: 'Manage and assess your skills',
+            },
         },
         pat: {
             path: '/account/pat',

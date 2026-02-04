@@ -1,41 +1,40 @@
 import { useLogger } from '@/hooks/useLogger';
-import { useTRPCClient } from '@/lib/trpc';
-import type { SkillsAssessmentSchema } from '@/server/controller/skillsAssessment';
+import { useTRPC } from '@/lib/trpc';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
-
-const publishSkillsAssessmentKey = 'publish-skills-assessment';
 
 export function usePublishSkillsAssessment() {
     const logger = useLogger('usePublishSkillsAssessment');
     const userId = useSession().data?.user?.id;
-    const trpcClient = useTRPCClient();
+    const trpc = useTRPC();
     const queryClient = useQueryClient();
 
-    const { data: publishStatus = false, isLoading: isPublishStatusLoading } = useQuery({
-        queryKey: [publishSkillsAssessmentKey],
-        queryFn: async () => {
-            logger.debug('Fetching publish skills assessment status');
-            const result = await trpcClient.getUser.query({
-                userId,
-            });
-            return result?.hasAssessmentPublished ?? false;
-        },
-    });
+    const getUserQueryOptions = trpc.getUser.queryOptions({ userId });
+    const getUserQuery = useQuery(getUserQueryOptions);
+
+    const publishStatus = getUserQuery.data?.hasAssessmentPublished ?? false;
+    const isPublishStatusLoading = getUserQuery.isLoading;
+
+    const updateUserMutation = useMutation(trpc.updateUser.mutationOptions());
 
     const mutateAssessmentPublishStatus = useMutation({
         mutationFn: async (newPublishStatus: boolean) => {
             logger.debug('Saving skills assessment publish status', { newPublishStatus });
-            await trpcClient.updateUser.mutate({ hasAssessmentPublished: newPublishStatus });
+            await updateUserMutation.mutateAsync({ hasAssessmentPublished: newPublishStatus });
             return newPublishStatus;
         },
 
         onMutate: async (newPublishStatus) => {
-            await queryClient.cancelQueries({ queryKey: [publishSkillsAssessmentKey] });
+            await queryClient.cancelQueries({ queryKey: getUserQueryOptions.queryKey });
 
-            const previousData = queryClient.getQueryData<SkillsAssessmentSchema>([publishSkillsAssessmentKey]);
+            const previousData = queryClient.getQueryData(getUserQueryOptions.queryKey);
 
-            queryClient.setQueryData([publishSkillsAssessmentKey], newPublishStatus);
+            if (previousData) {
+                queryClient.setQueryData(getUserQueryOptions.queryKey, {
+                    ...previousData,
+                    hasAssessmentPublished: newPublishStatus,
+                });
+            }
 
             return { previousData };
         },
@@ -44,8 +43,12 @@ export function usePublishSkillsAssessment() {
             logger.error('Failed to save publish status', { error });
 
             if (context?.previousData) {
-                queryClient.setQueryData([publishSkillsAssessmentKey], context.previousData);
+                queryClient.setQueryData(getUserQueryOptions.queryKey, context.previousData);
             }
+        },
+
+        onSettled: () => {
+            void queryClient.invalidateQueries({ queryKey: getUserQueryOptions.queryKey });
         },
     });
 

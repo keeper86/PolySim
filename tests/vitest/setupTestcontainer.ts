@@ -129,6 +129,15 @@ async function getKnexInstance(): Promise<ReturnType<typeof knex>> {
     });
 
     await knexInstance.migrate.latest();
+    await knexInstance.seed.run();
+
+    await knexInstance('user_data')
+        .insert(Object.values(testUsers))
+        .catch((err) => {
+            console.error(`Error seeding test users: ${JSON.stringify(Object.values(testUsers))}`, err);
+            throw err;
+        });
+
     return knexInstance;
 }
 
@@ -141,19 +150,9 @@ async function getRouter() {
     return appRouter;
 }
 
-async function seedDatabase(db: ReturnType<typeof knex>) {
-    await db('user_data')
-        .insert(Object.values(testUsers))
-        .catch((err) => {
-            console.error(`Error seeding test users: ${JSON.stringify(Object.values(testUsers))}`, err);
-            throw err;
-        });
-}
-
 beforeAll(async () => {
     await getRouter();
-    const db = await getKnexInstance();
-    await seedDatabase(db);
+    await getKnexInstance();
 });
 
 afterAll(async () => {

@@ -14,17 +14,20 @@ declare module "nextjs-routes" {
     | StaticRoute<"/">
     | StaticRoute<"/account">
     | StaticRoute<"/account/pat">
+    | StaticRoute<"/account/skills">
     | StaticRoute<"/account/skills-assessment">
     | StaticRoute<"/api-doc">
     | DynamicRoute<"/api/auth/[...nextauth]", { "nextauth": string[] }>
     | DynamicRoute<"/api/public/[...trpc]", { "trpc": string[] }>
     | StaticRoute<"/api/public/openapi.json">
     | DynamicRoute<"/api/trpc/[trpc]", { "trpc": string }>
-    | StaticRoute<"/files">
-    | StaticRoute<"/files/vis-network-demo">
+    | StaticRoute<"/benchmarks">
+    | StaticRoute<"/graph">
+    | StaticRoute<"/howto">
     | StaticRoute<"/imprint">
     | StaticRoute<"/pong">
-    | StaticRoute<"/skills">;
+    | StaticRoute<"/query">
+    | StaticRoute<"/upload">;
 
   interface StaticRoute<Pathname> {
     pathname: Pathname;

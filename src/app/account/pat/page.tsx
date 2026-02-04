@@ -12,55 +12,57 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { useTRPC, useTRPCClient } from '@/lib/trpc';
-import { useQuery } from '@tanstack/react-query';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useTRPC } from '@/lib/trpc';
+import type { PatToken } from '@/server/controller/pAccessToken';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import React from 'react';
 import { toast } from 'sonner';
 
-type PatToken = {
-    id: string;
-    name?: string | null;
-    created_at: string;
-    expires_at?: string | null;
+const isExpired = (token: PatToken2): boolean => {
+    return new Date(token.expiresAt) <= new Date();
 };
 
-const isExpired = (token: PatToken): boolean => {
-    return !!(token.expires_at && new Date(token.expires_at) <= new Date());
+type PatToken2 = Pick<PatToken, 'id' | 'name'> & {
+    createdAt: Date;
+    expiresAt: Date;
 };
+
 export default function PatPage() {
     const trpc = useTRPC();
-    const trpcClient = useTRPCClient();
 
-    const [creating, setCreating] = React.useState(false);
     const [newName, setNewName] = React.useState('');
     const [latestTokenValue, setLatestTokenValue] = React.useState<string | null>(null);
     const [expiryDays, setExpiryDays] = React.useState<number>(1);
     const [openTokenDialog, setOpenTokenDialog] = React.useState(false);
 
-    const { data: tokens = [], isLoading, refetch } = useQuery(trpc.listPATs.queryOptions({}));
+    const { data = [], isLoading, refetch } = useQuery(trpc.listPATs.queryOptions({}));
+
+    const tokens: PatToken2[] = data.map((token) => ({
+        ...token,
+        createdAt: new Date(token.createdAt),
+        expiresAt: new Date(token.expiresAt),
+    }));
+
+    const createPATMutation = useMutation(trpc.createPAT.mutationOptions());
+    const revokePATMutation = useMutation(trpc.revokePAT.mutationOptions());
+    const deletePATMutation = useMutation(trpc.deletePAT.mutationOptions());
 
     async function createToken() {
-        if (creating) {
-            return;
-        }
-        setCreating(true);
         setLatestTokenValue(null);
 
-        try {
-            const result = await trpcClient.createPAT.mutate({
-                name: newName || undefined,
-                expiresInDays: expiryDays,
-            });
-            if (result?.token) {
-                setLatestTokenValue(result.token);
-                void refetch();
-                setOpenTokenDialog(true);
-            }
-            setNewName('');
-        } finally {
-            setCreating(false);
+        const result = await createPATMutation.mutateAsync({
+            name: newName || undefined,
+            expiresInDays: expiryDays,
+        });
+        if (result?.token) {
+            setLatestTokenValue(result.token);
+            void refetch();
+            setOpenTokenDialog(true);
         }
+        setNewName('');
     }
 
     function copyToClipboard(value: string) {
@@ -73,25 +75,31 @@ export default function PatPage() {
                 <label htmlFor='patNameInput' className='block mb-2 text-sm font-medium'>
                     Token name (optional)
                 </label>
-                <div className='flex gap-2 items-center'>
+                <div className='flex flex-wrap sm:flex-nowrap gap-2 items-center'>
                     <Input
                         id='patNameInput'
                         value={newName}
                         onChange={(e) => setNewName((e.target as HTMLInputElement).value)}
                     />
-                    <select
-                        value={String(expiryDays)}
-                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setExpiryDays(Number(e.target.value))}
-                        className='w-40 rounded border px-2 py-1 bg-white'
-                    >
-                        <option value='0.0007'>1 minute</option>
-                        <option value='1'>1 day</option>
-                        <option value='7'>1 week</option>
-                        <option value='30'>1 month</option>
-                        <option value='365'>1 year</option>
-                    </select>
-                    <Button onClick={createToken} disabled={creating}>
-                        {creating ? 'Generating…' : 'Generate token'}
+                    <Field>
+                        <Select
+                            value={String(expiryDays)}
+                            onValueChange={(value: string) => setExpiryDays(Number(value))}
+                        >
+                            <SelectTrigger className='w-40'>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value='0.0007'>1 minute</SelectItem>
+                                <SelectItem value='1'>1 day</SelectItem>
+                                <SelectItem value='7'>1 week</SelectItem>
+                                <SelectItem value='30'>1 month</SelectItem>
+                                <SelectItem value='365'>1 year</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </Field>
+                    <Button onClick={createToken} disabled={createPATMutation.isPending}>
+                        {createPATMutation.isPending ? 'Generating…' : 'Generate token'}
                     </Button>
                 </div>
 
@@ -136,7 +144,7 @@ export default function PatPage() {
                     <div className='text-sm text-muted-foreground'>No tokens yet.</div>
                 ) : (
                     <ul className='space-y-2'>
-                        {tokens.map((token: PatToken) => (
+                        {tokens.map((token: PatToken2) => (
                             <li key={token.id} className='flex items-center justify-between rounded border p-3'>
                                 <div>
                                     <div className='flex items-center gap-2'>
@@ -144,20 +152,14 @@ export default function PatPage() {
                                         {isExpired(token) ? <Badge variant='destructive'>Expired</Badge> : null}
                                     </div>
                                     <div className='text-xs text-muted-foreground'>
-                                        Created {new Date(token.created_at).toLocaleString()}
-                                        {token.expires_at ? (
-                                            <span>
-                                                {' · '}Expires {new Date(token.expires_at).toLocaleString()}
-                                            </span>
-                                        ) : (
-                                            <span>{' · '}Never expires</span>
-                                        )}
+                                        Created {token.createdAt.toLocaleString()}
+                                        {' · '}Expires {token.expiresAt.toLocaleString()}
                                     </div>
                                 </div>
                                 <div className='flex items-center gap-2'>
                                     <Button
                                         variant={isExpired(token) ? 'ghost' : 'outline'}
-                                        disabled={isExpired(token)}
+                                        disabled={isExpired(token) || revokePATMutation.isPending}
                                         title={isExpired(token) ? 'Already revoked' : 'Revoke token'}
                                         onClick={async () => {
                                             const ok = confirm(
@@ -166,7 +168,8 @@ export default function PatPage() {
                                             if (!ok) {
                                                 return;
                                             }
-                                            await trpcClient.revokePAT.mutate({ id: token.id });
+
+                                            await revokePATMutation.mutateAsync({ id: token.id });
                                             void refetch();
                                         }}
                                     >
@@ -174,6 +177,7 @@ export default function PatPage() {
                                     </Button>
                                     <Button
                                         variant='destructive'
+                                        disabled={deletePATMutation.isPending}
                                         onClick={async () => {
                                             const ok = confirm(
                                                 'Delete this personal access token? This cannot be undone.',
@@ -181,7 +185,8 @@ export default function PatPage() {
                                             if (!ok) {
                                                 return;
                                             }
-                                            await trpcClient.deletePAT.mutate({ id: token.id });
+
+                                            await deletePATMutation.mutateAsync({ id: token.id });
                                             void refetch();
                                         }}
                                     >

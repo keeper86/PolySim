@@ -3,14 +3,10 @@ import { getMainNavRoutes, getProtectedRoutes, getPublicRoutes } from '@/lib/app
 import { render, screen } from '@testing-library/react';
 import type { Session } from 'next-auth';
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { NavMain } from './navMain';
 import { SidebarProvider } from '../ui/sidebar';
-
-vi.mock('next/link', () => ({
-    __esModule: true,
-    default: ({ href, children }: { href: string; children: React.ReactNode }) => <a href={href}>{children}</a>,
-}));
+import { NavSecondary } from './navSecondary';
 
 describe('NavMain', () => {
     it('renders all main navigation routes from PAGE_ROUTES and their icons', () => {
@@ -46,7 +42,10 @@ describe('NavMain', () => {
     it('shows only public routes when not logged in', () => {
         render(
             <AppProviders session={null}>
-                <NavMain />
+                <SidebarProvider>
+                    <NavMain />
+                    <NavSecondary />
+                </SidebarProvider>
             </AppProviders>,
         );
 
@@ -63,9 +62,9 @@ describe('NavMain', () => {
         const protectedRoutes = getProtectedRoutes();
         for (const route of protectedRoutes) {
             if (!route.isPublic) {
-                const maybe = screen.queryByText(route.label);
+                const maybe = screen.queryByRole('link', { name: route.label });
                 if (maybe) {
-                    expect(maybe).not.toBeInTheDocument();
+                    expect(maybe).toHaveAttribute('aria-disabled', 'true');
                 }
             }
         }
