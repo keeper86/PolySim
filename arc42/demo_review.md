@@ -311,7 +311,7 @@ Note:
 
 ---
 
-### We need to look at the Website!
+### We need to look at the [Website!](http://localhost:3000/)
 ---
 
 ###  How do we visualize things in our Website?
