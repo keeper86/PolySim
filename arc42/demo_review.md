@@ -255,7 +255,7 @@ Now we need to **plan** the app.
 
 ---
 
-#### Why Keycloak?
+#### Why [Keycloak](http://localhost:8080/admin/master/console/)?
 
 <div class="flow-grid-2x2" style="margin-top: 10px;">
     <div class="cell">
