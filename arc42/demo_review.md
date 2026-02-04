@@ -1086,9 +1086,9 @@ Infrastructure: Full-stack integration with Docker, Keycloak Auth, and tRPC type
 
 Complexity Management: Balancing feature-richness with core logic
 
-Team Coordination: Overcoming communication bottlenecks
+Team Coordination: Overcoming communication bottlenecks, scrumban
 
-Aligning work in a non-full-time environment.
+Aligning work in a non-full-time environment
 
 Process Realism: Adapting workflows to fit actual student time-constraints
 
