@@ -1062,15 +1062,7 @@ Does it work as intended?
 
 ---
 
-### Conclusion:
-
--FAIR & Provenance: Built a system to track scientific data origin, ensuring reproducibility in research.
-
--Self-Organized Teamwork: Process optimization through regular Retrospectives (transition from Scrum to Scrumban).
-
--Industry Standards: Integrated Git Workflows, mandatory Code Reviews, and automated CI/CD pipelines.
-
--Architectural Clarity: Managed high complexity using modular design and a strict separation of concerns.
+### Conclusion
 
 ---
 
@@ -1104,9 +1096,9 @@ Process Realism: Adapting workflows to fit actual student time-constraints
 
 -working with high scientific and security standards
 
--using modern web technologies in a full-stack project
+-using industry-grade tools and processes
 
--learning 
+---
 
 ### Summary: A Multi-layered Course
 
