@@ -264,7 +264,7 @@ Now we need to **plan** the app.
     </div>
     <div class="cell">
         <strong>Trust the Pros</strong><br>
-        <span style="font-size: 0.75em">Industry standard used by BMW & Cisco. Audited Open Source code.</span>
+        <span style="font-size: 0.75em">Industry standard used by CERN & others. Audited Open Source code.</span>
     </div>
     <div class="cell">
         <strong>Focus on App</strong><br>
