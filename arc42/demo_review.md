@@ -1064,11 +1064,11 @@ Does it work as intended?
 
 ### Conclusion:
 
+-FAIR & Provenance: Built a system to track scientific data origin, ensuring reproducibility in research.
+
 -Self-Organized Teamwork: Process optimization through regular Retrospectives (transition from Scrum to Scrumban).
 
 -Industry Standards: Integrated Git Workflows, mandatory Code Reviews, and automated CI/CD pipelines.
-
--FAIR & Provenance: Built a system to track scientific data origin, ensuring reproducibility in research.
 
 -Architectural Clarity: Managed high complexity using modular design and a strict separation of concerns.
 
@@ -1076,9 +1076,17 @@ Does it work as intended?
 
 ### Current State of the project
 
-Working PoC: Functional "Vertical Slice" from CLI-tracing to Database and UI-visualization
+-Established FAIR and Provenance as a good research basis
 
-Infrastructure: Full-stack integration with Docker, Keycloak Auth, and tRPC type-safety
+-Keycloak for security
+
+-Complete PAT management
+
+-working polytrace tool on the website
+
+---
+
+In sum we achieved an alpha version of the website with core functionality!
 
 ---
 
@@ -1093,6 +1101,12 @@ Aligning work in a non-full-time environment
 Process Realism: Adapting workflows to fit actual student time-constraints
 
 ---
+
+-working with high scientific and security standards
+
+-using modern web technologies in a full-stack project
+
+-learning 
 
 ### Summary: A Multi-layered Course
 
