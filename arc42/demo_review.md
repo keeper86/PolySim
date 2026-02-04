@@ -606,7 +606,7 @@ const userId = getUserIdFromContext(ctx);
 
 ---
 
-[**public API**](http://localhost:3000/account/pat) secured with **PATs**!
+[**Personal Access Tokens Management**](http://localhost:3000/account/pat)
 
 ---
 
