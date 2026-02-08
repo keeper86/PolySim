@@ -285,6 +285,44 @@ Note:
 
 ---
 
+#### The Architecture: Next.js & Keycloak
+
+<div class="flow-vertical" style="gap: 8px; margin-top: 10px;">
+    <div class="box" style="padding: 10px;">
+        <strong>Docker Container (:8080)</strong><br>
+        <span style="font-size: 0.75em">Keycloak runs completely separate from the App</span>
+    </div>
+    <div style="margin: 0;">
+        <span style="background: rgba(255,255,255,0.1); border: 1px dashed rgba(255,255,255,0.3); border-radius: 20px; padding: 4px 12px; font-size: 0.7em; color: var(--r-main-color);">
+            ⬇️ via next-auth Bridge
+        </span>
+    </div>
+    <div class="box" style="padding: 10px;">
+        <strong>Next.js Application</strong><br>
+        <span style="font-size: 0.75em">Never sees the password, only receives the "Ticket" (JWT)</span>
+    </div>
+</div>
+<br style="display: block; margin: 5px 0; content: ' ';">
+
+**The Login Flow:**
+<div class="flow-horizontal" style="margin-top: 5px; gap: 8px;">
+    <div class="box">Click "Login"</div>
+    <div class="arrow">→</div>
+    <div class="box">Redirect to Keycloak</div>
+    <div class="arrow">→</div>
+    <div class="box">Verify Creds</div>
+    <div class="arrow">→</div>
+    <div class="box">Back with Token</div>
+</div>
+
+Note:
+- **Infrastructure:** Keycloak runs isolated (Docker Container).
+- **Integration:** `next-auth` acts as the bridge.
+- **The Flow:** Redirect -> Login External -> Return with Ticket (JWT).
+- **Security:** Our App NEVER sees the password, only the token.
+
+---
+
 <img src="poc2.png" alt="Provenance Proof of Concept" class="full-width"/>
 
 ---
@@ -328,45 +366,6 @@ Note:
 
 - Dark mode
 - Different component sources
-
----
-
-
-#### The Architecture: Next.js & Keycloak
-
-<div class="flow-vertical" style="gap: 8px; margin-top: 10px;">
-    <div class="box" style="padding: 10px;">
-        <strong>Docker Container (:8080)</strong><br>
-        <span style="font-size: 0.75em">Keycloak runs completely separate from the App</span>
-    </div>
-    <div style="margin: 0;">
-        <span style="background: rgba(255,255,255,0.1); border: 1px dashed rgba(255,255,255,0.3); border-radius: 20px; padding: 4px 12px; font-size: 0.7em; color: var(--r-main-color);">
-            ⬇️ via next-auth Bridge
-        </span>
-    </div>
-    <div class="box" style="padding: 10px;">
-        <strong>Next.js Application</strong><br>
-        <span style="font-size: 0.75em">Never sees the password, only receives the "Ticket" (JWT)</span>
-    </div>
-</div>
-<br style="display: block; margin: 5px 0; content: ' ';">
-
-**The Login Flow:**
-<div class="flow-horizontal" style="margin-top: 5px; gap: 8px;">
-    <div class="box">Click "Login"</div>
-    <div class="arrow">→</div>
-    <div class="box">Redirect to Keycloak</div>
-    <div class="arrow">→</div>
-    <div class="box">Verify Creds</div>
-    <div class="arrow">→</div>
-    <div class="box">Back with Token</div>
-</div>
-
-Note:
-- **Infrastructure:** Keycloak runs isolated (Docker Container).
-- **Integration:** `next-auth` acts as the bridge.
-- **The Flow:** Redirect -> Login External -> Return with Ticket (JWT).
-- **Security:** Our App NEVER sees the password, only the token.
 
 ---
 
@@ -1013,6 +1012,10 @@ exit 0</code></pre>
 <img src="upload_provenance-1.png" alt="Upload Provenance" class="full-width"/>
 
 Note: Fallback when live-demo of trace+upload fails
+
+---
+
+[Let's verify the upload!](http://localhost:3000/graph)
 
 ---
 
