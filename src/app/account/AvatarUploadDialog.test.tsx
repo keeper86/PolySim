@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AvatarUploadDialog } from './AvatarUploadDialog';
@@ -113,7 +113,7 @@ describe('AvatarUploadDialog', () => {
             expect(dialogDescription).toBeInTheDocument();
         });
 
-        it('closes dialog and resets state when closed', async () => {
+        it('resets upload state when cancel is clicked', async () => {
             const user = userEvent.setup();
             render(<AvatarUploadDialog />);
 
@@ -216,12 +216,43 @@ describe('AvatarUploadDialog', () => {
             const triggerButton = screen.getByRole('button', { name: /upload avatar/i });
             await user.click(triggerButton);
 
-            const dropZone = screen.getByText(/drop your image here/i).closest('div');
+            const browseButton = screen.getByRole('button', { name: /browse/i });
+            const dropZone = browseButton.closest('div')?.parentElement?.parentElement;
             expect(dropZone).toBeInTheDocument();
+
+            const classNameBefore = dropZone?.className || '';
+            expect(classNameBefore).toContain('border-muted-foreground/25');
+            expect(classNameBefore).not.toContain('border-primary');
 
             fireEvent.dragOver(dropZone!);
 
+            const classNameDuring = dropZone?.className || '';
+            expect(classNameDuring).toContain('border-primary');
+            expect(classNameDuring).toContain('bg-primary/5');
+            expect(classNameDuring).not.toContain('border-muted-foreground/25');
+        });
+
+        it('restores default styling when drag leaves', async () => {
+            const user = userEvent.setup();
+            render(<AvatarUploadDialog />);
+
+            const triggerButton = screen.getByRole('button', { name: /upload avatar/i });
+            await user.click(triggerButton);
+
+            const browseButton = screen.getByRole('button', { name: /browse/i });
+            const dropZone = browseButton.closest('div')?.parentElement?.parentElement;
             expect(dropZone).toBeInTheDocument();
+
+            fireEvent.dragOver(dropZone!);
+            const classNameDuring = dropZone?.className || '';
+            expect(classNameDuring).toContain('border-primary');
+
+            fireEvent.dragLeave(dropZone!);
+
+            const classNameAfter = dropZone?.className || '';
+            expect(classNameAfter).toContain('border-muted-foreground/25');
+            expect(classNameAfter).not.toContain('border-primary');
+            expect(classNameAfter).not.toContain('bg-primary/5');
         });
 
         it('handles file drop correctly', async () => {
@@ -231,7 +262,8 @@ describe('AvatarUploadDialog', () => {
             const triggerButton = screen.getByRole('button', { name: /upload avatar/i });
             await user.click(triggerButton);
 
-            const dropZone = screen.getByText(/drop your image here/i).closest('div');
+            const browseButton = screen.getByRole('button', { name: /browse/i });
+            const dropZone = browseButton.closest('div')?.parentElement?.parentElement;
             expect(dropZone).toBeInTheDocument();
 
             const testFile = createTestFile('image/png', 500000);
@@ -282,7 +314,9 @@ describe('AvatarUploadDialog', () => {
                 expect.any(Object),
             );
 
-            capturedOnSuccess?.();
+            await act(async () => {
+                capturedOnSuccess?.();
+            });
 
             const successMessage = await screen.findByText(/avatar uploaded successfully/i);
             expect(successMessage).toBeInTheDocument();
@@ -312,8 +346,10 @@ describe('AvatarUploadDialog', () => {
             const uploadButton = await screen.findByRole('button', { name: /upload photo/i });
             await user.click(uploadButton);
 
-            const testError = new Error('Network error');
-            onErrorCallback?.(testError);
+            await act(async () => {
+                const testError = new Error('Network error');
+                onErrorCallback?.(testError);
+            });
 
             const errorMessage = await screen.findByText(/network error/i);
             expect(errorMessage).toBeInTheDocument();
@@ -348,7 +384,9 @@ describe('AvatarUploadDialog', () => {
                 expect.any(Object),
             );
 
-            capturedOnSuccess?.();
+            await act(async () => {
+                capturedOnSuccess?.();
+            });
 
             const successMessage = await screen.findByText(/avatar removed successfully/i);
             expect(successMessage).toBeInTheDocument();
@@ -370,8 +408,10 @@ describe('AvatarUploadDialog', () => {
             const removeButton = screen.getByRole('button', { name: /remove/i });
             await user.click(removeButton);
 
-            const testError = new Error('Failed to remove avatar');
-            onErrorCallback?.(testError);
+            await act(async () => {
+                const testError = new Error('Failed to remove avatar');
+                onErrorCallback?.(testError);
+            });
 
             const errorMessage = await screen.findByText(/failed to remove avatar/i);
             expect(errorMessage).toBeInTheDocument();
