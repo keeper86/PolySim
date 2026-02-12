@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AvatarUploadDialog } from './AvatarUploadDialog';
 
 const mockMutate = vi.fn();
@@ -63,6 +63,7 @@ const createMockFileReader = (): MockFileReaderInstance => ({
     result: null,
 });
 
+const originalFileReader = global.FileReader;
 Object.defineProperty(global, 'FileReader', {
     writable: true,
     value: vi.fn(() => createMockFileReader()),
@@ -85,6 +86,13 @@ describe('AvatarUploadDialog', () => {
         mockQueryOptions.mockReturnValue({
             queryKey: ['getUser'],
             queryFn: vi.fn(),
+        });
+    });
+
+    afterAll(() => {
+        Object.defineProperty(global, 'FileReader', {
+            writable: true,
+            value: originalFileReader,
         });
     });
 
