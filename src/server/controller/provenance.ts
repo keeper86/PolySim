@@ -2,34 +2,30 @@ import { z } from 'zod';
 import { procedure } from '../trpcRoot';
 import { db } from '../db';
 import { logger } from '../logger';
-import type { Knex } from 'knex';
 
 /**
- * Schema for a node in the provenance lineage
+ * Type for a node in the provenance lineage
  */
-const lineageNodeSchema = z.object({
-    id: z.string(),
-    label: z.string().nullable(),
-    nodeType: z.enum(['entity', 'activity', 'agent']),
-    depth: z.number(),
-    metadata: z.record(z.string(), z.unknown()).nullable(),
-});
+export type LineageNode = {
+    id: string;
+    label: string | null;
+    nodeType: 'entity' | 'activity' | 'agent';
+    depth: number;
+    metadata: Record<string, unknown> | null;
+};
 
 /**
- * Schema for an edge in the provenance lineage
+ * Type for an edge in the provenance lineage
  */
-const lineageEdgeSchema = z.object({
-    from: z.string(),
-    to: z.string(),
-    relationshipType: z.string(),
-    role: z.string().nullable(),
-});
-
-export type LineageNode = z.infer<typeof lineageNodeSchema>;
-export type LineageEdge = z.infer<typeof lineageEdgeSchema>;
+export type LineageEdge = {
+    from: string;
+    to: string;
+    relationshipType: string;
+    role: string | null;
+};
 
 /**
- * Database row type for lineage queries
+ * Database row type returned by PostgreSQL lineage functions
  */
 interface LineageRow {
     node_id: string;
@@ -44,29 +40,27 @@ interface LineageRow {
 }
 
 /**
- * Helper to build the metadata selection clause
+ * Database row type for common ancestors query
  */
-const buildMetadataSelect = (includeMetadata: boolean, tableAlias: string): string => {
-    return includeMetadata ? `${tableAlias}.metadata` : 'NULL::jsonb';
-};
+interface CommonAncestorRow {
+    node_id: string;
+    node_label: string | null;
+    node_type: 'entity' | 'activity' | 'agent';
+    depth: number;
+    metadata: Record<string, unknown> | null;
+    edge_from: string | null;
+    edge_to: string | null;
+    relationship_type: string | null;
+    role: string | null;
+}
 
 /**
- * Helper to build conditional metadata for alternating node types
+ * Parse lineage rows from PostgreSQL function into nodes and edges
  */
-const buildAlternatingMetadataSelect = (includeMetadata: boolean, fromAlias: string): string => {
-    if (!includeMetadata) {
-        return 'NULL::jsonb';
-    }
-    return `CASE 
-            WHEN ${fromAlias}.node_type = 'entity' THEN a.metadata
-            WHEN ${fromAlias}.node_type = 'activity' THEN e.metadata
-        END`;
-};
-
-/**
- * Parse lineage rows into nodes and edges
- */
-const parseLineageResults = (rows: LineageRow[]): { nodes: LineageNode[]; edges: LineageEdge[] } => {
+const parseLineageResults = (
+    rows: LineageRow[],
+    _includeMetadata: boolean,
+): { nodes: LineageNode[]; edges: LineageEdge[] } => {
     const nodes: LineageNode[] = [];
     const edges: LineageEdge[] = [];
     const seenNodes = new Set<string>();
@@ -104,372 +98,110 @@ const parseLineageResults = (rows: LineageRow[]): { nodes: LineageNode[]; edges:
 };
 
 /**
- * Execute a backward lineage query (find ancestors)
- */
-const executeBackwardLineageQuery = async (
-    knex: Knex,
-    entityId: string,
-    maxDepth: number,
-    includeMetadata: boolean,
-): Promise<LineageRow[]> => {
-    const metadataBase = buildMetadataSelect(includeMetadata, 'e');
-    const metadataRecursive = buildAlternatingMetadataSelect(includeMetadata, 'l');
-
-    const result = await knex.raw<{ rows: LineageRow[] }>(
-        `
-        WITH RECURSIVE lineage AS (
-            -- Base case: start with the target entity
-            SELECT 
-                e.id as node_id,
-                e.label as node_label,
-                'entity'::text as node_type,
-                0 as depth,
-                ${metadataBase} as metadata,
-                NULL::text as edge_from,
-                NULL::text as edge_to,
-                NULL::text as relationship_type,
-                NULL::text as role,
-                ARRAY[e.id] as path
-            FROM entities e
-            WHERE e.id = ?
-            
-            UNION ALL
-            
-            -- Recursive case: traverse backward through activities
-            SELECT 
-                CASE 
-                    WHEN l.node_type = 'entity' THEN a.id
-                    WHEN l.node_type = 'activity' THEN e.id
-                END as node_id,
-                CASE 
-                    WHEN l.node_type = 'entity' THEN a.label
-                    WHEN l.node_type = 'activity' THEN e.label
-                END as node_label,
-                CASE 
-                    WHEN l.node_type = 'entity' THEN 'activity'
-                    WHEN l.node_type = 'activity' THEN 'entity'
-                END::text as node_type,
-                l.depth + 1 as depth,
-                ${metadataRecursive} as metadata,
-                l.node_id as edge_from,
-                CASE 
-                    WHEN l.node_type = 'entity' THEN a.id
-                    WHEN l.node_type = 'activity' THEN e.id
-                END as edge_to,
-                CASE 
-                    WHEN l.node_type = 'entity' THEN 'wasGeneratedBy'
-                    WHEN l.node_type = 'activity' THEN 'used'
-                END::text as relationship_type,
-                u.role,
-                l.path || CASE 
-                    WHEN l.node_type = 'entity' THEN a.id
-                    WHEN l.node_type = 'activity' THEN e.id
-                END as path
-            FROM lineage l
-            LEFT JOIN was_generated_by wgb ON wgb.entity_id = l.node_id AND l.node_type = 'entity'
-            LEFT JOIN activities a ON a.id = wgb.activity_id
-            LEFT JOIN used u ON u.activity_id = l.node_id AND l.node_type = 'activity'
-            LEFT JOIN entities e ON e.id = u.entity_id
-            WHERE l.depth < ?
-                AND CASE 
-                    WHEN l.node_type = 'entity' THEN a.id
-                    WHEN l.node_type = 'activity' THEN e.id
-                END IS NOT NULL
-                AND NOT (CASE 
-                    WHEN l.node_type = 'entity' THEN a.id
-                    WHEN l.node_type = 'activity' THEN e.id
-                END = ANY(l.path))  -- Cycle detection
-        )
-        SELECT DISTINCT 
-            node_id, 
-            node_label, 
-            node_type, 
-            depth, 
-            metadata,
-            edge_from,
-            edge_to,
-            relationship_type,
-            role
-        FROM lineage
-        ORDER BY depth, node_id
-        `,
-        [entityId, maxDepth],
-    );
-
-    return result.rows;
-};
-
-/**
- * Execute a forward lineage query (find descendants)
- */
-const executeForwardLineageQuery = async (
-    knex: Knex,
-    entityId: string,
-    maxDepth: number,
-    includeMetadata: boolean,
-): Promise<LineageRow[]> => {
-    const metadataBase = buildMetadataSelect(includeMetadata, 'e');
-    const metadataRecursive = buildAlternatingMetadataSelect(includeMetadata, 'd');
-
-    const result = await knex.raw<{ rows: LineageRow[] }>(
-        `
-        WITH RECURSIVE descendants AS (
-            -- Base case: start with the source entity
-            SELECT 
-                e.id as node_id,
-                e.label as node_label,
-                'entity'::text as node_type,
-                0 as depth,
-                ${metadataBase} as metadata,
-                NULL::text as edge_from,
-                NULL::text as edge_to,
-                NULL::text as relationship_type,
-                NULL::text as role,
-                ARRAY[e.id] as path
-            FROM entities e
-            WHERE e.id = ?
-            
-            UNION ALL
-            
-            -- Recursive case: traverse forward through activities
-            SELECT 
-                CASE 
-                    WHEN d.node_type = 'entity' THEN a.id
-                    WHEN d.node_type = 'activity' THEN e.id
-                END as node_id,
-                CASE 
-                    WHEN d.node_type = 'entity' THEN a.label
-                    WHEN d.node_type = 'activity' THEN e.label
-                END as node_label,
-                CASE 
-                    WHEN d.node_type = 'entity' THEN 'activity'
-                    WHEN d.node_type = 'activity' THEN 'entity'
-                END::text as node_type,
-                d.depth + 1 as depth,
-                ${metadataRecursive} as metadata,
-                d.node_id as edge_from,
-                CASE 
-                    WHEN d.node_type = 'entity' THEN a.id
-                    WHEN d.node_type = 'activity' THEN e.id
-                END as edge_to,
-                CASE 
-                    WHEN d.node_type = 'entity' THEN 'used'
-                    WHEN d.node_type = 'activity' THEN 'wasGeneratedBy'
-                END::text as relationship_type,
-                u.role,
-                d.path || CASE 
-                    WHEN d.node_type = 'entity' THEN a.id
-                    WHEN d.node_type = 'activity' THEN e.id
-                END as path
-            FROM descendants d
-            LEFT JOIN used u ON u.entity_id = d.node_id AND d.node_type = 'entity'
-            LEFT JOIN activities a ON a.id = u.activity_id
-            LEFT JOIN was_generated_by wgb ON wgb.activity_id = d.node_id AND d.node_type = 'activity'
-            LEFT JOIN entities e ON e.id = wgb.entity_id
-            WHERE d.depth < ?
-                AND CASE 
-                    WHEN d.node_type = 'entity' THEN a.id
-                    WHEN d.node_type = 'activity' THEN e.id
-                END IS NOT NULL
-                AND NOT (CASE 
-                    WHEN d.node_type = 'entity' THEN a.id
-                    WHEN d.node_type = 'activity' THEN e.id
-                END = ANY(d.path))  -- Cycle detection
-        )
-        SELECT DISTINCT 
-            node_id, 
-            node_label, 
-            node_type, 
-            depth, 
-            metadata,
-            edge_from,
-            edge_to,
-            relationship_type,
-            role
-        FROM descendants
-        ORDER BY depth, node_id
-        `,
-        [entityId, maxDepth],
-    );
-
-    return result.rows;
-};
-
-/**
- * Execute a common ancestors query
- */
-const executeCommonAncestorsQuery = async (
-    knex: Knex,
-    entityId1: string,
-    entityId2: string,
-    maxDepth: number,
-): Promise<Array<{ id: string; label: string | null; depth_from_e1: number; depth_from_e2: number }>> => {
-    const result = await knex.raw<{
-        rows: Array<{
-            id: string;
-            label: string | null;
-            depth_from_e1: number;
-            depth_from_e2: number;
-        }>;
-    }>(
-        `
-        WITH RECURSIVE 
-            lineage1 AS (
-                SELECT e.id, e.label, 0 as depth, ARRAY[e.id] as path
-                FROM entities e WHERE e.id = ?
-                
-                UNION ALL
-                
-                SELECT e.id, e.label, l1.depth + 1, l1.path || e.id
-                FROM lineage1 l1
-                JOIN was_generated_by wgb ON wgb.entity_id = l1.id
-                JOIN activities a ON a.id = wgb.activity_id
-                JOIN used u ON u.activity_id = a.id
-                JOIN entities e ON e.id = u.entity_id
-                WHERE l1.depth < ? AND NOT (e.id = ANY(l1.path))
-            ),
-            lineage2 AS (
-                SELECT e.id, e.label, 0 as depth, ARRAY[e.id] as path
-                FROM entities e WHERE e.id = ?
-                
-                UNION ALL
-                
-                SELECT e.id, e.label, l2.depth + 1, l2.path || e.id
-                FROM lineage2 l2
-                JOIN was_generated_by wgb ON wgb.entity_id = l2.id
-                JOIN activities a ON a.id = wgb.activity_id
-                JOIN used u ON u.activity_id = a.id
-                JOIN entities e ON e.id = u.entity_id
-                WHERE l2.depth < ? AND NOT (e.id = ANY(l2.path))
-            )
-        SELECT 
-            l1.id,
-            l1.label,
-            MIN(l1.depth) as depth_from_e1,
-            MIN(l2.depth) as depth_from_e2
-        FROM lineage1 l1
-        INNER JOIN lineage2 l2 ON l1.id = l2.id
-        WHERE l1.id != ? AND l1.id != ?
-        GROUP BY l1.id, l1.label
-        ORDER BY (MIN(l1.depth) + MIN(l2.depth))
-        `,
-        [entityId1, maxDepth, entityId2, maxDepth, entityId1, entityId2],
-    );
-
-    return result.rows;
-};
-
-/**
- * Get the backward lineage (ancestors) of an entity
- * This traces back through activities to find all input entities that contributed to creating this entity
+ * Endpoint: Get entity lineage (backward traversal)
+ * Finds all ancestor entities that contributed to the creation of a given entity
  */
 export const getEntityLineage = () => {
     return procedure
         .input(
             z.object({
-                entityId: z.string().describe('The entity ID to trace lineage for'),
-                maxDepth: z.number().int().min(1).max(100).default(10).describe('Maximum depth to traverse the graph'),
-                includeMetadata: z.boolean().default(false).describe('Include metadata in the response'),
-            }),
-        )
-        .output(
-            z.object({
-                nodes: z.array(lineageNodeSchema),
-                edges: z.array(lineageEdgeSchema),
+                entityId: z.string(),
+                maxDepth: z.number().int().positive().optional(),
+                includeMetadata: z.boolean().optional().default(false),
             }),
         )
         .query(async ({ input }) => {
             const { entityId, maxDepth, includeMetadata } = input;
 
-            try {
-                const rows = await executeBackwardLineageQuery(db, entityId, maxDepth, includeMetadata);
-                return parseLineageResults(rows);
-            } catch (err) {
-                logger.error({ err, entityId }, 'Failed to get entity lineage');
-                throw new Error('Failed to retrieve entity lineage');
-            }
+            logger.info({ entityId, maxDepth, includeMetadata }, 'Fetching entity lineage');
+
+            // Call PostgreSQL function
+            const result = await db.raw<{ rows: LineageRow[] }>(`SELECT * FROM get_entity_lineage(?, ?, ?)`, [
+                entityId,
+                maxDepth ?? null,
+                includeMetadata,
+            ]);
+
+            const { nodes, edges } = parseLineageResults(result.rows, includeMetadata);
+
+            logger.info({ nodeCount: nodes.length, edgeCount: edges.length }, 'Retrieved lineage');
+
+            return {
+                nodes,
+                edges,
+            };
         });
 };
 
 /**
- * Get the forward lineage (descendants) of an entity
- * This traces forward through activities to find all output entities derived from this entity
+ * Endpoint: Get entity descendants (forward traversal)
+ * Finds all descendant entities that were derived from a given entity
  */
 export const getEntityDescendants = () => {
     return procedure
         .input(
             z.object({
-                entityId: z.string().describe('The entity ID to trace descendants for'),
-                maxDepth: z.number().int().min(1).max(100).default(10).describe('Maximum depth to traverse the graph'),
-                includeMetadata: z.boolean().default(false).describe('Include metadata in the response'),
-            }),
-        )
-        .output(
-            z.object({
-                nodes: z.array(lineageNodeSchema),
-                edges: z.array(lineageEdgeSchema),
+                entityId: z.string(),
+                maxDepth: z.number().int().positive().optional(),
+                includeMetadata: z.boolean().optional().default(false),
             }),
         )
         .query(async ({ input }) => {
             const { entityId, maxDepth, includeMetadata } = input;
 
-            try {
-                const rows = await executeForwardLineageQuery(db, entityId, maxDepth, includeMetadata);
-                return parseLineageResults(rows);
-            } catch (err) {
-                logger.error({ err, entityId }, 'Failed to get entity descendants');
-                throw new Error('Failed to retrieve entity descendants');
-            }
+            logger.info({ entityId, maxDepth, includeMetadata }, 'Fetching entity descendants');
+
+            // Call PostgreSQL function
+            const result = await db.raw<{ rows: LineageRow[] }>(`SELECT * FROM get_entity_descendants(?, ?, ?)`, [
+                entityId,
+                maxDepth ?? null,
+                includeMetadata,
+            ]);
+
+            const { nodes, edges } = parseLineageResults(result.rows, includeMetadata);
+
+            logger.info({ nodeCount: nodes.length, edgeCount: edges.length }, 'Retrieved descendants');
+
+            return {
+                nodes,
+                edges,
+            };
         });
 };
 
 /**
- * Find common ancestors between two entities
- * Useful for understanding if two outputs share common input data
+ * Endpoint: Get common ancestors
+ * Finds common ancestor entities that contributed to both specified entities
  */
 export const getCommonAncestors = () => {
     return procedure
         .input(
             z.object({
-                entityId1: z.string().describe('First entity ID'),
-                entityId2: z.string().describe('Second entity ID'),
-                maxDepth: z
-                    .number()
-                    .int()
-                    .min(1)
-                    .max(100)
-                    .default(10)
-                    .describe('Maximum depth to search for common ancestors'),
-            }),
-        )
-        .output(
-            z.object({
-                commonAncestors: z.array(
-                    z.object({
-                        id: z.string(),
-                        label: z.string().nullable(),
-                        depthFromEntity1: z.number(),
-                        depthFromEntity2: z.number(),
-                    }),
-                ),
+                entityId1: z.string(),
+                entityId2: z.string(),
+                maxDepth: z.number().int().positive().optional(),
+                includeMetadata: z.boolean().optional().default(false),
             }),
         )
         .query(async ({ input }) => {
-            const { entityId1, entityId2, maxDepth } = input;
+            const { entityId1, entityId2, maxDepth, includeMetadata } = input;
 
-            try {
-                const rows = await executeCommonAncestorsQuery(db, entityId1, entityId2, maxDepth);
-                return {
-                    commonAncestors: rows.map((row) => ({
-                        id: row.id,
-                        label: row.label,
-                        depthFromEntity1: row.depth_from_e1,
-                        depthFromEntity2: row.depth_from_e2,
-                    })),
-                };
-            } catch (err) {
-                logger.error({ err, entityId1, entityId2 }, 'Failed to get common ancestors');
-                throw new Error('Failed to find common ancestors');
-            }
+            logger.info({ entityId1, entityId2, maxDepth, includeMetadata }, 'Fetching common ancestors');
+
+            // Call PostgreSQL function
+            const result = await db.raw<{ rows: CommonAncestorRow[] }>(
+                `SELECT * FROM get_common_ancestors(?, ?, ?, ?)`,
+                [entityId1, entityId2, maxDepth ?? null, includeMetadata],
+            );
+
+            // Use the same parseLineageResults function
+            const { nodes, edges } = parseLineageResults(result.rows, includeMetadata);
+
+            logger.info({ nodeCount: nodes.length }, 'Retrieved common ancestors');
+
+            return {
+                nodes,
+                edges,
+            };
         });
 };

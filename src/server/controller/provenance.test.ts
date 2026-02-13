@@ -408,9 +408,9 @@ describe('Provenance Lineage Queries', () => {
             });
 
             // Should find common.txt and branch1/branch2 as common ancestors
-            expect(result.commonAncestors.length).toBeGreaterThan(0);
+            expect(result.nodes.length).toBeGreaterThan(0);
 
-            const commonIds = result.commonAncestors.map((a) => a.id);
+            const commonIds = result.nodes.map((a) => a.id);
             expect(commonIds).toContain('common.txt');
         });
 
@@ -428,7 +428,7 @@ describe('Provenance Lineage Queries', () => {
                 maxDepth: 10,
             });
 
-            expect(result.commonAncestors).toHaveLength(0);
+            expect(result.nodes).toHaveLength(0);
         });
 
         it('should not include the query entities themselves as common ancestors', async () => {
@@ -443,7 +443,7 @@ describe('Provenance Lineage Queries', () => {
             });
 
             // Should not include the entity itself
-            expect(result.commonAncestors).toHaveLength(0);
+            expect(result.nodes).toHaveLength(0);
         });
     });
 });
