@@ -3,6 +3,7 @@ import { getProvGraph } from './controller/ageGraph';
 import { health } from './controller/health';
 import { logs } from './controller/logs';
 import { createPAT, deletePAT, listPATs, revokePAT } from './controller/pAccessToken';
+import { getCommonAncestors, getEntityDescendants, getEntityLineage } from './controller/provenance';
 import { createProject } from './controller/projects';
 import { getSkillsAssessment, updateSkillsAssessment } from './controller/skillsAssessment';
 import { activityUpload } from './controller/uploadActivity';
@@ -29,6 +30,9 @@ export const publicAccessibleRouter = trpcRoot.router({
     getProvGraph: getProvGraph(),
     getUserIdFromPAT: getUserIdFromPAT(),
     uploadActivity: activityUpload(),
+    getEntityLineage: getEntityLineage(),
+    getEntityDescendants: getEntityDescendants(),
+    getCommonAncestors: getCommonAncestors(),
 });
 
 export const appRouter = trpcRoot.mergeRouters(publicAccessibleRouter, protectedAppRouter);
