@@ -44,52 +44,53 @@ export const getProvGraph = () => {
                 if (includeEntities) {
                     const ents = await db.select('id', 'label').from('entities').limit(max);
                     for (const e of ents) {
-                        nodes.push({ id: `ent-${e.id}`, label: e.label ?? `Entity ${e.id}`, group: 'entity' });
+                        // Use raw IDs (no prefix) to keep IDs consistent with storage
+                        nodes.push({ id: String(e.id), label: e.label ?? `Entity ${e.id}`, group: 'entity' });
                     }
                 }
 
                 if (includeActivities) {
                     const acts = await db.select('id', 'label').from('activities').limit(max);
                     for (const a of acts) {
-                        nodes.push({ id: `act-${a.id}`, label: a.label ?? `Activity ${a.id}`, group: 'activity' });
+                        nodes.push({ id: String(a.id), label: a.label ?? `Activity ${a.id}`, group: 'activity' });
                     }
                 }
 
                 if (includeAgents) {
                     const ags = await db.select('id', 'label').from('agents').limit(max);
                     for (const ag of ags) {
-                        nodes.push({ id: `ag-${ag.id}`, label: ag.label ?? `Agent ${ag.id}`, group: 'agent' });
+                        nodes.push({ id: String(ag.id), label: ag.label ?? `Agent ${ag.id}`, group: 'agent' });
                     }
                 }
 
                 // relations
                 const wgb = await db.select('*').from('was_generated_by').limit(max);
                 for (const r of wgb) {
-                    edges.push({ from: `ent-${r.entity_id}`, to: `act-${r.activity_id}`, label: 'wasGeneratedBy' });
+                    edges.push({ from: String(r.entity_id), to: String(r.activity_id), label: 'wasGeneratedBy' });
                 }
 
                 const used = await db.select('*').from('used').limit(max);
                 for (const r of used) {
-                    edges.push({ from: `act-${r.activity_id}`, to: `ent-${r.entity_id}`, label: r.role ?? 'used' });
+                    edges.push({ from: String(r.activity_id), to: String(r.entity_id), label: r.role ?? 'used' });
                 }
 
                 const wat = await db.select('*').from('was_attributed_to').limit(max);
                 for (const r of wat) {
-                    edges.push({ from: `ent-${r.entity_id}`, to: `ag-${r.agent_id}`, label: 'wasAttributedTo' });
+                    edges.push({ from: String(r.entity_id), to: String(r.agent_id), label: 'wasAttributedTo' });
                 }
 
                 const waw = await db.select('*').from('was_associated_with').limit(max);
                 for (const r of waw) {
                     edges.push({
-                        from: `act-${r.activity_id}`,
-                        to: `ag-${r.agent_id}`,
+                        from: String(r.activity_id),
+                        to: String(r.agent_id),
                         label: r.role ?? 'wasAssociatedWith',
                     });
                 }
 
                 const winf = await db.select('*').from('was_informed_by').limit(max);
                 for (const r of winf) {
-                    edges.push({ from: `act-${r.informed_id}`, to: `act-${r.informer_id}`, label: 'wasInformedBy' });
+                    edges.push({ from: String(r.informed_id), to: String(r.informer_id), label: 'wasInformedBy' });
                 }
 
                 return { nodes, edges };
