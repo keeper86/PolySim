@@ -1,0 +1,35 @@
+{
+    "activity": {
+        "id": "5d6d92fb026256e3ff8287f8792218ae55b59e5086f7f2325821a1c709ad2544",
+        "label": "chain-step-9",
+        "startedAt": 1770075866000,
+        "endedAt": 1770075866001,
+        "metadata": {
+            "step": 9
+        }
+    },
+    "entities": [
+        {
+            "id": "bd4b172c0e27c962602f9c6b3df209a6fd5cae621f82c52d2d1521cfae1406e5",
+            "label": "process-9",
+            "role": "process",
+            "metadata": {}
+        },
+        {
+            "id": "bf65736ce642004b921671e1bec23b9c724325536b79b4a8ceb99659a85c5698",
+            "label": "entity-8",
+            "role": "input",
+            "metadata": {
+                "path": "/tmp/seed/out8"
+            }
+        },
+        {
+            "id": "1dafe27d0d48cc134a8f09686c7b96cb5317a12dba80dd36ccede103f3f2760f",
+            "label": "entity-9",
+            "role": "output",
+            "metadata": {
+                "path": "/tmp/seed/out9"
+            }
+        }
+    ]
+}

@@ -17,7 +17,14 @@
  * @returns { Promise<void> }
  */
 exports.up = async function (knex) {
-    // Function 1: Get Entity Lineage (Backward Traversal)
+    // Function 1: Get Entity Lineage (Activity chain via informedBy)
+    // NOTE: This version defines lineage as the chain of activities that the
+    // given entity is based on. It starts from the activity(ies) that
+    // generated the entity (was_generated_by) and recursively follows
+    // activity-to-activity links through the `was_informed_by` relationship.
+    // Assumption: DB has a `was_informed_by` table with columns
+    // `informed_id` (the activity being informed) and `informer_id` (the
+    // activity that informed it).
     await knex.raw(`
     CREATE OR REPLACE FUNCTION get_entity_lineage(
       p_entity_id TEXT,
@@ -41,72 +48,41 @@ exports.up = async function (knex) {
     BEGIN
       RETURN QUERY
       WITH RECURSIVE lineage AS (
-        -- Base case: Start with the target entity
-        SELECT 
-          e.id as node_id,
-          e.label as node_label,
-          'entity'::text as node_type,
+        -- Base case: activities that generated the target entity
+        SELECT
+          a.id as node_id,
+          a.label as node_label,
+          'activity'::text as node_type,
           0 as depth,
-          CASE WHEN p_include_metadata THEN e.metadata ELSE NULL::jsonb END as metadata,
+          CASE WHEN p_include_metadata THEN a.metadata ELSE NULL::jsonb END as metadata,
           NULL::text as edge_from,
           NULL::text as edge_to,
           NULL::text as relationship_type,
           NULL::text as role,
-          ARRAY[e.id] as path
-        FROM entities e
-        WHERE e.id = p_entity_id
-        
+          ARRAY[a.id] as path
+        FROM activities a
+        JOIN was_generated_by wgb ON wgb.activity_id = a.id
+        WHERE wgb.entity_id = p_entity_id
+
         UNION ALL
-        
-        -- Recursive case: Traverse backward through activities
-        -- Alternates between entities and activities
-        SELECT 
-          CASE 
-            WHEN l.node_type = 'entity' THEN a.id
-            WHEN l.node_type = 'activity' THEN e.id
-          END as node_id,
-          CASE 
-            WHEN l.node_type = 'entity' THEN a.label
-            WHEN l.node_type = 'activity' THEN e.label
-          END as node_label,
-          CASE 
-            WHEN l.node_type = 'entity' THEN 'activity'
-            WHEN l.node_type = 'activity' THEN 'entity'
-          END::text as node_type,
+
+        -- Recursive case: follow was_informed_by links between activities
+        SELECT
+          CASE WHEN ib.informed_id = l.node_id THEN ib.informer_id ELSE ib.informed_id END as node_id,
+          a2.label as node_label,
+          'activity'::text as node_type,
           l.depth + 1 as depth,
-          CASE 
-            WHEN p_include_metadata AND l.node_type = 'entity' THEN a.metadata
-            WHEN p_include_metadata AND l.node_type = 'activity' THEN e.metadata
-            ELSE NULL::jsonb
-          END as metadata,
+          CASE WHEN p_include_metadata THEN a2.metadata ELSE NULL::jsonb END as metadata,
           l.node_id as edge_from,
-          CASE 
-            WHEN l.node_type = 'entity' THEN a.id
-            WHEN l.node_type = 'activity' THEN e.id
-          END as edge_to,
-          CASE 
-            WHEN l.node_type = 'entity' THEN 'wasGeneratedBy'
-            WHEN l.node_type = 'activity' THEN 'used'
-          END::text as relationship_type,
-          u.role,
-          l.path || CASE 
-            WHEN l.node_type = 'entity' THEN a.id
-            WHEN l.node_type = 'activity' THEN e.id
-          END as path
+          CASE WHEN ib.informed_id = l.node_id THEN ib.informer_id ELSE ib.informed_id END as edge_to,
+          'informedBy'::text as relationship_type,
+          NULL::text as role,
+          l.path || CASE WHEN ib.informed_id = l.node_id THEN ib.informer_id ELSE ib.informed_id END as path
         FROM lineage l
-        LEFT JOIN was_generated_by wgb ON wgb.entity_id = l.node_id AND l.node_type = 'entity'
-        LEFT JOIN activities a ON a.id = wgb.activity_id
-        LEFT JOIN used u ON u.activity_id = l.node_id AND l.node_type = 'activity'
-        LEFT JOIN entities e ON e.id = u.entity_id
+        JOIN was_informed_by ib ON ib.informed_id = l.node_id OR ib.informer_id = l.node_id
+        JOIN activities a2 ON a2.id = CASE WHEN ib.informed_id = l.node_id THEN ib.informer_id ELSE ib.informed_id END
         WHERE (p_max_depth IS NULL OR l.depth < p_max_depth)
-          AND CASE 
-            WHEN l.node_type = 'entity' THEN a.id
-            WHEN l.node_type = 'activity' THEN e.id
-          END IS NOT NULL
-          AND NOT (CASE 
-            WHEN l.node_type = 'entity' THEN a.id
-            WHEN l.node_type = 'activity' THEN e.id
-          END = ANY(l.path))
+          AND NOT (CASE WHEN ib.informed_id = l.node_id THEN ib.informer_id ELSE ib.informed_id END = ANY(l.path))
       )
       SELECT * FROM lineage
       ORDER BY depth, node_id;
@@ -117,13 +93,14 @@ exports.up = async function (knex) {
     // Add database-level documentation for get_entity_lineage
     await knex.raw(`
     COMMENT ON FUNCTION get_entity_lineage(TEXT, INTEGER, BOOLEAN) IS
-    'Performs backward provenance traversal to find all ancestor entities that contributed to the specified entity.
-    Uses recursive CTEs to traverse was_generated_by and used relationships.
+    'Returns the chain of activities that the specified entity is based on.
+    Starts from activity(ies) that generated the entity (was_generated_by) and
+  follows activity-to-activity links using the was_informed_by relationship.
     Parameters:
-      - p_entity_id: The ID of the entity to trace backwards from
+      - p_entity_id: The ID of the entity to trace from
       - p_max_depth: Optional maximum traversal depth (NULL for unlimited)
-      - p_include_metadata: Whether to include detailed metadata in results
-    Returns a graph of entities connected through activities and agents.';
+      - p_include_metadata: Whether to include detailed activity metadata in results
+    Returns a linearised activity lineage for the given entity.';
   `); // Function 2: Get Entity Descendants (Forward Traversal)
     await knex.raw(`
     CREATE OR REPLACE FUNCTION get_entity_descendants(

@@ -1,17 +1,21 @@
 {
     "activity": {
         "endedAt": 1770075858985,
-        "id": "790641e292e5bcf30e4c6f0d528b35a7c81797f1990c14c6409ccd8d132142a5",
+        "id": "6a1fd6acc935375b28413bdd31e32eaef54cba66276069ef89f5888895d676e9",
         "label": "Run /bin/sh",
         "metadata": {
-            "command": ["/bin/sh", "-c", "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"]
+            "command": [
+                "/bin/sh",
+                "-c",
+                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+            ]
         },
         "startedAt": 1770075858956
     },
     "entities": [
         {
             "createdAt": 1770075858971,
-            "id": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03",
+            "id": "7f39224e335994886c26ba8c241fcbe1d474aadaa2bd0a8e842983b098cea894",
             "label": "simple_run_out",
             "metadata": {
                 "accesses": [
@@ -27,7 +31,7 @@
         },
         {
             "createdAt": 1711874846000,
-            "id": "86d31f6fb799e91fa21bad341484564510ca287703a16e9e46c53338776f4f42",
+            "id": "d32b949af77782e6d29bedb2117a43e12d1642272f10cda5ed44cef7246078d0",
             "label": "sh",
             "metadata": {
                 "accesses": [
@@ -49,13 +53,15 @@
         },
         {
             "createdAt": 1769698204766,
-            "id": "e8e5fac19389c6b5d4401398edce9b9a9b27d689cc92fb49dfc60c6834a0eeb2",
+            "id": "eb011f7ae3f1dcbcb67865419198fdc78f16157df1fce9e914fcf8cd684aa6c6",
             "label": "simple_run.sh",
             "metadata": {
                 "accesses": [
                     {
                         "metadata": {
-                            "execve_argv": ["/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"]
+                            "execve_argv": [
+                                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/simple_run.sh"
+                            ]
                         },
                         "pid": 335552,
                         "role": "process"

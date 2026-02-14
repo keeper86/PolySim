@@ -7,6 +7,7 @@ import Graph from 'react-graph-vis';
 import { useTRPC } from '@/lib/trpc';
 import { useQuery } from '@tanstack/react-query';
 import type { Node, Edge } from 'react-graph-vis';
+import { GraphControlSidebar } from './graphControl';
 
 type QueryType = 'full' | 'lineage' | 'descendants' | 'commonAncestors';
 
@@ -168,7 +169,7 @@ export default function VisNetworkDemoPage() {
             },
             nodes: { size: 20, scaling: { min: 10, max: 30 }, font: { multi: 'html' } },
             edges: {},
-            interaction: { hover: true, multiselect: true, hideEdgesOnDrag: true },
+            interaction: { hover: true, multiselect: true, hideEdgesOnDrag: false },
             autoResize: true,
         };
     }, []);
@@ -275,7 +276,6 @@ export default function VisNetworkDemoPage() {
 
     return (
         <div className='flex gap-4 h-[85vh]'>
-            {/* Query Controls Sidebar */}
             <div className='w-80 overflow-y-auto border-r p-4 space-y-4'>
                 <div>
                     <h2 className='text-lg font-semibold mb-2'>Lineage Query Tester</h2>

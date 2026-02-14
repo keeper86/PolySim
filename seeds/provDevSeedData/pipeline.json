@@ -1,17 +1,21 @@
 {
     "activity": {
         "endedAt": 1770075859047,
-        "id": "0d19d6544ab141f13d8c42e651612dfdc6ed7c7242491cc6135a57d38b2eed15",
+        "id": "c6de82c4daaca514573a40da4ed765c9b99b8d7f8bf77f74aeec86000cee4a93",
         "label": "Run /bin/sh",
         "metadata": {
-            "command": ["/bin/sh", "-c", "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/pipeline.sh"]
+            "command": [
+                "/bin/sh",
+                "-c",
+                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/pipeline.sh"
+            ]
         },
         "startedAt": 1770075858991
     },
     "entities": [
         {
             "createdAt": 1770075859032,
-            "id": "3016bd6c71b4b67760fe2414a033f8dfd134995015c6bac1c9ba03a34b708850",
+            "id": "e3e628412f151e501ffe2c802f19c966042c63351f7c16478d2f37fdb67a8cbb",
             "label": "2",
             "metadata": {
                 "accesses": [
@@ -27,13 +31,15 @@
         },
         {
             "createdAt": 1769698204766,
-            "id": "3bcb6e8969050df4774bc3ff5894c38324d7f8f83cfcbbbd91459ed82c47a256",
+            "id": "6317e34ba3991264ac468d1504dccf48f079d102ab36c8a4c844507372b0fa40",
             "label": "pipeline.sh",
             "metadata": {
                 "accesses": [
                     {
                         "metadata": {
-                            "execve_argv": ["/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/pipeline.sh"]
+                            "execve_argv": [
+                                "/home/tobias/Projekte/PolySim/tools/polytrace/test/fixtures/pipeline.sh"
+                            ]
                         },
                         "pid": 335562,
                         "role": "process"
@@ -50,7 +56,7 @@
         },
         {
             "createdAt": 1711874846000,
-            "id": "86d31f6fb799e91fa21bad341484564510ca287703a16e9e46c53338776f4f42",
+            "id": "d32b949af77782e6d29bedb2117a43e12d1642272f10cda5ed44cef7246078d0",
             "label": "sh",
             "metadata": {
                 "accesses": [
