@@ -40,9 +40,10 @@ yarn-error.log*
 .env*
 !.env.example*
 
-# Intellij
+# IDE related
 /.idea
 *.iml
+.vscode
 
 # typescript
 *.tsbuildinfo
@@ -51,9 +52,14 @@ next-env.d.ts
 # plantuml
 plantuml*.jar
 
-.vscode
-
+# local test files
 **/run*/*
 sim
 testprog
+
+# some files
+*.pdf
+*.zip
+
+
 
