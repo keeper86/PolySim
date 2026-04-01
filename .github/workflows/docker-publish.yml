@@ -27,7 +27,7 @@ jobs:
 
             - name: Extract metadata (tags, labels) for app image
               id: meta-app
-              uses: docker/metadata-action@v5
+              uses: docker/metadata-action@v6
               with:
                   images: ghcr.io/${{ github.repository }}
 
@@ -43,7 +43,7 @@ jobs:
             # Build and push migrator image
             - name: Extract metadata (tags, labels) for migrator image
               id: meta-migrator
-              uses: docker/metadata-action@v5
+              uses: docker/metadata-action@v6
               with:
                   images: ghcr.io/${{ github.repository }}-migrator
 
