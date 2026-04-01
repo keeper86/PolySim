@@ -32,7 +32,7 @@ jobs:
                   images: ghcr.io/${{ github.repository }}
 
             - name: Build and push app image
-              uses: docker/build-push-action@v6
+              uses: docker/build-push-action@v7
               with:
                   context: .
                   target: production
@@ -48,7 +48,7 @@ jobs:
                   images: ghcr.io/${{ github.repository }}-migrator
 
             - name: Build and push migrator image
-              uses: docker/build-push-action@v6
+              uses: docker/build-push-action@v7
               with:
                   context: .
                   file: Dockerfile.migrator
