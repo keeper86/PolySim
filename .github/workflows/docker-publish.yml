@@ -13,13 +13,13 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
 
             - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v3
+              uses: docker/setup-buildx-action@v4
 
             - name: Log in to GitHub Container Registry
-              uses: docker/login-action@v3
+              uses: docker/login-action@v4
               with:
                   registry: ghcr.io
                   username: ${{ github.actor }}
@@ -27,12 +27,12 @@ jobs:
 
             - name: Extract metadata (tags, labels) for app image
               id: meta-app
-              uses: docker/metadata-action@v5
+              uses: docker/metadata-action@v6
               with:
                   images: ghcr.io/${{ github.repository }}
 
             - name: Build and push app image
-              uses: docker/build-push-action@v6
+              uses: docker/build-push-action@v7
               with:
                   context: .
                   target: production
@@ -43,12 +43,12 @@ jobs:
             # Build and push migrator image
             - name: Extract metadata (tags, labels) for migrator image
               id: meta-migrator
-              uses: docker/metadata-action@v5
+              uses: docker/metadata-action@v6
               with:
                   images: ghcr.io/${{ github.repository }}-migrator
 
             - name: Build and push migrator image
-              uses: docker/build-push-action@v6
+              uses: docker/build-push-action@v7
               with:
                   context: .
                   file: Dockerfile.migrator

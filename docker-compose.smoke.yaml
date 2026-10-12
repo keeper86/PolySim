@@ -1,7 +1,0 @@
-services:
-    app:
-        env_file: !override
-            - .env.smoke
-    caddy:
-        volumes:
-            - ./Caddyfile.smoke:/etc/caddy/Caddyfile
