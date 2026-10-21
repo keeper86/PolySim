@@ -4,7 +4,7 @@
     }
 }
 
-auth.{$CADDY_DOMAIN} {
+{$CADDY_AUTH_DOMAIN} {
     reverse_proxy keycloak:8080 { 
         header_up X-Forwarded-Proto https
         header_up X-Forwarded-Port 443
