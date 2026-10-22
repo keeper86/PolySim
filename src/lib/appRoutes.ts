@@ -91,6 +91,7 @@ export const APP_ROUTES = {
         icon: AiTwotoneApi,
         description: 'Interactive API documentation',
         isSecondaryNav: true,
+        isPublic: true,
     },
     benchmarks: {
         path: '/benchmarks',
